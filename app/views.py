@@ -1,6 +1,7 @@
 from app import app
 
-from flask import request, render_template
+from flask import request, jsonify
+import common
 
 
 @app.route("/")
