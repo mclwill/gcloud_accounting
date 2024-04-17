@@ -1,7 +1,7 @@
 from app import app
 
 from flask import request, jsonify
-import common
+from app import common
 
 
 @app.route("/")
