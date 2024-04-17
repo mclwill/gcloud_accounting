@@ -4,7 +4,9 @@ from flask import request, render_template
 
 
 @app.route("/")
-def index():
+def homepage():
+    return "Hi there, how ya doing? Mac 3"
+'''def index():
 
     """
     This route will render a template.
@@ -20,4 +22,4 @@ def index():
 
         return render_template("public/index.html", args=args)
 
-    return render_template("public/index.html", args=args)
+    return render_template("public/index.html", args=args)'''
