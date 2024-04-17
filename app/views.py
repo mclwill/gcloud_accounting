@@ -6,20 +6,14 @@ from flask import request, render_template
 @app.route("/")
 def homepage():
     return "Hi there, how ya doing? Mac 3"
-'''def index():
 
-    """
-    This route will render a template.
-    If a query string comes into the URL, it will return a parsed
-    dictionary of the query string keys & values, using request.args
-    """
-
+@app.route('/test')
+def test(uuid):
     args = None
-
     if request.args:
+        content = request.get_json(silent=True)
+        common.send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
+    else:
+        common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
-        args = request.args
-
-        return render_template("public/index.html", args=args)
-
-    return render_template("public/index.html", args=args)'''
+    return jsonify({"uuid":uuid})
