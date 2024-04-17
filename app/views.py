@@ -9,7 +9,7 @@ def homepage():
     return "Hi there, how ya doing? Mac 3"
 
 @app.route('/test')
-def test(uuid):
+def test():
     args = None
     if request.args:
         content = request.get_json(silent=True)
@@ -17,4 +17,4 @@ def test(uuid):
     else:
         common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
-    return jsonify({"uuid":uuid})
+    return 'Something'
