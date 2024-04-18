@@ -1,4 +1,4 @@
-This is a combination of code taken from following projects :
+This is a combination of code taken from following projects to get started:
 
 <h1>How to deploy Flask app to Google Cloud (Python 3) </h1>
 
