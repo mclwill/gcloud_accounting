@@ -8,7 +8,7 @@ from app import common
 def homepage():
     return "Hi there, how ya doing? Mac 3"
 
-@app.route('/test',methods=['POST'])
+@app.route('/test',methods=['POST','GET'])
 def test():
     #args = None
     content = request.get_json(silent=True)
