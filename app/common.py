@@ -82,7 +82,7 @@ def send_email(email_counter,message_subject,message_text,receiver_email_address
     global sender_pw
     
     if not sender_pw: #so only get pw once per session
-        sender_pw = 'yEc9m3G9f?ATeJtF'
+        sender_pw = access_secret_version('zd_zapier_pw','1')
     
     email_counter += 1
     sender_email = 'zd_zapier@mclarenwilliams.com.au'
