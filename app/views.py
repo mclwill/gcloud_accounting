@@ -6,7 +6,7 @@ from FlaskApp.app import common
 
 @app.route("/")
 def homepage():
-    return "Hi there, how ya doing? Mac 3"
+    return "Nothing to see here"
 
 @app.route('/test',methods=['POST','GET'])
 def test():
@@ -17,4 +17,4 @@ def test():
     else:
         common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
-    return 'Something'
+    return 'Test Processed - check email'
