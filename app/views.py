@@ -1,7 +1,7 @@
 from FlaskApp.app import app
 
 from flask import request, jsonify
-from FlaskApp.app import common
+from FlaskApp.app.common import send_email
 
 
 @app.route("/")
