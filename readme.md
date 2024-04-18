@@ -6,7 +6,7 @@ This is a combination of code taken from following projects :
 
 https://www.youtube.com/watch?v=wK7hPe4mN2A
 
-<h>Deploying a Flask app to a Virtual Machine - Learning Flask Series Pt. 23 </h>
+<h1>Deploying a Flask app to a Virtual Machine - Learning Flask Series Pt. 23 </h1>
 
 https://www.youtube.com/watch?v=a2g9pDleGQk
 
