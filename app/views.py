@@ -1,23 +1,20 @@
 from app import app
 
-from flask import request, render_template
+from flask import request, jsonify
+from app import common
 
 
 @app.route("/")
-def index():
+def homepage():
+    return "Hi there, how ya doing? Mac 3"
 
-    """
-    This route will render a template.
-    If a query string comes into the URL, it will return a parsed
-    dictionary of the query string keys & values, using request.args
-    """
+@app.route('/test',methods=['POST','GET'])
+def test():
+    #args = None
+    content = request.get_json(silent=True)
+    if content:
+        common.send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
+    else:
+        common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
-    args = None
-
-    if request.args:
-
-        args = request.args
-
-        return render_template("public/index.html", args=args)
-
-    return render_template("public/index.html", args=args)
+    return 'Something'
