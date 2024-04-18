@@ -1,5 +1,5 @@
 import smtplib
-'''import time
+import time
 import random
 import traceback
 import google.cloud.secretmanager as secretmanager
@@ -77,8 +77,7 @@ def initialise_exception_logging ():
     logger.addHandler(smtp_handler)
     print('logging started')
 
-'''
-sender_pw = None
+
 def send_email(email_counter,message_subject,message_text,receiver_email_address):
     global sender_pw
     
@@ -146,7 +145,7 @@ def send_email(email_counter,message_subject,message_text,receiver_email_address
         send_email(email_counter,message_subject + ' depth 5 or more: ' + str(email_counter),message_text,receiver_email_address)
         email_counter -= 1
         return False
-'''
+
 def dropbox_initiate():
     global dbx
     if not dbx:
@@ -218,4 +217,4 @@ def get_CD_FTP_credentials():
 
 #initialise_exception_logging()
 #uphance_initiate()
-'''
+
