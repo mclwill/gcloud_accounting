@@ -8,11 +8,11 @@ from app import common
 def homepage():
     return "Hi there, how ya doing? Mac 3"
 
-@app.route('/test')
+@app.route('/test',methods=['POST'])
 def test():
-    args = None
-    if request.args:
-        content = request.get_json(silent=True)
+    #args = None
+    content = request.get_json(silent=True)
+    if content:
         common.send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
     else:
         common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
