@@ -8,7 +8,7 @@ from FlaskApp.app.common import send_email
 def homepage():
     return "Nothing to see here"
 
-@app.route('/test',methods=['POST','GET'])
+@app.route('/test',methods=['POST'])
 def test():
     #args = None
     content = request.get_json(silent=True)
