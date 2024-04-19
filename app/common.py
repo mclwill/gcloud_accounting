@@ -72,10 +72,12 @@ def initialise_exception_logging ():
                                                 subject=u"Uphance Program Exception",
                                                 credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
                                                 secure=())
-
-    logger = logging.getLogger()
+    file_handler = logging.FileHandler('~/Dropbox/CrossDocks-Uphance/file.log')
+    file_handler.setFormatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
+    logger = logging.getLogger(__name__)
     logger.addHandler(smtp_handler)
-    print('logging started')
+    logger.addHandler(file_handler)
+    logger.info('logging started')
 
 
 def send_email(email_counter,message_subject,message_text,receiver_email_address):
