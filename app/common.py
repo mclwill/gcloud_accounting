@@ -217,6 +217,6 @@ def get_CD_FTP_credentials():
 
     return cross_docks_username, cross_docks_pw
 
-#initialise_exception_logging()
+initialise_exception_logging()
 #uphance_initiate()
 
