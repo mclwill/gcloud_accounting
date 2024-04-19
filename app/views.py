@@ -1,7 +1,7 @@
 from FlaskApp.app import app
 
 from flask import request, jsonify
-from FlaskApp.app.common import send_email
+import FlaskApp.app.common as common
 
 
 @app.route("/")
@@ -13,8 +13,8 @@ def test():
     #args = None
     content = request.get_json(silent=True)
     if content:
-        send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
+        common.send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
     else:
-        send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
+        common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
     return 'Test Processed - check email'
