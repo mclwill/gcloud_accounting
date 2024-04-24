@@ -7,7 +7,7 @@ import FlaskApp.app.common as common
 
 @app.route("/")
 def homepage():
-    with open('/var/log/cd-uphance/app.log', 'w') as sys.stdout:
+    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('Root route reached')
     return "Nothing to see here"
 
