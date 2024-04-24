@@ -65,6 +65,7 @@ def initialise_exception_logging ():
 
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('Begin Initiate')
+        print('Zd password',sender_pw)
         
     if not sender_pw: #so only get pw once per session
         sender_pw = access_secret_version('zd_zapier_pw','1')
