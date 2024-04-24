@@ -22,4 +22,4 @@ def test():
 
     return 'Test Processed - check email'
 
-common.logging_initiate()
+#common.logging_initiate()
