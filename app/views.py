@@ -22,5 +22,5 @@ def test():
 
     return 'Test Processed - check email'
 
-time.sleep(10)
+time.sleep(20)
 common.logging_initiate()
