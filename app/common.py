@@ -76,7 +76,7 @@ def logging_initiate ():
         print('Zd password',sender_pw)
         
     if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('zd_zapier_pw','latest')
+        sender_pw = access_secret_version('zd_zapier_pw','1')
     
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('After password')
