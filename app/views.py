@@ -6,7 +6,7 @@ import FlaskApp.app.common as common
 
 @app.route("/")
 def homepage():
-    common.logger.info('Root route reached')
+    print('Root route reached')
     return "Nothing to see here"
 
 @app.route('/test',methods=['POST'])
