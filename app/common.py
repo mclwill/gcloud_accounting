@@ -61,7 +61,10 @@ def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessS
 def initialise_exception_logging ():
     global sender_pw
     global logger
-    
+
+    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+        print('Begin Initiate')
+        
     if not sender_pw: #so only get pw once per session
         sender_pw = access_secret_version('zd_zapier_pw','1')
     
