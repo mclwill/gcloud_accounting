@@ -69,6 +69,8 @@ def initialise_exception_logging ():
     if not sender_pw: #so only get pw once per session
         sender_pw = access_secret_version('zd_zapier_pw','1')
     
+    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+        print('After password')
 
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr="zd_zapier@mclarenwilliams.com.au", 
