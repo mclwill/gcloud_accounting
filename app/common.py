@@ -246,7 +246,7 @@ def get_CD_FTP_credentials():
 
     return cross_docks_username, cross_docks_pw
 
-def check_initiate_done()
+def check_initiate_done():
     global initiate_done
 
     if not initiate_done:
