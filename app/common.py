@@ -76,6 +76,10 @@ def initialise_exception_logging ():
                                                 subject=u"Uphance Program Exception",
                                                 credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
                                                 secure=())
+
+    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+        print('After SMTP handler')
+        
     file_handler = logging.FileHandler('/home/log/cd-uphance/file_h.log')
     stream_hander = logging.StreamHandler()
 
