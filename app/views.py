@@ -11,7 +11,7 @@ def homepage():
         print('Root route reached')
     return "Nothing to see here"
 
-@app.route('/test',methods=['POST'])
+@app.route('/test',methods=['POST','GET'])
 def test():
     #args = None
     content = request.get_json(silent=True)
