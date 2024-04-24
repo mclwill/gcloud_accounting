@@ -7,14 +7,14 @@ import FlaskApp.app.common as common
 
 @app.route("/")
 def homepage():
-    check_initiate_done()
+    common.check_initiate_done()
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('Root route reached')
     return "Nothing to see here"
 
 @app.route('/test',methods=['POST','GET'])
 def test():
-    check_initiate_done()
+    common.check_initiate_done()
     #args = None
     content = request.get_json(silent=True)
     if content:
