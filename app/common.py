@@ -93,7 +93,7 @@ def logging_initiate ():
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('After SMTP handler')
         
-    file_handler = logging.FileHandler('/home/log/cd-uphance/file_h.log')
+    file_handler = logging.FileHandler('/var/log/cd-uphance/file_h.log')
     stream_hander = logging.StreamHandler()
 
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
