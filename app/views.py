@@ -24,5 +24,8 @@ def test():
 
     return 'Test Processed - check email'
 
+
+with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+        print('Views.py end')
 #time.sleep(20)
 #common.logging_initiate()
