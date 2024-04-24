@@ -1,5 +1,5 @@
 from FlaskApp.app import app
-
+import time
 import sys
 from flask import request, jsonify
 import FlaskApp.app.common as common
@@ -22,4 +22,5 @@ def test():
 
     return 'Test Processed - check email'
 
-#common.logging_initiate()
+time.sleep(10)
+common.logging_initiate()
