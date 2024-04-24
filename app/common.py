@@ -66,7 +66,7 @@ def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessS
 
     return payload
 
-def initialise_exception_logging ():
+def logging_initiate ():
     global sender_pw
     global logger
 
@@ -245,6 +245,6 @@ def get_CD_FTP_credentials():
 
     return cross_docks_username, cross_docks_pw
 
-initialise_exception_logging()
+#initialise_exception_logging()
 #uphance_initiate()
 
