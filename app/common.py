@@ -13,6 +13,7 @@ import requests
 from datetime import datetime
 
 #initialise parameters
+initiate_done = False
 sender_pw = False 
 
 dbx = False
@@ -244,6 +245,14 @@ def get_CD_FTP_credentials():
         cross_docks_pw = access_secret_version('cross_docks_pw','1')
 
     return cross_docks_username, cross_docks_pw
+
+def check_initiate_done()
+    global initiate_done
+
+    if not initiate_done:
+        logging_initiate()
+        initiate_done = True
+
 
 #initialise_exception_logging()
 #uphance_initiate()
