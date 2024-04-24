@@ -21,3 +21,5 @@ def test():
         common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
     return 'Test Processed - check email'
+
+common.logging_initiate()
