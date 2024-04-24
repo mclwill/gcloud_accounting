@@ -75,19 +75,21 @@ def logging_initiate ():
         print('Begin Initiate')
         print('Zd password',sender_pw)
         
-    if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('zd_zapier_pw','1')
+    #if not sender_pw: #so only get pw once per session
+    #    sender_pw = access_secret_version('zd_zapier_pw','1')
     
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('After password')
 
+    '''
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr="zd_zapier@mclarenwilliams.com.au", 
                                                 toaddrs="gary@mclarenwilliams.com.au",
                                                 subject=u"Uphance Program Exception",
                                                 credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
                                                 secure=())
-
+    '''
+    
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('After SMTP handler')
         
@@ -97,13 +99,13 @@ def logging_initiate ():
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('Handlers Set')
     
-    smtp_handler.setLevel(logging.INFO)
+    #smtp_handler.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
     stream_handler = setLevel(logging.INFO)
-    smtp_handler.setFormatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
+    #smtp_handler.setFormatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     file_handler.setFormatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     logger = logging.getLogger(__name__)
-    logger.addHandler(smtp_handler)
+    #logger.addHandler(smtp_handler)
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
     logger.info('logging started')
