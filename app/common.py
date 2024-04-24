@@ -46,6 +46,9 @@ def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessS
     # Access the secret version.
     response = client.access_secret_version(request={"name": name})
 
+    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+        print('Response',response.payload.data)
+    
     # Verify payload checksum.
     crc32c = google_crc32c.Checksum()
     crc32c.update(response.payload.data)
