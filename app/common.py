@@ -75,7 +75,7 @@ def initialise_exception_logging ():
     file_handler = logging.FileHandler('/home/log/cd-uphance/file_h.log')
     stream_hander = logging.StreamHandler()
 
-    with open('/var/log/cd-uphance/app.log', 'w') as sys.stdout:
+    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('Handlers Set')
     
     smtp_handler.setLevel(logging.INFO)
