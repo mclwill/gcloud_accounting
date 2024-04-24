@@ -6,7 +6,8 @@ import FlaskApp.app.common as common
 
 @app.route("/")
 def homepage():
-    print('Root route reached')
+    with open('~/cd-uphance/app.log', 'w') as sys.stdout:
+        print('Root route reached')
     return "Nothing to see here"
 
 @app.route('/test',methods=['POST'])
