@@ -110,7 +110,7 @@ def logging_initiate ():
     #logger.addHandler(smtp_handler)
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-    logger.warning('logging started')
+    logger.info('logging started')
 
 
 def send_email(email_counter,message_subject,message_text,receiver_email_address):
