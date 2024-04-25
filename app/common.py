@@ -114,6 +114,9 @@ def logging_initiate ():
     logger.addHandler(stream_handler)
     logger.info('logging started')
 
+    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+        print('Logger level:',logger.level)
+
 
 def send_email(email_counter,message_subject,message_text,receiver_email_address):
     global sender_pw
