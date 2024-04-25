@@ -108,7 +108,7 @@ def logging_initiate ():
     format = logging.Formatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     file_handler.setFormatter(format)
     stream_handler.setFormatter(format)
-    smtp_hander.setFormatter(format)
+    smtp_handler.setFormatter(format)
     
     logger.addHandler(smtp_handler)
     logger.addHandler(file_handler)
