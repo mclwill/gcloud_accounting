@@ -100,8 +100,8 @@ def logging_initiate ():
         print('Handlers Set')
     
     #smtp_handler.setLevel(logging.INFO)
-    file_handler.setLevel(logging.INFO)
-    stream_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.DEBUG)
+    stream_handler.setLevel(logging.DEBUG)
     #smtp_handler.setFormatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(format)
