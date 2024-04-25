@@ -92,7 +92,9 @@ def logging_initiate ():
     
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('After SMTP handler')
-        
+
+    logger = logging.getLogger(__name__)
+    
     file_handler = logging.FileHandler('/var/log/cd-uphance/file_h.log')
     stream_handler = logging.StreamHandler()
 
@@ -106,7 +108,7 @@ def logging_initiate ():
     format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(format)
     stream_handler.setFormatter(format)
-    logger = logging.getLogger(__name__)
+    
     #logger.addHandler(smtp_handler)
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
