@@ -263,6 +263,6 @@ def check_initiate_done():
         initiate_done = True
 
 
-#initialise_exception_logging()
+logging_initiate()
 #uphance_initiate()
 
