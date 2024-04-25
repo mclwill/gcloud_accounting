@@ -94,7 +94,7 @@ def logging_initiate ():
         print('After SMTP handler')
 
     logger = logging.getLogger(__name__)
-    
+    logger.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler('/var/log/cd-uphance/file_h.log')
     stream_handler = logging.StreamHandler()
 
