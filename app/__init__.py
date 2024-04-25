@@ -11,3 +11,6 @@ with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+    print('run.py' in __init__.py)
