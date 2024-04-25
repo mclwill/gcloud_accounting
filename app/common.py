@@ -264,5 +264,8 @@ def check_initiate_done():
 
 
 logging_initiate()
+
+with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+        print('Logging initiate called')
 #uphance_initiate()
 
