@@ -81,14 +81,14 @@ def logging_initiate ():
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('After password')
 
-    '''
+    
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr="zd_zapier@mclarenwilliams.com.au", 
                                                 toaddrs="gary@mclarenwilliams.com.au",
                                                 subject=u"Uphance Program Exception",
                                                 credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
                                                 secure=())
-    '''
+    
     
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('After SMTP handler')
@@ -101,15 +101,16 @@ def logging_initiate ():
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('Handlers Set')
     
-    #smtp_handler.setLevel(logging.INFO)
+    smtp_handler.setLevel(logging.INFO)
     file_handler.setLevel(logging.DEBUG)
     stream_handler.setLevel(logging.DEBUG)
-    #smtp_handler.setFormatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
+
     format = logging.Formatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     file_handler.setFormatter(format)
     stream_handler.setFormatter(format)
+    smtp_hander.setFormatter(format)
     
-    #logger.addHandler(smtp_handler)
+    logger.addHandler(smtp_handler)
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
     logger.info('logging started')
