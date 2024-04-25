@@ -260,12 +260,14 @@ def check_initiate_done():
 
     if not initiate_done:
         logging_initiate()
+        with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
+            print('Logging initiate called')
+        logging.debug('Initiate done')
         initiate_done = True
 
 
-logging_initiate()
+check_logging_initiate()
 
-with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('Logging initiate called')
+
 #uphance_initiate()
 
