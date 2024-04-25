@@ -11,6 +11,7 @@ import logging.handlers
 import json
 import requests
 from datetime import datetime
+from newrelic.agent import NewRelicContextFormatter
 
 #initialise parameters
 initiate_done = False
