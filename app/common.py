@@ -262,7 +262,7 @@ def check_logging_initiate():
         logging_initiate()
         with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
             print('Logging initiate called')
-        logging.debug('Initiate done')
+        logger.debug('Initiate done')
         initiate_done = True
 
 
