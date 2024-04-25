@@ -85,7 +85,7 @@ def logging_initiate ():
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr="zd_zapier@mclarenwilliams.com.au", 
                                                 toaddrs="gary@mclarenwilliams.com.au",
-                                                subject=u"Uphance Program Exception",
+                                                subject=u"Cross Docks Uphance Google VM Logging",
                                                 credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
                                                 secure=())
     
