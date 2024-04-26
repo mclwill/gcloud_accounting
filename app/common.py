@@ -85,7 +85,7 @@ def logging_initiate ():
                                                 credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
                                                 secure=())
 
-    new_relic_hander = logging.StreamHandler()
+    new_relic_handler = logging.StreamHandler()
     file_handler = logging.FileHandler('/var/log/cd-uphance/file_h.log')
     stream_handler = logging.StreamHandler()
 
