@@ -72,16 +72,11 @@ def logging_initiate ():
     global sender_pw
     global logger
 
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('Begin Initiate')
-        print('Zd password',sender_pw)
-        
     #if not sender_pw: #so only get pw once per session
     #    sender_pw = access_secret_version('zd_zapier_pw','1')
-    
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('After password')
 
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
     
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr="zd_zapier@mclarenwilliams.com.au", 
@@ -89,13 +84,8 @@ def logging_initiate ():
                                                 subject=u"Cross Docks Uphance Google VM Logging",
                                                 credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
                                                 secure=())
-    
-    
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('After SMTP handler')
 
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
+    new_relic_hander = logging.StreamHandler()
     file_handler = logging.FileHandler('/var/log/cd-uphance/file_h.log')
     stream_handler = logging.StreamHandler()
 
@@ -105,15 +95,18 @@ def logging_initiate ():
     smtp_handler.setLevel(logging.INFO)
     file_handler.setLevel(logging.DEBUG)
     stream_handler.setLevel(logging.DEBUG)
+    new_relic_handler.setLevel(logging.DEBUG)
 
     format = logging.Formatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     file_handler.setFormatter(format)
     stream_handler.setFormatter(format)
     smtp_handler.setFormatter(format)
+    new_relic_handler.setFormatter(NewRelicContextFormatter())
     
     logger.addHandler(smtp_handler)
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
+    logger.addHandler(new_relic_handler)
     logger.info('logging started')
 
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
