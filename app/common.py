@@ -64,7 +64,7 @@ def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessS
     can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
     """
     
-    list_service_accounts('227300495808')
+    #list_service_accounts('227300495808')
     
     # Create the Secret Manager client.
     client = secretmanager.SecretManagerServiceClient()
