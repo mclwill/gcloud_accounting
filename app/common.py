@@ -4,6 +4,7 @@ import time
 import random
 import traceback
 import google.cloud.secretmanager as secretmanager
+from google.oauth2 import service_account
 import google_crc32c
 import dropbox
 import logging
@@ -29,13 +30,41 @@ cross_docks_pw = False
 
 logger = False
 
+# [START iam_list_service_accounts]
+def list_service_accounts(project_id: str) -> dict:
+    """Lists all service accounts for the current project."""
+
+    credentials = service_account.Credentials.from_service_account_file(
+        filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    )
+
+    service = googleapiclient.discovery.build("iam", "v1", credentials=credentials)
+
+    service_accounts = (
+        service.projects()
+        .serviceAccounts()
+        .list(name="projects/" + project_id)
+        .execute()
+    )
+
+    for account in service_accounts["accounts"]:
+        logger.debug("Name: " + account["name"])
+        logger.debug("Email: " + account["email"])
+        logger.debug(" ")
+    return service_accounts
+
+
+# [END iam_list_service_accounts]
 
 def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessSecretVersionResponse:
     """
     Access the payload for the given secret version if one exists. The version
     can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
     """
-
+    
+    list_service_accounts('227300495808')
+    
     # Create the Secret Manager client.
     client = secretmanager.SecretManagerServiceClient()
 
