@@ -42,21 +42,18 @@ def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessS
     # Build the resource name of the secret version.
     name = f"projects/227300495808/secrets/{secret_id}/versions/{version}"
 
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('Access secret')
-        print('Secret ID',secret_id,version)
+    logger.debug('Access Secret with name: ' + name)
         
     # Access the secret version.
     response = client.access_secret_version(request={"name": name})
 
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('Response',response.payload.data)
+    logger.debug('Response payload data: ' + response.payload.data)
     
     # Verify payload checksum.
     crc32c = google_crc32c.Checksum()
     crc32c.update(response.payload.data)
     if response.payload.data_crc32c != int(crc32c.hexdigest(), 16):
-        print("Data corruption detected in Google Secrets")
+        logger.error("Data corruption detected in Google Secrets\nResponse.payload.data : " + response.payload.data)
         logger.exception("Data corruption detected in Google Secrets")
         raise
 
@@ -73,19 +70,12 @@ def logging_initiate ():
     global sender_pw
     global logger
 
-    
-
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
-
 
     new_relic_handler = logging.StreamHandler()
     file_handler = logging.FileHandler('/var/log/cd-uphance/file_h.log')
     stream_handler = logging.StreamHandler()
-
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('Handlers Set')
-    
     
     file_handler.setLevel(logging.DEBUG)
     stream_handler.setLevel(logging.DEBUG)
@@ -95,7 +85,6 @@ def logging_initiate ():
     file_handler.setFormatter(format)
     stream_handler.setFormatter(format)
     new_relic_handler.setFormatter(NewRelicContextFormatter())
-    
     
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
