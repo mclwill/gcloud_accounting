@@ -15,7 +15,8 @@ from newrelic.agent import NewRelicContextFormatter
 
 #initialise parameters
 initiate_done = False
-sender_pw = 'yEc9m3G9f?ATeJtF'
+#sender_pw = 'yEc9m3G9f?ATeJtF'
+sender_pw = False
 
 dbx = False
 
@@ -72,18 +73,11 @@ def logging_initiate ():
     global sender_pw
     global logger
 
-    #if not sender_pw: #so only get pw once per session
-    #    sender_pw = access_secret_version('zd_zapier_pw','1')
+    
 
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
-    
-    smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
-                                                fromaddr="zd_zapier@mclarenwilliams.com.au", 
-                                                toaddrs="gary@mclarenwilliams.com.au",
-                                                subject=u"Cross Docks Uphance Google VM Logging",
-                                                credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
-                                                secure=())
+
 
     new_relic_handler = logging.StreamHandler()
     file_handler = logging.FileHandler('/var/log/cd-uphance/file_h.log')
@@ -92,7 +86,7 @@ def logging_initiate ():
     with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
         print('Handlers Set')
     
-    smtp_handler.setLevel(logging.INFO)
+    
     file_handler.setLevel(logging.DEBUG)
     stream_handler.setLevel(logging.DEBUG)
     new_relic_handler.setLevel(logging.DEBUG)
@@ -100,17 +94,28 @@ def logging_initiate ():
     format = logging.Formatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     file_handler.setFormatter(format)
     stream_handler.setFormatter(format)
-    smtp_handler.setFormatter(format)
     new_relic_handler.setFormatter(NewRelicContextFormatter())
     
-    logger.addHandler(smtp_handler)
+    
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
     logger.addHandler(new_relic_handler)
-    logger.info('logging started')
+    logger.info('File, Stream and New_Relic logging started')
 
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('Logger level:',logger.level)
+    logger.debug('Attempting to start SMTP logging')
+    if not sender_pw: #so only get pw once per session
+        sender_pw = access_secret_version('zd_zapier_pw','latest')
+    logger.debug('Sender PW: ' + sender_pw)
+    smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
+                                                fromaddr="zd_zapier@mclarenwilliams.com.au", 
+                                                toaddrs="gary@mclarenwilliams.com.au",
+                                                subject=u"Cross Docks Uphance Google VM Logging",
+                                                credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
+                                                secure=())
+    smtp_handler.setLevel(logging.INFO)
+    smtp_handler.setFormatter(format)
+    logger.addHandler(smtp_handler)
+    logger.debug('SMTP logging started')
 
 
 def send_email(email_counter,message_subject,message_text,receiver_email_address):
