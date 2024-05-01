@@ -102,7 +102,7 @@ def logging_initiate ():
 
     logger.debug('Attempting to start SMTP logging')
     if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('zd_zapier_pw','latest')
+        sender_pw = access_secret_version('global_parameters',None,'zd_zapier_pw')
     logger.debug('Sender PW: ' + sender_pw)
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr="zd_zapier@mclarenwilliams.com.au", 
