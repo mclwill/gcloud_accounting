@@ -23,7 +23,7 @@ def test():
     return 'Test Processed - check email'
 
 @app.route('/uphance',methods=['POST','GET'])
-def test():
+def uphance():
     #args = None
     if common.uphance_initiate():
         #common.send_email(0,'Uphance initiated successfully',str(content),'gary@mclarenwilliams.com.au')
