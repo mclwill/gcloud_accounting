@@ -14,7 +14,7 @@ import json
 import requests
 from datetime import datetime
 from newrelic.agent import NewRelicContextFormatter
-import app.secrets
+import FlaskApp.app.secrets as secrets
 
 #initialise parameters
 initiate_done = False
