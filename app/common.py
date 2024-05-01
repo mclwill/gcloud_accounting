@@ -67,8 +67,13 @@ logger = False
 
     return payload'''
 
-def access_secret_version(secret_id: str, version: str):
-    return getattr(secrets,secret_id)
+def access_secret_version(secret_id: str, customer: str, parameter: str):
+    attribute = getattr(secrets,secret_id)
+    if customer :
+        secret = attribute[customer][parameter]
+    else:
+        secret = attribute[parameter]
+    return secret
 
 def logging_initiate ():
     global sender_pw
@@ -115,7 +120,7 @@ def send_email(email_counter,message_subject,message_text,receiver_email_address
     global sender_pw
     
     if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('zd_zapier_pw','1')
+        sender_pw = access_secret_version('global_parameters',None,'zd_zapier_pw')
     
     email_counter += 1
     sender_email = 'zd_zapier@mclarenwilliams.com.au'
@@ -211,7 +216,7 @@ def uphance_initiate():
     global logger
 
     if not uphance_headers :
-        uphance_secret = json.loads(access_secret_version('uphance_access_token','1'))
+        uphance_secret = json.loads(access_secret_version('customer_parameters','aemery','uphance_access_token'))
         #print(uphance_secret)
         uphance_expires = datetime.utcfromtimestamp(uphance_secret['created_at'] + uphance_secret['expires_in'])
         uphance_headers = {'Authorization': 'Bearer '+ uphance_secret['access_token'],'Content-Type': 'application/json'}
@@ -225,7 +230,7 @@ def uphance_initiate():
                 logger.debug('Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
                 td = uphance_expires - datetime.now()
                 if td.days < 30 :
-                    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in Google Secret Manager','gary@mclarenwilliams.com.au')
+                    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in secrets.py','gary@mclarenwilliams.com.au')
                 #else:
                 #    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in Google Secret Manager','gary@mclarenwilliams.com.au')
                 return True
