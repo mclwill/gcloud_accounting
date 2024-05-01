@@ -69,7 +69,7 @@ logger = False
 
 def access_secret_version(secret_id: str, version: str):
     logger.debug(dir(secrets))
-    return getattr(secrets,secret_id)
+    return getattr(__import__(secrets,fromlist=[secret_id]),secret_id)
 
 def logging_initiate ():
     global sender_pw
