@@ -7,8 +7,6 @@ import FlaskApp.app.common as common
 
 @app.route("/")
 def homepage():
-    with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-        print('Root route reached')
     return "Nothing to see here"
 
 @app.route('/test',methods=['POST','GET'])
@@ -25,7 +23,7 @@ def test():
 @app.route('/uphance',methods=['POST','GET'])
 def uphance():
     #args = None
-    if common.uphance_initiate():
+    if common.uphance_initiate('aemery'):
         #common.send_email(0,'Uphance initiated successfully',str(content),'gary@mclarenwilliams.com.au')
         return 'Uphance initiated successfully'
     else:
