@@ -237,7 +237,8 @@ def uphance_initiate():
     global logger
 
     if not uphance_headers :
-        uphance_secret = json.loads(access_secret_version('uphance_access_token','1'))
+        #uphance_secret = json.loads(access_secret_version('uphance_access_token','1'))
+        uphance_secret = {"access_token": "c83346984004fb9ac49ffd032446ff28c5eb73c2131cfa1c405fe7ce2fe1b4f7", "token_type": "Bearer", "expires_in": 31536000, "created_at": 1707257462}
         #print(uphance_secret)
         uphance_expires = datetime.utcfromtimestamp(uphance_secret['created_at'] + uphance_secret['expires_in'])
         uphance_headers = {'Authorization': 'Bearer '+ uphance_secret['access_token'],'Content-Type': 'application/json'}
