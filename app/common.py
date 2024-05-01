@@ -14,7 +14,7 @@ import json
 import requests
 from datetime import datetime
 from newrelic.agent import NewRelicContextFormatter
-import secrets
+import app.secrets
 
 #initialise parameters
 initiate_done = False
@@ -68,8 +68,8 @@ logger = False
     return payload'''
 
 def access_secret_version(secret_id: str, version: str):
-    # logger.debug(__dir__(secrets))
-    #logger.debug(vars(secrets).items())
+    logger.debug(__dir__(secrets))
+    logger.debug(vars(secrets).items())
     global return_value
     logger.debug(secrets.zd_zapier_pw)
     exec ('return_value = secrets.' + secret_id)
