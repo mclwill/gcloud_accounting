@@ -71,7 +71,7 @@ def access_secret_version(secret_id: str, version: str):
     # logger.debug(__dir__(secrets))
     #logger.debug(vars(secrets).items())
     global return_value
-    exec ('return value = secrets.' + secret_id)
+    exec ('return_value = secrets.' + secret_id)
     return return_value
 
 def logging_initiate ():
