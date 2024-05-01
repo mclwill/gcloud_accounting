@@ -22,6 +22,16 @@ def test():
 
     return 'Test Processed - check email'
 
+@app.route('/uphance',methods=['POST','GET'])
+def test():
+    #args = None
+    if common.uphance_initiate():
+        #common.send_email(0,'Uphance initiated successfully',str(content),'gary@mclarenwilliams.com.au')
+        return 'Uphance initiated successfully'
+    else:
+        #common.send_email(0,'Uphance not initiated','No content','gary@mclarenwilliams.com.au')
+        return 'Uphance not initiated'
+
 
 with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
     print('Views.py end')
