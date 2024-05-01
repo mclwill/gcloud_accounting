@@ -235,9 +235,8 @@ def uphance_initiate(customer:str, **kwargs):
                 #    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in Google Secret Manager','gary@mclarenwilliams.com.au')
                 return True
             else:
-                logger.info(response.status_code)
-                logger.exception('Problem initiating Uphance: Response Status Code = ' + str(response.status_code))
-                raise
+                logger.warning(response.status_code)
+                logger.exception('Problem initiating Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
         except Exception as ex:
             logger.exception('Error initiating Uphance for ' + customer + '\n' + str(ex))
     else:
