@@ -68,6 +68,7 @@ logger = False
     return payload'''
 
 def access_secret_version(secret_id: str, version: str):
+    logger.debug(dir(secrets))
     return getattr(secrets,secret_id)
 
 def logging_initiate ():
