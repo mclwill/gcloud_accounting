@@ -190,7 +190,7 @@ def dropbox_initiate():
         dbx_app_key = access_secret_version('global_parameters',None,'dbx_app_key')
         dbx_app_secret = access_secret_version('global_parameters',None,'dbx_app_secret')
         dbx_refresh_token = access_secret_version('global_parameters',None,'dbx_refresh_token')
-        dbx = dropbox.Dropbox(app_key=aemery_dbx_app_key,app_secret=aemery_dbx_app_secret,oauth2_refresh_token=aemery_dbx_refresh_token)
+        dbx = dropbox.Dropbox(app_key=dbx_app_key,app_secret=dbx_app_secret,oauth2_refresh_token=dbx_refresh_token)
         try:
             check = dbx.check_app(query = 'Test Me')
             #print(check,dir(check))
