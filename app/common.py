@@ -17,7 +17,7 @@ import requests
 from datetime import datetime
 from newrelic.agent import NewRelicContextFormatter
 
-monkey.path_all()
+monkey.patch_all()
 grpc_gevent.init_gevent()
 
 #initialise parameters
