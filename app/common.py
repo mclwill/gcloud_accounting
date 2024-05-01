@@ -246,9 +246,9 @@ def uphance_initiate():
             response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers)
     
             if response.status_code == 201:
-                print('Uphance initiated')
-                print(response.json())
-                print('Uphance token expires on: ',uphance_expires.strftime('%Y-%m-%d'))
+                logger.info('Uphance initiated')
+                logger.debug(response.json())
+                logger.debug('Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
                 td = uphance_expires - datetime.now()
                 if td.days < 30 :
                     send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in Google Secret Manager','gary@mclarenwilliams.com.au')
@@ -256,14 +256,14 @@ def uphance_initiate():
                 #    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in Google Secret Manager','gary@mclarenwilliams.com.au')
                 return True
             else:
-                print(response.status_code)
+                logger.info(response.status_code)
                 logger.exception('Problem initiating Uphance: Response Status Code = ' + str(response.status_code))
                 raise
         except Exception as ex:
             logger.exception('Error initiating Uphance\n' + str(ex))
             raise
     else:
-        print('Uphance already initiated')
+        logger.info('Uphance already initiated')
     return True
 
 def get_CD_FTP_credentials():
