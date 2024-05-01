@@ -4,8 +4,6 @@ import smtplib
 import time
 import random
 import traceback
-import grpc.experimental.gevent as grpc_gevent
-from gevent import monkey
 import google.cloud.secretmanager as secretmanager
 from google.oauth2 import service_account
 import google_crc32c
@@ -16,9 +14,6 @@ import json
 import requests
 from datetime import datetime
 from newrelic.agent import NewRelicContextFormatter
-
-monkey.patch_all()
-grpc_gevent.init_gevent()
 
 #initialise parameters
 initiate_done = False
