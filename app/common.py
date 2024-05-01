@@ -14,10 +14,10 @@ import json
 import requests
 from datetime import datetime
 from newrelic.agent import NewRelicContextFormatter
+import secrets
 
 #initialise parameters
 initiate_done = False
-#sender_pw = 'yEc9m3G9f?ATeJtF'
 sender_pw = False
 
 dbx = False
@@ -31,13 +31,11 @@ cross_docks_pw = False
 
 logger = False
 
-def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessSecretVersionResponse:
+'''def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessSecretVersionResponse:
     """
     Access the payload for the given secret version if one exists. The version
     can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
     """
-    
-    #list_service_accounts('227300495808')
     
     # Create the Secret Manager client.
     client = secretmanager.SecretManagerServiceClient()
@@ -67,7 +65,10 @@ def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessS
     payload = response.payload.data.decode("UTF-8")
     #print(f"Plaintext: {payload}")
 
-    return payload
+    return payload'''
+
+def access_secret_version(secret_id: str, version: str):
+    return getattr(secrets,secret_id)
 
 def logging_initiate ():
     global sender_pw
@@ -210,8 +211,7 @@ def uphance_initiate():
     global logger
 
     if not uphance_headers :
-        #uphance_secret = json.loads(access_secret_version('uphance_access_token','1'))
-        uphance_secret = {"access_token": "c83346984004fb9ac49ffd032446ff28c5eb73c2131cfa1c405fe7ce2fe1b4f7", "token_type": "Bearer", "expires_in": 31536000, "created_at": 1707257462}
+        uphance_secret = json.loads(access_secret_version('uphance_access_token','1'))
         #print(uphance_secret)
         uphance_expires = datetime.utcfromtimestamp(uphance_secret['created_at'] + uphance_secret['expires_in'])
         uphance_headers = {'Authorization': 'Bearer '+ uphance_secret['access_token'],'Content-Type': 'application/json'}
