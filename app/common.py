@@ -17,8 +17,8 @@ from newrelic.agent import NewRelicContextFormatter
 
 #initialise parameters
 initiate_done = False
-#sender_pw = 'yEc9m3G9f?ATeJtF'
-sender_pw = False
+sender_pw = 'yEc9m3G9f?ATeJtF'
+#sender_pw = False
 
 dbx = False
 
