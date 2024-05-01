@@ -69,8 +69,8 @@ logger = False
 
 def access_secret_version(secret_id: str, version: str):
     # logger.debug(__dir__(secrets))
-    logger.debug(vars(secrets).items())
-    return getattr(secrets,secret_id)
+    #logger.debug(vars(secrets).items())
+    exec ('return secrets.' + secret.id)
 
 def logging_initiate ():
     global sender_pw
