@@ -222,7 +222,7 @@ def uphance_initiate(customer:str, **kwargs):
         uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_secret['access_token'],'Content-Type': 'application/json'}
         uphance_register = {'organizationId': uphance_org_id[customer]}
         try:
-            response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers)
+            response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
     
             if response.status_code == 201:
                 logger.info('Uphance initiated')
