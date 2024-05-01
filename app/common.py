@@ -4,7 +4,7 @@ import smtplib
 import time
 import random
 import traceback
-import grpc.experimental.gevent as grpc_event
+import grpc.experimental.gevent as grpc_gevent
 from gevent import monkey
 import google.cloud.secretmanager as secretmanager
 from google.oauth2 import service_account
