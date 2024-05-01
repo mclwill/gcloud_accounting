@@ -28,7 +28,8 @@ uphance_headers = {'aemery':False}
 uphance_register_url = 'https://api.uphance.com/organisations/set_current_org'
 uphance_org_id = {'aemery':36866}
 
-cross_docks_username = "ftpemprod"
+cross_docks_info = {'aemery':False}
+username = "ftpemprod"
 cross_docks_pw = False
 
 logger = False
@@ -186,9 +187,9 @@ def send_email(email_counter,message_subject,message_text,receiver_email_address
 def dropbox_initiate():
     global dbx
     if not dbx:
-        aemery_dbx_app_key = access_secret_version('dbx_app_key','1')
-        aemery_dbx_app_secret = access_secret_version('dbx_app_secret','1')
-        aemery_dbx_refresh_token = access_secret_version('dbx_refresh_token','1')
+        dbx_app_key = access_secret_version('global_parameters',None,'dbx_app_key')
+        dbx_app_secret = access_secret_version('global_parameters',None,'dbx_app_secret')
+        dbx_refresh_token = access_secret_version('global_parameters',None,'dbx_refresh_token')
         dbx = dropbox.Dropbox(app_key=aemery_dbx_app_key,app_secret=aemery_dbx_app_secret,oauth2_refresh_token=aemery_dbx_refresh_token)
         try:
             check = dbx.check_app(query = 'Test Me')
@@ -243,13 +244,16 @@ def uphance_initiate(customer:str, **kwargs):
         logger.info('Uphance already initiated')
     return True
 
-def get_CD_FTP_credentials():
-    global cross_docks_pw, cross_docks_username
+def get_CD_FTP_credentials(customer:str,**kwargs):
+    global cross_docks_info
     
-    if not cross_docks_pw:
-        cross_docks_pw = access_secret_version('cross_docks_pw','1')
+    force_initiate = kwargs.pop('force_initiate',None)
 
-    return cross_docks_username, cross_docks_pw
+    if (not cross_docks_info[customer]) or force_initiate:
+        cross_docks_info[customer] = {'username':access_secret_version('customer_parameters',customer,'cross_docks_FTP_username'),
+                                      'password':access_secret_version('customer_parameters',customer,'cross_docks_FTP_pw')}
+
+    return cross_docks_info[customer]
 
 def check_logging_initiate():
     global initiate_done
@@ -266,6 +270,6 @@ def check_uphance_initiate():
 
 check_logging_initiate()
 check_uphance_initiate()
+dropbox_initiate()
 
-#uphance_initiate()
 

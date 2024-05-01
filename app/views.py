@@ -31,6 +31,4 @@ def uphance():
         return 'Uphance not initiated'
 
 
-with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-    print('Views.py end')
 
