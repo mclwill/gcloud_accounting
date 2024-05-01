@@ -14,6 +14,7 @@ import json
 import requests
 from datetime import datetime
 from newrelic.agent import NewRelicContextFormatter
+import secrets
 
 #initialise parameters
 initiate_done = False
