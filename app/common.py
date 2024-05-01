@@ -68,8 +68,8 @@ logger = False
     return payload'''
 
 def access_secret_version(secret_id: str, version: str):
-    logger.debug(dir(secrets))
-    return getattr(__import__(secrets,fromlist=[secret_id]),secret_id)
+    logger.debug(__dir__(secrets))
+    return getattr(secrets,secret_id)
 
 def logging_initiate ():
     global sender_pw
