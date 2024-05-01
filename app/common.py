@@ -22,9 +22,11 @@ sender_pw = False
 
 dbx = False
 
-uphance_headers = False
+customers = ['aemery']
+
+uphance_headers = {'aemery':False}
 uphance_register_url = 'https://api.uphance.com/organisations/set_current_org'
-uphance_org_id = 36866
+uphance_org_id = {'aemery':36866}
 
 cross_docks_username = "ftpemprod"
 cross_docks_pw = False
@@ -88,17 +90,14 @@ def logging_initiate ():
     
     file_handler.setLevel(logging.DEBUG)
     stream_handler.setLevel(logging.DEBUG)
-    new_relic_handler.setLevel(logging.DEBUG)
 
     format = logging.Formatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     file_handler.setFormatter(format)
     stream_handler.setFormatter(format)
-    new_relic_handler.setFormatter(NewRelicContextFormatter())
     
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-    logger.addHandler(new_relic_handler)
-    logger.info('File, Stream and New_Relic logging started')
+    logger.info('File and Stream logging started')
 
     logger.debug('Attempting to start SMTP logging')
     if not sender_pw: #so only get pw once per session
@@ -211,16 +210,17 @@ def dropbox_initiate():
 #dropbox_initiate()
 #print('dbx:',dbx)
 
-def uphance_initiate():
+def uphance_initiate(customer:str, **kwargs):
+    force_initiate = kwargs.pop('force_initiate',None)
     global uphance_headers
     global logger
 
-    if not uphance_headers :
+    if (not uphance_headers[customer]) or force_initiate :
         uphance_secret = json.loads(access_secret_version('customer_parameters','aemery','uphance_access_token'))
         #print(uphance_secret)
         uphance_expires = datetime.utcfromtimestamp(uphance_secret['created_at'] + uphance_secret['expires_in'])
-        uphance_headers = {'Authorization': 'Bearer '+ uphance_secret['access_token'],'Content-Type': 'application/json'}
-        uphance_register = {'organizationId': uphance_org_id}
+        uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_secret['access_token'],'Content-Type': 'application/json'}
+        uphance_register = {'organizationId': uphance_org_id[customer]}
         try:
             response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers)
     
@@ -239,8 +239,7 @@ def uphance_initiate():
                 logger.exception('Problem initiating Uphance: Response Status Code = ' + str(response.status_code))
                 raise
         except Exception as ex:
-            logger.exception('Error initiating Uphance\n' + str(ex))
-            raise
+            logger.exception('Error initiating Uphance for ' + customer + '\n' + str(ex))
     else:
         logger.info('Uphance already initiated')
     return True
@@ -258,13 +257,16 @@ def check_logging_initiate():
 
     if not initiate_done:
         logging_initiate()
-        with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
-            print('Logging initiate called')
         logger.debug('Initiate done')
         initiate_done = True
 
+def check_uphance_initiate():
+    global customers
+    for c in customers:
+        uphance_initiate(c)
 
 check_logging_initiate()
+check_uphance_initiate()
 
 #uphance_initiate()
 
