@@ -3,7 +3,7 @@ from FlaskApp.app import app
 import sys
 from flask import request, jsonify
 import FlaskApp.app.common as common
-import FlassApp.app.uphance_webhook_info as uphance_webhook
+import FlaskApp.app.uphance_webhook_info as uphance_webhook
 
 
 @app.route("/")
