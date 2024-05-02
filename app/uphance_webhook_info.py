@@ -18,13 +18,13 @@ import ftputil
 
 #include general files
 
-import file_format_GMcL #default configuration data for Cross Dock formatting -> see Jupyter Notebook for code to create this info from Cross Docks formatting spreadsheet
-import common
+import FlaskApp.app.file_format_GMcL  as file_format_GMcL #default configuration data for Cross Dock formatting -> see Jupyter Notebook for code to create this info from Cross Docks formatting spreadsheet
+import FlaskApp.app.common as common 
 
 custom_file_format_modules = {}
 
 for c in common.customers :
-    custom_file_format_modules[c] = importlib.import_module('file_format_'+ c)
+    custom_file_format_modules[c] = importlib.import_module('FlaskApp.app.file_format_'+ c)
 
 
 from_zone = tz.tzutc()
