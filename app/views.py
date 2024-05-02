@@ -3,6 +3,7 @@ from FlaskApp.app import app
 import sys
 from flask import request, jsonify
 import FlaskApp.app.common as common
+import FlassApp.app.uphance_webhook_info as uphance_webhook
 
 
 @app.route("/")
@@ -30,5 +31,13 @@ def uphance():
         #common.send_email(0,'Uphance not initiated','No content','gary@mclarenwilliams.com.au')
         return 'Uphance not initiated'
 
+
+@app.route('/aemery',methods=['POST','GET'])
+def process_aemery_webhook():
+    content = request.get_json(silent=True)
+    if content:
+        return uphance_webhook('aemery',request)
+    else 
+        return 'No content'
 
 
