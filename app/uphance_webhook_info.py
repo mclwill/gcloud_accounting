@@ -47,7 +47,7 @@ aemery_dbx_app_secret = 'in08qrhgq0qit5n'
 
 #dbx_folder = "/A.Emery/Wholesale/APIs (Anna's Dad)/Cross Docks Info/FTP_production_files/sent/"
 
-cc_codes_pd = pd.read_csv('CountryCodes.csv',index_col='Country')
+cc_codes_pd = pd.read_csv('FlaskApp/app/CountryCodes.csv',index_col='Country')
 
 
 '''def send_email(message_subject,message_text,receiver_email_address):
