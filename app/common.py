@@ -146,7 +146,7 @@ def send_email(customer,email_counter,message_subject,message_text,receiver_emai
                 receiver_email_address = [receiver_email_address]
 
             #Defining The Message 
-            message = "From: aemery_gcf <zd_zapier@mclarenwilliams.com.au>\nTo:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + message_subject + '\n\n' + message_text
+            message = "From: aemery_gcf <zd_zapier@mclarenwilliams.com.au>\nTo:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + ' : ' + message_subject + '\n\n' + message_text
 
             #Sending the Email
             smtp.sendmail(sender_email, receiver_email_address,message.encode('utf-8')) 
