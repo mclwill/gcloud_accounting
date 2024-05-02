@@ -116,7 +116,7 @@ def logging_initiate ():
     logger.debug('SMTP logging started')
 
 
-def send_email(email_counter,message_subject,message_text,receiver_email_address):
+def send_email(customer,email_counter,message_subject,message_text,receiver_email_address):
     global sender_pw
     
     if not sender_pw: #so only get pw once per session
@@ -244,12 +244,10 @@ def uphance_initiate(customer:str, **kwargs):
         logger.info('Uphance already initiated')
     return True
 
-def get_CD_FTP_credentials(customer:str,**kwargs):
+def get_CD_FTP_credentials(customer:str):
     global cross_docks_info
-    
-    force_initiate = kwargs.pop('force_initiate',None)
 
-    if (not cross_docks_info[customer]) or force_initiate:
+    if (not cross_docks_info[customer]):
         cross_docks_info[customer] = {'username':access_secret_version('customer_parameters',customer,'cross_docks_FTP_username'),
                                       'password':access_secret_version('customer_parameters',customer,'cross_docks_FTP_pw')}
 
