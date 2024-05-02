@@ -37,7 +37,7 @@ def process_aemery_webhook():
     content = request.get_json(silent=True)
     if content:
         return uphance_webhook('aemery',request)
-    else 
+    else :
         return 'No content'
 
 
