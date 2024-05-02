@@ -7,7 +7,7 @@ import json
 import pandas as pd
 #import dropbox
 import io
-#import os
+import os
 from collections import defaultdict
 from datetime import datetime
 from dateutil import tz
@@ -46,6 +46,9 @@ aemery_dbx_app_secret = 'in08qrhgq0qit5n'
 '''
 
 #dbx_folder = "/A.Emery/Wholesale/APIs (Anna's Dad)/Cross Docks Info/FTP_production_files/sent/"
+
+ommon.logger.debug(str(os.getcwd()))
+common.logger.debug(str(os.listdir()))
 
 cc_codes_pd = pd.read_csv('FlaskApp/app/CountryCodes.csv',index_col='Country')
 
