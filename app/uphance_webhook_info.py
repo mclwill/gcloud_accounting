@@ -50,7 +50,7 @@ aemery_dbx_app_secret = 'in08qrhgq0qit5n'
 common.logger.debug(str(os.getcwd()))
 common.logger.debug(str(os.listdir()))
 
-cc_codes_pd = pd.read_csv('FlaskApp/app/CountryCodes.csv',index_col='Country')
+cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
 
 
 '''def send_email(message_subject,message_text,receiver_email_address):
