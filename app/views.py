@@ -36,7 +36,7 @@ def uphance():
 def process_aemery_webhook():
     content = request.get_json(silent=True)
     if content:
-        return uphance_webhook('aemery',content)
+        return uphance_webhook.uphance_prod_webhook('aemery',content)
     else :
         return 'No content'
 
