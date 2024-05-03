@@ -16,23 +16,6 @@ from datetime import datetime
 #from newrelic.agent import NewRelicContextFormatter
 import FlaskApp.app.secrets as secrets
 
-#initialise parameters
-initiate_done = False
-sender_pw = False
-
-dbx = False
-
-customers = ['aemery','two-ts']
-
-uphance_headers = {'aemery':False}
-uphance_register_url = 'https://api.uphance.com/organisations/set_current_org'
-uphance_org_id = {'aemery':36866}
-
-cross_docks_info = {'aemery':False}
-username = "ftpemprod"
-cross_docks_pw = False
-
-logger = False
 
 '''def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessSecretVersionResponse:
     """
@@ -280,6 +263,27 @@ def check_uphance_initiate():
     global customers
     for c in customers:
         uphance_initiate(c)
+
+#initialise parameters
+
+initiate_done = False
+sender_pw = False
+
+dbx = False
+
+customers = access_secret_version('global_parameters',None,'customers')
+uphance_headers = {}
+for c in customers:
+    uphance_headers[c] = False
+
+uphance_register_url = access_secret_version('global_parameters',None,'uphance_register_url')
+uphance_org_id = access_secret_version('global_parameters',None,'uphance_org_id')
+
+cross_docks_info = {}
+for c in customers:
+    cross_docks_info[c] = False
+
+logger = False
 
 check_logging_initiate()
 check_uphance_initiate()
