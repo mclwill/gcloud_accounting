@@ -106,7 +106,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
         sender_pw = access_secret_version('global_parameters',None,'email_pw')
     
     email_counter += 1
-    sender_email = access_secret_version('global_parameters',None,'from_email'),
+    sender_email = access_secret_version('global_parameters',None,'from_email')
  
     if email_counter < 0:
         logger.exception('Email counter below zero: ' + str(email_counter) + ' ' + message_subject + ' ' + message_text)
