@@ -22,7 +22,7 @@ sender_pw = False
 
 dbx = False
 
-customers = ['aemery']
+customers = ['aemery','two-ts']
 
 uphance_headers = {'aemery':False}
 uphance_register_url = 'https://api.uphance.com/organisations/set_current_org'
