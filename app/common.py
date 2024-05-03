@@ -170,10 +170,10 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
 
         except Exception as ex:
             tb = traceback.format_exc()
-            print('Other email exception')
-            print('Exception info:',e)
-            print(tb)
-            raise
+            logger.error('Log Error: Other email exception')
+            logger.error('Log Error: Exception info:',e)
+            logger.error(tb)
+            return False
 
 
     else: #too many active emails - wait after random time period to send again
