@@ -13,7 +13,7 @@ import logging.handlers
 import json
 import requests
 from datetime import datetime
-from newrelic.agent import NewRelicContextFormatter
+#from newrelic.agent import NewRelicContextFormatter
 import FlaskApp.app.secrets as secrets
 
 #initialise parameters
@@ -102,13 +102,13 @@ def logging_initiate ():
 
     logger.debug('Attempting to start SMTP logging')
     if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('global_parameters',None,'zd_zapier_pw')
+        sender_pw = access_secret_version('global_parameters',None,'email_pw')
     logger.debug('Sender PW: ' + sender_pw)
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
-                                                fromaddr="zd_zapier@mclarenwilliams.com.au", 
-                                                toaddrs="gary@mclarenwilliams.com.au",
+                                                fromaddr=access_secret_version('global_parameters',None,'from_email'),
+                                                toaddrs=access_secret_version('global_parameters',None,'emails'),
                                                 subject=u"Cross Docks Uphance Google VM Logging",
-                                                credentials=('zd_zapier@mclarenwilliams.com.au', sender_pw),
+                                                credentials=(access_secret_version('global_parameters',None,'from_email'), sender_pw),
                                                 secure=())
     smtp_handler.setLevel(logging.INFO)
     smtp_handler.setFormatter(format)
@@ -116,14 +116,14 @@ def logging_initiate ():
     logger.debug('SMTP logging started')
 
 
-def send_email(customer,email_counter,message_subject,message_text,receiver_email_address):
+def send_email(customer,email_counter,message_subject,message_text,dest_email):
     global sender_pw
     
     if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('global_parameters',None,'zd_zapier_pw')
+        sender_pw = access_secret_version('global_parameters',None,'email_pw')
     
     email_counter += 1
-    sender_email = 'zd_zapier@mclarenwilliams.com.au'
+    sender_email = access_secret_version('global_parameters',None,'from_email'),
  
     if email_counter < 0:
         logger.exception('Email counter below zero: ' + str(email_counter) + ' ' + message_subject + ' ' + message_text)
@@ -142,11 +142,26 @@ def send_email(customer,email_counter,message_subject,message_text,receiver_emai
             #print('sender password',sender_pw)
             smtp.login(sender_email,sender_pw)
 
-            if type(receiver_email_address) == str:
+            #dest_email can be either one email address, list of email addresses or a list with 'global' and/or 'customer' to pick up the configured data in secrets.py
+
+            if type(dest_email) == str:
                 receiver_email_address = [receiver_email_address]
+            else:
+                receiver_email_address = []
+                for text in dest_email:
+                    if text == 'global':
+                        for e in access_secret_version('global_parameters',None,'emails'):
+                            receiver_email_address.append(e)
+                    elif text == 'customer':
+                        for e in access_secret_version('customer_parameters',customer,'emails'):
+                            receiver_email_address.append(e)
+                    else:
+                        receiver_email_address.append(text)
+
+            smtp_from = 'From: ' + access_secret_version('global_parameters',None,'from_name') + '<' + access_secret_version('global_parameters',None,'from_email') + '>\n'
 
             #Defining The Message 
-            message = "From: aemery_gcf <zd_zapier@mclarenwilliams.com.au>\nTo:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + ' : ' + message_subject + '\n\n' + message_text
+            message = smtp_from + "To:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + ' : ' + message_subject + '\n\n' + message_text
 
             #Sending the Email
             smtp.sendmail(sender_email, receiver_email_address,message.encode('utf-8')) 
@@ -199,12 +214,12 @@ def dropbox_initiate():
             else:
                 dbx = False
                 tb = traceback.format_exc()
-                send_email(0,'Error Initialising Dropbox','Check result is: ' + str(check.result) + '\nTraceback:\n' + tb, "gary@mclarenwilliams.com.au")
+                send_email(0,'Error Initialising Dropbox','Check result is: ' + str(check.result) + '\nTraceback:\n' + tb, ['global'])
                 return False
         except Exception as ex:
             print('Exception:',ex)
             tb = traceback.format_exc()
-            send_email(0,'Error Initialising Dropbox','Exception: ' + str(ex) + '\nTraceback:\n' + tb, "gary@mclarenwilliams.com.au")
+            send_email(0,'Error Initialising Dropbox','Exception: ' + str(ex) + '\nTraceback:\n' + tb, ['global'])
             dbx = False
             return False
 

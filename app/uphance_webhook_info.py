@@ -98,7 +98,7 @@ def transfer_FTP(customer,file_name,file_data):
     
     except Exception as ex:
         
-        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),"gary@mclarenwilliams.com.au")
+        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
         return
         
     
@@ -330,9 +330,9 @@ def uphance_process_webhook(customer,request):
         request_dict = remove_special_unicode_chars(request_dict)
         data_str = process_uphance_event(customer,request_dict)
         if len(error.keys()) == 0:
-            common.send_email(customer,0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),"gary@mclarenwilliams.com.au")
+            common.send_email(customer,0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global','customer'])
         else:
-            common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),"gary@mclarenwilliams.com.au")
+            common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global','customer'])
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict))
     
