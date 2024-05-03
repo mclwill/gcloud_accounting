@@ -122,6 +122,8 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
 
             #User Authentication 
 
+            logger.debug('Sender email: ',sender_email)
+
             #print('sender password',sender_pw)
             smtp.login(sender_email,sender_pw)
 
