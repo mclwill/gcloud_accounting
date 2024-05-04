@@ -253,7 +253,7 @@ def uphance_check_token_status(customer):
             else:
                 uphance_token_refresh = True
     else:
-        if not uphance_access_token[customer]:
+        if not customer in uphance_access_token :
             uphance_token_refresh = True
 
     logger.debug('token check 3:' + str(uphance_access_token) + str(uphance_token_refresh))
