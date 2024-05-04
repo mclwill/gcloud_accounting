@@ -291,7 +291,7 @@ def uphance_initiate(customer:str, **kwargs):
 
     if (not uphance_headers[customer]) or force_initiate :
         uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
-        uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_access_token['access_token'],'Content-Type': 'application/json'}
+        uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_access_token[customer]['access_token'],'Content-Type': 'application/json'}
         uphance_register = {'organizationId': uphance_org_id[customer]}
         try:
             response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
