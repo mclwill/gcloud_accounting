@@ -267,6 +267,7 @@ def uphance_check_token_status(customer):
                          'grant_type' : 'password'}
         try: 
             response = requests.post(uphance_token_url,json = uphance_get_token,headers = uphance_headers)
+            logger.debug('token after request' + str(response.json()))
             if response.status_code == 200:
                 logger.info('New token fetched for ' + customer)
                 if not uphance_access_token : #dict doesn't exist so need to create it
