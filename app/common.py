@@ -63,7 +63,7 @@ def access_secret_version(secret_id: str, customer: str, parameter: str):
 
 def json_dump(file,variable):
     try:
-        with open (file,"w") as outfile:
+        with open ('/var/www/FlaskApp/FlaskApp/app/' + file,"w") as outfile:
             json.dump(variable,outfile)
         return True
     except :
@@ -73,7 +73,7 @@ def json_dump(file,variable):
 
 def json_load(file):
     try:
-        with open(file) as infile:
+        with open('/var/www/FlaskApp/FlaskApp/app/' + file) as infile:
             return json.load(file)
     except FileNotFoundError as fnf_error:
         logger.debug(str(fnf_error))
