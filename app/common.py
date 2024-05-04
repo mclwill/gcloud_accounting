@@ -284,7 +284,7 @@ def uphance_initiate(customer:str, **kwargs):
     global uphance_headers, uphance_access_token
     global logger
 
-    if uphance_check_token_status(customer)
+    if uphance_check_token_status(customer):
 
         if (not uphance_headers[customer]) or force_initiate :
             uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
