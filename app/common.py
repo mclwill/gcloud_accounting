@@ -147,7 +147,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
 
             if type(dest_email) == str:
                 receiver_email_address = [receiver_email_address]
-            elif type(dest_emai) == list:
+            elif type(dest_email) == list:
                 receiver_email_address = []
                 for text in dest_email:
                     if text == 'global':
