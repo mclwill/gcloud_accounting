@@ -75,7 +75,7 @@ def json_load(file):
     try:
         with open(file) as infile:
             return json.load(file)
-    except FileNotFoundError as fnf_error
+    except FileNotFoundError as fnf_error:
         logger.debug(str(fnf_error))
         return False
 
