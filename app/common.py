@@ -147,7 +147,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
             #dest_email can be either one email address, list of email addresses or a list with 'global' and/or 'customer' to pick up the configured data in secrets.py
 
             if type(dest_email) == str:
-                receiver_email_address = [receiver_email_address]
+                receiver_email_address = [dest_email]
             elif type(dest_email) == list:
                 receiver_email_address = []
                 for text in dest_email:

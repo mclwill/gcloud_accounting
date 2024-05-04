@@ -24,7 +24,7 @@ def get_pending_FTP_files(customer):
             rejected_files = ftp_host.listdir(ftp_host.curdir)
 
             if rejected_files:
-                common.send_email(customer,0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),"gary@mclarenwilliams.com.au")
+                common.send_email(customer,0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),"global")
     
     except Exception as ex:
         common.logger.warning('Cross Docks Error on getting pending files for ' + customer + '\nException : ' + str(ex))
