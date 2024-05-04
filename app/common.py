@@ -325,7 +325,7 @@ def get_CD_FTP_credentials(customer:str):
 def check_logging_initiate():
     global initiate_logging_done
 
-    if not initiate_done:
+    if not initiate_logging_done:
         logging_initiate()
         logger.debug('Initiate logging done')
         initiate_logging_done = True
