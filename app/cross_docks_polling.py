@@ -272,7 +272,7 @@ def cross_docks_poll_FTP(customer):
                 common.logger.debug('Processing file for ' + customer + ' : ' + f)
                 if not download_file_DBX(customer,result,f):
                     break #if get an error from Dropbox then break processing
-                if not move_CD_file_FTP(customer,'out/pending','out/sent',f)
+                if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
                     break #if get an error from CD FTP then break processing
                 proc_files.append(f)
             i += 1
