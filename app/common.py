@@ -74,7 +74,7 @@ def json_dump(file,variable):
 def json_load(file):
     try:
         with open('/var/www/FlaskApp/FlaskApp/app/' + file) as infile:
-            return json.load(file)
+            return json.load(infile)
     except FileNotFoundError as fnf_error:
         logger.debug(str(fnf_error))
         return False
