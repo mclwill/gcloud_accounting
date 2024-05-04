@@ -236,11 +236,11 @@ def uphance_check_token_status(customer):
 
     uphance_token_refresh = False
 
-    logger.debug('token check 1:' + str(uphance_access_token) + str(uphane_token_refresh))
+    logger.debug('token check 1:' + str(uphance_access_token) + str(uphance_token_refresh))
 
     if not uphance_access_token : #uphance_access_token not loaded
         uphance_access_token = json_load('uphance_access_tokens.json') #try to load from json file
-        logger.debug('token check 2:' + str(uphance_access_token) + str(uphane_token_refresh))
+        logger.debug('token check 2:' + str(uphance_access_token) + str(uphance_token_refresh))
         if not uphance_access_token: #if unsuccessful then create refresh token
             uphance_refresh_token = True
         else:
@@ -256,7 +256,7 @@ def uphance_check_token_status(customer):
         if not uphance_access_token[customer]:
             uphance_token_refresh = True
 
-    logger.debug('token check 3:' + str(uphance_access_token) + str(uphane_token_refresh))
+    logger.debug('token check 3:' + str(uphance_access_token) + str(uphance_token_refresh))
 
     if uphance_token_refresh:
         uphance_token_url = 'https://api.uphance.com/oauth/token'
@@ -280,7 +280,7 @@ def uphance_check_token_status(customer):
         except Exception as ex:
             logger.exception('Error getting new access token for Uphance for ' + customer + '\n' + str(ex))
 
-    logger.debug('token check 4:' + str(uphance_access_token) + str(uphane_token_refresh))
+    logger.debug('token check 4:' + str(uphance_access_token) + str(uphance_token_refresh))
 
 def uphance_initiate(customer:str, **kwargs):
     force_initiate = kwargs.pop('force_initiate',None)
