@@ -4,6 +4,7 @@ import sys
 from flask import request, jsonify
 import FlaskApp.app.common as common
 import FlaskApp.app.uphance_webhook_info as uphance_webhook
+import FlaskApp.app.cross_docks_polling as cross_docks_polling
 
 
 @app.route("/")
@@ -32,12 +33,19 @@ def uphance():
         return 'Uphance not initiated'
 
 
-@app.route('/aemery',methods=['POST','GET'])
+@app.route('/aemery',methods=['POST'])
 def process_aemery_webhook():
     content = request.get_json(silent=True)
     if content:
         return uphance_webhook.uphance_prod_webhook('aemery',content)
     else :
         return 'No content'
+
+@app.route('/aemery_cross-docks-polling',methods=['POST'])
+def process_aemery_cross_docks_polling():
+    content = request.get_json(silent=True)
+    if content:
+    cross_docks_polling.ross_docks_poll_request('aemery',content)
+    return 'Done'
 
 
