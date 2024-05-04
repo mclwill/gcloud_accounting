@@ -13,7 +13,7 @@ to_zone = tz.tzlocal()
 
 def get_pending_FTP_files(customer):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
-    common.logger.debug(str(cross_dock_info))
+    common.logger.debug(str(cross_docks_info))
     try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info.username, cross_docks_info.password) as ftp_host:
 
