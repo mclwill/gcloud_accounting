@@ -144,7 +144,7 @@ def process_CD_file(customer,directory,f):
             url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
             #print(url)
             if uphance_api_call('put',url=url) :
-                common.send_email(,customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
+                common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                        'Input File: ' + f + '\n' +
                                                                                        data +\
                                                                                        'URL: ' + url,"global")

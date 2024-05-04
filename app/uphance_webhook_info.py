@@ -47,9 +47,6 @@ aemery_dbx_app_secret = 'in08qrhgq0qit5n'
 
 #dbx_folder = "/A.Emery/Wholesale/APIs (Anna's Dad)/Cross Docks Info/FTP_production_files/sent/"
 
-common.logger.debug(str(os.getcwd()))
-common.logger.debug(str(os.listdir()))
-
 cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
 
 
@@ -99,10 +96,10 @@ def transfer_FTP(customer,file_name,file_data):
     except Exception as ex:
         
         common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
-        return
+        return False
         
-    
     common.logger.info('Logging Info for : ' + customer + "\nFile " + file_name + ' sent to FTP server')
+    return True
     
 
 def get_custom_file_format(customer,stream_id,ri):
