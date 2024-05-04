@@ -61,6 +61,24 @@ def access_secret_version(secret_id: str, customer: str, parameter: str):
         secret = attribute[parameter]
     return secret
 
+def json_dump(file,variable):
+    try:
+        with open (file,"w") as outfile:
+            json.dump(variable,outfile)
+        return True
+    except:
+        raise Exception('Storing of variable to json file' + file + 'failed')
+        return False
+
+
+def json_load(file):
+    try:
+        with open(file) as infile:
+            return json.load(file)
+    except Exception as ex:
+        logger.debug(str(ex))
+        return False
+
 def logging_initiate ():
     global sender_pw
     global logger
@@ -86,7 +104,7 @@ def logging_initiate ():
     logger.debug('Attempting to start SMTP logging')
     if not sender_pw: #so only get pw once per session
         sender_pw = access_secret_version('global_parameters',None,'email_pw')
-    logger.debug('Sender PW: ' + sender_pw)
+    #logger.debug('Sender PW: ' + sender_pw)
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr=access_secret_version('global_parameters',None,'from_email'),
                                                 toaddrs=access_secret_version('global_parameters',None,'emails'),
@@ -122,10 +140,6 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
 
             #User Authentication 
 
-            logger.debug(str(secrets.global_parameters))
-
-            logger.debug('Sender email: ' + sender_email)
-
             #print('sender password',sender_pw)
             smtp.login(sender_email,sender_pw)
 
@@ -133,7 +147,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
 
             if type(dest_email) == str:
                 receiver_email_address = [receiver_email_address]
-            else:
+            elif type(dest_emai) == list:
                 receiver_email_address = []
                 for text in dest_email:
                     if text == 'global':
@@ -144,6 +158,10 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
                             receiver_email_address.append(e)
                     else:
                         receiver_email_address.append(text)
+            else:
+                raise Exception('Error sending email: send email destination address in the wrong fomat. dest_email: ' + str(dest_email))
+                smtp.quit()
+                return False
 
             smtp_from = 'From: ' + access_secret_version('global_parameters',None,'from_name') + '<' + access_secret_version('global_parameters',None,'from_email') + '>\n'
 
@@ -213,16 +231,61 @@ def dropbox_initiate():
 #dropbox_initiate()
 #print('dbx:',dbx)
 
+def uphance_check_token_status(customer):
+    global uphance_access_token
+
+    uphance_token_refresh = False
+
+    if not uphance_access_token : #uphance_access_token not loaded
+        uphance_access_token = json_load('uphance_access_tokens.json') #try to load from json file
+        if not uphance_access_token: #if unsuccessful then create refresh token
+            uphance_refresh_token = True
+        else:
+            if uphance_access_token[customer]: #if uphance token exists for customer check if near expiry
+                uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
+                td = uphance_expires - datetime.now()
+                if td.days < 30 :
+                    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nGetting new access token',['global'])
+                    uphance_token_refresh = True
+            else:
+                uphance_token_refresh = True
+    else:
+        if not uphance_access_token[customer]:
+            uphance_token_refresh = True
+
+    if uphance_token_refresh:
+        uphance_token_url = 'https://api.uphance.com/oauth/token'
+        uphance_headers = {'Content-Type': 'application/json'}
+        uphance_login = access_secret_version('customer_parameters',customer,'uphance_login')
+        uphance_get_token = {'email': uphance_login['username'],
+                         'password' : uphance_login['password'],
+                         'grant_type' : 'password'}
+        try: 
+            response = requests.post(uphance_token_url,json = uphance_get_token,headers = uphance_headers)
+            if response.status_code == 200:
+                logger.info('New token fetched for ' + customer)
+                if not uphance_access_token : #dict doesn't exist so need to create it
+                    uphance_access_token = {}
+                uphance_access_token[customer] = response.json()
+                json_dump('uphance_access_tokens.json',uphance_access_token)
+            else:
+                logger.warning(response.status_code)
+                logger.exception('Problem getting new access token for Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
+        except Exception as ex:
+            logger.exception('Error getting new access token for Uphance for ' + customer + '\n' + str(ex))
+
+
+
 def uphance_initiate(customer:str, **kwargs):
     force_initiate = kwargs.pop('force_initiate',None)
-    global uphance_headers
+    global uphance_headers, uphance_access_token
     global logger
 
+    uphance_check_token_status(customer):
+
     if (not uphance_headers[customer]) or force_initiate :
-        uphance_secret = json.loads(access_secret_version('customer_parameters','aemery','uphance_access_token'))
-        #print(uphance_secret)
-        uphance_expires = datetime.utcfromtimestamp(uphance_secret['created_at'] + uphance_secret['expires_in'])
-        uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_secret['access_token'],'Content-Type': 'application/json'}
+        uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
+        uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_access_token['access_token'],'Content-Type': 'application/json'}
         uphance_register = {'organizationId': uphance_org_id[customer]}
         try:
             response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
@@ -231,17 +294,13 @@ def uphance_initiate(customer:str, **kwargs):
                 logger.info('Uphance initiated')
                 logger.debug(response.json())
                 logger.debug('Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
-                td = uphance_expires - datetime.now()
-                if td.days < 30 :
-                    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in secrets.py','gary@mclarenwilliams.com.au')
-                #else:
-                #    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nNeed to get new token and store in Google Secret Manager','gary@mclarenwilliams.com.au')
                 return True
             else:
                 logger.warning(response.status_code)
                 logger.exception('Problem initiating Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
         except Exception as ex:
             logger.exception('Error initiating Uphance for ' + customer + '\n' + str(ex))
+
     else:
         logger.info('Uphance already initiated')
     return True
@@ -260,11 +319,12 @@ def check_logging_initiate():
 
     if not initiate_done:
         logging_initiate()
-        logger.debug('Initiate done')
+        logger.debug('Initiate logging done')
         initiate_done = True
 
 def check_uphance_initiate():
     global customers
+
     for c in customers:
         uphance_initiate(c)
 
@@ -276,7 +336,9 @@ sender_pw = False
 dbx = False
 
 customers = access_secret_version('global_parameters',None,'customers')
+
 uphance_headers = {}
+uphance_access_token = False
 for c in customers:
     uphance_headers[c] = False
 
