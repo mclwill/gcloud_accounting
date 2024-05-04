@@ -43,9 +43,9 @@ def process_aemery_webhook():
 
 @app.route('/aemery_cross-docks-polling',methods=['POST'])
 def process_aemery_cross_docks_polling():
-    content = request.get_json(silent=True)
-    if content:
+
     cross_docks_polling.ross_docks_poll_request('aemery',content)
+    
     return 'Done'
 
 
