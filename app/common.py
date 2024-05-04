@@ -338,13 +338,15 @@ def check_uphance_initiate():
 
 #initialise parameters
 
+#initial email settings
+sender_pw = False
+
 #initiate logging
 initiate_logging_done = False
 logger = False
 check_logging_initiate()
 
-#initial email settings
-sender_pw = False
+
 
 #initiate dropbox
 dbx = False
