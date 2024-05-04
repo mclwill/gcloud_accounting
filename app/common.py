@@ -242,7 +242,7 @@ def uphance_check_token_status(customer):
         uphance_access_token = json_load('uphance_access_tokens.json') #try to load from json file
         logger.debug('token check 2:' + str(uphance_access_token) + str(uphance_token_refresh))
         if not uphance_access_token: #if unsuccessful then create refresh token
-            uphance_refresh_token = True
+            uphance_token_refresh = True
         else:
             if uphance_access_token[customer]: #if uphance token exists for customer check if near expiry
                 uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
