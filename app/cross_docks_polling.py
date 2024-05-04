@@ -15,7 +15,7 @@ def get_pending_FTP_files(customer):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     common.logger.debug(str(cross_docks_info))
     try: 
-        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info.['password']) as ftp_host:
+        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
 
             ftp_host.chdir('out/pending')
             pending_files = ftp_host.listdir(ftp_host.curdir)
@@ -36,7 +36,7 @@ def get_pending_FTP_files(customer):
 def get_data_FTP(customer,directory,f):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     try: 
-        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info.['password']) as ftp_host:
+        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
 
             ftp_host.chdir(directory)
             with ftp_host.open(f,'r') as fobj:
@@ -51,7 +51,7 @@ def get_data_FTP(customer,directory,f):
 def move_CD_file_FTP(customer,source,dest,f):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     '''try: 
-        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info.['password']) as ftp_host:
+        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
             with ftp_host.open(source + '/' + f,'rb') as source_obj:
                 with ftp_host.open(dest + '/' + f,'wb') as dest_obj:
                     ftp_host.copyfileobj(source_obj,dest_obj)
