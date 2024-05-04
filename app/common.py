@@ -99,7 +99,7 @@ def logging_initiate ():
     
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-    logger.info('File and Stream logging started')
+    
 
     logger.debug('Attempting to start SMTP logging')
     if not sender_pw: #so only get pw once per session
@@ -114,7 +114,8 @@ def logging_initiate ():
     smtp_handler.setLevel(logging.INFO)
     smtp_handler.setFormatter(format)
     logger.addHandler(smtp_handler)
-    logger.debug('SMTP logging started')
+
+    logger.info('Cross Docks - Uphance API: Logging started for File, Stream and SMTP logging')
 
 
 def send_email(customer,email_counter,message_subject,message_text,dest_email):
@@ -236,11 +237,8 @@ def uphance_check_token_status(customer):
 
     uphance_token_refresh = False
 
-    logger.debug('token check 1:' + str(uphance_access_token) + str(uphance_token_refresh))
-
     if not uphance_access_token : #uphance_access_token not loaded
         uphance_access_token = json_load('uphance_access_tokens.json') #try to load from json file
-        logger.debug('token check 2:' + str(uphance_access_token) + str(uphance_token_refresh))
         if not uphance_access_token: #if unsuccessful then create refresh token
             uphance_token_refresh = True
         else:
@@ -255,8 +253,6 @@ def uphance_check_token_status(customer):
     else:
         if not customer in uphance_access_token :
             uphance_token_refresh = True
-
-    logger.debug('token check 3:' + str(uphance_access_token) + str(uphance_token_refresh))
 
     if uphance_token_refresh:
         uphance_token_url = 'https://api.uphance.com/oauth/token'
@@ -275,41 +271,47 @@ def uphance_check_token_status(customer):
                 uphance_access_token[customer] = response.json()
                 json_dump('uphance_access_tokens.json',uphance_access_token)
             else:
-                logger.warning(response.status_code)
-                logger.exception('Problem getting new access token for Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
+                logger.warning('Problem getting new access token for Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
+                return False
         except Exception as ex:
-            logger.exception('Error getting new access token for Uphance for ' + customer + '\n' + str(ex))
+            logger.warning('Exception getting new access token for Uphance for ' + customer + '\n' + str(ex))
+            return False
 
-    logger.debug('token check 4:' + str(uphance_access_token) + str(uphance_token_refresh))
+    return True
 
 def uphance_initiate(customer:str, **kwargs):
     force_initiate = kwargs.pop('force_initiate',None)
     global uphance_headers, uphance_access_token
     global logger
 
-    uphance_check_token_status(customer)
+    if uphance_check_token_status(customer)
 
-    if (not uphance_headers[customer]) or force_initiate :
-        uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
-        uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_access_token[customer]['access_token'],'Content-Type': 'application/json'}
-        uphance_register = {'organizationId': uphance_org_id[customer]}
-        try:
-            response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
-    
-            if response.status_code == 201:
-                logger.info('Uphance initiated')
-                logger.debug(response.json())
-                logger.debug('Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
-                return True
-            else:
-                logger.warning(response.status_code)
-                logger.exception('Problem initiating Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
-        except Exception as ex:
-            logger.exception('Error initiating Uphance for ' + customer + '\n' + str(ex))
+        if (not uphance_headers[customer]) or force_initiate :
+            uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
+            uphance_headers[customer] = {'Authorization': 'Bearer '+ uphance_access_token[customer]['access_token'],'Content-Type': 'application/json'}
+            uphance_register = {'organizationId': uphance_org_id[customer]}
+            try:
+                response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
+        
+                if response.status_code == 201:
+                    logger.info('Uphance initiated')
+                    logger.debug(response.json())
+                    logger.info('Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
+                    return True
+                else:
+                    logger.warning('Problem initiating Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
+                    return False
+            except Exception as ex:
+                logger.warning('Exception occurred while trying to initiate Uphance for ' + customer + '\n' + str(ex))
+                tb = traceback.format_exc()
+                logger.warning(tb)
+                return False
+        else:
+            logger.info('Uphance already initiated')
+        return True
 
     else:
-        logger.info('Uphance already initiated')
-    return True
+        return False
 
 def get_CD_FTP_credentials(customer:str):
     global cross_docks_info
@@ -321,44 +323,58 @@ def get_CD_FTP_credentials(customer:str):
     return cross_docks_info[customer]
 
 def check_logging_initiate():
-    global initiate_done
+    global initiate_logging_done
 
     if not initiate_done:
         logging_initiate()
         logger.debug('Initiate logging done')
-        initiate_done = True
+        initiate_logging_done = True
 
 def check_uphance_initiate():
     global customers
 
     for c in customers:
-        uphance_initiate(c)
+        uphance_running[c] = uphance_initiate(c)
 
 #initialise parameters
 
-initiate_done = False
+#initiate logging
+initiate_logging_done = False
+logger = False
+check_logging_initiate()
+
+#initial email settings
 sender_pw = False
 
+#initiate dropbox
 dbx = False
+dropbox_initiate()
 
+#initiate uphance 
 customers = access_secret_version('global_parameters',None,'customers')
 
 uphance_headers = {}
+uphance_running = {}
 uphance_access_token = False
+
 for c in customers:
     uphance_headers[c] = False
+    uphance_running[c] = False
 
 uphance_register_url = access_secret_version('global_parameters',None,'uphance_register_url')
 uphance_org_id = access_secret_version('global_parameters',None,'uphance_org_id')
 
+check_uphance_initiate()
+
+#initiate cross_docks
 cross_docks_info = {}
 for c in customers:
     cross_docks_info[c] = False
 
-logger = False
 
-check_logging_initiate()
-check_uphance_initiate()
-dropbox_initiate()
+
+
+
+
 
 

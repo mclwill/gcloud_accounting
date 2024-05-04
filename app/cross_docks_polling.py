@@ -294,6 +294,6 @@ def cross_docks_poll_FTP(customer):
         common.send_email(0,'CD Files Processed for ' + customer,'No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
     
     
-def cross_docks_poll_request(customer,request):
+def cross_docks_poll_request(customer):
     cross_docks_poll_FTP(customer)
     
