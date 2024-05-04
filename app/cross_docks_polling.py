@@ -292,7 +292,7 @@ def cross_docks_poll_FTP(customer):
         proc_end_time = datetime.datetime.now()
         proc_elapsed_time = proc_end_time - proc_start_time
         
-        common.send_email(,customer,0,'CD Files Processed for ' + customer,'No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
+        common.send_email(customer,0,'CD Files Processed for ' + customer,'No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
     
     
 def cross_docks_poll_request(customer):
