@@ -294,9 +294,8 @@ def uphance_initiate(customer:str, **kwargs):
                 response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
         
                 if response.status_code == 201:
-                    logger.info('Uphance initiated')
+                    logger.info('Uphance initiated for ' + customer + '\nUphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
                     logger.debug(response.json())
-                    logger.info('Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
                     return True
                 else:
                     logger.warning('Problem initiating Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
