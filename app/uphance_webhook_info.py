@@ -146,7 +146,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
             exec(mapping_code)
             #print('data[ci]',data[ci])    
         if len(error.keys()) > 0:
-            common.logger.warning('Log Warning Error for : '+ customers + '\nError info:',stream_id,error)
+            common.logger.warning('Log Warning Error for : '+ customers + '\nError info:' + stream_id + '\n' + str(error))
         return create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
     else: #process loops
         loops_dict = {}
@@ -199,7 +199,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
                 if not blank_line[0]: #blank line set in code for field
                     multi_line = multi_line + create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
         if len(error.keys()) > 0:
-            common.logger.warning('Logger Warning Error for : ' + customer + '\nError info:',stream_id,error)
+            common.logger.warning('Logger Warning Error for : ' + customer + '\nError info:' + stream_id + '\n' + str(error))
         return multi_line
     
 def process_all_record_indicators(customer,event_data,stream_id):
@@ -266,7 +266,7 @@ def process_product_update(customer,event_data):
     if len(file_data.split('\n')) > 2 : #then not an empty CD file
         process_file(customer,file_data,file_name)
     else:
-        common.logger.info('Logger Info for :' + customer + '\nFile not sent to CD as no IT records\n',file_data)
+        common.logger.info('Logger Info for :' + customer + '\nFile not sent to CD as no IT records\n' + file_data)
     
     return file_data
 
