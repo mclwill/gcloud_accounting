@@ -39,12 +39,27 @@ def process_aemery_webhook():
     if content:
         return uphance_webhook.uphance_prod_webhook('aemery',content)
     else :
-        return 'No content'
+        return 'amery - No content'
 
 @app.route('/aemery_cross-docks-polling',methods=['POST'])
 def process_aemery_cross_docks_polling():
 
     cross_docks_polling.cross_docks_poll_request('aemery')
+    
+    return 'Done'
+
+@app.route('/two-ts',methods=['POST'])
+def process_two_ts_webhook():
+    content = request.get_json(silent=True)
+    if content:
+        return uphance_webhook.uphance_prod_webhook('two-ts',content)
+    else :
+        return 'two-ts No content'
+
+@app.route('/aemery_cross-docks-polling',methods=['POST'])
+def process_two-ts_cross_docks_polling():
+
+    cross_docks_polling.cross_docks_poll_request('two-ts')
     
     return 'Done'
 
