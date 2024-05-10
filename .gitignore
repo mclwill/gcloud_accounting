@@ -1,5 +1,6 @@
 #app specific files
 secrets.py
+*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
