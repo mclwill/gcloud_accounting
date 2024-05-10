@@ -225,20 +225,20 @@ def process_file(customer,file_data,file_name):
     #common.get_CD_FTP_credentials(customer)
     common.dropbox_initiate()
 
-    '''dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + file_name
+    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + file_name
     with io.BytesIO(file_data.encode()) as stream:
         stream.seek(0)
 
         common.dbx.files_upload(stream.read(), dbx_file, mode=common.dropbox.files.WriteMode.overwrite)
-    '''
-    common.logger.debug('dummy Dropbox Transfer')
+    
+    common.logger.debug('Dropbox Transfer')
 
     if len(error.keys()) == 0 : #no errors reported so send to Cross Docks
-        #transfer_FTP(customer,file_name,file_data)
-        common.logger.debug('dummy transfer_FTP 1')
+        transfer_FTP(customer,file_name,file_data)
+        common.logger.debug('transfer_FTP 1')
     elif error['send_to_CD'] :
-        #transfer_FTP(customer,file_name,file_data)
-        common.logger.debug('dummy transfer_FTP 2')
+        transfer_FTP(customer,file_name,file_data)
+        common.logger.debug('transfer_FTP 2')
 
     
 def process_pick_ticket(customer,event_data):
