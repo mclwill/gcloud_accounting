@@ -327,9 +327,9 @@ def uphance_process_webhook(customer,request):
         request_dict = remove_special_unicode_chars(request_dict)
         data_str = process_uphance_event(customer,request_dict)
         if len(error.keys()) == 0:
-            common.send_email(customer,0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global','customer'])
+            common.send_email(customer,0,'Uphance_webhook_info for : ' + customer,'Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
         else:
-            common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global','customer'])
+            common.send_email(customer,0,'Uphance_webhook_error for : ' + customer,'Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict))
     
