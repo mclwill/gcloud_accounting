@@ -194,8 +194,8 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
         except Exception as ex:
             tb = traceback.format_exc()
             logger.error('Log Error: Other email exception')
-            logger.error('Log Error: Exception info:',ex)
-            logger.error(tb)
+            logger.error('Log Error: Exception info:',  + str(ex))
+            logger.error(str(tb))
             return False
 
 
