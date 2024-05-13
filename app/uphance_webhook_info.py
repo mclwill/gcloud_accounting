@@ -347,7 +347,7 @@ def uphance_process_webhook(customer,request):
             return
         else:
             sendees = ['global'] #default to only global email recipients
-            for stream_id in common.access_secret_version('customer_parameters',customer,'stream_errors_to_be_reported')
+            for stream_id in common.access_secret_version('customer_parameters',customer,'stream_errors_to_be_reported'):
                 if any(stream_id in string for string in error.keys()):
                     sendees = ['global','customer'] 
             common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
