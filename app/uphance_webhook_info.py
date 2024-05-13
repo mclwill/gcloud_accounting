@@ -199,7 +199,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
                 if not blank_line[0]: #blank line set in code for field
                     multi_line = multi_line + create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
         if len(error.keys()) > 0:
-            common.logger.warning('Logger Warning Error for : ' + customer + '\nError info:' + stream_id + '\n' + str(error))
+            common.logger.info('Logger Info for : ' + customer + '\nError info:' + stream_id + '\n' + str(error) + '\n' + str(event_data))
         return multi_line
     
 def process_all_record_indicators(customer,event_data,stream_id):
@@ -256,6 +256,19 @@ def process_pick_ticket(customer,event_data):
     else:
         return "Not Sent to Cross Docks - Already in Packing State"
 
+def process_pick_ticket_delete(customer,event_data):
+    
+    #need to send to CD regardless of packing state as unable to check state as pick ticket has been deleted.
+    event_id = event_data['id']
+    
+    stream_id = 'OR'
+    event_id = event_data['id']
+
+    file_data = 'HD|EM|OR\nOR1|D|' + str(event_id) + '\n'#special short code to delete order before packing
+    file_name = stream_id + datetime.now().strftime("%Y%m%dT%H%M%S") + '_' + str(event_id).zfill(4) + '_' + 'pick_ticket_delete' + '.csv'
+    process_file(customer,file_data,file_name)
+    return file_data
+
 def process_product_update(customer,event_data):
     stream_id = 'IT'
     event_id = event_data['id']
@@ -266,7 +279,7 @@ def process_product_update(customer,event_data):
     if len(file_data.split('\n')) > 2 : #then not an empty CD file
         process_file(customer,file_data,file_name)
     else:
-        common.logger.info('Logger Info for :' + customer + '\nFile not sent to CD as no IT records\n' + file_data)
+        common.logger.info('Logger Info for :' + customer + '\nFile not sent to CD as no IT records\n' + file_data + '\n' + str(event_data))
     
     return file_data
 
@@ -289,6 +302,9 @@ def process_uphance_event(customer,event_dict) :
     if (event_dict['event'] == 'pick_ticket_create') or (event_dict['event'] == 'pick_ticket_update'):
         return process_pick_ticket(customer,event_dict['pick_ticket'])
     
+    elif (event_dict['event'] == 'pick_ticket_delete'):
+        return process_pick_ticket_delete(event_dict['pick_ticket'])
+
     elif (event_dict['event'] == 'product_create') or (event_dict['event'] == 'product_update'):
         return process_product_update(customer,event_dict['product'])   
     
@@ -328,15 +344,17 @@ def uphance_process_webhook(customer,request):
         data_str = process_uphance_event(customer,request_dict)
         if len(error.keys()) == 0:
             common.send_email(customer,0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
+            return
         else:
-            common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
+            sendees = ['global'] #default to only global email recipients
+            for stream_id in common.access_secret_version('customer_parameters',customer,'stream_errors_to_be_reported')
+                if any(stream_id in string for string in error.keys()):
+                    sendees = ['global','customer'] 
+            common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict))
     
 
-
-
-#@functions_framework.http
 def uphance_prod_webhook(customer,request):
     #assume all good to respond with HTTP 200 response
     #x = threading.Thread (target = uphance_process_webhook,args=(request,))
@@ -345,4 +363,4 @@ def uphance_prod_webhook(customer,request):
     uphance_process_webhook(customer,request)
     return '200'  #need string to give HTTP 200 response
 
-#uphance_test_webhook(CD_ff.CD_test_request)
+
