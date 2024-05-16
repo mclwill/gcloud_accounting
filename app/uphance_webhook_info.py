@@ -95,7 +95,7 @@ def transfer_FTP(customer,file_name,file_data):
     
     except Exception as ex:
         
-        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
+        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         return False
         
     common.logger.info('Logging Info for : ' + customer + "\nFile " + file_name + ' sent to FTP server')
@@ -327,7 +327,7 @@ def remove_special_unicode_chars(obj):
             
 
 def uphance_process_webhook(customer,request):
-    global dbx, mapping_code, stream_id
+    global dbx, mapping_code, stream_id, request_dict
     # Extract relevant data from the request payload
 
     mapping_code = ''
