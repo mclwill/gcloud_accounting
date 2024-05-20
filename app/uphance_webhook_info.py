@@ -276,7 +276,7 @@ def process_product_update(customer,event_data):
     event_date = str(datetime.now().strftime("%Y%m%dT%H%M%S"))
     event_name = event_data['name']
     file_data = process_all_record_indicators(customer,event_data,stream_id)
-    file_name = stream_id + event_date + '_' + str(event_id) + '_' + event_name + '.csv'
+    file_name = stream_id + event_date + '_' + str(event_id) + '_' + event_name.replace('/','_').replace(' ','_') + '.csv'
     if len(file_data.split('\n')) > 2 : #then not an empty CD file
         process_file(customer,file_data,file_name)
     else:
@@ -291,7 +291,7 @@ def process_production_order(customer,event_data):
     event_date = str(datetime.strptime(event_data['updated_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=from_zone).astimezone(to_zone).strftime("%Y%m%dT%H%M%S"))
     event_name = event_data['vendor'] + '_' + event_data['delivery_name']
     file_data = process_all_record_indicators(customer,event_data,stream_id)
-    file_name = stream_id + event_date + '_' + str(event_id) +'_' + event_name + '.csv'
+    file_name = stream_id + event_date + '_' + str(event_id) +'_' + event_name.replace('/','_').replace(' ','_') + '.csv'
     process_file(customer,file_data,file_name)
     
     return file_data
