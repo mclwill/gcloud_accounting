@@ -88,7 +88,7 @@ def transfer_FTP(customer,file_name,file_data):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
-
+            common.logger.debug('CD credentials : '+ cross_docks_info['username'] + cross_docks_info['password'])
             ftp_host.chdir('in/pending')
             with ftp_host.open(file_name, "w", encoding="utf8") as fobj:
                 fobj.write(file_data)
@@ -225,7 +225,7 @@ def process_file(customer,file_data,file_name):
     #common.get_CD_FTP_credentials(customer)
     common.dropbox_initiate()
 
-    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/' + file_name
+    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/sent/' + file_name
     with io.BytesIO(file_data.encode()) as stream:
         stream.seek(0)
 
