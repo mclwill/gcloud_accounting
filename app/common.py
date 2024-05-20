@@ -371,6 +371,10 @@ check_uphance_initiate()
 cross_docks_info = {}
 for c in customers:
     cross_docks_info[c] = False
+    get_CD_FTP_credentials(c)
+
+
+
 
 
 
