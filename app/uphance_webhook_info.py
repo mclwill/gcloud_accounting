@@ -88,7 +88,8 @@ def transfer_FTP(customer,file_name,file_data):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
-            common.logger.debug('CD credentials : '+ cross_docks_info['username'] + cross_docks_info['password'])
+            common.logger.debug('CD credentials : '+ cross_docks_info['username'] + ':' + cross_docks_info['password'])
+            common.logger.debug('CD getcwd : ' + ftp_host.getcwd())
             ftp_host.chdir('in/pending')
             with ftp_host.open(file_name, "w", encoding="utf8") as fobj:
                 fobj.write(file_data)
