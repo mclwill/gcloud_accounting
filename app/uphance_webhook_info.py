@@ -225,7 +225,7 @@ def process_file(customer,file_data,file_name):
     #common.get_CD_FTP_credentials(customer)
     common.dropbox_initiate()
 
-    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '\' + file_name
+    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/' + file_name
     with io.BytesIO(file_data.encode()) as stream:
         stream.seek(0)
 
