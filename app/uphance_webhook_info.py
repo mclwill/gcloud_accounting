@@ -222,7 +222,7 @@ def process_all_record_indicators(customer,event_data,stream_id):
     #print('Error info2:',error,error.keys(),len(error.keys()))
     
 def process_file(customer,file_data,file_name):
-    
+    global error
     #common.get_CD_FTP_credentials(customer)
     common.dropbox_initiate()
 
@@ -235,11 +235,18 @@ def process_file(customer,file_data,file_name):
     common.logger.debug('Dropbox Transfer')
 
     if len(error.keys()) == 0 : #no errors reported so send to Cross Docks
-        transfer_FTP(customer,file_name,file_data)
-        common.logger.debug('transfer_FTP 1')
+        if transfer_FTP(customer,file_name,file_data):
+            common.logger.debug('transfer_FTP 1')
+        else:
+            error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
+            common.logger.warning('transfer_FTP error for file: ' + file_name)
     elif error['send_to_CD'] :
-        transfer_FTP(customer,file_name,file_data)
-        common.logger.debug('transfer_FTP 2')
+        if transfer_FTP(customer,file_name,file_data):
+            common.logger.debug('transfer_FTP 2')
+        else:
+            error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
+            common.logger.warning('transfer_FTP error for file: ' + file_name)
+        
 
     
 def process_pick_ticket(customer,event_data):

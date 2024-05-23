@@ -56,7 +56,7 @@ def process_two_ts_webhook():
     else :
         return 'two-ts No content'
 
-@app.route('/aemery_cross-docks-polling',methods=['POST'])
+@app.route('/two-ts_cross-docks-polling',methods=['POST'])
 def process_two_ts_cross_docks_polling():
 
     cross_docks_polling.cross_docks_poll_request('two-ts')
