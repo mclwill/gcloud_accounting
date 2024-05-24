@@ -255,43 +255,47 @@ def process_CD_file(customer,directory,f):
     return data
 
 def cross_docks_poll_FTP(customer):
-    proc_start_time = datetime.datetime.now()
+    try:
+        proc_start_time = datetime.datetime.now()
 
-    files = get_pending_FTP_files(customer) 
-    if files:
-        files.sort() #sort list so that MO files are done before PC files - this helps prevent subsequent pick_ticket_update events going back to CD
-        common.logger.debug('FTP files to be processed for ' + customer + ':\n' + str(files))
-        proc_max_files = 25
-        i = 0
-        proc_files = []
-        
-        for f in files:
-            common.logger.debug('Processing file: ' + f)
-            result = process_CD_file(customer,'out/pending',f)
-            if result:
-                common.logger.debug('Processing file for ' + customer + ' : ' + f)
-                if not download_file_DBX(customer,result,f):
-                    break #if get an error from Dropbox then break processing
-                if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
-                    break #if get an error from CD FTP then break processing
-                proc_files.append(f)
-            i += 1
-            if i >= proc_max_files:
-                break
+        files = get_pending_FTP_files(customer) 
+        if files:
+            files.sort() #sort list so that MO files are done before PC files - this helps prevent subsequent pick_ticket_update events going back to CD
+            common.logger.debug('FTP files to be processed for ' + customer + ':\n' + str(files))
+            proc_max_files = 25
+            i = 0
+            proc_files = []
+            
+            for f in files:
+                common.logger.debug('Processing file: ' + f)
+                result = process_CD_file(customer,'out/pending',f)
+                if result:
+                    common.logger.debug('Processing file for ' + customer + ' : ' + f)
+                    if not download_file_DBX(customer,result,f):
+                        break #if get an error from Dropbox then break processing
+                    if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
+                        break #if get an error from CD FTP then break processing
+                    proc_files.append(f)
+                i += 1
+                if i >= proc_max_files:
+                    break
 
-        proc_end_time = datetime.datetime.now()
-        proc_elapsed_time = proc_end_time - proc_start_time
-        proc_info_str = 'CD Files Processed :\nNum Files : ' + str(i) + '\nStart Time (UTC): ' + proc_start_time.strftime("%H:%M:%S") + '\n' + \
-                        'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
-                        'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
-                        'Files Processed: ' + str(proc_files)
-        common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,'global')
-    else:
-        common.logger.debug('No files to process for ' + customer)
-        proc_end_time = datetime.datetime.now()
-        proc_elapsed_time = proc_end_time - proc_start_time
-        
-        common.send_email(customer,0,'CD Files Processed for ' + customer,'No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
+            proc_end_time = datetime.datetime.now()
+            proc_elapsed_time = proc_end_time - proc_start_time
+            proc_info_str = 'CD Files Processed :\nNum Files : ' + str(i) + '\nStart Time (UTC): ' + proc_start_time.strftime("%H:%M:%S") + '\n' + \
+                            'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
+                            'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
+                            'Files Processed: ' + str(proc_files)
+            common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,'global')
+        else:
+            common.logger.debug('No files to process for ' + customer)
+            proc_end_time = datetime.datetime.now()
+            proc_elapsed_time = proc_end_time - proc_start_time
+            
+            common.send_email(customer,0,'CD Files Processed for ' + customer,'No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
+    except Exception as e:
+        common.logger.exception('Exception message for : ' + customer + '\nError in Cross Docks Polling:\nException Info: ' + str(e))
+    
     
     
 def cross_docks_poll_request(customer):
