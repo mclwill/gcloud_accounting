@@ -126,7 +126,7 @@ def uphance_api_call(customer,api_type,**kwargs):
         return False
     '''
 
-    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + url + '\n' + json)
+    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
 
     
 def process_CD_file(customer,directory,f):
