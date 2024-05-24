@@ -167,7 +167,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
             smtp_from = 'From: ' + access_secret_version('global_parameters',None,'from_name') + '<' + access_secret_version('global_parameters',None,'from_email') + '>\n'
 
             #Defining The Message 
-            message = smtp_from + "To:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + ' - Uphance Cross Docks message ' + message_subject + '\n\n' + message_text
+            message = smtp_from + "To:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + '_Uphance Cross Docks message_' + message_subject + '\n\n' + message_text
 
             #Sending the Email
             smtp.sendmail(sender_email, receiver_email_address,message.encode('utf-8')) 
