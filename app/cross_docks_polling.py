@@ -23,7 +23,7 @@ def get_pending_FTP_files(customer):
             rejected_files = ftp_host.listdir(ftp_host.curdir)
 
             if rejected_files:
-                common.send_email(customer,0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),"global")
+                common.send_email(customer,0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),['global'])
     
     except Exception as ex:
         common.logger.warning('Cross Docks Error on getting pending files for ' + customer + '\nException : ' + str(ex))
@@ -146,7 +146,7 @@ def process_CD_file(customer,directory,f):
                 common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                        'Input File: ' + f + '\n' +
                                                                                        data +\
-                                                                                       'URL: ' + url,"global")
+                                                                                       'URL: ' + url,['global'])
                 common.logger.debug('MO email sent')
             else:
                 error = True
@@ -203,7 +203,7 @@ def process_CD_file(customer,directory,f):
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
                                                                                            'Input File: ' + f + '\n' +
                                                                                            data +
-                                                                                           'URL: ' + url_tc + '\n' + url_ship,"global")
+                                                                                           'URL: ' + url_tc + '\n' + url_ship,['global'])
                         common.logger.debug('PC_email sent')
             else:
                 common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks file: ' + f + '\n' + \
@@ -212,12 +212,12 @@ def process_CD_file(customer,directory,f):
                                                              'Quantity Ordered:' + str(quantity_ordered) + '\n' + \
                                                              'Quantity Shipped: ' + str(quantity_shipped) + '\n' + \
                                                              'Variance: ' + str(variance) + '\n\n' + \
-                                                             'Data in CD file: \n' + data + '\n',["richard@aemery.com","global"])
+                                                             'Data in CD file: \n' + data + '\n',["richard@aemery.com",'global'])
                                                               
                 
                 common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' +
                                                                                'Input File: ' + f + '\n' +
-                                                                               data,"global")
+                                                                               data,['global'])
 
         else:
             error = True
@@ -232,7 +232,7 @@ def process_CD_file(customer,directory,f):
             common.send_email(customer,0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID:' + stream_id + '\n' +
                                                                               'Purchase Order Number' + str(po_number) + '\n\n' +
                                                                                'Input File: ' + f + '\n' +
-                                                                               data,['customer',"global"])
+                                                                               data,['customer','global'])
             common.logger.debug('TP email sent')
         else:
             common.logger.warning('Failed to get Purchase Order Number from TP file. FileName = ' + f)
@@ -248,7 +248,7 @@ def process_CD_file(customer,directory,f):
     if error : 
         common.send_email(customer,0,'CD_FTP_Process_error','CD processing error (check Google Cloud logs):\nStream ID:' + stream_id + '\n' +
                                                                                'Input File: ' + f + '\n' +
-                                                                               data,"global")
+                                                                               data,['global'])
         common.logger.debug('Error email sent')
         return False #flag error
         
@@ -286,7 +286,7 @@ def cross_docks_poll_FTP(customer):
                             'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
                             'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
                             'Files Processed: ' + str(proc_files)
-            common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,'global')
+            common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,['global'])
         else:
             common.logger.debug('No files to process for ' + customer)
             proc_end_time = datetime.datetime.now()
