@@ -49,7 +49,7 @@ def get_data_FTP(customer,directory,f):
 
 def move_CD_file_FTP(customer,source,dest,f):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
-    '''try: 
+    try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
             with ftp_host.open(source + '/' + f,'rb') as source_obj:
                 with ftp_host.open(dest + '/' + f,'wb') as dest_obj:
@@ -62,7 +62,7 @@ def move_CD_file_FTP(customer,source,dest,f):
         return False
         
     return True
-    '''
+    
 
     common.logger.debug('CD file move for ' + customer + ' : ' + file)
 
@@ -70,7 +70,7 @@ def move_CD_file_FTP(customer,source,dest,f):
 def download_file_DBX(customer,file_data,file):
     
     dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/received/' + file
-    '''try:
+    try:
         with io.BytesIO(file_data.encode()) as stream:
             stream.seek(0)
             common.dbx.files_upload(stream.read(), dbx_file, mode=common.dropbox.files.WriteMode.overwrite)
@@ -81,7 +81,7 @@ def download_file_DBX(customer,file_data,file):
         tb = traceback.format_exc()
         common.logger.warning(tb)
         return False
-    '''
+    
     common.logger.debug('DBX download for ' + customer + ' : ' + file)
     
 def get_CD_parameter(data,ri,col_id):
@@ -103,7 +103,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
     
-    '''if api_type == 'post':
+    if api_type == 'post':
         response = requests.post(url,json = json,headers = common.uphance_headers[customer])
         common.logger.debug('Post ' + url)
     elif api_type == 'put':
@@ -124,9 +124,10 @@ def uphance_api_call(customer,api_type,**kwargs):
         common.logger.warning('Uphance ' + api_type + ' error for ' + customer)
         common.logger.warning(response.status_code)
         return False
-    '''
+    
 
-    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
+    #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
+    #return True
 
     
 def process_CD_file(customer,directory,f):
@@ -229,8 +230,8 @@ def process_CD_file(customer,directory,f):
             if type(po_number) == list:
                 po_number = po_number[0]
 
-            common.send_email(customer,0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID:' + stream_id + '\n' +
-                                                                              'Purchase Order Number' + str(po_number) + '\n\n' +
+            common.send_email(customer,0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
+                                                                              'Purchase Order Number: ' + str(po_number) + '\n\n' +
                                                                                'Input File: ' + f + '\n' +
                                                                                data,['customer','global'])
             common.logger.debug('TP email sent')
