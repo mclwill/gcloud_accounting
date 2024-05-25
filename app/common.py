@@ -80,7 +80,6 @@ def json_load(file):
         return False
 
 def logging_initiate ():
-    global sender_pw
     global logger
 
     logger = logging.getLogger(__name__)
@@ -102,8 +101,7 @@ def logging_initiate ():
     
 
     logger.debug('Attempting to start SMTP logging')
-    if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('global_parameters',None,'email_pw')
+    sender_pw = access_secret_version('global_parameters',None,'email_pw')
     #logger.debug('Sender PW: ' + sender_pw)
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr=access_secret_version('global_parameters',None,'from_email'),
