@@ -119,13 +119,10 @@ def logging_initiate ():
 
 
 def send_email(customer,email_counter,message_subject,message_text,dest_email):
-    global sender_pw
-    
-    if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('global_parameters',None,'email_pw')
-    
+
     email_counter += 1
-    sender_email = access_secret_version('global_parameters',None,'from_email')
+    sender_email = access_secret_version('customer_parameters',customer,'reporting_email')
+    sender_pw = access_secret_version('customer_parameters',customer,'reporting_email_pw')
  
     if email_counter < 0:
         logger.exception('Email counter below zero: ' + str(email_counter) + ' ' + message_subject + ' ' + message_text)
@@ -336,9 +333,6 @@ def check_uphance_initiate():
         uphance_running[c] = uphance_initiate(c)
 
 #initialise parameters
-
-#initial email settings
-sender_pw = False
 
 #initiate logging
 initiate_logging_done = False
