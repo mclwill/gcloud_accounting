@@ -180,7 +180,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
             #logger.exception('send mail SMTP error',exc_info = True)
             if error_code == 421 : #try again after random time interval up to 5 seconds
                 time.sleep(random.random()*5)
-                send_email(email_counter,message_subject + ' depth: ' + str(email_counter),message_text,receiver_email_address)
+                send_email(customer,email_counter,message_subject + ' depth: ' + str(email_counter),message_text,receiver_email_address)
                 email_counter -= 1
                 return True
             logger.exception('send mail SMTP error',exc_info = True)
@@ -197,7 +197,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
 
     else: #too many active emails - wait after random time period to send again
         time.sleep(random.random()*5)
-        send_email(email_counter,message_subject + ' depth 5 or more: ' + str(email_counter),message_text,receiver_email_address)
+        send_email(customer,email_counter,message_subject + ' depth 5 or more: ' + str(email_counter),message_text,receiver_email_address)
         email_counter -= 1
         return False
 
