@@ -147,7 +147,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
             exec(mapping_code)
             #print('data[ci]',data[ci])    
         if len(error.keys()) > 0:
-            common.logger.warning('Log Warning Error for : '+ customers + '\nError info:' + stream_id + '\n' + str(error))
+            common.logger.warning('Log Warning Error for : '+ customer + '\nError info:' + stream_id + '\n' + str(error))
         return create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
     else: #process loops
         loops_dict = {}
