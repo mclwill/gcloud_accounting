@@ -55,7 +55,7 @@ import FlaskApp.app.secrets as secrets
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
-    logger.debug('Secrets.py data: ' + str(attribute))
+    #logger.debug('Secrets.py data: ' + str(attribute))
     if customer :
         secret = attribute[customer][parameter]
     else:
