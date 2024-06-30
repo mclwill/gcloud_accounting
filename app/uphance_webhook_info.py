@@ -368,8 +368,8 @@ def uphance_prod_webhook(customer,request):
     #x = threading.Thread (target = uphance_process_webhook,args=(request,))
     #x.start()
     #common.initialise_exception_logging()
-    uphance_process_webhook(customer,request)
     common.logger.debug(customer + '\n' + request)
+    uphance_process_webhook(customer,request)
     return '200'  #need string to give HTTP 200 response
 
 
