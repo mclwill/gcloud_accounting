@@ -263,7 +263,7 @@ def cross_docks_poll_FTP(customer):
         if files:
             files.sort() #sort list so that MO files are done before PC files - this helps prevent subsequent pick_ticket_update events going back to CD
             common.logger.debug('FTP files to be processed for ' + customer + ':\n' + str(files))
-            proc_max_files = 25
+            proc_max_files = 100 #increased on 8th July in A.Emery Google Function - need to check timing on Google Cloud Engine
             i = 0
             proc_files = []
             

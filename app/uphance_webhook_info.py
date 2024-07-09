@@ -293,15 +293,17 @@ def process_product_update(customer,event_data):
 
 def process_production_order(customer,event_data):
     global stream_id
-    stream_id = 'PT'
-    event_id = str(event_data['production_order_number'])
-    event_date = str(datetime.strptime(event_data['updated_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=from_zone).astimezone(to_zone).strftime("%Y%m%dT%H%M%S"))
-    event_name = event_data['vendor'] + '_' + event_data['delivery_name']
-    file_data = process_all_record_indicators(customer,event_data,stream_id)
-    file_name = stream_id + event_date + '_' + str(event_id) +'_' + event_name.replace('/','_').replace(' ','_') + '.csv'
-    process_file(customer,file_data,file_name)
-    
-    return file_data
+    if event_data['status'] != 'checked in':
+        stream_id = 'PT'
+        event_id = str(event_data['production_order_number'])
+        event_date = str(datetime.strptime(event_data['updated_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=from_zone).astimezone(to_zone).strftime("%Y%m%dT%H%M%S"))
+        event_name = event_data['vendor'] + '_' + event_data['delivery_name']
+        file_data = process_all_record_indicators(customer,event_data,stream_id)
+        file_name = stream_id + event_date + '_' + str(event_id) +'_' + event_name.replace('/','_').replace(' ','_') + '.csv'
+        process_file(customer,file_data,file_name)
+        return file_data
+    else:
+        return "Not Sent to Cross Docks - Already Checked In"
 
 def process_uphance_event(customer,event_dict) :
     global error
