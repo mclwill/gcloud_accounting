@@ -104,6 +104,8 @@ def transfer_FTP(customer,file_name,file_data):
     
 
 def get_custom_file_format(customer,stream_id,ri):
+    common.logger.debug(custom_file_format_modules[customer].CD_file_format[stream_id])
+
     return  custom_file_format_modules[customer].CD_file_format.get(stream_id,{}).get('mapping',{})  # see https://stackoverflow.com/questions/26979046/python-check-multi-level-dict-key-existence
 
 def create_field_line(field_str,field_list,mapping):
