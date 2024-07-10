@@ -9,6 +9,7 @@ import FlaskApp.app.cross_docks_polling as cross_docks_polling
 
 @app.route("/")
 def homepage():
+    common.logger.debug('root of domain reached displaying : Nothing to see here')
     return "Nothing to see here"
 
 @app.route('/test',methods=['POST','GET'])
