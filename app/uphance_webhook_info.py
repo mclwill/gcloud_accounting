@@ -169,7 +169,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
             exec(mapping_code)
             #print('data[ci]',data[ci])    
         if len(error.keys()) > 0:
-            common.logger.warning('Log Warning Error for : '+ customer + '\nError info:' + stream_id + '\n' + str(error))
+            common.logger.info('Logger Info for : ' + customer + '\nError info:' + stream_id + '\n' + str(error) + '\n' + str(event_data))
         return create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
     else: #process loops
         loops_dict = {}
@@ -382,7 +382,7 @@ def remove_special_unicode_chars(obj):
             
 
 def uphance_process_webhook(customer,request):
-    global dbx, mapping_code, stream_id, request_dict
+    global dbx, mapping_code, stream_id, request_dict,error
     # Extract relevant data from the request payload
 
     mapping_code = ''
@@ -404,7 +404,8 @@ def uphance_process_webhook(customer,request):
             sendees = ['global'] #default to only global email recipients
             for stream_id in common.access_secret_version('customer_parameters',customer,'stream_errors_to_be_reported'):
                 if any(stream_id in string for string in error.keys()):
-                    sendees = ['global','customer'] 
+                    sendees = ['global','customer']
+            common.logger.debug('Sending error report to : ' + str(sendees))      
             common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
