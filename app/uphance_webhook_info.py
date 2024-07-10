@@ -133,6 +133,7 @@ def getQtyOrdered(event_data,index1,index2):
         return None
 
 def checkAddressForError(event_data):
+    global cc_codes_pd
     address_error = {}
     
     if ['event_data']['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
