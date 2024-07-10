@@ -104,7 +104,7 @@ def transfer_FTP(customer,file_name,file_data):
     
 
 def get_custom_file_format(customer,stream_id,ri):
-    return  custom_file_format_modules[customer].CD_file_format.get('stream_id',{}).get(ri,{}).get('mapping')  # see https://stackoverflow.com/questions/26979046/python-check-multi-level-dict-key-existence
+    return  custom_file_format_modules[customer].CD_file_format.get(stream_id,{}).get('mapping',{})  # see https://stackoverflow.com/questions/26979046/python-check-multi-level-dict-key-existence
 
 def create_field_line(field_str,field_list,mapping):
     #print(kwargs)
@@ -235,7 +235,7 @@ def process_all_record_indicators(customer,event_data,stream_id):
         new_file_data = process_record_indicator(customer,event_data,stream_id,ri,mapping)
         mapping = get_custom_file_format(customer,stream_id,ri) #get any custom mapping and override default if that is the case
         common.logger.debug('Logger Info for : ' + customer + '\nCustom Mapping Code for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping))
-        if mapping : 
+        if mapping['RECORD_INDICATOR']['Processing'] : 
             new_file_data = process_record_indicator(customer,event_data,stream_id,mapping)
             common.logger.debug('Logger Info for : ' + customer + '\nCustom File Data for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping) + '\nNew File Data : ' + new_file_data)
         file_data = file_data + new_file_data
