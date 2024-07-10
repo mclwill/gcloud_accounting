@@ -405,8 +405,12 @@ def uphance_process_webhook(customer,request):
             for stream_id in common.access_secret_version('customer_parameters',customer,'stream_errors_to_be_reported'):
                 if any(stream_id in string for string in error.keys()):
                     sendees = ['global','customer']
-            common.logger.debug('Sending error report to : ' + str(sendees))      
-            common.send_email(customer,0,'Error processing Uphance webhook','There was an error when processing information received from Uphance:\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
+            common.logger.debug('Sending error report to : ' + str(sendees)) 
+            if error['send_to_CD']:
+                error_message = 'There was an error when processing information received from Uphance - however the file was still sent to Cross Docks' 
+            else:
+               error_message = 'There was an error when processing information received from Uphance - the file was not sent to Cross Docks' 
+            common.send_email(customer,0,'Error processing Uphance webhook',error_message + '\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
     
