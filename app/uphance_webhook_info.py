@@ -406,7 +406,7 @@ def uphance_process_webhook(customer,request):
                 if any(stream_id in string for string in error.keys()):
                     sendees = ['global','customer']
             common.logger.debug('Sending error report to : ' + str(sendees))      
-            common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
+            common.send_email(customer,0,'Error processing Uphance webhook','There was an error when processing information received from Uphance:\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
     
