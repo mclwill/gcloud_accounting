@@ -141,7 +141,7 @@ def checkAddressForError(event_data):
             address['Aust State Error'] = 'Not in List of Abbreviations'
         if len(['event_code']['address']['postcode']) != 4:
             address['Aust Postcode Error'] = 'Wrong Length'
-    elif !country:
+    elif not country:
         address['Country Error'] = 'No Country'
     if !event_data['address']['city'] :
         address['City Error'] = 'No City'
