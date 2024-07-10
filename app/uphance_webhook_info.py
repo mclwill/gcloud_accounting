@@ -239,7 +239,7 @@ def process_all_record_indicators(customer,event_data,stream_id):
         common.logger.debug('Logger Info for : ' + customer + '\nCustom Mapping Code for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping))
         if len(mapping.keys()) > 0:
             if mapping['RECORD_INDICATOR']['Processing'] : 
-                new_file_data = process_record_indicator(customer,event_data,stream_id,mapping)
+                new_file_data = process_record_indicator(customer,event_data,stream_id,ri,mapping)
                 common.logger.debug('Logger Info for : ' + customer + '\nCustom File Data for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping) + '\nNew File Data : ' + new_file_data)
         file_data = file_data + new_file_data
     #print(file_data)
