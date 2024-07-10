@@ -131,16 +131,16 @@ def getQtyOrdered(event_data,index1,index2):
     else:
         return None
 
-def checkAddressForError(event_data,cc_codes_pd):
+def checkAddressForError(event_data):
     
     address_error = {}
     
-    if ['event_data']['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
+    if event_data['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
         country = cc_codes_pd.index[cc_codes_pd['Alpha-2 code'] == ['event_code']['address']['country']].to_list()[0]
     if country == 'Australia' :
-        if ['event_code']['address']['state'] not in ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] :
+        if event_data['address']['state'] not in ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] :
             address['Aust State Error'] = 'Not in List of Abbreviations'
-        if len(['event_code']['address']['postcode']) != 4:
+        if len(event_data['address']['postcode']) != 4:
             address['Aust Postcode Error'] = 'Wrong Length'
     elif not country:
         address['Country Error'] = 'No Country'
