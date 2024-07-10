@@ -143,7 +143,7 @@ def checkAddressForError(event_data):
             address['Aust Postcode Error'] = 'Wrong Length'
     elif not country:
         address['Country Error'] = 'No Country'
-    if !event_data['address']['city'] :
+    if not event_data['address']['city'] :
         address['City Error'] = 'No City'
     
     return address_error
