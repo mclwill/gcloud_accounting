@@ -131,8 +131,8 @@ def getQtyOrdered(event_data,index1,index2):
     else:
         return None
 
-def checkAddressForError(event_data):
-    cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
+def checkAddressForError(event_data,cc_codes_pd):
+    
     address_error = {}
     
     if ['event_data']['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
