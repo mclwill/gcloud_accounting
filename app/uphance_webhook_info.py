@@ -47,7 +47,6 @@ aemery_dbx_app_secret = 'in08qrhgq0qit5n'
 
 #dbx_folder = "/A.Emery/Wholesale/APIs (Anna's Dad)/Cross Docks Info/FTP_production_files/sent/"
 
-global cc_codes_pd
 cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
 
 
@@ -133,7 +132,7 @@ def getQtyOrdered(event_data,index1,index2):
         return None
 
 def checkAddressForError(event_data):
-    global cc_codes_pd
+    cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
     address_error = {}
     
     if ['event_data']['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
