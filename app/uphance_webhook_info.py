@@ -47,6 +47,7 @@ aemery_dbx_app_secret = 'in08qrhgq0qit5n'
 
 #dbx_folder = "/A.Emery/Wholesale/APIs (Anna's Dad)/Cross Docks Info/FTP_production_files/sent/"
 
+global cc_codes_pd
 cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
 
 
