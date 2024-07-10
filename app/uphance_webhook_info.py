@@ -131,6 +131,23 @@ def getQtyOrdered(event_data,index1,index2):
     else:
         return None
 
+def checkAddressForError(event_data):
+    address_error = {}
+    
+    if ['event_data']['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
+        country = cc_codes_pd.index[cc_codes_pd['Alpha-2 code'] == ['event_code']['address']['country']].to_list()[0]
+    if country == 'Australia' :
+        if ['event_code']['address']['state'] not in ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] :
+            address['Aust State Error'] = 'Not in List of Abbreviations'
+        if len(['event_code']['address']['postcode']) != 4:
+            address['Aust Postcode Error'] = 'Wrong Length'
+    elif !country:
+        address['Country Error'] = 'No Country'
+    if !event_data['address']['city'] :
+        address['City Error'] = 'No City'
+    
+    return address_error
+
 def process_record_indicator(customer,event_data,stream_id,ri,mapping):
     global mapping_code #so that can be displayed in exception logging
 
@@ -214,8 +231,10 @@ def process_all_record_indicators(customer,event_data,stream_id):
         mapping = file_format_GMcL.CD_file_format[stream_id][ri]['mapping']
         new_file_data = process_record_indicator(customer,event_data,stream_id,ri,mapping)
         mapping = get_custom_file_format(customer,stream_id,ri) #get any custom mapping and override default if that is the case
+        common.logger.debug('Logger Info for : ' + customer + '\nCustom Mapping Code for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping))
         if mapping : 
-            new_file_data = process_custom_record_indicator(customer,event_data,stream_id,mapping)
+            new_file_data = process_record_indicator(customer,event_data,stream_id,mapping)
+            common.logger.debug('Logger Info for : ' + customer + '\nCustom File Data for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping) + '\nNew File Data : ' + new_file_data)
         file_data = file_data + new_file_data
     #print(file_data)
     return file_data
