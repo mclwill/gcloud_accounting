@@ -136,7 +136,7 @@ def checkAddressForError(event_data):
     address_error = {}
     
     if event_data['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
-        country = cc_codes_pd.index[cc_codes_pd['Alpha-2 code'] == ['event_code']['address']['country']].to_list()[0]
+        country = cc_codes_pd.index[cc_codes_pd['Alpha-2 code'] == event_data['address']['country']].to_list()[0]
     else:
         country = event_data['address']['country']
     if country == 'Australia' :
