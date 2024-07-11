@@ -402,7 +402,7 @@ def uphance_process_webhook(customer,request):
             return
         else:
             sendees = ['global'] #default to only global email recipients
-            for stream_id in common.access_secret_version('customer_parameters',customer,'stream_errors_to_be_reported'):
+            for stream_id in common.access_secret_version('customer_parameters',customer,'errors_to_be_reported'):
                 if any(stream_id in string for string in error.keys()):
                     sendees = ['global','customer']
             common.logger.debug('Sending error report to : ' + str(sendees)) 
