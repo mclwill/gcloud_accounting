@@ -142,7 +142,7 @@ def checkAddressForError(event_data):
     else:
         country = event_data['address']['country']
     if country == 'Australia' :
-        if event_data['address']['state'].capitalize() not in ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] :
+        if event_data['address']['state'].upper() not in ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] :
             address_error['Aust State Error'] = 'Not in List of Abbreviations'
         if len(event_data['address']['postcode']) != 4:
             address_error['Aust Postcode Error'] = 'Wrong Length'
