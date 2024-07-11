@@ -55,6 +55,7 @@ import FlaskApp.app.secrets as secrets
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
+    #logger.debug('Secrets.py data: ' + str(attribute))
     if customer :
         secret = attribute[customer][parameter]
     else:
@@ -80,7 +81,6 @@ def json_load(file):
         return False
 
 def logging_initiate ():
-    global sender_pw
     global logger
 
     logger = logging.getLogger(__name__)
@@ -102,8 +102,7 @@ def logging_initiate ():
     
 
     logger.debug('Attempting to start SMTP logging')
-    if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('global_parameters',None,'email_pw')
+    sender_pw = access_secret_version('global_parameters',None,'email_pw')
     #logger.debug('Sender PW: ' + sender_pw)
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr=access_secret_version('global_parameters',None,'from_email'),
@@ -119,13 +118,10 @@ def logging_initiate ():
 
 
 def send_email(customer,email_counter,message_subject,message_text,dest_email):
-    global sender_pw
-    
-    if not sender_pw: #so only get pw once per session
-        sender_pw = access_secret_version('global_parameters',None,'email_pw')
-    
+
     email_counter += 1
-    sender_email = access_secret_version('global_parameters',None,'from_email')
+    sender_email = access_secret_version('customer_parameters',customer,'reporting_email')
+    sender_pw = access_secret_version('customer_parameters',customer,'reporting_email_pw')
  
     if email_counter < 0:
         logger.exception('Email counter below zero: ' + str(email_counter) + ' ' + message_subject + ' ' + message_text)
@@ -167,7 +163,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
             smtp_from = 'From: ' + access_secret_version('global_parameters',None,'from_name') + '<' + access_secret_version('global_parameters',None,'from_email') + '>\n'
 
             #Defining The Message 
-            message = smtp_from + "To:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + ' : ' + message_subject + '\n\n' + message_text
+            message = smtp_from + "To:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + '_Uphance Cross Docks message ' + message_subject + '\n\n' + message_text
 
             #Sending the Email
             smtp.sendmail(sender_email, receiver_email_address,message.encode('utf-8')) 
@@ -184,7 +180,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
             #logger.exception('send mail SMTP error',exc_info = True)
             if error_code == 421 : #try again after random time interval up to 5 seconds
                 time.sleep(random.random()*5)
-                send_email(email_counter,message_subject + ' depth: ' + str(email_counter),message_text,receiver_email_address)
+                send_email(customer,email_counter,message_subject + ' depth: ' + str(email_counter),message_text,receiver_email_address)
                 email_counter -= 1
                 return True
             logger.exception('send mail SMTP error',exc_info = True)
@@ -194,14 +190,14 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
         except Exception as ex:
             tb = traceback.format_exc()
             logger.error('Log Error: Other email exception')
-            logger.error('Log Error: Exception info:',ex)
-            logger.error(tb)
+            logger.error('Log Error: Exception info:'  + str(ex))
+            logger.error(str(tb))
             return False
 
 
     else: #too many active emails - wait after random time period to send again
         time.sleep(random.random()*5)
-        send_email(email_counter,message_subject + ' depth 5 or more: ' + str(email_counter),message_text,receiver_email_address)
+        send_email(customer,email_counter,message_subject + ' depth 5 or more: ' + str(email_counter),message_text,receiver_email_address)
         email_counter -= 1
         return False
 
@@ -337,9 +333,6 @@ def check_uphance_initiate():
 
 #initialise parameters
 
-#initial email settings
-sender_pw = False
-
 #initiate logging
 initiate_logging_done = False
 logger = False
@@ -371,6 +364,10 @@ check_uphance_initiate()
 cross_docks_info = {}
 for c in customers:
     cross_docks_info[c] = False
+    get_CD_FTP_credentials(c)
+
+
+
 
 
 

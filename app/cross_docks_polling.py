@@ -13,7 +13,6 @@ to_zone = tz.tzlocal()
 
 def get_pending_FTP_files(customer):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
-    common.logger.debug(str(cross_docks_info))
     try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
 
@@ -24,7 +23,7 @@ def get_pending_FTP_files(customer):
             rejected_files = ftp_host.listdir(ftp_host.curdir)
 
             if rejected_files:
-                common.send_email(customer,0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),"global")
+                common.send_email(customer,0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),['global'])
     
     except Exception as ex:
         common.logger.warning('Cross Docks Error on getting pending files for ' + customer + '\nException : ' + str(ex))
@@ -50,7 +49,7 @@ def get_data_FTP(customer,directory,f):
 
 def move_CD_file_FTP(customer,source,dest,f):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
-    '''try: 
+    try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
             with ftp_host.open(source + '/' + f,'rb') as source_obj:
                 with ftp_host.open(dest + '/' + f,'wb') as dest_obj:
@@ -63,7 +62,7 @@ def move_CD_file_FTP(customer,source,dest,f):
         return False
         
     return True
-    '''
+    
 
     common.logger.debug('CD file move for ' + customer + ' : ' + file)
 
@@ -71,7 +70,7 @@ def move_CD_file_FTP(customer,source,dest,f):
 def download_file_DBX(customer,file_data,file):
     
     dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/received/' + file
-    '''try:
+    try:
         with io.BytesIO(file_data.encode()) as stream:
             stream.seek(0)
             common.dbx.files_upload(stream.read(), dbx_file, mode=common.dropbox.files.WriteMode.overwrite)
@@ -82,7 +81,7 @@ def download_file_DBX(customer,file_data,file):
         tb = traceback.format_exc()
         common.logger.warning(tb)
         return False
-    '''
+    
     common.logger.debug('DBX download for ' + customer + ' : ' + file)
     
 def get_CD_parameter(data,ri,col_id):
@@ -104,7 +103,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
     
-    '''if api_type == 'post':
+    if api_type == 'post':
         response = requests.post(url,json = json,headers = common.uphance_headers[customer])
         common.logger.debug('Post ' + url)
     elif api_type == 'put':
@@ -125,9 +124,10 @@ def uphance_api_call(customer,api_type,**kwargs):
         common.logger.warning('Uphance ' + api_type + ' error for ' + customer)
         common.logger.warning(response.status_code)
         return False
-    '''
+    
 
-    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + url + '\n' + json)
+    #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
+    #return True
 
     
 def process_CD_file(customer,directory,f):
@@ -143,11 +143,11 @@ def process_CD_file(customer,directory,f):
         if order_id:
             url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
             #print(url)
-            if uphance_api_call('put',url=url) :
+            if uphance_api_call(customer,'put',url=url) :
                 common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                        'Input File: ' + f + '\n' +
                                                                                        data +\
-                                                                                       'URL: ' + url,"global")
+                                                                                       'URL: ' + url,['global'])
                 common.logger.debug('MO email sent')
             else:
                 error = True
@@ -204,7 +204,7 @@ def process_CD_file(customer,directory,f):
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
                                                                                            'Input File: ' + f + '\n' +
                                                                                            data +
-                                                                                           'URL: ' + url_tc + '\n' + url_ship,"global")
+                                                                                           'URL: ' + url_tc + '\n' + url_ship,['global'])
                         common.logger.debug('PC_email sent')
             else:
                 common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks file: ' + f + '\n' + \
@@ -213,12 +213,12 @@ def process_CD_file(customer,directory,f):
                                                              'Quantity Ordered:' + str(quantity_ordered) + '\n' + \
                                                              'Quantity Shipped: ' + str(quantity_shipped) + '\n' + \
                                                              'Variance: ' + str(variance) + '\n\n' + \
-                                                             'Data in CD file: \n' + data + '\n',["richard@aemery.com","global"])
+                                                             'Data in CD file: \n' + data + '\n',["richard@aemery.com",'global'])
                                                               
                 
                 common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' +
                                                                                'Input File: ' + f + '\n' +
-                                                                               data,"global")
+                                                                               data,['global'])
 
         else:
             error = True
@@ -230,10 +230,10 @@ def process_CD_file(customer,directory,f):
             if type(po_number) == list:
                 po_number = po_number[0]
 
-            common.send_email(customer,0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID:' + stream_id + '\n' +
-                                                                              'Purchase Order Number' + str(po_number) + '\n\n' +
+            common.send_email(customer,0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
+                                                                              'Purchase Order Number: ' + str(po_number) + '\n\n' +
                                                                                'Input File: ' + f + '\n' +
-                                                                               data,['customer',"global"])
+                                                                               data,['customer','global'])
             common.logger.debug('TP email sent')
         else:
             common.logger.warning('Failed to get Purchase Order Number from TP file. FileName = ' + f)
@@ -249,50 +249,54 @@ def process_CD_file(customer,directory,f):
     if error : 
         common.send_email(customer,0,'CD_FTP_Process_error','CD processing error (check Google Cloud logs):\nStream ID:' + stream_id + '\n' +
                                                                                'Input File: ' + f + '\n' +
-                                                                               data,"global")
+                                                                               data,['global'])
         common.logger.debug('Error email sent')
         return False #flag error
         
     return data
 
 def cross_docks_poll_FTP(customer):
-    proc_start_time = datetime.datetime.now()
+    try:
+        proc_start_time = datetime.datetime.now()
 
-    files = get_pending_FTP_files(customer) 
-    if files:
-        files.sort() #sort list so that MO files are done before PC files - this helps prevent subsequent pick_ticket_update events going back to CD
-        common.logger.debug('FTP files to be processed for ' + customer + ':\n' + str(files))
-        proc_max_files = 25
-        i = 0
-        proc_files = []
-        
-        for f in files:
-            common.logger.debug('Processing file: ' + f)
-            result = process_CD_file(customer,'out/pending',f)
-            if result:
-                common.logger.debug('Processing file for ' + customer + ' : ' + f)
-                if not download_file_DBX(customer,result,f):
-                    break #if get an error from Dropbox then break processing
-                if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
-                    break #if get an error from CD FTP then break processing
-                proc_files.append(f)
-            i += 1
-            if i >= proc_max_files:
-                break
+        files = get_pending_FTP_files(customer) 
+        if files:
+            files.sort() #sort list so that MO files are done before PC files - this helps prevent subsequent pick_ticket_update events going back to CD
+            common.logger.debug('FTP files to be processed for ' + customer + ':\n' + str(files))
+            proc_max_files = 100 #increased on 8th July in A.Emery Google Function - need to check timing on Google Cloud Engine
+            i = 0
+            proc_files = []
+            
+            for f in files:
+                common.logger.debug('Processing file: ' + f)
+                result = process_CD_file(customer,'out/pending',f)
+                if result:
+                    common.logger.debug('Processing file for ' + customer + ' : ' + f)
+                    if not download_file_DBX(customer,result,f):
+                        break #if get an error from Dropbox then break processing
+                    if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
+                        break #if get an error from CD FTP then break processing
+                    proc_files.append(f)
+                i += 1
+                if i >= proc_max_files:
+                    break
 
-        proc_end_time = datetime.datetime.now()
-        proc_elapsed_time = proc_end_time - proc_start_time
-        proc_info_str = 'CD Files Processed :\nNum Files : ' + str(i) + '\nStart Time (UTC): ' + proc_start_time.strftime("%H:%M:%S") + '\n' + \
-                        'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
-                        'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
-                        'Files Processed: ' + str(proc_files)
-        common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,'global')
-    else:
-        common.logger.debug('No files to process for ' + customer)
-        proc_end_time = datetime.datetime.now()
-        proc_elapsed_time = proc_end_time - proc_start_time
-        
-        common.send_email(customer,0,'CD Files Processed for ' + customer,'No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
+            proc_end_time = datetime.datetime.now()
+            proc_elapsed_time = proc_end_time - proc_start_time
+            proc_info_str = 'CD Files Processed :\nNum Files : ' + str(i) + '\nStart Time (UTC): ' + proc_start_time.strftime("%H:%M:%S") + '\n' + \
+                            'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
+                            'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
+                            'Files Processed: ' + str(proc_files)
+            common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,['global'])
+        else:
+            common.logger.debug('No files to process for ' + customer)
+            proc_end_time = datetime.datetime.now()
+            proc_elapsed_time = proc_end_time - proc_start_time
+            
+            common.send_email(customer,0,'CD Files Processed','No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
+    except Exception as e:
+        common.logger.exception('Exception message for : ' + customer + '\nError in Cross Docks Polling:\nException Info: ' + str(e))
+    
     
     
 def cross_docks_poll_request(customer):

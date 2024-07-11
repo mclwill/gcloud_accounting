@@ -87,15 +87,16 @@ cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',inde
 def transfer_FTP(customer,file_name,file_data):
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     try: 
-        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info[username], common.cross_docks_info[password]) as ftp_host:
-
+        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
+            common.logger.debug('CD credentials : '+ cross_docks_info['username'] + ':' + cross_docks_info['password'])
+            common.logger.debug('CD getcwd : ' + ftp_host.getcwd())
             ftp_host.chdir('in/pending')
             with ftp_host.open(file_name, "w", encoding="utf8") as fobj:
                 fobj.write(file_data)
     
     except Exception as ex:
         
-        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
+        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         return False
         
     common.logger.info('Logging Info for : ' + customer + "\nFile " + file_name + ' sent to FTP server')
@@ -103,7 +104,9 @@ def transfer_FTP(customer,file_name,file_data):
     
 
 def get_custom_file_format(customer,stream_id,ri):
-    return  custom_file_format_modules[customer].CD_file_format.get('stream_id',{}).get(ri,{}).get('mapping')  # see https://stackoverflow.com/questions/26979046/python-check-multi-level-dict-key-existence
+    common.logger.debug(custom_file_format_modules[customer].CD_file_format[stream_id][ri])
+
+    return  custom_file_format_modules[customer].CD_file_format.get(stream_id,{}).get(ri,{}).get('mapping',{})  # see https://stackoverflow.com/questions/26979046/python-check-multi-level-dict-key-existence
 
 def create_field_line(field_str,field_list,mapping):
     #print(kwargs)
@@ -130,6 +133,26 @@ def getQtyOrdered(event_data,index1,index2):
     else:
         return None
 
+def checkAddressForError(event_data):
+    
+    address_error = {}
+    
+    if event_data['address']['country'] in cc_codes_pd['Alpha-2 code'].to_list() : #country codes with 2 letters
+        country = cc_codes_pd.index[cc_codes_pd['Alpha-2 code'] == event_data['address']['country']].to_list()[0]
+    else:
+        country = event_data['address']['country']
+    if country == 'Australia' :
+        if event_data['address']['state'].capitalize() not in ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] :
+            address_error['Aust State Error'] = 'Not in List of Abbreviations'
+        if len(event_data['address']['postcode']) != 4:
+            address_error['Aust Postcode Error'] = 'Wrong Length'
+    elif not country:
+        address_error['Country Error'] = 'No Country'
+    if not event_data['address']['city'] :
+        address_error['City Error'] = 'No City'
+    
+    return address_error
+
 def process_record_indicator(customer,event_data,stream_id,ri,mapping):
     global mapping_code #so that can be displayed in exception logging
 
@@ -146,7 +169,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
             exec(mapping_code)
             #print('data[ci]',data[ci])    
         if len(error.keys()) > 0:
-            common.logger.warning('Log Warning Error for : '+ customers + '\nError info:',stream_id,error)
+            common.logger.info('Logger Info for : ' + customer + '\nError info:' + stream_id + '\n' + str(error) + '\n' + str(event_data))
         return create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
     else: #process loops
         loops_dict = {}
@@ -199,7 +222,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
                 if not blank_line[0]: #blank line set in code for field
                     multi_line = multi_line + create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
         if len(error.keys()) > 0:
-            common.logger.warning('Logger Warning Error for : ' + customer + '\nError info:',stream_id,error)
+            common.logger.info('Logger Info for : ' + customer + '\nError info:' + stream_id + '\n' + str(error) + '\n' + str(event_data))
         return multi_line
     
 def process_all_record_indicators(customer,event_data,stream_id):
@@ -213,32 +236,42 @@ def process_all_record_indicators(customer,event_data,stream_id):
         mapping = file_format_GMcL.CD_file_format[stream_id][ri]['mapping']
         new_file_data = process_record_indicator(customer,event_data,stream_id,ri,mapping)
         mapping = get_custom_file_format(customer,stream_id,ri) #get any custom mapping and override default if that is the case
-        if mapping : 
-            new_file_data = process_custom_record_indicator(customer,event_data,stream_id,mapping)
+        common.logger.debug('Logger Info for : ' + customer + '\nCustom Mapping Code for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping))
+        if len(mapping.keys()) > 0:
+            if mapping['RECORD_INDICATOR']['Processing'][0] : 
+                new_file_data = process_record_indicator(customer,event_data,stream_id,ri,mapping)
+                common.logger.debug('Logger Info for : ' + customer + '\nCustom File Data for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping) + '\nNew File Data : ' + new_file_data)
         file_data = file_data + new_file_data
     #print(file_data)
     return file_data
     #print('Error info2:',error,error.keys(),len(error.keys()))
     
 def process_file(customer,file_data,file_name):
-    
+    global error
     #common.get_CD_FTP_credentials(customer)
     common.dropbox_initiate()
 
-    '''dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + file_name
+    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/sent/' + file_name
     with io.BytesIO(file_data.encode()) as stream:
         stream.seek(0)
 
         common.dbx.files_upload(stream.read(), dbx_file, mode=common.dropbox.files.WriteMode.overwrite)
-    '''
-    common.logger.debug('dummy Dropbox Transfer')
+    
+    common.logger.debug('Dropbox Transfer')
 
     if len(error.keys()) == 0 : #no errors reported so send to Cross Docks
-        #transfer_FTP(customer,file_name,file_data)
-        common.logger.debug('dummy transfer_FTP 1')
+        if transfer_FTP(customer,file_name,file_data):
+            common.logger.debug('transfer_FTP 1')
+        else:
+            error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
+            common.logger.warning('transfer_FTP error for file: ' + file_name)
     elif error['send_to_CD'] :
-        #transfer_FTP(customer,file_name,file_data)
-        common.logger.debug('dummy transfer_FTP 2')
+        if transfer_FTP(customer,file_name,file_data):
+            common.logger.debug('transfer_FTP 2')
+        else:
+            error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
+            common.logger.warning('transfer_FTP error for file: ' + file_name)
+        
 
     
 def process_pick_ticket(customer,event_data):
@@ -256,30 +289,62 @@ def process_pick_ticket(customer,event_data):
     else:
         return "Not Sent to Cross Docks - Already in Packing State"
 
+def process_pick_ticket_delete(customer,event_data):
+    
+    #need to send to CD regardless of packing state as unable to check state as pick ticket has been deleted.
+    event_id = event_data['id']
+    
+    stream_id = 'OR'
+    event_id = event_data['id']
+
+    CD_code = access_secret_version('customer_parameters',customer,'CD_customer_code')
+
+    file_data = 'HD|'+CD_code+'|OR\nOR1|D|' + str(event_id) + '\n'#special short code to delete order before packing
+    file_name = stream_id + datetime.now().strftime("%Y%m%dT%H%M%S") + '_' + str(event_id).zfill(4) + '_' + 'pick_ticket_delete' + '.csv'
+    process_file(customer,file_data,file_name)
+    return file_data
+
 def process_product_update(customer,event_data):
     stream_id = 'IT'
     event_id = event_data['id']
     event_date = str(datetime.now().strftime("%Y%m%dT%H%M%S"))
     event_name = event_data['name']
     file_data = process_all_record_indicators(customer,event_data,stream_id)
-    file_name = stream_id + event_date + '_' + str(event_id) + '_' + event_name + '.csv'
+    file_name = stream_id + event_date + '_' + str(event_id) + '_' + event_name.replace('/','_').replace(' ','_') + '.csv'
     if len(file_data.split('\n')) > 2 : #then not an empty CD file
         process_file(customer,file_data,file_name)
     else:
-        common.logger.info('Logger Info for :' + customer + '\nFile not sent to CD as no IT records\n',file_data)
+        common.logger.info('Logger Info for :' + customer + '\nFile not sent to CD as no IT records\n' + file_data + '\n' + str(event_data))
     
     return file_data
 
 def process_production_order(customer,event_data):
     global stream_id
-    stream_id = 'PT'
-    event_id = str(event_data['production_order_number'])
-    event_date = str(datetime.strptime(event_data['updated_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=from_zone).astimezone(to_zone).strftime("%Y%m%dT%H%M%S"))
-    event_name = event_data['vendor'] + '_' + event_data['delivery_name']
-    file_data = process_all_record_indicators(customer,event_data,stream_id)
-    file_name = stream_id + event_date + '_' + str(event_id) +'_' + event_name + '.csv'
-    process_file(customer,file_data,file_name)
+    if event_data['status'] != 'checked in':
+        stream_id = 'PT'
+        event_id = str(event_data['production_order_number'])
+        event_date = str(datetime.strptime(event_data['updated_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=from_zone).astimezone(to_zone).strftime("%Y%m%dT%H%M%S"))
+        event_name = event_data['vendor'] + '_' + event_data['delivery_name']
+        file_data = process_all_record_indicators(customer,event_data,stream_id)
+        file_name = stream_id + event_date + '_' + str(event_id) +'_' + event_name.replace('/','_').replace(' ','_') + '.csv'
+        process_file(customer,file_data,file_name)
+        return file_data
+    else:
+        return "Not Sent to Cross Docks - Already Checked In"
+
+def process_production_order_delete(customer,event_data):
     
+    #need to send to CD regardless of packing state as unable to check state as pick ticket has been deleted.
+    event_id = event_data['id']
+    
+    stream_id = 'PT'
+    event_id = event_data['id']
+
+    CD_code = access_secret_version('customer_parameters',customer,'CD_customer_code')
+
+    file_data = 'HD|'+CD_code+'|PT\nPT1|D|' + str(event_id) + '\n'#special short code to delete order before packing
+    file_name = stream_id + datetime.now().strftime("%Y%m%dT%H%M%S") + '_' + str(event_id).zfill(4) + '_' + 'receiving_ticket_delete' + '.csv'
+    process_file(customer,file_data,file_name)
     return file_data
 
 def process_uphance_event(customer,event_dict) :
@@ -289,6 +354,9 @@ def process_uphance_event(customer,event_dict) :
     if (event_dict['event'] == 'pick_ticket_create') or (event_dict['event'] == 'pick_ticket_update'):
         return process_pick_ticket(customer,event_dict['pick_ticket'])
     
+    elif (event_dict['event'] == 'pick_ticket_delete'):
+        return process_pick_ticket_delete(event_dict['pick_ticket'])
+
     elif (event_dict['event'] == 'product_create') or (event_dict['event'] == 'product_update'):
         return process_product_update(customer,event_dict['product'])   
     
@@ -296,7 +364,10 @@ def process_uphance_event(customer,event_dict) :
         return process_production_order(customer,event_dict['receiving_ticket'])
     
     elif event_dict['event'] == 'receiving_ticket_create':
-        return process_production_order(customer,event_dict['receiving_ticket'])  
+        return process_production_order(customer,event_dict['receiving_ticket']) 
+
+    elif event_dict['event'] == 'receiving_ticket_delete':
+        return process_production_order_delete(customer,event_dict['receiving_ticket'])    
         
     return "NULL"
 
@@ -311,7 +382,7 @@ def remove_special_unicode_chars(obj):
             
 
 def uphance_process_webhook(customer,request):
-    global dbx, mapping_code, stream_id
+    global dbx, mapping_code, stream_id, request_dict,error
     # Extract relevant data from the request payload
 
     mapping_code = ''
@@ -327,22 +398,30 @@ def uphance_process_webhook(customer,request):
         request_dict = remove_special_unicode_chars(request_dict)
         data_str = process_uphance_event(customer,request_dict)
         if len(error.keys()) == 0:
-            common.send_email(customer,0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global','customer'])
+            common.send_email(customer,0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
+            return
         else:
-            common.send_email(customer,0,'Uphance_webhook_error','Uphance processing complete:\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global','customer'])
+            sendees = ['global'] #default to only global email recipients
+            for stream_id in common.access_secret_version('customer_parameters',customer,'stream_errors_to_be_reported'):
+                if any(stream_id in string for string in error.keys()):
+                    sendees = ['global','customer']
+            common.logger.debug('Sending error report to : ' + str(sendees)) 
+            if error['send_to_CD']:
+                error_message = 'There was an error when processing information received from Uphance - however the file was still sent to Cross Docks' 
+            else:
+               error_message = 'There was an error when processing information received from Uphance - the file was not sent to Cross Docks' 
+            common.send_email(customer,0,'Error processing Uphance webhook',error_message + '\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
     except Exception as e:
-        common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict))
+        common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
     
 
-
-
-#@functions_framework.http
 def uphance_prod_webhook(customer,request):
     #assume all good to respond with HTTP 200 response
     #x = threading.Thread (target = uphance_process_webhook,args=(request,))
     #x.start()
     #common.initialise_exception_logging()
+    common.logger.debug(customer + '\n' + str(request))
     uphance_process_webhook(customer,request)
     return '200'  #need string to give HTTP 200 response
 
-#uphance_test_webhook(CD_ff.CD_test_request)
+
