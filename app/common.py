@@ -77,7 +77,7 @@ def json_load(file):
         with open('/var/www/FlaskApp/FlaskApp/app/' + file) as infile:
             return json.load(infile)
     except FileNotFoundError as fnf_error:
-        logger.debug(str(fnf_error))
+        logger.warning(str(fnf_error))
         return False
 
 def logging_initiate ():
@@ -114,7 +114,7 @@ def logging_initiate ():
     smtp_handler.setFormatter(format)
     logger.addHandler(smtp_handler)
 
-    logger.info('Cross Docks - Uphance API: Logging started for File, Stream and SMTP logging')
+    logger.debug('Cross Docks - Uphance API: Logging started for File, Stream and SMTP logging')
 
 
 def send_email(customer,email_counter,message_subject,message_text,dest_email):
@@ -259,7 +259,7 @@ def uphance_check_token_status(customer):
                          'grant_type' : 'password'}
         try: 
             response = requests.post(uphance_token_url,json = uphance_get_token,headers = uphance_headers)
-            logger.debug('token after request' + str(response.json()))
+            #logger.debug('token after request' + str(response.json()))
             if response.status_code == 200:
                 logger.info('New token fetched for ' + customer)
                 if not uphance_access_token : #dict doesn't exist so need to create it
@@ -290,7 +290,7 @@ def uphance_initiate(customer:str, **kwargs):
                 response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
         
                 if response.status_code == 201:
-                    logger.info('Uphance initiated for ' + customer + '\nUphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
+                    logger.info('\nLogger Info for ' + customer + '\nUphance initiated for ' + customer + '\nUphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
                     logger.debug(response.json())
                     return True
                 else:
