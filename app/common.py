@@ -242,7 +242,7 @@ def uphance_check_token_status(customer):
                 uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
                 td = uphance_expires - datetime.now()
                 if td.days < 30 :
-                    send_email(0,'Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days\nGetting new access token',['global'])
+                    logger.info('Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days' + ' for ' + customer + '\nGetting new access token')
                     uphance_token_refresh = True
             else:
                 uphance_token_refresh = True
@@ -266,6 +266,7 @@ def uphance_check_token_status(customer):
                     uphance_access_token = {}
                 uphance_access_token[customer] = response.json()
                 json_dump('uphance_access_tokens.json',uphance_access_token)
+                logger.info('Uphance access token renewed for ' + customer)
             else:
                 logger.warning('Problem getting new access token for Uphance for '+ customer + ' : Response Status Code = ' + str(response.status_code))
                 return False
