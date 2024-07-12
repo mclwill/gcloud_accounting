@@ -5,7 +5,8 @@ from dateutil import tz
 import ftputil
 import requests
 import traceback
-from tabulate import tabulate
+#from tabulate import tabulate
+from prettytable import PrettyTable
 
 import FlaskApp.app.common as common 
 
@@ -209,20 +210,19 @@ def process_CD_file(customer,directory,f):
                         common.logger.debug('PC_email sent')
             else:
                 variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
+                
+                variance_msg = PrettyTable()
+                variance_msg.field_names = ["Barcode","Qty Ordered","Qty Shipped","Variance"]
 
-                variance_table = []
-                variance_table.append(["Barcode","Qty Ordered","Qty Shipped","Variance"])
                 for i in range(len(variance_idx)):
-                    variance_table.append([products[variance_idx[i]],quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
+                    variance_msg.add.row([products[variance_idx[i]],quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
 
-                variance_msg = tabulate(variance_table,headers='firstrow',tablefmt='fancy_grid')
-
-                common.logger.debug(str(variance_msg))
+                common.logger.debug(variance_msg.get_string())
 
                 common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
                                                              'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
                                                              'Cross Docks file: ' + f + '\n\n' + \
-                                                             str(variance_msg) + '\n\n',['global'])
+                                                             variance_msg.get_string() + '\n\n',['global'])
                                                              #'Data in CD file: \n' + data + '\n''',['global'])
                                                               
                 
