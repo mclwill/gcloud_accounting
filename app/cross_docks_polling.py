@@ -225,7 +225,7 @@ def process_CD_file(customer,directory,f):
                                                              'Cross Docks file: ' + f + '\n\n' + \
                                                              'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
                                                              'The following items contain a shipping variance\n\n' + \
-                                                             variance_msg + '\n\n',['global'])
+                                                             variance_msg + '\n\n',['customer','global'])
                                                              #'Data in CD file: \n' + data + '\n''',['global'])
                                                               
                 
