@@ -161,7 +161,8 @@ def process_CD_file(customer,directory,f):
         order_id = get_CD_parameter(data_lines,'OS1',2)
         tracking = get_CD_parameter(data_lines,'OS1',19)
         carrier = get_CD_parameter(data_lines,'OS1',12)
-        
+        uphance_ord_no = get_CD_parameter(data_lines,'OS1',13)
+
         products = get_CD_parameter(data_lines,'OS2',2)
         if type(products) == str:
             products = [products]
@@ -222,6 +223,8 @@ def process_CD_file(customer,directory,f):
                 common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
                                                              'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
                                                              'Cross Docks file: ' + f + '\n\n' + \
+                                                             'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
+                                                             'The following items contain a shipping variance\n\n' + \
                                                              variance_msg.get_string() + '\n\n',['global'])
                                                              #'Data in CD file: \n' + data + '\n''',['global'])
                                                               
