@@ -215,7 +215,7 @@ def process_CD_file(customer,directory,f):
                 for i in range(len(variance_idx)):
                     variance_table.append([products[variance_idx[i]],quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
 
-                variance_msg = tabulate(variance_table)
+                variance_msg = tabulate(variance_table,headers='firstrow')
 
                 common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
                                                              'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n' + \
