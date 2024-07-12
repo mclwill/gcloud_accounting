@@ -231,7 +231,7 @@ def process_CD_file(customer,directory,f):
                 
                 common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' + \
                                                                                'Input File: ' + f + '\n' + \
-                                                                               'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \ 
+                                                                               'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
                                                                                data,['global'])
 
         else:
