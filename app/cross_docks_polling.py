@@ -208,7 +208,7 @@ def process_CD_file(customer,directory,f):
                                                                                            'URL: ' + url_tc + '\n' + url_ship,['global'])
                         common.logger.debug('PC_email sent')
             else:
-                variance_idx = [i for i in range(len(variance)) if variance[i] != 0]
+                variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
 
                 variance_table = []
                 variance_table.append(["Barcode","Qty Ordered","Qty Shipped","Variance"])
