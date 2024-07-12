@@ -221,7 +221,7 @@ def process_CD_file(customer,directory,f):
                                                              'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n' + \
                                                              'Cross Docks file: ' + f + '\n' + \
                                                              variance_msg + '\n\n' + \
-                                                             'Data in CD file: \n' + data + '\n',['customer','global'])
+                                                             'Data in CD file: \n' + data + '\n',['global'])
                                                               
                 
                 common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' +
