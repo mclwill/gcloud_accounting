@@ -5,7 +5,7 @@ from dateutil import tz
 import ftputil
 import requests
 import traceback
-from tablulate import tabluate
+from tabulate import tabluate
 
 import FlaskApp.app.common as common 
 
