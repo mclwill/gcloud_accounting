@@ -211,7 +211,7 @@ def process_CD_file(customer,directory,f):
                 variance_idx = [i for i in range(len(variance)) if variance[i] != 0]
 
                 variance_table = []
-                variance_table[0] = ["Barcode","Qty Ordered","Qty Shipped","Variance"]
+                variance_table.append(["Barcode","Qty Ordered","Qty Shipped","Variance"])
                 for i in range(len(variance_idx)):
                     variance_table.append([products[variance_idx[i]],quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
 
