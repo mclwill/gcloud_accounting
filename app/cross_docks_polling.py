@@ -215,7 +215,7 @@ def process_CD_file(customer,directory,f):
                 variance_msg.field_names = ["Barcode","Qty Ordered","Qty Shipped","Variance"]
 
                 for i in range(len(variance_idx)):
-                    variance_msg.add.row([products[variance_idx[i]],quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
+                    variance_msg.add_row([products[variance_idx[i]],quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
 
                 common.logger.debug(variance_msg.get_string())
 
