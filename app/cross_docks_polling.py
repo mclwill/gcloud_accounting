@@ -217,12 +217,12 @@ def process_CD_file(customer,directory,f):
 
                 variance_msg = tabulate(variance_table,headers='firstrow',tablefmt='fancy_grid')
 
-                common.logger.debug(variance_msg)
+                common.logger.debug(str(variance_msg))
 
                 common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
                                                              'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
                                                              'Cross Docks file: ' + f + '\n\n' + \
-                                                             variance_msg + '\n\n',['global'])
+                                                             str(variance_msg) + '\n\n',['global'])
                                                              #'Data in CD file: \n' + data + '\n''',['global'])
                                                               
                 
