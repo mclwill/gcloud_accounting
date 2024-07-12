@@ -213,7 +213,7 @@ def process_CD_file(customer,directory,f):
                                                              'Quantity Ordered:' + str(quantity_ordered) + '\n' + \
                                                              'Quantity Shipped: ' + str(quantity_shipped) + '\n' + \
                                                              'Variance: ' + str(variance) + '\n\n' + \
-                                                             'Data in CD file: \n' + data + '\n',["richard@aemery.com",'global'])
+                                                             'Data in CD file: \n' + data + '\n',['global'])
                                                               
                 
                 common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' +
