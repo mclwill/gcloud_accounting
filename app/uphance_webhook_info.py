@@ -99,7 +99,7 @@ def transfer_FTP(customer,file_name,file_data):
         common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         return False
         
-    common.logger.info('\nLogging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
+    common.logger.debug('\nLogging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
     return True
     
 
@@ -355,7 +355,7 @@ def process_uphance_event(customer,event_dict) :
         return process_pick_ticket(customer,event_dict['pick_ticket'])
     
     elif (event_dict['event'] == 'pick_ticket_delete'):
-        return process_pick_ticket_delete(event_dict['pick_ticket'])
+        return process_pick_ticket_delete(customer,event_dict['pick_ticket'])
 
     elif (event_dict['event'] == 'product_create') or (event_dict['event'] == 'product_update'):
         return process_product_update(customer,event_dict['product'])   

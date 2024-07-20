@@ -6,7 +6,6 @@ import ftputil
 import requests
 import traceback
 from tabulate import tabulate
-#from prettytable import PrettyTable
 
 import FlaskApp.app.common as common 
 
