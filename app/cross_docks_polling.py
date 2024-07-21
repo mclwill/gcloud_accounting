@@ -161,6 +161,13 @@ def process_CD_file(customer,directory,f):
         tracking = get_CD_parameter(data_lines,'OS1',19)
         carrier = get_CD_parameter(data_lines,'OS1',12)
         uphance_ord_no = get_CD_parameter(data_lines,'OS1',13)
+        ship_to_name = get_CD_parameter(data_lines,'OS1',6)
+        ship_to_address_1 = get_CD_parameter(data_lines,'OS1',7)
+        ship_to_address_2 = get_CD_parameter(data_lines,'OS1',8)
+        ship_to_city = get_CD_parameter(data_lines,'OS1',9)
+        ship_to_state = get_CD_parameter(data_lines,'OS1',10)
+        ship_to_postcode = get_CD_parameter(data_lines,'OS1',11)
+        ship
 
         products = get_CD_parameter(data_lines,'OS2',2)
         if type(products) == str:
@@ -223,6 +230,12 @@ def process_CD_file(customer,directory,f):
                                                              'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
                                                              'Cross Docks file: ' + f + '\n\n' + \
                                                              'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
+                                                             'Ship to Name: ' + str(ship_to_name) + '\n' + \
+                                                             'Ship to Address 1: ' + str(ship_to_address_1) + '\n' + \
+                                                             'Ship to Address 2: ' + str(ship_to_address_1) + '\n' + \
+                                                             'Ship to City: ' + str(ship_to_city) + '\n' + \
+                                                             'Ship to State: ' + str(ship_to_state) + '\n' + \
+                                                             'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
                                                              'The following items contain a shipping variance\n\n' + \
                                                              variance_msg + '\n\n',['customer','global'])
                                                              #'Data in CD file: \n' + data + '\n''',['global'])
