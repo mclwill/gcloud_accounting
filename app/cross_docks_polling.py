@@ -167,7 +167,6 @@ def process_CD_file(customer,directory,f):
         ship_to_city = get_CD_parameter(data_lines,'OS1',9)
         ship_to_state = get_CD_parameter(data_lines,'OS1',10)
         ship_to_postcode = get_CD_parameter(data_lines,'OS1',11)
-        ship
 
         products = get_CD_parameter(data_lines,'OS2',2)
         if type(products) == str:
