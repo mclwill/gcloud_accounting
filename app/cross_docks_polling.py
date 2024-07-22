@@ -214,6 +214,7 @@ def process_CD_file(customer,directory,f):
                     if result == '404':
                         error['PC'] = result
                         error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        error['Process File'] = True
                         common.logger.warning(customer + '\n\n' + str(error))                                         
                 if len(error.keys()) == 0 :
                     url_ship = url + '/ship'    
@@ -221,6 +222,7 @@ def process_CD_file(customer,directory,f):
                     if result:
                         error['PC'] = result
                         error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        error['Process File'] = True
                         common.logger.warning(customer + '\n\n' + str(error))   
                     if not result :
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
@@ -295,9 +297,13 @@ def process_CD_file(customer,directory,f):
         if 'Error Email Text' in error:
             email_text = email_text + str(error['Error Email Text'])
         email_text = email_text + '\n\nInput File: ' + f + '\n' + data
-        common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global','customer'])
+        common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global'])
         common.logger.debug('Error email sent')
-        return False #flag error
+        if 'Process File' in error:
+            if error['Process File']:  #if true then process file anyway to avoid repeated error messages
+                return data 
+            else:
+                return False #flag error
         
     return data
 
