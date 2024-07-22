@@ -219,7 +219,7 @@ def process_CD_file(customer,directory,f):
                 if len(error.keys()) == 0 :
                     url_ship = url + '/ship'    
                     result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
-                    if result 
+                    if result:
                         error['PC'] = result
                         error[]'Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         common.logger.warning(customer + '\n\n' + str(error))   
