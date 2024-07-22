@@ -101,6 +101,7 @@ def get_CD_parameter(data,ri,col_id):
     return info
 
 def uphance_api_call(customer,api_type,**kwargs):
+    return_error = False
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
     
@@ -115,16 +116,17 @@ def uphance_api_call(customer,api_type,**kwargs):
         common.logger.debug('Get ' + url)
     else:
         common.logger.warning('Error in api_type: ' + api_type)
-        return False
+        return_error = 'Error in api_type'
+        return return_error
 
     if response.status_code == 200:
         common.logger.debug('Uphance ' + api_type + ' successful for ' + customer)
         common.logger.debug(response.json())
-        return response.json()
+        return return_error  #this should be a False
     else:
         common.logger.warning('Uphance ' + api_type + ' error for ' + customer)
         common.logger.warning(response.status_code)
-        return False
+        return str(response.status_code)
     
 
     #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
@@ -132,7 +134,9 @@ def uphance_api_call(customer,api_type,**kwargs):
 
     
 def process_CD_file(customer,directory,f):
-    error = False
+    global error
+
+    error = {}
     data = get_data_FTP(customer,directory,f)
     data_lines = data.split('\n')
     stream_id = get_CD_parameter(data_lines,'HD',3)
@@ -144,16 +148,21 @@ def process_CD_file(customer,directory,f):
         if order_id:
             url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
             #print(url)
-            if uphance_api_call(customer,'put',url=url) :
+            result = uphance_api_call(customer,'put',url=url)
+            if not result :
                 common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                        'Input File: ' + f + '\n' +
                                                                                        data +\
                                                                                        'URL: ' + url,['global'])
                 common.logger.debug('MO email sent')
             else:
-                error = True
+                error['MO'] = result
+                error['Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                common.logger.warning(str(error)) 
         else:
-            error = True
+            error['MO'] = True
+            error['Error Email Text'] = 'Unable to retrieve order number from Cross Docks info'
+            common.logger.warning(customer + '\n\n' + str(error)) 
             
     elif stream_id == 'PC' :  #confirmation of shipping by Cross Docks
         short_shipped = False
@@ -202,13 +211,19 @@ def process_CD_file(customer,directory,f):
                     url_tc = url_tc + 'carrier=' + carrier + '&'
                 if tracking or carrier :
                     url_tc = url_tc[0:-1] #remove last &
-                    if not uphance_api_call(customer,'put',url=url_tc):
-                        error = True                                           
-                if not error :
+                    result = uphance_api_call(customer,'put',url=url_tc)
+                    if result:
+                        error['PC'] = result
+                        error{'Error Email Text'} = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        common.logger.warning(customer + '\n\n' + str(error))                                         
+                if len(error.keys()) == 0 :
                     url_ship = url + '/ship'    
-                    if not uphance_api_call(customer,'put',url=url_ship): #send api call to mark status as 'ship' must be done after tracking or carrier info
-                        error = True
-                    if not error :
+                    result = uphance_api_call(customer,'put',url=url_ship): #send api call to mark status as 'ship' must be done after tracking or carrier info
+                    if result 
+                        error['PC'] = result
+                        error{'Error Email Text'} = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        common.logger.warning(customer + '\n\n' + str(error))   
+                    if not result :
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
                                                                                            'Input File: ' + f + '\n' +
                                                                                            data +
@@ -246,8 +261,9 @@ def process_CD_file(customer,directory,f):
                                                                                data,['global'])
 
         else:
-            error = True
-    
+            error['PC'] = True
+            error['Error Email Text'] = ' Unable to retrieve order number from Cross Docks info'
+            common.logger.warning(customer + '\n\n' + str(error))
     
     elif stream_id == 'TP' : #Purchase order return file
         po_number = get_CD_parameter(data_lines,'TP',2)
@@ -261,18 +277,23 @@ def process_CD_file(customer,directory,f):
                                                                                data,['customer','global'])
             common.logger.debug('TP email sent')
         else:
-            common.logger.warning('Failed to get Purchase Order Number from TP file. FileName = ' + f)
-            
-
+            error['TP'] = True
+            error['Error Email Text'] = 'Unable to retrieve purchase order number from Cross Docks info'
+            common.logger.warning(customer + '\n\n' + 'Failed to get Purchase Order Number from TP file. FileName = ' + f + '\n\n' + str(error))
     
     elif stream_id == 'RJ' : #file rejected by Cross Docks
-        error = True
+        error['RJ'] = True
+        error['Error Email Text'] = 'Cross Docks sent RJ file'
+        common.logger.warning(customer + '\n\n' + 'Cross Docks sent RJ File. FileName = ' + f + '\n\n' + str(error))
         
     else:
-        error = True
+        error['Unknown Stream ID'] = True
+        error['Error Email Text'] = 'Cross Docks sent unknown Stream ID in file'
+        common.logger.warning(customer + '\n\n' + 'Cross Docks sent unknown Stream ID in file. FileName = ' + f + '\n\n' + str(error))
         
-    if error : 
-        common.send_email(customer,0,'CD_FTP_Process_error','CD processing error (check Google Cloud logs):\nStream ID:' + stream_id + '\n' +
+    if len(error.keys()) > 0 : 
+        common.send_email(customer,0,'CD_FTP_Process_error','CD processing error (check Google Cloud logs):\nStream ID:' + stream_id + '\n\n' +
+                                                                               'Error Info: ' + str(error)
                                                                                'Input File: ' + f + '\n' +
                                                                                data,['global'])
         common.logger.debug('Error email sent')
