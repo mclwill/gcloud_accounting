@@ -124,8 +124,7 @@ def uphance_api_call(customer,api_type,**kwargs):
         common.logger.debug(response.json())
         return return_error  #this should be a False
     else:
-        common.logger.warning('Uphance ' + api_type + ' error for ' + customer)
-        common.logger.warning(response.status_code)
+        common.logger.warning('Uphance ' + api_type + ' error for ' + customer + '\n\nResponse Status Code' + str(response.status_code))
         return str(response.status_code)
     
 
@@ -212,16 +211,16 @@ def process_CD_file(customer,directory,f):
                 if tracking or carrier :
                     url_tc = url_tc[0:-1] #remove last &
                     result = uphance_api_call(customer,'put',url=url_tc)
-                    if result:
+                    if result == '404':
                         error['PC'] = result
-                        error['Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         common.logger.warning(customer + '\n\n' + str(error))                                         
                 if len(error.keys()) == 0 :
                     url_ship = url + '/ship'    
                     result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
                     if result:
                         error['PC'] = result
-                        error['Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         common.logger.warning(customer + '\n\n' + str(error))   
                     if not result :
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
@@ -293,7 +292,7 @@ def process_CD_file(customer,directory,f):
         
     if len(error.keys()) > 0 : 
         common.send_email(customer,0,'CD_FTP_Process_error','CD processing error (check Google Cloud logs):\nStream ID:' + stream_id + '\n\n' +
-                                                                               'Error Info: ' + str(error) +
+                                                                               'Error Info: ' + str(error) + '\n\n' + 
                                                                                'Input File: ' + f + '\n' +
                                                                                data,['global'])
         common.logger.debug('Error email sent')
