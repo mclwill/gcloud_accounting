@@ -124,7 +124,7 @@ def uphance_api_call(customer,api_type,**kwargs):
         common.logger.debug(response.json())
         return return_error  #this should be a False
     else:
-        common.logger.warning('Uphance ' + api_type + ' error for ' + customer + '\n\nResponse Status Code' + str(response.status_code))
+        common.logger.warning('Uphance ' + api_type + ' error for ' + customer + '\nURL: ' + url + '\nResponse Status Code: ' + str(response.status_code))
         return str(response.status_code)
     
 
@@ -291,10 +291,11 @@ def process_CD_file(customer,directory,f):
         common.logger.warning(customer + '\n\n' + 'Cross Docks sent unknown Stream ID in file. FileName = ' + f + '\n\n' + str(error))
         
     if len(error.keys()) > 0 : 
-        common.send_email(customer,0,'CD_FTP_Process_error','CD processing error (check Google Cloud logs):\nStream ID:' + stream_id + '\n\n' +
-                                                                               'Error Info: ' + str(error) + '\n\n' + 
-                                                                               'Input File: ' + f + '\n' +
-                                                                               data,['global'])
+        email_text = 'CD processing error :\nStream ID:' + stream_id + '\n\n'
+        if 'Error Email Text' in error:
+            email_text = email_text + str(error['Email Error Text'])
+        email_text = email_text + 'Input File: ' + f + '\n' + data
+        common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global'])
         common.logger.debug('Error email sent')
         return False #flag error
         
