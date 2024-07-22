@@ -297,7 +297,7 @@ def process_CD_file(customer,directory,f):
         if 'Error Email Text' in error:
             email_text = email_text + str(error['Error Email Text'])
         email_text = email_text + '\n\nInput File: ' + f + '\n' + data
-        common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global'])
+        common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global','customer'])
         common.logger.debug('Error email sent')
         if 'Process File' in error:
             if error['Process File']:  #if true then process file anyway to avoid repeated error messages
