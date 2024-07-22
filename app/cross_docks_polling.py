@@ -293,7 +293,7 @@ def process_CD_file(customer,directory,f):
         
     if len(error.keys()) > 0 : 
         common.send_email(customer,0,'CD_FTP_Process_error','CD processing error (check Google Cloud logs):\nStream ID:' + stream_id + '\n\n' +
-                                                                               'Error Info: ' + str(error)
+                                                                               'Error Info: ' + str(error) +
                                                                                'Input File: ' + f + '\n' +
                                                                                data,['global'])
         common.logger.debug('Error email sent')
