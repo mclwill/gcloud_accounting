@@ -214,14 +214,14 @@ def process_CD_file(customer,directory,f):
                     result = uphance_api_call(customer,'put',url=url_tc)
                     if result:
                         error['PC'] = result
-                        error{'Error Email Text'} = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        error['Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         common.logger.warning(customer + '\n\n' + str(error))                                         
                 if len(error.keys()) == 0 :
                     url_ship = url + '/ship'    
                     result = uphance_api_call(customer,'put',url=url_ship): #send api call to mark status as 'ship' must be done after tracking or carrier info
                     if result 
                         error['PC'] = result
-                        error{'Error Email Text'} = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                        error[]'Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         common.logger.warning(customer + '\n\n' + str(error))   
                     if not result :
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
