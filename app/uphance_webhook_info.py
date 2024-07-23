@@ -305,6 +305,7 @@ def process_pick_ticket_delete(customer,event_data):
     return file_data
 
 def process_product_update(customer,event_data):
+    global error
     stream_id = 'IT'
     event_id = event_data['id']
     event_date = str(datetime.now().strftime("%Y%m%dT%H%M%S"))
@@ -314,6 +315,7 @@ def process_product_update(customer,event_data):
     if len(file_data.split('\n')) > 2 : #then not an empty CD file
         process_file(customer,file_data,file_name)
     else:
+        error['send_to_CD'] = False #override any error['send_to_CD'] to correct error messages at end of processing
         common.logger.info('\nLogger Info for ' + customer + '\nFile not sent to CD as no IT records\n' + file_data + '\n' + str(event_data))
     
     return file_data

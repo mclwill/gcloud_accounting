@@ -168,6 +168,7 @@ def process_CD_file(customer,directory,f):
         order_id = get_CD_parameter(data_lines,'OS1',2)
         tracking = get_CD_parameter(data_lines,'OS1',19)
         carrier = get_CD_parameter(data_lines,'OS1',12)
+        shipping_cost = get_CD_parameter(data_lines,'OS1',18)
         uphance_ord_no = get_CD_parameter(data_lines,'OS1',13)
         ship_to_name = get_CD_parameter(data_lines,'OS1',6)
         ship_to_address_1 = get_CD_parameter(data_lines,'OS1',7)
@@ -196,26 +197,29 @@ def process_CD_file(customer,directory,f):
             url = 'https://api.uphance.com/pick_tickets/'
             url = url + order_id
 
+            #print(url)
+            url_tc = url + '?' #prepare for extra info URL
+            if tracking :
+                url_tc = url_tc + 'tracking_number=' + tracking + '&'
+            if carrier :
+                if 'DHL' in carrier:
+                    carrier = 'dhl' #mapping to Uphance configured code for DHL
+                elif ('EPARCEL' in carrier) or ('STARTRACK' in carrier) :
+                    carrier = 'australia_post' #mapping to Uphance configured code for Australia Post
+                url_tc = url_tc + 'carrier=' + carrier + '&'
+            if shipping_cost :
+                url_tc = url_tc + 'shipping_cost=' + shipping_cost + '&'
+            if tracking or carrier or shipping_cost :
+                url_tc = url_tc[0:-1] #remove last &
+                result = uphance_api_call(customer,'put',url=url_tc)
+                if result == '404':
+                    error['PC'] = result
+                    error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                    error['Process File'] = True
+                    common.logger.warning(customer + '\n\n' + str(error))  
+
             if all(v == '0' for v in variance): #no variances from order in info from CD
-                
-                #print(url)
-                url_tc = url + '?' #prepare for extra info URL
-                if tracking :
-                    url_tc = url_tc + 'tracking_number=' + tracking + '&'
-                if carrier :
-                    if 'DHL' in carrier:
-                        carrier = 'dhl' #mapping to Uphance configured code for DHL
-                    elif ('EPARCEL' in carrier) or ('STARTRACK' in carrier) :
-                        carrier = 'australia_post' #mapping to Uphance configured code for Australia Post
-                    url_tc = url_tc + 'carrier=' + carrier + '&'
-                if tracking or carrier :
-                    url_tc = url_tc[0:-1] #remove last &
-                    result = uphance_api_call(customer,'put',url=url_tc)
-                    if result == '404':
-                        error['PC'] = result
-                        error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
-                        error['Process File'] = True
-                        common.logger.warning(customer + '\n\n' + str(error))                                         
+                                                      
                 if len(error.keys()) == 0 :
                     url_ship = url + '/ship'    
                     result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
