@@ -251,7 +251,7 @@ def process_CD_file(customer,directory,f):
                                                              'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
                                                              'Ship to Name: ' + str(ship_to_name) + '\n' + \
                                                              'Ship to Address 1: ' + str(ship_to_address_1) + '\n' + \
-                                                             'Ship to Address 2: ' + str(ship_to_address_1) + '\n' + \
+                                                             'Ship to Address 2: ' + str(ship_to_address_2) + '\n' + \
                                                              'Ship to City: ' + str(ship_to_city) + '\n' + \
                                                              'Ship to State: ' + str(ship_to_state) + '\n' + \
                                                              'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
