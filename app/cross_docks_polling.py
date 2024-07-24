@@ -117,15 +117,15 @@ def uphance_api_call(customer,api_type,**kwargs):
     else:
         common.logger.warning('Error in api_type: ' + api_type)
         return_error = 'Error in api_type'
-        return return_error
+        return return_error, 'NULL'
 
     if response.status_code == 200:
         common.logger.debug('Uphance ' + api_type + ' successful for ' + customer)
         common.logger.debug(response.json())
-        return return_error  #this should be a False
+        return return_error, response.json()  #this should be a False
     else:
         common.logger.warning('Uphance ' + api_type + ' error for ' + customer + '\nURL: ' + url + '\nResponse Status Code: ' + str(response.status_code))
-        return str(response.status_code)
+        return str(response.status_code), 'NULL'
     
 
     #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
@@ -148,14 +148,14 @@ def process_CD_file(customer,directory,f):
             url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
             #print(url)
             result = uphance_api_call(customer,'put',url=url)
-            if not result :
+            if not result[0] :
                 common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                        'Input File: ' + f + '\n' +
                                                                                        data +\
                                                                                        'URL: ' + url,['global'])
                 common.logger.debug('MO email sent')
             else:
-                error['MO'] = result
+                error['MO'] = result[0]
                 error['Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                 common.logger.warning(str(error)) 
         else:
@@ -212,23 +212,31 @@ def process_CD_file(customer,directory,f):
             if tracking or carrier or shipping_cost :
                 url_tc = url_tc[0:-1] #remove last &
                 result = uphance_api_call(customer,'put',url=url_tc)
-                if result == '404':
-                    error['PC'] = result
+                if result[0] == '404':
+                    error['PC'] = result[0]
                     error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                     error['Process File'] = True
-                    common.logger.warning(customer + '\n\n' + str(error))  
+                    common.logger.warning(customer + '\n\n' + str(error))
+                else:
+                    common.logger.warning(customer + 'Uphance Error while process PC File\n Response Error Code: ' + str result[0])
+                    error['PC'] = result[0]
+                    error['Process File'] = False
 
             if all(v == '0' for v in variance): #no variances from order in info from CD
                                                       
                 if len(error.keys()) == 0 :
                     url_ship = url + '/ship'    
                     result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
-                    if result:
-                        error['PC'] = result
+                    if result[0] == '404':
+                        error['PC'] = result[0]
                         error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         error['Process File'] = True
                         common.logger.warning(customer + '\n\n' + str(error))   
-                    if not result :
+                    else:
+                        common.logger.warning(customer + 'Uphance Error while process PC File\n Response Error Code: ' + str result[0])
+                        error['PC'] = result[0]
+                        error['Process File'] = False
+                    if not result[0] :
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
                                                                                            'Input File: ' + f + '\n' +
                                                                                            data +
@@ -238,10 +246,32 @@ def process_CD_file(customer,directory,f):
                 variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
                 
                 variance_table = []
-                variance_table.append(["Barcode","Qty Ordered","Qty Shipped","Variance"])
+                variance_table.append(["Barcode","SKU Info","Qty Ordered","Qty Shipped","Variance"])
 
                 for i in range(len(variance_idx)):
-                    variance_table.append([products[variance_idx[i]],quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
+                    url = 'https://api.uphance.com/skus?filter[ean]=' + products[variance_idx[i]] #find sku with barcode
+                    result = uphance_api_call(customer,'get',url=url)
+                    if not result[0]:
+                        if len(result[1]['skus']) == 1 : #should only be one matching sku
+                            sku = result[1]['skus'][0]
+                            product_name = sku['product_name']
+                            if not product_name:
+                                product_name = 'N/A'
+                            color = sku['color']
+                            if not color:
+                                color = 'N/A'
+                            size = sku['size']
+                            if not size:
+                                size = 'N/A'
+                            sku_number = sku['sku_number']
+                            if not sku_number:
+                                sku_number = 'N/A'
+                            sku_text = 'Product: ' + product_name + ', Color: ' + color + ', Size: ' + size + ', SKU: ' + sku_number
+                        else:
+                            sku_text = 'Product: N/A' 
+                    else :
+                        sku_text = 'Product: N/A' 
+                    variance_table.append([products[variance_idx[i]],sku_text,quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
 
                 variance_msg = tabulate(variance_table,headers = "firstrow")
 
@@ -300,9 +330,9 @@ def process_CD_file(customer,directory,f):
         email_text = 'CD processing error :\nStream ID:' + stream_id + '\n\n'
         if 'Error Email Text' in error:
             email_text = email_text + str(error['Error Email Text'])
-        email_text = email_text + '\n\nInput File: ' + f + '\n' + data
-        common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global','customer'])
-        common.logger.debug('Error email sent')
+            email_text = email_text + '\n\nInput File: ' + f + '\n' + data
+            common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global','customer'])
+            common.logger.debug('Error email sent')
         if 'Process File' in error:
             if error['Process File']:  #if true then process file anyway to avoid repeated error messages
                 return data 
