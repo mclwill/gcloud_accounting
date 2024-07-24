@@ -222,7 +222,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):
                 if not blank_line[0]: #blank line set in code for field
                     multi_line = multi_line + create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data)
         if len(error.keys()) > 0:
-            common.logger.info('\nLogger Info for ' + customer + '\nError info:' + stream_id + '\n' + str(error) + '\n' + str(event_data))
+            common.logger.debug('\nLogger Info for ' + customer + '\nError info:' + stream_id + '\n' + str(error) + '\n' + str(event_data))  #downgraded to debugging on 25 July 2024 to reduce email load 
         return multi_line
     
 def process_all_record_indicators(customer,event_data,stream_id):
@@ -316,7 +316,7 @@ def process_product_update(customer,event_data):
         process_file(customer,file_data,file_name)
     else:
         error['send_to_CD'] = False #override any error['send_to_CD'] to correct error messages at end of processing
-        common.logger.info('\nLogger Info for ' + customer + '\nFile not sent to CD as no IT records\n' + file_data + '\n' + str(event_data))
+        common.logger.debug('\nLogger Info for ' + customer + '\nFile not sent to CD as no IT records\n' + file_data + '\n' + str(event_data)) #downgraded to debugging on 25 July 2024 to reduce email load 
     
     return file_data
 
