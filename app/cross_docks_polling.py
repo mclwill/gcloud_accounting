@@ -218,7 +218,7 @@ def process_CD_file(customer,directory,f):
                     error['Process File'] = True
                     common.logger.warning(customer + '\n\n' + str(error))
                 else:
-                    common.logger.warning(customer + 'Uphance Error while process PC File\n Response Error Code: ' + str result[0])
+                    common.logger.warning(customer + 'Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                     error['PC'] = result[0]
                     error['Process File'] = False
 
