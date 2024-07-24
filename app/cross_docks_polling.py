@@ -217,14 +217,14 @@ def process_CD_file(customer,directory,f):
                     error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                     error['Process File'] = True
                     common.logger.warning(customer + '\n\n' + str(error))
-                else:
-                    common.logger.warning(customer + 'Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
+                elif not result[0]:
+                    common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                     error['PC'] = result[0]
                     error['Process File'] = False
 
-            if all(v == '0' for v in variance): #no variances from order in info from CD
-                                                      
-                if len(error.keys()) == 0 :
+            if len(error.keys()) == 0:
+                if all(v == '0' for v in variance): #no variances from order in info from CD
+                                                    
                     url_ship = url + '/ship'    
                     result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
                     if result[0] == '404':
@@ -232,8 +232,8 @@ def process_CD_file(customer,directory,f):
                         error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         error['Process File'] = True
                         common.logger.warning(customer + '\n\n' + str(error))   
-                    else:
-                        common.logger.warning(customer + 'Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
+                    elif not result[0]:
+                        common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                         error['PC'] = result[0]
                         error['Process File'] = False
                     if not result[0] :
@@ -242,58 +242,58 @@ def process_CD_file(customer,directory,f):
                                                                                            data +
                                                                                            'URL: ' + url_tc + '\n' + url_ship,['global'])
                         common.logger.debug('PC_email sent')
-            else:
-                variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
-                
-                variance_table = []
-                variance_table.append(["Barcode","SKU Info","Qty Ordered","Qty Shipped","Variance"])
+                else:
+                    variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
+                    
+                    variance_table = []
+                    variance_table.append(["Barcode","SKU Info","Qty Ordered","Qty Shipped","Variance"])
 
-                for i in range(len(variance_idx)):
-                    url = 'https://api.uphance.com/skus?filter[ean]=' + products[variance_idx[i]] #find sku with barcode
-                    result = uphance_api_call(customer,'get',url=url)
-                    if not result[0]:
-                        if len(result[1]['skus']) == 1 : #should only be one matching sku
-                            sku = result[1]['skus'][0]
-                            product_name = sku['product_name']
-                            if not product_name:
-                                product_name = 'N/A'
-                            color = sku['color']
-                            if not color:
-                                color = 'N/A'
-                            size = sku['size']
-                            if not size:
-                                size = 'N/A'
-                            sku_number = sku['sku_number']
-                            if not sku_number:
-                                sku_number = 'N/A'
-                            sku_text = 'Product: ' + product_name + ', Color: ' + color + ', Size: ' + size + ', SKU: ' + sku_number
-                        else:
+                    for i in range(len(variance_idx)):
+                        url = 'https://api.uphance.com/skus?filter[ean]=' + products[variance_idx[i]] #find sku with barcode
+                        result = uphance_api_call(customer,'get',url=url)
+                        if not result[0]:
+                            if len(result[1]['skus']) == 1 : #should only be one matching sku
+                                sku = result[1]['skus'][0]
+                                product_name = sku['product_name']
+                                if not product_name:
+                                    product_name = 'N/A'
+                                color = sku['color']
+                                if not color:
+                                    color = 'N/A'
+                                size = sku['size']
+                                if not size:
+                                    size = 'N/A'
+                                sku_number = sku['sku_number']
+                                if not sku_number:
+                                    sku_number = 'N/A'
+                                sku_text = 'Product: ' + product_name + ', Color: ' + color + ', Size: ' + size + ', SKU: ' + sku_number
+                            else:
+                                sku_text = 'Product: N/A' 
+                        else :
                             sku_text = 'Product: N/A' 
-                    else :
-                        sku_text = 'Product: N/A' 
-                    variance_table.append([products[variance_idx[i]],sku_text,quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
+                        variance_table.append([products[variance_idx[i]],sku_text,quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
 
-                variance_msg = tabulate(variance_table,headers = "firstrow")
+                    variance_msg = tabulate(variance_table,headers = "firstrow")
 
-                common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
-                                                             'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
-                                                             'Cross Docks file: ' + f + '\n\n' + \
-                                                             'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
-                                                             'Ship to Name: ' + str(ship_to_name) + '\n' + \
-                                                             'Ship to Address 1: ' + str(ship_to_address_1) + '\n' + \
-                                                             'Ship to Address 2: ' + str(ship_to_address_2) + '\n' + \
-                                                             'Ship to City: ' + str(ship_to_city) + '\n' + \
-                                                             'Ship to State: ' + str(ship_to_state) + '\n' + \
-                                                             'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
-                                                             'The following items contain a shipping variance\n\n' + \
-                                                             variance_msg + '\n\n',['customer','global'])
-                                                             #'Data in CD file: \n' + data + '\n''',['global'])
-                                                              
-                
-                common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' + \
-                                                                               'Input File: ' + f + '\n' + \
-                                                                               'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
-                                                                               data,['global'])
+                    common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
+                                                                 'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
+                                                                 'Cross Docks file: ' + f + '\n\n' + \
+                                                                 'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
+                                                                 'Ship to Name: ' + str(ship_to_name) + '\n' + \
+                                                                 'Ship to Address 1: ' + str(ship_to_address_1) + '\n' + \
+                                                                 'Ship to Address 2: ' + str(ship_to_address_2) + '\n' + \
+                                                                 'Ship to City: ' + str(ship_to_city) + '\n' + \
+                                                                 'Ship to State: ' + str(ship_to_state) + '\n' + \
+                                                                 'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
+                                                                 'The following items contain a shipping variance\n\n' + \
+                                                                 variance_msg + '\n\n',['customer','global'])
+                                                                 #'Data in CD file: \n' + data + '\n''',['global'])
+                                                                  
+                    
+                    common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' + \
+                                                                                   'Input File: ' + f + '\n' + \
+                                                                                   'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
+                                                                                   data,['global'])
 
         else:
             error['PC'] = True
