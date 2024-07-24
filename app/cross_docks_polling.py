@@ -329,7 +329,7 @@ def process_CD_file(customer,directory,f):
     if len(error.keys()) > 0 : 
         email_text = 'CD processing error :\nStream ID:' + stream_id + '\n\n'
         if 'Error Email Text' in error:
-            email_text = email_text + str(error['Error Email Text'])
+            email_text = email_text + str(error['Error Email Text']) + '\n\nOrder No: ' + str(uphance_ord_no)
             email_text = email_text + '\n\nInput File: ' + f + '\n' + data
             common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global','customer'])
             common.logger.debug('Error email sent')
