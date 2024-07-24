@@ -297,7 +297,7 @@ def process_pick_ticket_delete(customer,event_data):
     stream_id = 'OR'
     event_id = event_data['id']
 
-    CD_code = access_secret_version('customer_parameters',customer,'CD_customer_code')
+    CD_code = common.access_secret_version('customer_parameters',customer,'CD_customer_code')
 
     file_data = 'HD|'+CD_code+'|OR\nOR1|D|' + str(event_id) + '\n'#special short code to delete order before packing
     file_name = stream_id + datetime.now().strftime("%Y%m%dT%H%M%S") + '_' + str(event_id).zfill(4) + '_' + 'pick_ticket_delete' + '.csv'
@@ -342,7 +342,7 @@ def process_production_order_delete(customer,event_data):
     stream_id = 'PT'
     event_id = event_data['id']
 
-    CD_code = access_secret_version('customer_parameters',customer,'CD_customer_code')
+    CD_code = common.access_secret_version('customer_parameters',customer,'CD_customer_code')
 
     file_data = 'HD|'+CD_code+'|PT\nPT1|D|' + str(event_id) + '\n'#special short code to delete order before packing
     file_name = stream_id + datetime.now().strftime("%Y%m%dT%H%M%S") + '_' + str(event_id).zfill(4) + '_' + 'receiving_ticket_delete' + '.csv'

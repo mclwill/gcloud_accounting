@@ -221,6 +221,8 @@ def process_CD_file(customer,directory,f):
                     common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                     error['PC'] = result[0]
                     error['Process File'] = False
+                else:
+                    common.logger.debug('Uphance pick ticket update successful')
 
             if len(error.keys()) == 0:
                 if all(v == '0' for v in variance): #no variances from order in info from CD
@@ -236,11 +238,12 @@ def process_CD_file(customer,directory,f):
                         common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                         error['PC'] = result[0]
                         error['Process File'] = False
-                    if not result[0] :
+                    else :
                         common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
                                                                                            'Input File: ' + f + '\n' +
                                                                                            data +
                                                                                            'URL: ' + url_tc + '\n' + url_ship,['global'])
+                        common.logger.debug('Uphance shipping update successful')
                         common.logger.debug('PC_email sent')
                 else:
                     variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
