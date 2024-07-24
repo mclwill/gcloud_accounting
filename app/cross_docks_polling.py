@@ -217,7 +217,7 @@ def process_CD_file(customer,directory,f):
                     error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                     error['Process File'] = True
                     common.logger.warning(customer + '\n\n' + str(error))
-                elif not result[0]:
+                elif result[0]:
                     common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                     error['PC'] = result[0]
                     error['Process File'] = False
@@ -232,7 +232,7 @@ def process_CD_file(customer,directory,f):
                         error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
                         error['Process File'] = True
                         common.logger.warning(customer + '\n\n' + str(error))   
-                    elif not result[0]:
+                    elif result[0]:
                         common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                         error['PC'] = result[0]
                         error['Process File'] = False
