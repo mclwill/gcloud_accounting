@@ -278,7 +278,7 @@ def process_CD_file(customer,directory,f):
 
                     variance_msg = tabulate(variance_table,headers = "firstrow")
 
-                    common.send_email(customer,0,'Cross Docks Message: Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
+                    common.send_email(customer,0,'Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
                                                                  'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
                                                                  'Cross Docks file: ' + f + '\n\n' + \
                                                                  'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
@@ -293,7 +293,7 @@ def process_CD_file(customer,directory,f):
                                                                  #'Data in CD file: \n' + data + '\n''',['global'])
                                                                   
                     
-                    common.send_email(customer,0,'CD_Short_Shipped','CD short shipped:\nStream ID:' + stream_id + '\n' + \
+                    common.send_email(customer,0,'CD Short Shipped Info','CD short shipped:\nStream ID:' + stream_id + '\n' + \
                                                                                    'Input File: ' + f + '\n' + \
                                                                                    'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
                                                                                    data,['global'])
