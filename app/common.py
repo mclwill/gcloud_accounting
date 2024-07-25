@@ -4,9 +4,9 @@ import smtplib
 import time
 import random
 import traceback
-import google.cloud.secretmanager as secretmanager
-from google.oauth2 import service_account
-import google_crc32c
+#import google.cloud.secretmanager as secretmanager
+#from google.oauth2 import service_account
+#import google_crc32c
 import dropbox
 import logging
 import logging.handlers
