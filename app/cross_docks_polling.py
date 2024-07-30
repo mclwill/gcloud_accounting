@@ -145,7 +145,7 @@ def process_CD_file(customer,directory,f):
     if stream_id == 'MO':  #notification that process has started in Cross Docks
         order_id = get_CD_parameter(data_lines,'MO',2)
         common.logger.debug('order_id: ' + order_id)
-        if order_id:
+        if order_id.isnumeric():
             url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
             #print(url)
             result = uphance_api_call(customer,'put',url=url)
@@ -194,7 +194,7 @@ def process_CD_file(customer,directory,f):
         if type(variance) == str:
             variance = [variance]
 
-        if order_id :
+        if order_id.isnumeric() :
             url = 'https://api.uphance.com/pick_tickets/'
             url = url + order_id
 
