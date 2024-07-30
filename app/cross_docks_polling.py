@@ -342,6 +342,8 @@ def process_CD_file(customer,directory,f):
                 return data 
             else:
                 return False #flag error
+        else:
+            return False 
         
     return data
 
