@@ -140,6 +140,7 @@ def process_CD_file(customer,directory,f):
     data_lines = data.split('\n')
     stream_id = get_CD_parameter(data_lines,'HD',3)
     common.logger.debug('stream_id: ' + stream_id)
+    uphance_order_no = None
     
     if stream_id == 'MO':  #notification that process has started in Cross Docks
         order_id = get_CD_parameter(data_lines,'MO',2)
