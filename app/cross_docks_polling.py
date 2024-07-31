@@ -68,9 +68,9 @@ def move_CD_file_FTP(customer,source,dest,f):
     common.logger.debug('CD file move for ' + customer + ' : ' + file)
 
 
-def download_file_DBX(customer,file_data,file):
+def download_file_DBX(customer,file_data,folder,file):
     
-    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/received/' + file
+    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/' + folder + '/' + file
     try:
         with io.BytesIO(file_data.encode()) as stream:
             stream.seek(0)
@@ -337,15 +337,10 @@ def process_CD_file(customer,directory,f):
             email_text = email_text + '\n\nInput File: ' + f + '\n' + data
             common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global','customer'])
             common.logger.debug('Error email sent')
-        if 'Process File' in error:
-            if error['Process File']:  #if true then process file anyway to avoid repeated error messages
-                return data 
-            else:
-                return False #flag error
-        else:
-            return False 
         
-    return data
+        return False, data #flag error so that file is put into rejected folders in DBX and CD FTP
+        
+    return True, data
 
 def cross_docks_poll_FTP(customer):
     try:
@@ -358,17 +353,25 @@ def cross_docks_poll_FTP(customer):
             proc_max_files = 100 #increased on 8th July in A.Emery Google Function - need to check timing on Google Cloud Engine
             i = 0
             proc_files = []
+            rejected_files = []
             
             for f in files:
                 common.logger.debug('Processing file: ' + f)
                 result = process_CD_file(customer,'out/pending',f)
-                if result:
+                if result[0]:
                     common.logger.debug('Processing file for ' + customer + ' : ' + f)
-                    if not download_file_DBX(customer,result,f):
+                    if not download_file_DBX(customer,result[1],'received',f):
                         break #if get an error from Dropbox then break processing
                     if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
                         break #if get an error from CD FTP then break processing
                     proc_files.append(f)
+                else:
+                    common.logger.debug('Processing rejected file for ' + customer + ' : ' + f)
+                    if not download_file_DBX(customer,result[1],'rejected',f):
+                        break #if get an error from Dropbox then break processing
+                    if not move_CD_file_FTP(customer,'out/pending','out/rejected',f):
+                        break #if get an error from CD FTP then break processing
+                    rejected_files.append(f)
                 i += 1
                 if i >= proc_max_files:
                     break
@@ -378,7 +381,8 @@ def cross_docks_poll_FTP(customer):
             proc_info_str = 'CD Files Processed :\nNum Files : ' + str(i) + '\nStart Time (UTC): ' + proc_start_time.strftime("%H:%M:%S") + '\n' + \
                             'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
                             'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
-                            'Files Processed: ' + str(proc_files)
+                            'Files Processed: ' + str(proc_files) + '\n' +
+                            'Files Rejected: ' + str(rejected_files)
             common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,['global'])
         else:
             common.logger.debug('No files to process for ' + customer)
