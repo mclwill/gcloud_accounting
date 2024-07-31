@@ -400,7 +400,7 @@ def uphance_process_webhook(customer,request):
         request_dict = remove_special_unicode_chars(request_dict)
         data_str = process_uphance_event(customer,request_dict)
         if len(error.keys()) == 0:
-            common.send_email(customer,0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'])
+            common.send_email(0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'],customer=customer)
             return
         else:
             sendees = ['global'] #default to only global email recipients
@@ -412,7 +412,7 @@ def uphance_process_webhook(customer,request):
                 error_message = 'There was an error when processing information received from Uphance - however the file was still sent to Cross Docks' 
             else:
                error_message = 'There was an error when processing information received from Uphance - the file was not sent to Cross Docks' 
-            common.send_email(customer,0,'Error processing Uphance webhook',error_message + '\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees)
+            common.send_email(0,'Error processing Uphance webhook',error_message + '\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees,customer=customer)
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
     

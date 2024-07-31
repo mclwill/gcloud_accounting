@@ -24,7 +24,7 @@ def get_pending_FTP_files(customer):
             rejected_files = ftp_host.listdir(ftp_host.curdir)
 
             if rejected_files:
-                common.send_email(customer,0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),['global'])
+                common.send_email(0,'CD_FTP_Rejected_Files','Rejected Files reported by Cross Docks:\n' + str(rejected_files),['global'],customer=customer)
     
     except Exception as ex:
         common.logger.warning('Cross Docks Error on getting pending files for ' + customer + '\nException : ' + str(ex))
@@ -150,10 +150,11 @@ def process_CD_file(customer,directory,f):
             #print(url)
             result = uphance_api_call(customer,'put',url=url)
             if not result[0] :
-                common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
+                common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                        'Input File: ' + f + '\n' +
                                                                                        data +\
-                                                                                       'URL: ' + url,['global'])
+                                                                                       'URL: ' + url,['global'] + \
+                                                                                       customer=customer)
                 common.logger.debug('MO email sent')
             else:
                 error['MO'] = result[0]
@@ -240,10 +241,10 @@ def process_CD_file(customer,directory,f):
                         error['PC'] = result[0]
                         error['Process File'] = False
                     else :
-                        common.send_email(customer,0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
+                        common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
                                                                                            'Input File: ' + f + '\n' +
                                                                                            data +
-                                                                                           'URL: ' + url_tc + '\n' + url_ship,['global'])
+                                                                                           'URL: ' + url_tc + '\n' + url_ship,['global'],customer=customer)
                         common.logger.debug('Uphance shipping update successful')
                         common.logger.debug('PC_email sent')
                 else:
@@ -279,7 +280,7 @@ def process_CD_file(customer,directory,f):
 
                     variance_msg = tabulate(variance_table,headers = "firstrow")
 
-                    common.send_email(customer,0,'Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
+                    common.send_email(0,'Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
                                                                  'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
                                                                  'Cross Docks file: ' + f + '\n\n' + \
                                                                  'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
@@ -290,14 +291,14 @@ def process_CD_file(customer,directory,f):
                                                                  'Ship to State: ' + str(ship_to_state) + '\n' + \
                                                                  'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
                                                                  'The following items contain a shipping variance\n\n' + \
-                                                                 variance_msg + '\n\n',['customer','global'])
+                                                                 variance_msg + '\n\n',['customer','global'],customer=customer)
                                                                  #'Data in CD file: \n' + data + '\n''',['global'])
                                                                   
                     
-                    common.send_email(customer,0,'CD Short Shipped Info','CD short shipped:\nStream ID:' + stream_id + '\n' + \
+                    common.send_email(0,'CD Short Shipped Info','CD short shipped:\nStream ID:' + stream_id + '\n' + \
                                                                                    'Input File: ' + f + '\n' + \
                                                                                    'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
-                                                                                   data,['global'])
+                                                                                   data,['global'],customer=customer)
 
         else:
             error['PC'] = True
@@ -310,10 +311,11 @@ def process_CD_file(customer,directory,f):
             if type(po_number) == list:
                 po_number = po_number[0]
 
-            common.send_email(customer,0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
+            common.send_email(0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
                                                                               'Purchase Order Number: ' + str(po_number) + '\n\n' +
                                                                                'Input File: ' + f + '\n' +
-                                                                               data,['customer','global'])
+                                                                               data,['customer','global'],
+                                                                               customer=customer)
             common.logger.debug('TP email sent')
         else:
             error['TP'] = True
@@ -335,7 +337,7 @@ def process_CD_file(customer,directory,f):
         if 'Error Email Text' in error:
             email_text = email_text + str(error['Error Email Text']) + '\n\nOrder No: ' + str(uphance_ord_no)
             email_text = email_text + '\n\nInput File: ' + f + '\n' + data
-            common.send_email(customer,0,'CD_FTP_Process_error',email_text,['global','customer'])
+            common.send_email(0,'CD_FTP_Process_error',email_text,['global','customer'],customer=customer)
             common.logger.debug('Error email sent')
         
         return False, data #flag error so that file is put into rejected folders in DBX and CD FTP
@@ -383,13 +385,13 @@ def cross_docks_poll_FTP(customer):
                             'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
                             'Files Processed: ' + str(proc_files) + '\n' + \
                             'Files Rejected: ' + str(rejected_files)
-            common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,['global'])
+            common.send_email(0,'CD Files Processed for ' + customer,proc_info_str,['global'],customer=customer)
         else:
             common.logger.debug('No files to process for ' + customer)
             proc_end_time = datetime.datetime.now()
             proc_elapsed_time = proc_end_time - proc_start_time
             
-            common.send_email(customer,0,'CD Files Processed','No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au')
+            common.send_email(0,'CD Files Processed','No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au',customer=customer)
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Cross Docks Polling:\nException Info: ' + str(e))
     
