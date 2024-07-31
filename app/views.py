@@ -17,9 +17,9 @@ def test():
     #args = None
     content = request.get_json(silent=True)
     if content:
-        common.send_email('Test',0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
+        common.send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
     else:
-        common.send_email('Test',0,'Test Message','No content','gary@mclarenwilliams.com.au')
+        common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
     return 'Test Processed - check email'
 
