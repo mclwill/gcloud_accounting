@@ -153,8 +153,8 @@ def process_CD_file(customer,directory,f):
                 common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                        'Input File: ' + f + '\n' +
                                                                                        data +\
-                                                                                       'URL: ' + url,['global'] + \
-                                                                                       customer=customer)
+                                                                                       'URL: ' + url,['global'],customer=customer)
+                                                                                       
                 common.logger.debug('MO email sent')
             else:
                 error['MO'] = result[0]
