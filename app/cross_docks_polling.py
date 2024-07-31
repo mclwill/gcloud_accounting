@@ -381,7 +381,7 @@ def cross_docks_poll_FTP(customer):
             proc_info_str = 'CD Files Processed :\nNum Files : ' + str(i) + '\nStart Time (UTC): ' + proc_start_time.strftime("%H:%M:%S") + '\n' + \
                             'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
                             'Elapsed Time: ' + str(proc_elapsed_time) + '\n' + \
-                            'Files Processed: ' + str(proc_files) + '\n' +
+                            'Files Processed: ' + str(proc_files) + '\n' + \
                             'Files Rejected: ' + str(rejected_files)
             common.send_email(customer,0,'CD Files Processed for ' + customer,proc_info_str,['global'])
         else:
