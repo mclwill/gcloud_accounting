@@ -127,7 +127,7 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
     else:
         sender_email = access_secret_version('global_parameters',None,'from_email')
         sender_pw = access_secret_version('global_parameters',None,'email_pw')
- 
+
     if email_counter < 0:
         logger.exception('Email counter below zero: ' + str(email_counter) + ' ' + message_subject + ' ' + message_text)
         return False
@@ -168,6 +168,8 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
             smtp_from = 'From: ' + access_secret_version('global_parameters',None,'from_name') + '<' + access_secret_version('global_parameters',None,'from_email') + '>\n'
 
             #Defining The Message 
+            if not customer:
+                customer = 'No customer'
             message = smtp_from + "To:  %s\r\n" % ",".join(receiver_email_address) + 'Subject: ' + customer + ' : Uphance Cross Docks message ' + message_subject + '\n\n' + message_text
 
             #Sending the Email
