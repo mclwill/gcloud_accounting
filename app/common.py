@@ -117,11 +117,16 @@ def logging_initiate ():
     logger.debug('Cross Docks - Uphance API: Logging started for File, Stream and SMTP logging')
 
 
-def send_email(customer,email_counter,message_subject,message_text,dest_email):
+def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
+    customer = kwargs.pop('customer',None)
 
     email_counter += 1
-    sender_email = access_secret_version('customer_parameters',customer,'reporting_email')
-    sender_pw = access_secret_version('customer_parameters',customer,'reporting_email_pw')
+    if customer:
+        sender_email = access_secret_version('customer_parameters',customer,'reporting_email')
+        sender_pw = access_secret_version('customer_parameters',customer,'reporting_email_pw')
+    else:
+        sender_email = access_secret_version('global_parameters',None,'from_email')
+        sender_pw = access_secret_version('global_parameters',None,'email_pw')
  
     if email_counter < 0:
         logger.exception('Email counter below zero: ' + str(email_counter) + ' ' + message_subject + ' ' + message_text)
@@ -147,7 +152,7 @@ def send_email(customer,email_counter,message_subject,message_text,dest_email):
             elif type(dest_email) == list:
                 receiver_email_address = []
                 for text in dest_email:
-                    if text == 'global':
+                    if text == 'global' or (not customer) :
                         for e in access_secret_version('global_parameters',None,'emails'):
                             receiver_email_address.append(e)
                     elif text == 'customer':
