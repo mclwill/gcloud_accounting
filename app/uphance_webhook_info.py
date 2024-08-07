@@ -413,9 +413,10 @@ def uphance_process_webhook(customer,request):
             else:
                error_message = 'There was an error when processing information received from Uphance - the file was not sent to Cross Docks' 
             common.send_email(0,'Error processing Uphance webhook',error_message + '\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees,customer=customer)
+        return True #successful
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
-    
+        return False #error 
 
 def uphance_prod_webhook(customer,request):
     #assume all good to respond with HTTP 200 response
@@ -423,7 +424,9 @@ def uphance_prod_webhook(customer,request):
     #x.start()
     #common.initialise_exception_logging()
     common.logger.debug(customer + '\n' + str(request))
-    uphance_process_webhook(customer,request)
-    return '200'  #need string to give HTTP 200 response
+    if uphance_process_webhook(customer,request):
+        return '200'  #need string to give HTTP 200 response
+    else:
+        return '500'  #return HTTP 500 response - Internal Server Error - hopefully Uphance will return webhook
 
 
