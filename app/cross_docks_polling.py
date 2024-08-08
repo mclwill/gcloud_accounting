@@ -392,8 +392,12 @@ def cross_docks_poll_FTP(customer):
             proc_elapsed_time = proc_end_time - proc_start_time
             
             common.send_email(0,'CD Files Processed','No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au',customer=customer)
+
+        return 200
+
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Cross Docks Polling:\nException Info: ' + str(e))
+        return 500
     
     
     

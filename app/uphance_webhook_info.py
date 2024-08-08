@@ -425,8 +425,8 @@ def uphance_prod_webhook(customer,request):
     #common.initialise_exception_logging()
     common.logger.debug(customer + '\n' + str(request))
     if uphance_process_webhook(customer,request):
-        return '200'  #need string to give HTTP 200 response
+        return 200  #need string to give HTTP 200 response
     else:
-        return '500'  #return HTTP 500 response - Internal Server Error - hopefully Uphance will retry webhook
+        return 500  #return HTTP 500 response - Internal Server Error - hopefully Uphance will retry webhook
 
 

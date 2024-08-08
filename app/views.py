@@ -21,7 +21,7 @@ def test():
     else:
         common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
-    return 'Test Processed - check email', 202
+    return 'Test Processed - check email'
 
 @app.route('/uphance',methods=['POST','GET'])
 def uphance():
@@ -38,30 +38,32 @@ def uphance():
 def process_aemery_webhook():
     content = request.get_json(silent=True)
     if content:
-        return uphance_webhook.uphance_prod_webhook('aemery',content)
+        status_code = uphance_webhook.uphance_prod_webhook('aemery',content)
+        return 'Processed', status_code
     else :
         return 'amery - No content'
 
 @app.route('/aemery_cross-docks-polling',methods=['POST'])
 def process_aemery_cross_docks_polling():
 
-    cross_docks_polling.cross_docks_poll_request('aemery')
+    status_code = cross_docks_polling.cross_docks_poll_request('aemery')
     
-    return 'Done'
+    return 'Procssed', status_code
 
 @app.route('/two-ts',methods=['POST'])
 def process_two_ts_webhook():
     content = request.get_json(silent=True)
     if content:
-        return uphance_webhook.uphance_prod_webhook('two-ts',content)
+        status_code = uphance_webhook.uphance_prod_webhook('two-ts',content)
+        return 'Processed', status_code
     else :
         return 'two-ts No content'
 
 @app.route('/two-ts_cross-docks-polling',methods=['POST'])
 def process_two_ts_cross_docks_polling():
 
-    cross_docks_polling.cross_docks_poll_request('two-ts')
+    status_code = cross_docks_polling.cross_docks_poll_request('two-ts')
     
-    return 'Done'
+    return 'Processed', status_code
 
 
