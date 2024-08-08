@@ -21,7 +21,7 @@ def test():
     else:
         common.send_email(0,'Test Message','No content','gary@mclarenwilliams.com.au')
 
-    return 'Test Processed - check email'
+    return 'Test Processed - check email', 202
 
 @app.route('/uphance',methods=['POST','GET'])
 def uphance():
