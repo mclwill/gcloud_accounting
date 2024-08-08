@@ -427,6 +427,6 @@ def uphance_prod_webhook(customer,request):
     if uphance_process_webhook(customer,request):
         return '200'  #need string to give HTTP 200 response
     else:
-        return '500'  #return HTTP 500 response - Internal Server Error - hopefully Uphance will return webhook
+        return '500'  #return HTTP 500 response - Internal Server Error - hopefully Uphance will retry webhook
 
 
