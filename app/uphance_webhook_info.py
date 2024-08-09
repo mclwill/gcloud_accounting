@@ -401,7 +401,7 @@ def uphance_process_webhook(customer,request):
         data_str = process_uphance_event(customer,request_dict)
         if len(error.keys()) == 0:
             common.send_email(0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'],customer=customer)
-            return
+            return True #successful
         else:
             sendees = ['global'] #default to only global email recipients
             for filter_text in common.access_secret_version('customer_parameters',customer,'errors_to_be_reported'):
