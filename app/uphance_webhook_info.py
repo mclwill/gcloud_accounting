@@ -30,6 +30,8 @@ for c in common.customers :
 from_zone = tz.tzutc()
 to_zone = tz.tzlocal()
 
+process_webhook_depth = 0
+
 '''smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                             fromaddr="zd_zapier@mclarenwilliams.com.au", 
                                             toaddrs="gary@mclarenwilliams.com.au",
@@ -252,12 +254,20 @@ def process_file(customer,file_data,file_name):
     common.dropbox_initiate()
 
     dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/sent/' + file_name
-    with io.BytesIO(file_data.encode()) as stream:
-        stream.seek(0)
-
-        common.dbx.files_upload(stream.read(), dbx_file, mode=common.dropbox.files.WriteMode.overwrite)
     
-    common.logger.debug('Dropbox Transfer')
+    #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
+    try:
+        with io.BytesIO(file_data.encode()) as stream:
+            stream.seek(0)
+
+            common.dbx.files_upload(stream.read(), dbx_file, mode=common.dropbox.files.WriteMode.overwrite)
+
+        common.logger.debug('Dropbox Transferred Successfully')
+
+    except Exception as ex:
+        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance Dropbox Error - need to check if file sent to Dropbox\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+        
+        common.logger.debug('Dropbox Transfer Error')
 
     if len(error.keys()) == 0 : #no errors reported so send to Cross Docks
         if transfer_FTP(customer,file_name,file_data):
@@ -384,12 +394,21 @@ def remove_special_unicode_chars(obj):
             
 
 def uphance_process_webhook(customer,request):
-    global dbx, mapping_code, stream_id, request_dict,error
+    global dbx, mapping_code, stream_id, request_dict,error, process_webhook_depth
     # Extract relevant data from the request payload
 
     mapping_code = ''
     stream_id = ''
+    process_webhook_depth += 1
     
+    ''' Code for multiple attempts if exception occurs - but not used at the moment - 2024-08-09 
+    if process_webhook_depth > 1 : 
+        common.logger.info('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nProcess Webhook Depth = ' + str(process_webhook_depth))
+    if process_webhook_depth > 2 :
+        common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nProcess Webhook Depth Limit reached') #don't keep retrying
+        return False 
+    '''
+
     try:
         #dbx = dropbox.Dropbox(app_key=aemery_dbx_app_key,app_secret=aemery_dbx_app_secret,oauth2_refresh_token=aemery_dbx_refresh_token)
         if type(request) != dict:
@@ -414,13 +433,22 @@ def uphance_process_webhook(customer,request):
                error_message = 'There was an error when processing information received from Uphance - the file was not sent to Cross Docks' 
             common.send_email(0,'Error processing Uphance webhook',error_message + '\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees,customer=customer)
         
-        common.logger.debug('Uphance Sub Process return True')
+        #common.logger.debug('Uphance Sub Process return True')
+        process_webhook_depth = 0 #decrement
         return True #successful
         
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
-        common.logger.debug('Uphance Sub Process return False')
-        return False #error 
+        #common.logger.debug('Uphance Sub Process return False')
+        
+        ''' Code for multiple attempts if exception occurs - but not used at the moment - 2024-08-09 
+        uphance_process_webhook(customer,request) : #try webhook processing again in case of intermittent Dropbox or FTP error
+        if process_webhook_depth == 0:
+            return True
+        else:
+            return False #error '''
+
+        return False
 
 def uphance_prod_webhook(customer,request):
     #assume all good to respond with HTTP 200 response
@@ -429,10 +457,10 @@ def uphance_prod_webhook(customer,request):
     #common.initialise_exception_logging()
     common.logger.debug(customer + '\n' + str(request))
     if uphance_process_webhook(customer,request):
-        common.logger.debug('Uphance Process return True')
+        #common.logger.debug('Uphance Process return True')
         return 200  
     else:
-        common.logger.debug('Uphance Process return False')
+        #common.logger.debug('Uphance Process return False')
         return 500  #return HTTP 500 response - Internal Server Error - hopefully Uphance will retry webhook
 
 
