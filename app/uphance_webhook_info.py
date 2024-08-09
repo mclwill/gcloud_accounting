@@ -413,8 +413,10 @@ def uphance_process_webhook(customer,request):
             else:
                error_message = 'There was an error when processing information received from Uphance - the file was not sent to Cross Docks' 
             common.send_email(0,'Error processing Uphance webhook',error_message + '\n\nError Info: ' + str(error) + '\n' + 'Output file:\n' + data_str + '\nInput Request:\n' + str(request_dict),sendees,customer=customer)
-        return True #successful
+        
         common.logger.debug('Uphance Sub Process return True')
+        return True #successful
+        
     except Exception as e:
         common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(stream_id) + '\nMapping Code :\n' + str(mapping_code) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
         common.logger.debug('Uphance Sub Process return False')
