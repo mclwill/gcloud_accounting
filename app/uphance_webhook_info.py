@@ -87,6 +87,7 @@ cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',inde
     
 
 def transfer_FTP(customer,file_name,file_data):
+    global error, request_dict
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
@@ -99,6 +100,7 @@ def transfer_FTP(customer,file_name,file_data):
     except Exception as ex:
         
         common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+        error['send_to_CD'] = False;
         return False
         
     common.logger.debug('\nLogging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
@@ -249,7 +251,7 @@ def process_all_record_indicators(customer,event_data,stream_id):
     #print('Error info2:',error,error.keys(),len(error.keys()))
     
 def process_file(customer,file_data,file_name):
-    global error
+    global error, request_dict
     #common.get_CD_FTP_credentials(customer)
     common.dropbox_initiate()
 
