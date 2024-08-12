@@ -190,15 +190,15 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
                 send_email(customer,email_counter,message_subject + ' depth: ' + str(email_counter),message_text,receiver_email_address)
                 email_counter -= 1
                 return True
-            logger.exception('send mail SMTP error',exc_info = True)
+            tb = traceback.format_exc()
+            logger.warning('Send mail SMTP error - no retry performed' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
             email_counter -= 1
             return False
 
         except Exception as ex:
             tb = traceback.format_exc()
-            logger.error('Log Error: Other email exception')
-            logger.error('Log Error: Exception info:'  + str(ex))
-            logger.error(str(tb))
+            logger.warning('Other email error - no retry performed' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+            email_counter -= 1
             return False
 
 
