@@ -105,8 +105,8 @@ def uphance_api_call(customer,api_type,**kwargs):
     json = kwargs.pop('json',None)
     
     #this coding used for testing only so that Uphance is not updated
-    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + str(url) + str(json))
-    return 500, 'Testing Call to uphance_api_call'
+    #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + str(url) + str(json))
+    #return 500, 'Testing Call to uphance_api_call'
     #end of testing code
 
     return_error = False
