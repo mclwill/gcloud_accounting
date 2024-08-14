@@ -136,7 +136,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
     #return True
 
-def process_MO_file(customer,data_lines) :
+def process_MO_file(customer,data,data_lines) :
     global error
 
     '''
@@ -170,7 +170,7 @@ def process_MO_file(customer,data_lines) :
         error['Logger Text'] = 'Unable to retrieve order number from Cross Docks info'
         common.logger.warning(customer + '\n\n' + str(error) + '\nCross Docks data:\n' + str(data)) 
 
-def process_PC_file(customer,data_lines):
+def process_PC_file(customer,data,data_lines):
     global error
 
     '''
@@ -323,7 +323,7 @@ def process_PC_file(customer,data_lines):
         error['Logger Text'] = 'Unable to retrieve order number from Cross Docks info'
         common.logger.warning(customer + '\n\n' + str(error) + '\nCross Docks data:\n' + str(data))
     
-def process_TP_file(customer,data_lines):
+def process_TP_file(customer,data,data_lines):
     global error 
 
     '''
@@ -371,13 +371,13 @@ def process_CD_file(customer,directory,f):
     uphance_ord_no = None
     
     if stream_id == 'MO':  #notification that process has started in Cross Docks
-        process_MO_file(customer,data_lines)
+        process_MO_file(customer,data,data_lines)
            
     elif stream_id == 'PC' :  #confirmation of shipping by Cross Docks
-        process_PC_file(customer,data_lines)
+        process_PC_file(customer,data,data_lines)
         
     elif stream_id == 'TP' : #Purchase order return file
-        process_TP_file(customer,data_lines)
+        process_TP_file(customer,data,data_lines)
         
     elif stream_id == 'RJ' : #file rejected by Cross Docks
         error['RJ'] = True
