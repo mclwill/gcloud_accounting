@@ -407,7 +407,7 @@ def process_CD_file(customer,directory,f):
         
     return 'OK', data
 
-def cross_docks_poll_FTP(customer):
+def cross_docks_poll_request(customer):
     try:
         proc_start_time = datetime.datetime.now()
 
@@ -463,8 +463,4 @@ def cross_docks_poll_FTP(customer):
         common.logger.exception('Exception message for : ' + customer + '\nError in Cross Docks Polling:\nException Info: ' + str(e))
         return 500
     
-    
-    
-def cross_docks_poll_request(customer):
-    cross_docks_poll_FTP(customer)
     
