@@ -102,7 +102,7 @@ def getLocalFiles(folder):
         return True, localfiles
     
     except Exception as ex:
-        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error','Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         return False, None
 
 
@@ -114,7 +114,7 @@ def storeLocalFile(customer,folder,file_name,file_data) :
             text_file.write(file_data)
         return True 
     except Exception as ex:
-        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error','Local File Save Error \nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nError:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Save Error \nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nError:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         return False
 
 
