@@ -101,6 +101,11 @@ def get_CD_parameter(data,ri,col_id):
     return info
 
 def uphance_api_call(customer,api_type,**kwargs):
+    
+    #this coding used for testing only so that Uphance is not updated
+    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
+    return False, 'Testing Call to uphance_api_call'
+
     return_error = False
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
