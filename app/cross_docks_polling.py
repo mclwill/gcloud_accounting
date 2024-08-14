@@ -105,7 +105,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     json = kwargs.pop('json',None)
     
     #this coding used for testing only so that Uphance is not updated
-    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
+    common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + str(url) + str(json))
     return 404, 'Testing Call to uphance_api_call'
     #end of testing code
 
@@ -320,7 +320,7 @@ def process_PC_file(customer,f,data,data_lines):
 
     else:
         error['PC'] = True
-        error['File State'] = 1
+        error['File Status'] = 1
         error['Logger Text'] = 'Unable to retrieve order number from Cross Docks info'
         common.logger.warning(customer + '\n\n' + str(error) + '\n\nFile was rejected : FileName = ' + f + '\n\nCross Docks data:\n\n' + str(data))
     
@@ -348,7 +348,7 @@ def process_TP_file(customer,f,data,data_lines):
         common.logger.debug('TP email sent')
     else:
         error['TP'] = True
-        error['File State'] = 1
+        error['File Status'] = 1
         error['Logger Text'] = 'Unable to retrieve purchase order number from Cross Docks info'
         common.logger.warning(customer + '\n\n' + 'Failed to get Purchase Order Number from TP file. FileName = ' + f + '\n\n' + str(error))
 
