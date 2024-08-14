@@ -232,13 +232,13 @@ def process_PC_file(customer,f,data,data_lines):
             result = uphance_api_call(customer,'put',url=url_tc)
             if result[0] == '404':
                 error['PC'] = result[0]
-                error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started\n\nFile moved to "received" folder'
                 error['File Status'] = 2
                 common.logger.warning(customer + '\n\n' + str(error))
             elif result[0]:
                 error['PC'] = result[0]
                 error['File Status'] = 3
-                common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
+                common.logger.warning(customer + ': Uphance Error while processing PC Filename: ' + f + '\n Response Error Code: ' + str(result[0]) + '\n\nFile processing will be retried at next run')
 
             else:
                 common.logger.debug('Uphance pick ticket update successful')
@@ -250,14 +250,14 @@ def process_PC_file(customer,f,data,data_lines):
                 result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
                 if result[0] == '404':
                     error['PC'] = result[0]
-                    error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                    error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started\n\nFile moved to "received" folder'
                     error['File Status'] = 2
                     common.logger.warning(customer + '\n\n' + str(error))   
                 elif result[0]:
                     
                     error['PC'] = result[0]
                     error['File Status'] = 3
-                    common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
+                    common.logger.warning(customer + ': Uphance Error while processing PC Filename: ' + f + '\n Response Error Code: ' + str(result[0]) + '\n\nFile processing will be retried at next run')
                 else :
                     common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
                                                                                        'Input File: ' + f + '\n' +
