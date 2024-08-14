@@ -86,8 +86,49 @@ cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',inde
 '''    
     
 
-def transfer_FTP(customer,file_name,file_data):
+
+def getLocalFiles(folder):
     global error, request_dict
+    
+    localfiles = []
+    try:
+        for (root,dirs,files) in os.walk(folder,topdown=True):
+            for f in files:
+                with open(os.path.join(folder,f),'r') as text_file:
+                    filedata = text_file.read()
+                file_item = {'file_name':f,'file_data':filedata}
+                localfiles.append(file_item)
+
+        return True, localfiles
+    
+    except Exception as ex:
+        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error','Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+        return False, None
+
+
+def storeLocalFile(folder,file_name,filedata) :
+    global error, request_dict
+
+    try:
+        with open(file_name,'w') as text_file:
+            text_file.write(filedata)
+        return True 
+    except Exception as ex:
+        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error','Local File Save Error \nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nError:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+        return False
+
+
+def processQueuedFiles(folder):
+    queuedFiles = getLocalFiles(folder)
+    if queuedFiles[0] : #only process files if no errors on getting Local files
+        for file_item in queuedFiles[1]:
+            if transfer_FTP(customer,file_item['file_name'],file_item['file_data'],True): #flag this is a retry to avoid another saving on error
+                os.remove(os.path.join(folder,file_item['file_name'])) #remove file if FTP successful
+                common.logger.info('Logger Info for ' + customer + '\nLocal file successully transferred via FTP and removed locally\nFile: ' + file_item['file_name'])
+
+def transfer_FTP(customer,file_name,file_data,retry=False):
+    global error, request_dict
+
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     try: 
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
@@ -99,11 +140,15 @@ def transfer_FTP(customer,file_name,file_data):
     
     except Exception as ex:
         
-        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Cross Docks FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         error['send_to_CD'] = False;
+        if not retry:
+            storeLocalFile(os.path.join('home/gary/cd_send_files',customer),filename,filedata) : #store file locally
+            common.logger.info('Logging Info for ' + customer + "\nFile " + file_name + ' stored locally')
         return False
         
-    common.logger.debug('\nLogging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
+    common.logger.debug('Logging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
+
     return True
     
 
@@ -158,7 +203,7 @@ def checkAddressForError(event_data):
     return address_error
 
 def process_record_indicator(customer,event_data,stream_id,ri,mapping):
-    global mapping_code #so that can be displayed in exception logging
+    global error,mapping_code #so that can be displayed in exception logging
 
     loop_lengths_known = False
     loops = {} #use dictionary for values in exec() function as simple variables don't seem to be accessible
@@ -273,13 +318,18 @@ def process_file(customer,file_data,file_name):
 
     if len(error.keys()) == 0 : #no errors reported so send to Cross Docks
         if transfer_FTP(customer,file_name,file_data):
-            common.logger.debug('transfer_FTP 1')
+            common.logger.debug('transfer_FTP ok after no error')
+            #process any stored files since last FTP was successful so can resend queued files to Cross Docks
+            processQueuedFiles(os.path.join('home/gary/cd_send_files',customer))
+            
         else:
             error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
             common.logger.warning('transfer_FTP error for file: ' + file_name)
     elif error['send_to_CD'] :
         if transfer_FTP(customer,file_name,file_data):
-            common.logger.debug('transfer_FTP 2')
+            common.logger.debug('transfer_FTP ok after error: ' + str(error))
+            #process any stored files since last FTP was successful so can resend queued files to Cross Docks
+            processQueuedFiles(os.path.join('home/gary/cd_send_files',customer))
         else:
             error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
             common.logger.warning('transfer_FTP error for file: ' + file_name)

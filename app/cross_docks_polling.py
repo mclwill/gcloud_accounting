@@ -131,9 +131,232 @@ def uphance_api_call(customer,api_type,**kwargs):
     #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
     #return True
 
+def process_MO_file(customer,datalines) :
+    global error
+
+    '''
+    error codes for processing and rejecting CD files
+    0 - File OK and moved to 'received' folder
+    1 - File Rejected and moved to 'rejected' folder
+    2 - File not processed by Uphance but can still be moved to 'received folder'
+    3 - File not processed by Uphance and should be left in 'pending' folder
+    '''
+
+    order_id = get_CD_parameter(data_lines,'MO',2)
+    common.logger.debug('order_id: ' + order_id)
+    if order_id.isnumeric():
+        url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
+        #print(url)
+        result = uphance_api_call(customer,'put',url=url)
+        if not result[0] :
+            common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
+                                                                                   'Input File: ' + f + '\n' +
+                                                                                   data +\
+                                                                                   'URL: ' + url,['global'],customer=customer)
+                                                                                   
+            common.logger.debug('MO email sent')
+        else:
+            error['MO'] = result[0]
+            error['File Status'] = 3
+            common.logger.warning('Logging warning for ' + customer + ': MO file was not procesed by Uphance.\nHTTP Error returned = ' + str(result[0]) + 'File was not processed')
+    else:
+        error['MO'] = True
+        error['File Status'] = 1
+        error['Logger Text'] = 'Unable to retrieve order number from Cross Docks info'
+        common.logger.warning(customer + '\n\n' + str(error) + '\nCross Docks data:\n' + str(data)) 
+
+def process_PC_file(customer,datalines):
+    global error
+
+    '''
+    error codes for processing and rejecting CD files
+    0 - File OK and moved to 'received' folder
+    1 - File Rejected and moved to 'rejected' folder
+    2 - File not processed by Uphance but can still be moved to 'received folder'
+    3 - File not processed by Uphance and should be left in 'pending' folder
+    '''
+
+    short_shipped = False
+    order_id = get_CD_parameter(data_lines,'OS1',2)
+    tracking = get_CD_parameter(data_lines,'OS1',19)
+    carrier = get_CD_parameter(data_lines,'OS1',12)
+    shipping_cost = get_CD_parameter(data_lines,'OS1',18)
+    uphance_ord_no = get_CD_parameter(data_lines,'OS1',13)
+    ship_to_name = get_CD_parameter(data_lines,'OS1',6)
+    ship_to_address_1 = get_CD_parameter(data_lines,'OS1',7)
+    ship_to_address_2 = get_CD_parameter(data_lines,'OS1',8)
+    ship_to_city = get_CD_parameter(data_lines,'OS1',9)
+    ship_to_state = get_CD_parameter(data_lines,'OS1',10)
+    ship_to_postcode = get_CD_parameter(data_lines,'OS1',11)
+
+    products = get_CD_parameter(data_lines,'OS2',2)
+    if type(products) == str:
+        products = [products]
     
+    quantity_ordered = get_CD_parameter(data_lines,'OS2',3) #returns a list of quantity shipped if more than one OS2 line
+    if type(quantity_ordered) == str:
+        quantity_ordered = [quantity_ordered]
+    
+    quantity_shipped = get_CD_parameter(data_lines,'OS2',4) #returns a list of quantity shipped if more than one OS2 line
+    if type(quantity_shipped) == str:
+        quantity_shipped = [quantity_shipped]
+    
+    variance = get_CD_parameter(data_lines,'OS2',5)
+    if type(variance) == str:
+        variance = [variance]
+
+    if order_id.isnumeric() :
+        url = 'https://api.uphance.com/pick_tickets/'
+        url = url + order_id
+
+        #print(url)
+        url_tc = url + '?' #prepare for extra info URL
+        if tracking :
+            url_tc = url_tc + 'tracking_number=' + tracking + '&'
+        if carrier :
+            if 'DHL' in carrier:
+                carrier = 'dhl' #mapping to Uphance configured code for DHL
+            elif ('EPARCEL' in carrier) or ('STARTRACK' in carrier) :
+                carrier = 'australia_post' #mapping to Uphance configured code for Australia Post
+            url_tc = url_tc + 'carrier=' + carrier + '&'
+        if shipping_cost :
+            url_tc = url_tc + 'shipping_cost=' + shipping_cost + '&'
+        if tracking or carrier or shipping_cost :
+            url_tc = url_tc[0:-1] #remove last &
+            result = uphance_api_call(customer,'put',url=url_tc)
+            if result[0] == '404':
+                error['PC'] = result[0]
+                error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                error['File State'] = 2
+                common.logger.warning(customer + '\n\n' + str(error))
+            elif result[0]:
+                error['PC'] = result[0]
+                error['File State'] = 3
+                common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
+
+            else:
+                common.logger.debug('Uphance pick ticket update successful')
+
+        if len(error.keys()) == 0:
+            if all(v == '0' for v in variance): #no variances from order in info from CD
+                                                
+                url_ship = url + '/ship'    
+                result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
+                if result[0] == '404':
+                    error['PC'] = result[0]
+                    error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
+                    error['File State'] = 2
+                    common.logger.warning(customer + '\n\n' + str(error))   
+                elif result[0]:
+                    
+                    error['PC'] = result[0]
+                    error['File State'] = 3
+                    common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
+                else :
+                    common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
+                                                                                       'Input File: ' + f + '\n' +
+                                                                                       data +
+                                                                                       'URL: ' + url_tc + '\n' + url_ship,['global'],customer=customer)
+                    common.logger.debug('Uphance shipping update successful')
+                    common.logger.debug('PC_email sent')
+            else:
+                variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
+                
+                variance_table = []
+                variance_table.append(["Barcode","SKU Info","Qty Ordered","Qty Shipped","Variance"])
+
+                for i in range(len(variance_idx)):
+                    url = 'https://api.uphance.com/skus?filter[ean]=' + products[variance_idx[i]] #find sku with barcode
+                    result = uphance_api_call(customer,'get',url=url)
+                    if not result[0]:
+                        if len(result[1]['skus']) == 1 : #should only be one matching sku
+                            sku = result[1]['skus'][0]
+                            product_name = sku['product_name']
+                            if not product_name:
+                                product_name = 'N/A'
+                            color = sku['color']
+                            if not color:
+                                color = 'N/A'
+                            size = sku['size']
+                            if not size:
+                                size = 'N/A'
+                            sku_number = sku['sku_number']
+                            if not sku_number:
+                                sku_number = 'N/A'
+                            sku_text = 'Product: ' + product_name + ', Color: ' + color + ', Size: ' + size + ', SKU: ' + sku_number
+                        else:
+                            sku_text = 'Product: N/A' 
+                    else :
+                        sku_text = 'Product: N/A' 
+                    variance_table.append([products[variance_idx[i]],sku_text,quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
+
+                variance_msg = tabulate(variance_table,headers = "firstrow")
+
+                common.send_email(0,'Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
+                                                             'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
+                                                             'Cross Docks file: ' + f + '\n\n' + \
+                                                             'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
+                                                             'Ship to Name: ' + str(ship_to_name) + '\n' + \
+                                                             'Ship to Address 1: ' + str(ship_to_address_1) + '\n' + \
+                                                             'Ship to Address 2: ' + str(ship_to_address_2) + '\n' + \
+                                                             'Ship to City: ' + str(ship_to_city) + '\n' + \
+                                                             'Ship to State: ' + str(ship_to_state) + '\n' + \
+                                                             'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
+                                                             'The following items contain a shipping variance\n\n' + \
+                                                             variance_msg + '\n\n',['customer','global'],customer=customer)
+                                                             #'Data in CD file: \n' + data + '\n''',['global'])
+                                                              
+                
+                common.send_email(0,'CD Short Shipped Info','CD short shipped:\nStream ID:' + stream_id + '\n' + \
+                                                                               'Input File: ' + f + '\n' + \
+                                                                               'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
+                                                                               data,['global'],customer=customer)
+
+    else:
+        error['PC'] = True
+        error['File State'] = 1
+        error['Logger Text'] = 'Unable to retrieve order number from Cross Docks info'
+        common.logger.warning(customer + '\n\n' + str(error) + '\nCross Docks data:\n' + str(data))
+    
+def process_TP_file(customer,datalines):
+    global error 
+
+    '''
+    error codes for processing and rejecting CD files
+    0 - File OK and moved to 'received' folder
+    1 - File Rejected and moved to 'rejected' folder
+    2 - File not processed by Uphance but can still be moved to 'received folder'
+    3 - File not processed by Uphance and should be left in 'pending' folder
+    '''
+
+    po_number = get_CD_parameter(data_lines,'TP',2)
+    if po_number:
+        if type(po_number) == list:
+            po_number = po_number[0]
+
+        common.send_email(0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
+                                                                          'Purchase Order Number: ' + str(po_number) + '\n\n' +
+                                                                           'Input File: ' + f + '\n' +
+                                                                           data,['customer','global'],
+                                                                           customer=customer)
+        common.logger.debug('TP email sent')
+    else:
+        error['TP'] = True
+        error['File State'] = 1
+        error['Logger Text'] = 'Unable to retrieve purchase order number from Cross Docks info'
+        common.logger.warning(customer + '\n\n' + 'Failed to get Purchase Order Number from TP file. FileName = ' + f + '\n\n' + str(error))
+
 def process_CD_file(customer,directory,f):
     global error
+
+    '''
+    error codes for processing and rejecting CD files
+    0 - File OK and moved to 'received' folder
+    1 - File Rejected and moved to 'rejected' folder
+    2 - File not processed by Uphance but can still be moved to 'received folder'
+    3 - File not processed by Uphance and should be left in 'pending' folder
+    '''
+
 
     error = {}
     data = get_data_FTP(customer,directory,f)
@@ -143,193 +366,23 @@ def process_CD_file(customer,directory,f):
     uphance_ord_no = None
     
     if stream_id == 'MO':  #notification that process has started in Cross Docks
-        order_id = get_CD_parameter(data_lines,'MO',2)
-        common.logger.debug('order_id: ' + order_id)
-        if order_id.isnumeric():
-            url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
-            #print(url)
-            result = uphance_api_call(customer,'put',url=url)
-            if not result[0] :
-                common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
-                                                                                       'Input File: ' + f + '\n' +
-                                                                                       data +\
-                                                                                       'URL: ' + url,['global'],customer=customer)
-                                                                                       
-                common.logger.debug('MO email sent')
-            else:
-                error['MO'] = result[0]
-                error['Error Email Text'] = 'Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
-                common.logger.warning(str(error)) 
-        else:
-            error['MO'] = True
-            error['Error Email Text'] = 'Unable to retrieve order number from Cross Docks info'
-            common.logger.warning(customer + '\n\n' + str(error)) 
-            
+        process_MO_file(customer,datalines)
+           
     elif stream_id == 'PC' :  #confirmation of shipping by Cross Docks
-        short_shipped = False
-        order_id = get_CD_parameter(data_lines,'OS1',2)
-        tracking = get_CD_parameter(data_lines,'OS1',19)
-        carrier = get_CD_parameter(data_lines,'OS1',12)
-        shipping_cost = get_CD_parameter(data_lines,'OS1',18)
-        uphance_ord_no = get_CD_parameter(data_lines,'OS1',13)
-        ship_to_name = get_CD_parameter(data_lines,'OS1',6)
-        ship_to_address_1 = get_CD_parameter(data_lines,'OS1',7)
-        ship_to_address_2 = get_CD_parameter(data_lines,'OS1',8)
-        ship_to_city = get_CD_parameter(data_lines,'OS1',9)
-        ship_to_state = get_CD_parameter(data_lines,'OS1',10)
-        ship_to_postcode = get_CD_parameter(data_lines,'OS1',11)
-
-        products = get_CD_parameter(data_lines,'OS2',2)
-        if type(products) == str:
-            products = [products]
+        process_PC_file(customer,datalines)
         
-        quantity_ordered = get_CD_parameter(data_lines,'OS2',3) #returns a list of quantity shipped if more than one OS2 line
-        if type(quantity_ordered) == str:
-            quantity_ordered = [quantity_ordered]
-        
-        quantity_shipped = get_CD_parameter(data_lines,'OS2',4) #returns a list of quantity shipped if more than one OS2 line
-        if type(quantity_shipped) == str:
-            quantity_shipped = [quantity_shipped]
-        
-        variance = get_CD_parameter(data_lines,'OS2',5)
-        if type(variance) == str:
-            variance = [variance]
-
-        if order_id.isnumeric() :
-            url = 'https://api.uphance.com/pick_tickets/'
-            url = url + order_id
-
-            #print(url)
-            url_tc = url + '?' #prepare for extra info URL
-            if tracking :
-                url_tc = url_tc + 'tracking_number=' + tracking + '&'
-            if carrier :
-                if 'DHL' in carrier:
-                    carrier = 'dhl' #mapping to Uphance configured code for DHL
-                elif ('EPARCEL' in carrier) or ('STARTRACK' in carrier) :
-                    carrier = 'australia_post' #mapping to Uphance configured code for Australia Post
-                url_tc = url_tc + 'carrier=' + carrier + '&'
-            if shipping_cost :
-                url_tc = url_tc + 'shipping_cost=' + shipping_cost + '&'
-            if tracking or carrier or shipping_cost :
-                url_tc = url_tc[0:-1] #remove last &
-                result = uphance_api_call(customer,'put',url=url_tc)
-                if result[0] == '404':
-                    error['PC'] = result[0]
-                    error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
-                    error['Process File'] = True
-                    common.logger.warning(customer + '\n\n' + str(error))
-                elif result[0]:
-                    common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
-                    error['PC'] = result[0]
-                    error['Process File'] = False
-                else:
-                    common.logger.debug('Uphance pick ticket update successful')
-
-            if len(error.keys()) == 0:
-                if all(v == '0' for v in variance): #no variances from order in info from CD
-                                                    
-                    url_ship = url + '/ship'    
-                    result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
-                    if result[0] == '404':
-                        error['PC'] = result[0]
-                        error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
-                        error['Process File'] = True
-                        common.logger.warning(customer + '\n\n' + str(error))   
-                    elif result[0]:
-                        common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
-                        error['PC'] = result[0]
-                        error['Process File'] = False
-                    else :
-                        common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
-                                                                                           'Input File: ' + f + '\n' +
-                                                                                           data +
-                                                                                           'URL: ' + url_tc + '\n' + url_ship,['global'],customer=customer)
-                        common.logger.debug('Uphance shipping update successful')
-                        common.logger.debug('PC_email sent')
-                else:
-                    variance_idx = [i for i in range(len(variance)) if variance[i] != '0']
-                    
-                    variance_table = []
-                    variance_table.append(["Barcode","SKU Info","Qty Ordered","Qty Shipped","Variance"])
-
-                    for i in range(len(variance_idx)):
-                        url = 'https://api.uphance.com/skus?filter[ean]=' + products[variance_idx[i]] #find sku with barcode
-                        result = uphance_api_call(customer,'get',url=url)
-                        if not result[0]:
-                            if len(result[1]['skus']) == 1 : #should only be one matching sku
-                                sku = result[1]['skus'][0]
-                                product_name = sku['product_name']
-                                if not product_name:
-                                    product_name = 'N/A'
-                                color = sku['color']
-                                if not color:
-                                    color = 'N/A'
-                                size = sku['size']
-                                if not size:
-                                    size = 'N/A'
-                                sku_number = sku['sku_number']
-                                if not sku_number:
-                                    sku_number = 'N/A'
-                                sku_text = 'Product: ' + product_name + ', Color: ' + color + ', Size: ' + size + ', SKU: ' + sku_number
-                            else:
-                                sku_text = 'Product: N/A' 
-                        else :
-                            sku_text = 'Product: N/A' 
-                        variance_table.append([products[variance_idx[i]],sku_text,quantity_ordered[variance_idx[i]],quantity_shipped[variance_idx[i]],variance[variance_idx[i]]])
-
-                    variance_msg = tabulate(variance_table,headers = "firstrow")
-
-                    common.send_email(0,'Short Ship Response','Cross Docks are reporting that the following order was shipped without all the stock\n' + \
-                                                                 'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
-                                                                 'Cross Docks file: ' + f + '\n\n' + \
-                                                                 'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
-                                                                 'Ship to Name: ' + str(ship_to_name) + '\n' + \
-                                                                 'Ship to Address 1: ' + str(ship_to_address_1) + '\n' + \
-                                                                 'Ship to Address 2: ' + str(ship_to_address_2) + '\n' + \
-                                                                 'Ship to City: ' + str(ship_to_city) + '\n' + \
-                                                                 'Ship to State: ' + str(ship_to_state) + '\n' + \
-                                                                 'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
-                                                                 'The following items contain a shipping variance\n\n' + \
-                                                                 variance_msg + '\n\n',['customer','global'],customer=customer)
-                                                                 #'Data in CD file: \n' + data + '\n''',['global'])
-                                                                  
-                    
-                    common.send_email(0,'CD Short Shipped Info','CD short shipped:\nStream ID:' + stream_id + '\n' + \
-                                                                                   'Input File: ' + f + '\n' + \
-                                                                                   'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
-                                                                                   data,['global'],customer=customer)
-
-        else:
-            error['PC'] = True
-            error['Error Email Text'] = ' Unable to retrieve order number from Cross Docks info'
-            common.logger.warning(customer + '\n\n' + str(error))
-    
     elif stream_id == 'TP' : #Purchase order return file
-        po_number = get_CD_parameter(data_lines,'TP',2)
-        if po_number:
-            if type(po_number) == list:
-                po_number = po_number[0]
-
-            common.send_email(0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
-                                                                              'Purchase Order Number: ' + str(po_number) + '\n\n' +
-                                                                               'Input File: ' + f + '\n' +
-                                                                               data,['customer','global'],
-                                                                               customer=customer)
-            common.logger.debug('TP email sent')
-        else:
-            error['TP'] = True
-            error['Error Email Text'] = 'Unable to retrieve purchase order number from Cross Docks info'
-            common.logger.warning(customer + '\n\n' + 'Failed to get Purchase Order Number from TP file. FileName = ' + f + '\n\n' + str(error))
-    
+        process_TP_file(customer,datalines)
+        
     elif stream_id == 'RJ' : #file rejected by Cross Docks
         error['RJ'] = True
-        error['Error Email Text'] = 'Cross Docks sent RJ file'
+        error['Logger Text'] = 'Cross Docks sent RJ file'
         common.logger.warning(customer + '\n\n' + 'Cross Docks sent RJ File. FileName = ' + f + '\n\n' + str(error))
         
     else:
         error['Unknown Stream ID'] = True
-        error['Error Email Text'] = 'Cross Docks sent unknown Stream ID in file'
+        error['File State'] = 1
+        error['Logger Text'] = 'Cross Docks sent unknown Stream ID in file'
         common.logger.warning(customer + '\n\n' + 'Cross Docks sent unknown Stream ID in file. FileName = ' + f + '\n\n' + str(error))
         
     if len(error.keys()) > 0 : 
@@ -340,9 +393,13 @@ def process_CD_file(customer,directory,f):
             common.send_email(0,'CD_FTP_Process_error',email_text,['global','customer'],customer=customer)
             common.logger.debug('Error email sent')
         
-        return False, data #flag error so that file is put into rejected folders in DBX and CD FTP
+        if 'File Status' in error:
+            if error['File Status'] == 1:
+                return 'Rejected', data
+            elif error['File Status'] == 3:
+                return 'Retry File', data
         
-    return True, data
+    return 'OK', data
 
 def cross_docks_poll_FTP(customer):
     try:
@@ -360,20 +417,21 @@ def cross_docks_poll_FTP(customer):
             for f in files:
                 common.logger.debug('Processing file: ' + f)
                 result = process_CD_file(customer,'out/pending',f)
-                if result[0]:
+                if result[0] == 'OK':
                     common.logger.debug('Processing file for ' + customer + ' : ' + f)
                     if not download_file_DBX(customer,result[1],'received',f):
                         break #if get an error from Dropbox then break processing
                     if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
                         break #if get an error from CD FTP then break processing
                     proc_files.append(f)
-                else:
+                elif result[0] == 'Rejected':
                     common.logger.debug('Processing rejected file for ' + customer + ' : ' + f)
                     if not download_file_DBX(customer,result[1],'rejected',f):
                         break #if get an error from Dropbox then break processing
                     if not move_CD_file_FTP(customer,'out/pending','out/rejected',f):
                         break #if get an error from CD FTP then break processing
                     rejected_files.append(f)
+                # if not 'OK' or 'Rejected' then leave file untouched on FTP server for processing next time
                 i += 1
                 if i >= proc_max_files:
                     break
