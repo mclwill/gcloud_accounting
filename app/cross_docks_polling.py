@@ -30,7 +30,7 @@ def get_pending_FTP_files(customer):
         common.logger.warning('Cross Docks Error on getting pending files for ' + customer + '\nException : ' + str(ex))
         return False
 
-    common.logger.debug('Files returned for ' + customer + 'from FTP curdir:' + str(pending_files))    
+    common.logger.debug('Files returned for ' + customer + ' from FTP curdir:' + str(pending_files))    
     return pending_files
 
 def get_data_FTP(customer,directory,f):
@@ -104,8 +104,9 @@ def uphance_api_call(customer,api_type,**kwargs):
     
     #this coding used for testing only so that Uphance is not updated
     common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
-    return False, 'Testing Call to uphance_api_call'
-
+    return 404, 'Testing Call to uphance_api_call'
+    #end of testing code
+    
     return_error = False
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
