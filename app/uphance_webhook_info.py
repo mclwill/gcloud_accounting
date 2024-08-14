@@ -131,6 +131,10 @@ def transfer_FTP(customer,file_name,file_data,retry=False):
 
     cross_docks_info = common.get_CD_FTP_credentials(customer)
     try: 
+        #code for testing only
+        raise Exception("Testing error in FTP transfer")
+        #end of test code
+        
         with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
             common.logger.debug('CD credentials : '+ cross_docks_info['username'] + ':' + cross_docks_info['password'])
             common.logger.debug('CD getcwd : ' + ftp_host.getcwd())
