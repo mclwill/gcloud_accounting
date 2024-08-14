@@ -106,7 +106,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     
     #this coding used for testing only so that Uphance is not updated
     common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + str(url) + str(json))
-    return 404, 'Testing Call to uphance_api_call'
+    return 500, 'Testing Call to uphance_api_call'
     #end of testing code
 
     return_error = False
@@ -233,11 +233,11 @@ def process_PC_file(customer,f,data,data_lines):
             if result[0] == '404':
                 error['PC'] = result[0]
                 error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
-                error['File State'] = 2
+                error['File Status'] = 2
                 common.logger.warning(customer + '\n\n' + str(error))
             elif result[0]:
                 error['PC'] = result[0]
-                error['File State'] = 3
+                error['File Status'] = 3
                 common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
 
             else:
@@ -251,12 +251,12 @@ def process_PC_file(customer,f,data,data_lines):
                 if result[0] == '404':
                     error['PC'] = result[0]
                     error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started'
-                    error['File State'] = 2
+                    error['File Status'] = 2
                     common.logger.warning(customer + '\n\n' + str(error))   
                 elif result[0]:
                     
                     error['PC'] = result[0]
-                    error['File State'] = 3
+                    error['File Status'] = 3
                     common.logger.warning(customer + ': Uphance Error while process PC File\n Response Error Code: ' + str(result[0]))
                 else :
                     common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' +
@@ -387,7 +387,7 @@ def process_CD_file(customer,directory,f):
         
     else:
         error['Unknown Stream ID'] = True
-        error['File State'] = 1
+        error['File Status'] = 1
         error['Logger Text'] = 'Cross Docks sent unknown Stream ID in file'
         common.logger.warning(customer + '\n\n' + 'Cross Docks sent unknown Stream ID in file. FileName = ' + f + '\n\n' + str(error))
         
