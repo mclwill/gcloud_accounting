@@ -106,7 +106,7 @@ def getLocalFiles(folder):
         return False, None
 
 
-def storeLocalFile(folder,file_name,filedata) :
+def storeLocalFile(customer,folder,file_name,filedata) :
     global error, request_dict
 
     try:
@@ -147,7 +147,7 @@ def transfer_FTP(customer,file_name,file_data,retry=False):
         common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Cross Docks FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         error['send_to_CD'] = False;
         if not retry:
-            storeLocalFile(os.path.join('home/gary/cd_send_files',customer),file_name,file_data)  #store file locally
+            storeLocalFile(customer,os.path.join('home/gary/cd_send_files',customer),file_name,file_data)  #store file locally
             common.logger.info('Logging Info for ' + customer + "\nFile " + file_name + ' stored locally')
         return False
         
