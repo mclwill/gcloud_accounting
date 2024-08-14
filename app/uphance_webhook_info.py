@@ -118,7 +118,7 @@ def storeLocalFile(customer,folder,file_name,file_data) :
         return False
 
 
-def processQueuedFiles(folder):
+def processQueuedFiles(customer,folder):
     queuedFiles = getLocalFiles(folder)
     if queuedFiles[0] : #only process files if no errors on getting Local files
         for file_item in queuedFiles[1]:
@@ -324,7 +324,7 @@ def process_file(customer,file_data,file_name):
         if transfer_FTP(customer,file_name,file_data):
             common.logger.debug('transfer_FTP ok after no error')
             #process any stored files since last FTP was successful so can resend queued files to Cross Docks
-            processQueuedFiles(os.path.join('home/gary/cd_send_files',customer))
+            processQueuedFiles(customer,os.path.join('home/gary/cd_send_files',customer))
             
         else:
             error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
@@ -333,7 +333,7 @@ def process_file(customer,file_data,file_name):
         if transfer_FTP(customer,file_name,file_data):
             common.logger.debug('transfer_FTP ok after error: ' + str(error))
             #process any stored files since last FTP was successful so can resend queued files to Cross Docks
-            processQueuedFiles(os.path.join('home/gary/cd_send_files',customer))
+            processQueuedFiles(customer,os.path.join('home/gary/cd_send_files',customer))
         else:
             error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
             common.logger.warning('transfer_FTP error for file: ' + file_name)
