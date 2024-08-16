@@ -1,5 +1,6 @@
 import pandas as pd
 import FlaskApp.app.common as common
+from datetime import datetime
 '''
 module for collecting daily information on stock levels, sales, returns and new stock orders
 Columns
@@ -27,7 +28,7 @@ def get_uphance_stock_levels(customer):
 		    data = response[1]
 		    for p in data['products']:
 		        row_dict = {}
-		        row_dict['Date'] = [dt.now()]
+		        row_dict['Date'] = [datetime.datetime.now()]
 		        row_dict['p_id'] = [p['id']]
 		        row_dict['p_identifier'] = [p['product_identifier']]
 		        row_dict['p_name'] = [p['name']]
