@@ -8,7 +8,7 @@ Date,p_id,p_identifier,p_url,p_name,season_id,sku_id,sku_number,color,size,ean,i
 '''
 
 def get_uphance_stock_levels(customer):
-	file_path = "Wholesale/APIs (Anna's Dad)/Cross Docks Info/FTP_production_files/DataStore/data.csv"
+	file_path = "Wholesale/APIs (Anna's Dad)/Uphance/DataStore/data.csv"
 	byte_stream = common.read_dropbox_bytestream(customer,file_path)
 	if byte_stream:
 		df = pd.read_csv(byte_stream,sep='|',index_col=False)
@@ -19,11 +19,12 @@ def get_uphance_stock_levels(customer):
 	page = 1 #get ready for Uphance pagination
 	while page :
 	    response = common.uphance_api_call(customer,'get',url=url_product+'/?page='+str(page))
-	    if data[0]:
-	    	common.logger.debug('Uphance Product API Call Status Code' + str(response[0]))
+	    common.logger.debug('Uphance Product API Call Status Code' + str(response[0]))
+	    if response[0]:
 	    	common.logger.warning('Uphance Error on Product API call for :' + customer)
 	    	break
 	    else:
+		    common.logger.debug('')
 		    data = response[1].json()
 		    for p in data['products']:
 		        row_dict = {}
