@@ -1,5 +1,4 @@
 import json
-import io
 import datetime
 from dateutil import tz
 import ftputil
@@ -57,33 +56,23 @@ def move_CD_file_FTP(customer,source,dest,f):
                     ftp_host.copyfileobj(source_obj,dest_obj)
                     ftp_host.remove(source + '/' + f)
                     
-    
     except Exception as ex:
         common.logger.warning('Error in move_CD_file_FTP for ' + customer + ':' + str(ex))
         return False
         
     return True
     
-
     common.logger.debug('CD file move for ' + customer + ' : ' + file)
 
 
-def download_file_DBX(customer,file_data,folder,file):
+def upload_file_to_dropbox(customer,file_data,folder,file_name):
     
-    dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/' + folder + '/' + file
-    try:
-        with io.BytesIO(file_data.encode()) as stream:
-            stream.seek(0)
-            common.dbx.files_upload(stream.read(), dbx_file, mode=common.dropbox.files.WriteMode.overwrite)
-
-        return True
-    except Exception as ex:
-        common.logger.warning('DBX error for ' + customer + ': ' + str(ex))
-        tb = traceback.format_exc()
-        common.logger.warning(tb)
-        return False
+    dbx_file = os.path.join(common.access_secret_version('customer_parameters',customer,'dbx_folder'),folder,file_name)
     
-    common.logger.debug('DBX download for ' + customer + ' : ' + file)
+    if not common.store_dropbox_unicode(customer,file_data,dbx_file)
+        common.logger.warning('Cross Docks file not stored in Dropbox - processing has continued\nFile Name: ' + file_name + '\nFile Contents : \n' + file_data)
+    else:
+        common.logger.debug('Dropbox upload successful for ' + customer + ' : ' + file_name)
     
 def get_CD_parameter(data,ri,col_id):
     #return all records with ri indicator as a list
@@ -100,6 +89,7 @@ def get_CD_parameter(data,ri,col_id):
         return info
     return info
 
+''' move to common.py
 def uphance_api_call(customer,api_type,**kwargs):
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
@@ -136,6 +126,7 @@ def uphance_api_call(customer,api_type,**kwargs):
 
     #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
     #return True
+'''
 
 def process_MO_file(customer,stream_id,f,data,data_lines) :
     global error
@@ -153,7 +144,7 @@ def process_MO_file(customer,stream_id,f,data,data_lines) :
     if order_id.isnumeric():
         url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
         #print(url)
-        result = uphance_api_call(customer,'put',url=url)
+        result = common.uphance_api_call(customer,'put',url=url)
         if not result[0] :
             common.send_email(0,'CD_FTP_Process_info','CD processing complete:\nStream ID:' + stream_id + '\n' + \
                                                                                    'Input File: ' + f + '\n' +
@@ -229,7 +220,7 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
             url_tc = url_tc + 'shipping_cost=' + shipping_cost + '&'
         if tracking or carrier or shipping_cost :
             url_tc = url_tc[0:-1] #remove last &
-            result = uphance_api_call(customer,'put',url=url_tc)
+            result = common.uphance_api_call(customer,'put',url=url_tc)
             if result[0] == '404':
                 error['PC'] = result[0]
                 error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started\n\nFile moved to "received" folder'
@@ -247,7 +238,7 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
             if all(v == '0' for v in variance): #no variances from order in info from CD
                                                 
                 url_ship = url + '/ship'    
-                result = uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
+                result = common.uphance_api_call(customer,'put',url=url_ship) #send api call to mark status as 'ship' must be done after tracking or carrier info
                 if result[0] == '404':
                     error['PC'] = result[0]
                     error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started\n\nFile moved to "received" folder'
@@ -273,7 +264,7 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
 
                 for i in range(len(variance_idx)):
                     url = 'https://api.uphance.com/skus?filter[ean]=' + products[variance_idx[i]] #find sku with barcode
-                    result = uphance_api_call(customer,'get',url=url)
+                    result = common.uphance_api_call(customer,'get',url=url)
                     if not result[0]:
                         if len(result[1]['skus']) == 1 : #should only be one matching sku
                             sku = result[1]['skus'][0]
@@ -425,7 +416,7 @@ def cross_docks_poll_request(customer):
                 result = process_CD_file(customer,'out/pending',f)
                 if result[0] == 'OK':
                     common.logger.debug('Processing file for ' + customer + ' : ' + f)
-                    if not download_file_DBX(customer,result[1],'received',f):
+                    if not upload_file_to_dropbox(customer,result[1],'received',f):
                         break #if get an error from Dropbox then break processing
                     if not move_CD_file_FTP(customer,'out/pending','out/sent',f):
                         break #if get an error from CD FTP then break processing

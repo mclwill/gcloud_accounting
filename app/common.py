@@ -1,57 +1,18 @@
-import sys
 import os
+import io
 import smtplib
 import time
 import random
 import traceback
-#import google.cloud.secretmanager as secretmanager
-#from google.oauth2 import service_account
-#import google_crc32c
 import dropbox
 import logging
 import logging.handlers
 import json
 import requests
 from datetime import datetime
-#from newrelic.agent import NewRelicContextFormatter
+from contextlib import closing
+
 import FlaskApp.app.secrets as secrets
-
-
-'''def access_secret_version(secret_id: str, version: str) -> secretmanager.AccessSecretVersionResponse:
-    """
-    Access the payload for the given secret version if one exists. The version
-    can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
-    """
-    
-    # Create the Secret Manager client.
-    client = secretmanager.SecretManagerServiceClient()
-
-    # Build the resource name of the secret version.
-    name = f"projects/227300495808/secrets/{secret_id}/versions/{version}"
-
-    logger.debug('Access Secret with name: ' + name)
-        
-    # Access the secret version.
-    response = client.access_secret_version(request={"name": name})
-
-    logger.debug('Response payload data: ' + response.payload.data)
-    
-    # Verify payload checksum.
-    crc32c = google_crc32c.Checksum()
-    crc32c.update(response.payload.data)
-    if response.payload.data_crc32c != int(crc32c.hexdigest(), 16):
-        logger.error("Data corruption detected in Google Secrets\nResponse.payload.data : " + response.payload.data)
-        logger.exception("Data corruption detected in Google Secrets")
-        raise
-
-    # Print the secret payload.
-    #
-    # WARNING: Do not print the secret in a production environment - this
-    # snippet is showing how to access the secret material.
-    payload = response.payload.data.decode("UTF-8")
-    #print(f"Plaintext: {payload}")
-
-    return payload'''
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
@@ -232,9 +193,6 @@ def dropbox_initiate():
             dbx = False
             return False
 
-#dropbox_initiate()
-#print('dbx:',dbx)
-
 def uphance_check_token_status(customer):
     global uphance_access_token
 
@@ -338,6 +296,80 @@ def check_uphance_initiate():
 
     for c in customers:
         uphance_running[c] = uphance_initiate(c)
+
+def uphance_api_call(customer,api_type,**kwargs):
+    url = kwargs.pop('url',None)
+    json = kwargs.pop('json',None)
+    
+    #this coding used for testing only so that Uphance is not updated
+    #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + str(url) + str(json))
+    #return 500, 'Testing Call to uphance_api_call'
+    #end of testing code
+
+    return_error = False
+    
+    if api_type == 'post':
+        response = requests.post(url,json = json,headers = uphance_headers[customer])
+        common.logger.debug('Post ' + url)
+    elif api_type == 'put':
+        response = requests.put(url,headers = uphance_headers[customer])
+        common.logger.debug('Put ' + url)
+    elif api_type == 'get' :
+        response = requests.get(url,headers = uphance_headers[customer])
+        common.logger.debug('Get ' + url)
+    else:
+        common.logger.warning('Error in api_type: ' + api_type)
+        return_error = 'Error in api_type'
+        return return_error, 'NULL'
+
+    if response.status_code == 200:
+        common.logger.debug('Uphance ' + api_type + ' successful for ' + customer)
+        common.logger.debug(response.json())
+        return return_error, response.json()  #this should be a False
+    else:
+        common.logger.warning('Uphance ' + api_type + ' error for ' + customer + '\nURL: ' + url + '\nResponse Status Code: ' + str(response.status_code))
+        return str(response.status_code), 'NULL'
+    
+
+    #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
+    #return True
+
+def read_dropbox_bytestream(customer,file_path)
+    global dbx
+    
+    #see https://stackoverflow.com/questions/53697160/how-do-i-read-an-excel-file-directly-from-dropboxs-api-using-pandas-read-excel
+    
+    try: 
+        _, res = dbx.files_download(file_path)
+        with closing(res) as result:
+            byte_data = result.content
+            logger.debug('Dropbox Read done successfully')
+            return io.BytesIO(byte_data)
+
+    except Exception as ex:
+        tb = traceback.format_exc()
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in read_dropbox\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
+        common.logger.warning(tb)
+        logger.debug('Dropbox Read Error')
+        return False
+
+
+def store_dropbox_unicode(customer,file_data,file_path)
+    global dbx
+    #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
+    try:
+        with io.BytesIO(file_data.encode()) as stream:
+            stream.seek(0)
+            dbx.files_upload(stream.read(), file_path, mode=dropbox.files.WriteMode.overwrite)
+        logger.debug('Dropbox Transferred Successfully')
+        return True 
+
+    except Exception as ex:
+        tb = traceback.format_exc()
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
+        common.logger.warning(tb)
+        logger.debug('Dropbox Transfer Error')
+        return False
 
 #initialise parameters
 

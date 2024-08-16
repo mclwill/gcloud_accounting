@@ -1,20 +1,11 @@
-#import functions_framework
-import json
-#import smtplib
-#import logging
-#import logging.handlers
-#import threading
+
 import pandas as pd
 #import dropbox
-import io
-import os
 from collections import defaultdict
 from datetime import datetime
 from dateutil import tz
 import importlib
 import ftputil
-#import time
-#import random
 
 #include general files
 
@@ -32,60 +23,7 @@ to_zone = tz.tzlocal()
 
 process_webhook_depth = 0
 
-'''smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
-                                            fromaddr="zd_zapier@mclarenwilliams.com.au", 
-                                            toaddrs="gary@mclarenwilliams.com.au",
-                                            subject=u"Uphance webhook info logging exception",
-                                            credentials=('zd_zapier@mclarenwilliams.com.au', 'yEc9m3G9f?ATeJtF'),
-                                            secure=())
-
-logger = logging.getLogger()
-logger.addHandler(smtp_handler)
-
-aemery_dbx_refresh_token = 'tX62hzYj2h0AAAAAAAAAATd7DM2a0yAnNSW_P7SpMx_LA3JV4QnufbN-ddRDt0cd'
-aemery_dbx_app_key = 'uxrn09slklm1una'
-aemery_dbx_app_secret = 'in08qrhgq0qit5n'
-'''
-
-#dbx_folder = "/A.Emery/Wholesale/APIs (Anna's Dad)/Cross Docks Info/FTP_production_files/sent/"
-
 cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
-
-
-'''def send_email(message_subject,message_text,receiver_email_address):
-    sender_email = 'zd_zapier@mclarenwilliams.com.au'
-    sender_pw = 'yEc9m3G9f?ATeJtF'
-    try: 
-        #Create your SMTP session 
-        smtp = smtplib.SMTP('smtp.gmail.com', 587) 
-
-       #Use TLS to add security 
-        smtp.starttls() 
-
-        #User Authentication 
-        smtp.login(sender_email,sender_pw)
-
-        #Defining The Message 
-        message = 'From: aemery_gcf <zd_zapier@mclarenwilliams.com.au>\nTo:  <gary@mclarenwilliams.com.au>\nSubject: ' + message_subject + '\n\n' + message_text
-
-        #Sending the Email
-        smtp.sendmail(sender_email, receiver_email_address,message.encode('utf-8')) 
-
-        #Terminating the session 
-        smtp.quit() 
-        return True
-
-    except SMTPResponseException as ex:
-        error_code = ex.smtp_code
-        error_message = ex.smtp_error
-        logger.exception(ex)
-        if error_code == 421 : #try again after random time interval up to 5 seconds
-            time.sleep(random.random(5))
-            send_email(message_subject,message_text,receiver_email_address)
-            return True
-'''    
-    
-
 
 def getLocalFiles(folder):
     global error, request_dict
@@ -301,11 +239,13 @@ def process_all_record_indicators(customer,event_data,stream_id):
     
 def process_file(customer,file_data,file_name):
     global error, request_dict
-    #common.get_CD_FTP_credentials(customer)
-    common.dropbox_initiate()
 
     dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/sent/' + file_name
+
+    if not common.store_dropbox(customer,file_data,dbx_file)
+        common.logger.warning('Cross Docks file not stored in Dropbox - processing has continued\nFile Name: ' + file_name + '\nFile Contents : \n' + file_data)
     
+    '''move to common.py
     #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
     try:
         with io.BytesIO(file_data.encode()) as stream:
@@ -315,10 +255,14 @@ def process_file(customer,file_data,file_name):
 
         common.logger.debug('Dropbox Transferred Successfully')
 
+    
+
     except Exception as ex:
         common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Uphance Dropbox Error - need to check if file sent to Dropbox\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         
         common.logger.debug('Dropbox Transfer Error')
+
+    '''
 
     if len(error.keys()) == 0 : #no errors reported so send to Cross Docks
         if transfer_FTP(customer,file_name,file_data):
@@ -328,15 +272,16 @@ def process_file(customer,file_data,file_name):
             
         else:
             error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
-            common.logger.warning('transfer_FTP error for file: ' + file_name)
-    elif error['send_to_CD'] :
-        if transfer_FTP(customer,file_name,file_data):
-            common.logger.debug('transfer_FTP ok after error: ' + str(error))
-            #process any stored files since last FTP was successful so can resend queued files to Cross Docks
-            processQueuedFiles(customer,os.path.join('home/gary/cd_send_files',customer))
-        else:
-            error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
-            common.logger.warning('transfer_FTP error for file: ' + file_name)
+            common.logger.warning('transfer_FTP error for file: ' + file_name +'\nFile should have been stored on server for sending to Cross Docks when FTP up again')
+    elif 'send_to_CD' in error :
+        if error['send_to_CD'] :
+            if transfer_FTP(customer,file_name,file_data):
+                common.logger.debug('transfer_FTP ok after error: ' + str(error))
+                #process any stored files since last FTP was successful so can resend queued files to Cross Docks
+                processQueuedFiles(customer,os.path.join('home/gary/cd_send_files',customer))
+            else:
+                error['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
+                common.logger.warning('transfer_FTP error for file: ' + file_name +'\nFile should have been stored on server for sending to Cross Docks when FTP up again')
         
 
     

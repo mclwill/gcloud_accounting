@@ -5,6 +5,7 @@ from flask import request, jsonify
 import FlaskApp.app.common as common
 import FlaskApp.app.uphance_webhook_info as uphance_webhook
 import FlaskApp.app.cross_docks_polling as cross_docks_polling
+import FlaskApp.app.reporting as reporting
 
 
 @app.route("/")
@@ -67,3 +68,9 @@ def process_two_ts_cross_docks_polling():
     return 'Processed', status_code
 
 
+@app.route('/aemery_get_product_data',methods=['POST'])
+def process_aemery_get_uphance_stock_levels):
+
+    status_code = reporting.get_uphance_stock_levels('aemery')
+    
+    return 'Procssed', status_code
