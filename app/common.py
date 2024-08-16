@@ -256,7 +256,7 @@ def uphance_initiate(customer:str, **kwargs):
                 response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
         
                 if response.status_code == 201:
-                    logger.info('\nLogger Info for ' + customer + '\nUphance initiated for ' + customer + '\nUphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
+                    logger.info('\nLogger Info for ' + customer + ' Uphance initiated and Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
                     logger.debug(response.json())
                     return True
                 else:
@@ -348,7 +348,7 @@ def read_dropbox_bytestream(customer,file_path):
 
     except Exception as ex:
         tb = traceback.format_exc()
-        logger.warning('Logging Warning Error for :' + customer + ' Exception in read_dropbox\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in read_dropbox\nFile Path: ' + file_path + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
         common.logger.warning(tb)
         logger.debug('Dropbox Read Error')
         return False
@@ -366,7 +366,7 @@ def store_dropbox_unicode(customer,file_data,file_path):
 
     except Exception as ex:
         tb = traceback.format_exc()
-        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nError Info: ' + str(error) + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
         common.logger.warning(tb)
         logger.debug('Dropbox Transfer Error')
         return False
