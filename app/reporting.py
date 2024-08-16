@@ -19,13 +19,12 @@ def get_uphance_stock_levels(customer):
 	page = 1 #get ready for Uphance pagination
 	while page :
 	    response = common.uphance_api_call(customer,'get',url=url_product+'/?page='+str(page))
-	    common.logger.debug('Uphance Product API Call Status Code' + str(response[0]))
+	    common.logger.debug('Uphance Product API Call Status Code: ' + str(response[0]))
 	    if response[0]:
 	    	common.logger.warning('Uphance Error on Product API call for :' + customer)
 	    	break
 	    else:
-		    common.logger.debug('')
-		    data = response[1].json()
+		    data = response[1]
 		    for p in data['products']:
 		        row_dict = {}
 		        row_dict['Date'] = [dt.now()]
