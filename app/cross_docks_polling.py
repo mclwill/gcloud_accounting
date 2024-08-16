@@ -1,5 +1,5 @@
 import json
-import datetime
+from datetime import datetime
 from dateutil import tz
 import ftputil
 import requests
@@ -400,7 +400,7 @@ def process_CD_file(customer,directory,f):
 
 def cross_docks_poll_request(customer):
     try:
-        proc_start_time = datetime.datetime.now()
+        proc_start_time = datetime.now()
 
         files = get_pending_FTP_files(customer) 
         if files:
@@ -433,7 +433,7 @@ def cross_docks_poll_request(customer):
                 if i >= proc_max_files:
                     break
 
-            proc_end_time = datetime.datetime.now()
+            proc_end_time = datetime.now()
             proc_elapsed_time = proc_end_time - proc_start_time
             proc_info_str = 'CD Files Processed :\nNum Files : ' + str(i) + '\nStart Time (UTC): ' + proc_start_time.strftime("%H:%M:%S") + '\n' + \
                             'End Time (UTC): ' + proc_end_time.strftime("%H:%M:%S") + '\n' + \
@@ -443,7 +443,7 @@ def cross_docks_poll_request(customer):
             common.send_email(0,'CD Files Processed for ' + customer,proc_info_str,['global'],customer=customer)
         else:
             common.logger.debug('No files to process for ' + customer)
-            proc_end_time = datetime.datetime.now()
+            proc_end_time = datetime.now()
             proc_elapsed_time = proc_end_time - proc_start_time
             
             common.send_email(0,'CD Files Processed','No files processed\nElapsed Time: ' + str(proc_elapsed_time),'gary@mclarenwilliams.com.au',customer=customer)

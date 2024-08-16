@@ -28,7 +28,7 @@ def get_uphance_stock_levels(customer):
 		    data = response[1]
 		    for p in data['products']:
 		        row_dict = {}
-		        row_dict['Date'] = [datetime.datetime.now()]
+		        row_dict['Date'] = [datetime.now()]
 		        row_dict['p_id'] = [p['id']]
 		        row_dict['p_identifier'] = [p['product_identifier']]
 		        row_dict['p_name'] = [p['name']]
