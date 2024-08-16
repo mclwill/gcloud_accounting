@@ -310,24 +310,24 @@ def uphance_api_call(customer,api_type,**kwargs):
     
     if api_type == 'post':
         response = requests.post(url,json = json,headers = uphance_headers[customer])
-        common.logger.debug('Post ' + url)
+        logger.debug('Post ' + url)
     elif api_type == 'put':
         response = requests.put(url,headers = uphance_headers[customer])
-        common.logger.debug('Put ' + url)
+        logger.debug('Put ' + url)
     elif api_type == 'get' :
         response = requests.get(url,headers = uphance_headers[customer])
-        common.logger.debug('Get ' + url)
+        logger.debug('Get ' + url)
     else:
-        common.logger.warning('Error in api_type: ' + api_type)
+        logger.warning('Error in api_type: ' + api_type)
         return_error = 'Error in api_type'
         return return_error, 'NULL'
 
     if response.status_code == 200:
-        common.logger.debug('Uphance ' + api_type + ' successful for ' + customer)
-        common.logger.debug(response.json())
+        logger.debug('Uphance ' + api_type + ' successful for ' + customer)
+        logger.debug(response.json())
         return return_error, response.json()  #this should be a False
     else:
-        common.logger.warning('Uphance ' + api_type + ' error for ' + customer + '\nURL: ' + url + '\nResponse Status Code: ' + str(response.status_code))
+        logger.warning('Uphance ' + api_type + ' error for ' + customer + '\nURL: ' + url + '\nResponse Status Code: ' + str(response.status_code))
         return str(response.status_code), 'NULL'
     
 
