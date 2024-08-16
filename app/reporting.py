@@ -9,7 +9,7 @@ Date,p_id,p_identifier,p_url,p_name,season_id,sku_id,sku_number,color,size,ean,i
 '''
 
 def get_uphance_stock_levels(customer):
-	file_path = "Wholesale/APIs (Anna's Dad)/Uphance/DataStore/data.csv"
+	file_path = "/Wholesale/APIs (Anna's Dad)/Uphance/DataStore/data.csv"
 	byte_stream = common.read_dropbox_bytestream(customer,file_path)
 	if byte_stream:
 		df = pd.read_csv(byte_stream,sep='|',index_col=False)
