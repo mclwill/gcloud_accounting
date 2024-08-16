@@ -52,5 +52,5 @@ def get_uphance_stock_levels(customer):
 		        df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
 	    page = data['meta']['next_page']
 	csv_file_data = df.to_csv(sep='|',index=False)
-	common.store_dropbox_unicode(customer,csv_file_data)
+	common.store_dropbox_unicode(customer,csv_file_data,file_path)
 	common.logger.info('Uphance DataStore updated for ' + customer + '\nFile Path: ' + file_path)
