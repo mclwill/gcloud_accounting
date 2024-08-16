@@ -69,7 +69,7 @@ def process_two_ts_cross_docks_polling():
 
 
 @app.route('/aemery_get_product_data',methods=['POST'])
-def process_aemery_get_uphance_stock_levels):
+def process_aemery_get_uphance_stock_levels():
 
     status_code = reporting.get_uphance_stock_levels('aemery')
     
