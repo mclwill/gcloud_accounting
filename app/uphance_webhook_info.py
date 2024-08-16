@@ -242,7 +242,7 @@ def process_file(customer,file_data,file_name):
 
     dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/sent/' + file_name
 
-    if not common.store_dropbox(customer,file_data,dbx_file)
+    if not common.store_dropbox(customer,file_data,dbx_file):
         common.logger.warning('Cross Docks file not stored in Dropbox - processing has continued\nFile Name: ' + file_name + '\nFile Contents : \n' + file_data)
     
     '''move to common.py
