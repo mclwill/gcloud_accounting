@@ -334,7 +334,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
     #return True
 
-def read_dropbox_bytestream(customer,file_path)
+def read_dropbox_bytestream(customer,file_path):
     global dbx
     
     #see https://stackoverflow.com/questions/53697160/how-do-i-read-an-excel-file-directly-from-dropboxs-api-using-pandas-read-excel
@@ -354,7 +354,7 @@ def read_dropbox_bytestream(customer,file_path)
         return False
 
 
-def store_dropbox_unicode(customer,file_data,file_path)
+def store_dropbox_unicode(customer,file_data,file_path):
     global dbx
     #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
     try:
