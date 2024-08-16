@@ -348,7 +348,7 @@ def read_dropbox_bytestream(customer,file_path):
 
     except Exception as ex:
         tb = traceback.format_exc()
-        logger.warning('Logging Warning Error for :' + customer + ' Exception in read_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in read_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex))
         common.logger.warning(tb)
         logger.debug('Dropbox Read Error')
         return False
@@ -366,7 +366,7 @@ def store_dropbox_unicode(customer,file_data,file_path):
 
     except Exception as ex:
         tb = traceback.format_exc()
-        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n')
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data)
         common.logger.warning(tb)
         logger.debug('Dropbox Transfer Error')
         return False
