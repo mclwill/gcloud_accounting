@@ -34,7 +34,7 @@ def get_data_store_info(customer):
         df = pd.read_csv(byte_stream,sep='|',index_col=False)
     else:
         df = pd.DataFrame() #start with empty dataframe
-    
+    aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
     url_product = 'https://api.uphance.com/products'
     page = 1 #get ready for Uphance pagination
     while page :
@@ -46,7 +46,6 @@ def get_data_store_info(customer):
             break
         else:
             data = response[1]
-            aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
             row_dict = {}
             for p in data['products']:
                 for v in p['variations'] :

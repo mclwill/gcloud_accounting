@@ -1,6 +1,7 @@
 from FlaskApp.app import app
 #import time
 import sys
+import threading
 from flask import request, jsonify
 import FlaskApp.app.common as common
 import FlaskApp.app.uphance_webhook_info as uphance_webhook
@@ -70,7 +71,7 @@ def process_two_ts_cross_docks_polling():
 
 @app.route('/aemery_get_product_data',methods=['POST'])
 def process_aemery_get_data_store_info():
-
-    status_code = data_store.get_data_store_info('aemery')
-    
-    return 'Processed', status_code
+    #use threading so that no timeout occurs on POST
+    x = threading.Thread(target = data_store.get_data_store_info, args=('aemery',))
+    x.start()
+    return 'Processed using thread'
