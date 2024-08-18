@@ -14,10 +14,12 @@ Date,p_id,p_identifier,p_url,p_name,season_id,sku_id,sku_number,color,size,ean,i
 utc_zone = tz.tzutc()
 to_zone = tz.gettz('Australia/Melbourne')
 
-def extend_list_in_dict(row_dict,n):
-	for d in row_dict.keys():
-		for i in range(n)L
-			row_dict[d] = row_dict[d].append(row_dict[d][-1])
+def dict_append(d,k,v): #used to build row_dict array in format to transfer to pandas dataframe
+    if k in d:
+        d[k].append(v)
+        return d[k]
+    else:
+        return [v]
 
 def get_uphance_data_store_info(customer):
 	data_store_folder = common.access_secret_version('customer_parameters',customer,'data_store_folder')
@@ -44,34 +46,32 @@ def get_uphance_data_store_info(customer):
 	    else:
 		    data = response[1]
 		    aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
-		    row_df = pd.DataFrame()
+		    df = pd.DataFrame()
 		    for p in data['products']:
-		        row_dict = {}
-		        row_dict['date'] = [aest_now]
-		        row_dict['p_id'] = [p['id']]
-		        row_dict['p_identifier'] = [p['product_identifier']]
-		        row_dict['p_name'] = [p['name']]
-		        row_dict['url'] = [p['image_url']]
-		        row_dict['season_id'] = [','.join(str(x) for x in p['season_id'])]
-		        row_dict['category'] = [p['category']]
-		        row_dict['sub_category'] = [p['sub_category']]
-
 		        for v in p['variations'] :
-		            row_dict['color'] = [v['color']]
-		            for pr in v['prices']:
-		                row_dict['price_' + pr['name'] + '_currency' ] = [pr['currency']]
-		                row_dict['price_' + pr['name'] + '_wsp' ] = [pr['wsp_money']]
-		                row_dict['price_' + pr['name'] + '_mrsp' ] = [pr['msrp_money']]
-		                row_df = 
-		            for sku in v['skus']:    
-		                row_dict['sku_id'] = [sku['id']]
-		                row_dict['size'] = [sku['size']]
-		                row_dict['sku_number'] = [sku['sku_number']]
-		                row_dict['ean'] = [sku['ean']]
-		                row_dict['in_stock'] = [sku['in_stock']]
-		                row_dict['available_to_sell'] = [sku['available_to_sell']]
-		                row_dict['available_to_sell_from_stock'] = [sku['available_to_sell_from_stock']]
-		        		df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
+		            for sku in v['skus']:  
+		                if sku['ean']:
+		                    row_dict['date'] = dict_append(row_dict,'date',dt_now)
+		                    row_dict['p_id'] = dict_append(row_dict,'p_id',p['id'])
+		                    row_dict['p_identifier'] = dict_append(row_dict,'p_identifier',p['product_identifier'])
+		                    row_dict['p_name'] = dict_append(row_dict,'p_name',p['name'])
+		                    row_dict['url'] = dict_append(row_dict,'url',p['image_url'])
+		                    row_dict['season_id'] = dict_append(row_dict,'season_id',','.join(str(x) for x in p['season_id']))
+		                    row_dict['category'] = dict_append(row_dict,'category',p['category'])
+		                    row_dict['sub_category'] = dict_append(row_dict,'sub_category',p['sub_category'])
+		                    row_dict['color'] = dict_append(row_dict,'color',v['color'])
+		                    row_dict['sku_id'] = dict_append(row_dict,'sku_id',sku['id'])
+		                    row_dict['ean'] = dict_append(row_dict,'ean',sku['ean'])
+		                    row_dict['size'] = dict_append(row_dict,'size',sku['size'])
+		                    row_dict['sku_number'] = dict_append(row_dict,'sku_number',sku['sku_number'])
+		                    row_dict['in_stock'] = dict_append(row_dict,'in_stock',sku['in_stock'])
+		                    row_dict['available_to_sell'] = dict_append(row_dict,'available_to_sell',sku['available_to_sell'])
+		                    row_dict['available_to_sell_from_stock'] = dict_append(row_dict,'available_to_sell_from_stock',sku['available_to_sell_from_stock'])
+		                    for pr in v['prices']:
+		                        row_dict['price_' + pr['name'] + '_currency' ] = dict_append(row_dict,'price_' + pr['name'] + '_currency',pr['currency'])
+		                        row_dict['price_' + pr['name'] + '_wsp' ] = dict_append(row_dict,'price_' + pr['name'] + '_wsp',pr['wsp_money'])
+		                        row_dict['price_' + pr['name'] + '_mrsp' ] = dict_append(row_dict,'price_' + pr['name'] + '_mrsp' ,pr['msrp_money'])
+		df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
 	    page = data['meta']['next_page']
 	csv_file_data = df.to_csv(sep='|',index=False)
 	common.store_dropbox_unicode(customer,csv_file_data,stock_file_path)
