@@ -31,7 +31,7 @@ else:
 df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
 
 available_columns = df[['url_markdown','date','p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
-#available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
+available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
 available_products = df['p_name'].unique()
 available_colors = df['color'].unique()
 available_sizes = df['size'].unique()
