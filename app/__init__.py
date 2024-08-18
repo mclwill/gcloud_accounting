@@ -10,7 +10,7 @@ from FlaskApp.app import views
 with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
     print('__init__.py')
 
-dash_app = dash.Dash(server=app,routes_pathname_prefix="/dashboard")
+dash_app = dash.Dash(server=app,routes_pathname_prefix="/dashboard/")
 
 dash_app.layout = html.Div("This is the Dash app")
 
