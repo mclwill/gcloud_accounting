@@ -20,7 +20,7 @@ def dict_append(d,k,v): #used to build row_dict array in format to transfer to p
     else:
         return [v]
 
-def get_uphance_data_store_info(customer):
+def get_data_store_info(customer):
     data_store_folder = common.access_secret_version('customer_parameters',customer,'data_store_folder')
     stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
     orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
