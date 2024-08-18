@@ -104,7 +104,7 @@ dash_app.layout = html.Div([
                         ),
                     ]),
                 ]),
-            ],color='#FFFFFF',outline=True),
+            ],color='light',outline=True),
         ),
     ]),
     dbc.Row([
