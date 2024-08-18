@@ -150,6 +150,6 @@ def update_table(v_product,v_color,v_size):
         v_color = color_option_list
     if not v_size or v_size == 'All':
         v_size = size_option_list
-    ddf = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_product))&(available_columns['size'].isin(v_product))]
+    ddf = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
     
     return ddf.to_dict("records")             
