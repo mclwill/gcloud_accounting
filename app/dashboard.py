@@ -17,6 +17,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 customer = 'aemery'
 
+
 data_store_folder = common.data_store[customer]
 stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
@@ -27,7 +28,9 @@ if byte_stream:
 else:
     df = pd.DataFrame() #start with empty dataframe
 
-available_columns = df[['p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
+df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + a + "](https://amery.com)")
+
+available_columns = df[['url_markdown','p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
 available_products = df['p_name'].unique()
 available_colors = df['color'].unique()
 available_sizes = df['size'].unique()
@@ -150,5 +153,7 @@ def update_table(v_product,v_color,v_size):
         v_color = color_option_list
     if not v_size or v_size == 'All':
         v_size = size_option_list
-    ddf = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
-    return ddf.to_dict("records")             
+    dff = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
+    if len(dff.index) < 10:
+        dff = available_columns['']
+    return dff.to_dict("records")             
