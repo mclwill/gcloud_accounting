@@ -1,6 +1,7 @@
 import pandas as pd
 import FlaskApp.app.common as common
 from datetime import datetime
+from dateutil import tz
 import FlaskApp.app.cross_docks_polling as cd_polling
 '''
 module for collecting daily information on stock levels, sales, returns and new stock orders
@@ -8,8 +9,6 @@ Columns
 
 Date,p_id,p_identifier,p_url,p_name,season_id,sku_id,sku_number,color,size,ean,in_stock,available_to_sell,available_to_sell_from_stock
 '''
-
-
 
 utc_zone = tz.tzutc()
 to_zone = tz.gettz('Australia/Melbourne')
