@@ -26,7 +26,7 @@ if byte_stream:
 else:
     df = pd.DataFrame() #start with empty dataframe
 
-available_columns = df[['p_identifier','p_name','color','size','sku_id']]
+available_columns = df[['p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
 available_products = df['p_name'].unique()
 
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
