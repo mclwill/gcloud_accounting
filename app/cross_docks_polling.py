@@ -7,6 +7,7 @@ import traceback
 from tabulate import tabulate
 
 import FlaskApp.app.common as common 
+import FlaskApp.app.reporting as reporting
 
 from_zone = tz.tzutc()
 to_zone = tz.tzlocal()
@@ -308,7 +309,8 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
                                                                                'Input File: ' + f + '\n' + \
                                                                                'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
                                                                                data,['global'],customer=customer)
-
+            if common.data_store[customer]:
+                common.storeLocalFile(os.path.join('home/gary/data_store',customer),f,data,customer=customer,error=error)
     else:
         error['PC'] = True
         error['File Status'] = 1

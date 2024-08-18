@@ -10,7 +10,8 @@ import ftputil
 #include general files
 
 import FlaskApp.app.file_format_GMcL  as file_format_GMcL #default configuration data for Cross Dock formatting -> see Jupyter Notebook for code to create this info from Cross Docks formatting spreadsheet
-import FlaskApp.app.common as common 
+import FlaskApp.app.common as common
+import FlaskApp.app.reporting as reporting
 
 custom_file_format_modules = {}
 
@@ -295,7 +296,7 @@ def process_pick_ticket(customer,event_data):
         file_data = process_all_record_indicators(customer,event_data,stream_id)
         file_name = stream_id + event_date + '_' + str(event_id).zfill(4) + '_' + str(event_shipment_number).zfill(4) + '.csv'
         process_file(customer,file_data,file_name)
-    
+        reporting.or_file_sent(customer,file_data)
         return file_data
     else:
         return "Not Sent to Cross Docks - Already in Packing State"
