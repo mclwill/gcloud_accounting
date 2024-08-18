@@ -41,15 +41,15 @@ dash_app.layout = html.Div([
         html.Div([
                 dcc.Dropdown(
                         id='select_column',
-                        options=[{'label':i, 'value': i} for i in available_produtcs],
+                        options=[{'label':i, 'value': i} for i in available_products],
                         value='THE ELI SANDAL',
                         #multi=True
                 )
         ]),
         dash_table.DataTable(
             id='data_table',
-            columns=[{"name": i, "id": i} for i in ingredients_tab_data.columns],
-            data=ingredients_tab_data.to_dict("rows")
+            columns=[{"name": i, "id": i} for i in available_columns.columns],
+            data=available_columns.to_dict("rows")
         )
 ])  
 
