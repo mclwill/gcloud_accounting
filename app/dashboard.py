@@ -40,7 +40,7 @@ color_option_list = [{'label':i, 'value': i} for i in available_colors]
 size_option_list = [{'label':i, 'value': i} for i in available_sizes]
 
 dash_app.layout = html.Div([
-    dcc.Row([
+    dbc.Row([
         dbc.Card([
             dbc.CardBody([
                 html.H1("Dashboard"),
@@ -52,7 +52,7 @@ dash_app.layout = html.Div([
             style={"width": "18rem"},
         ),
     ]),
-    dcc.Row([
+    dbc.Row([
         dbc.Card([
             dbc.CardBody([
                 html.P("Product"),
@@ -100,7 +100,7 @@ dash_app.layout = html.Div([
         ]),
 
     ]),
-    dcc.Row([
+    dbc.Row([
         dbc.Card([
             dbc.CardBody([
                 dash_table.DataTable(
