@@ -11,7 +11,6 @@ import ftputil
 
 import FlaskApp.app.file_format_GMcL  as file_format_GMcL #default configuration data for Cross Dock formatting -> see Jupyter Notebook for code to create this info from Cross Docks formatting spreadsheet
 import FlaskApp.app.common as common
-import FlaskApp.app.reporting as reporting
 
 custom_file_format_modules = {}
 
@@ -26,39 +25,11 @@ process_webhook_depth = 0
 
 cc_codes_pd = pd.read_csv('/var/www/FlaskApp/FlaskApp/app/CountryCodes.csv',index_col='Country')
 
-def getLocalFiles(folder):
-    global error, request_dict
-    
-    localfiles = []
-    try:
-        for (root,dirs,files) in os.walk(folder,topdown=True):
-            for f in files:
-                with open(os.path.join(folder,f),'r') as text_file:
-                    filedata = text_file.read()
-                file_item = {'file_name':f,'file_data':filedata}
-                localfiles.append(file_item)
-
-        return True, localfiles
-    
-    except Exception as ex:
-        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
-        return False, None
-
-
-def storeLocalFile(customer,folder,file_name,file_data) :
-    global error, request_dict
-
-    try:
-        with open(os.path.join(folder,file_name),'w') as text_file:
-            text_file.write(file_data)
-        return True 
-    except Exception as ex:
-        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Save Error \nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
-        return False
-
 
 def processQueuedFiles(customer,folder):
-    queuedFiles = getLocalFiles(folder)
+    global error,request_dict
+
+    queuedFiles = common.getLocalFiles(folder,customer=customer,error=error,request_dict=request_dict)
     if queuedFiles[0] : #only process files if no errors on getting Local files
         for file_item in queuedFiles[1]:
             if transfer_FTP(customer,file_item['file_name'],file_item['file_data'],True): #flag this is a retry to avoid another saving on error
@@ -86,7 +57,7 @@ def transfer_FTP(customer,file_name,file_data,retry=False):
         common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Cross Docks FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
         error['send_to_CD'] = False;
         if not retry:
-            storeLocalFile(customer,os.path.join('home/gary/cd_send_files',customer),file_name,file_data)  #store file locally
+            common.storeLocalFile(os.path.join('home/gary/cd_send_files',customer),file_name,file_data,customer=customer,error=error,request_dict=request_dict)  #store file locally
             common.logger.info('Logging Info for ' + customer + "\nFile " + file_name + ' stored locally')
         return False
         
@@ -287,6 +258,7 @@ def process_file(customer,file_data,file_name):
 
     
 def process_pick_ticket(customer,event_data):
+    global error, request_dict
     if event_data['service'] != 'Packing':
         stream_id = 'OR'
         event_id = event_data['id']
@@ -296,7 +268,8 @@ def process_pick_ticket(customer,event_data):
         file_data = process_all_record_indicators(customer,event_data,stream_id)
         file_name = stream_id + event_date + '_' + str(event_id).zfill(4) + '_' + str(event_shipment_number).zfill(4) + '.csv'
         process_file(customer,file_data,file_name)
-        reporting.or_file_sent(customer,file_data)
+        if common.data_store[customer]:
+            common.storeLocalFile(os.path.join('home/gary/data_store',customer),file_name,file_data,customer=customer,error=error,request_dict=request_dict)
         return file_data
     else:
         return "Not Sent to Cross Docks - Already in Packing State"
@@ -412,7 +385,6 @@ def uphance_process_webhook(customer,request):
     '''
 
     try:
-        #dbx = dropbox.Dropbox(app_key=aemery_dbx_app_key,app_secret=aemery_dbx_app_secret,oauth2_refresh_token=aemery_dbx_refresh_token)
         if type(request) != dict:
             request_dict = request.get_json()
         else:

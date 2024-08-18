@@ -7,7 +7,6 @@ import traceback
 from tabulate import tabulate
 
 import FlaskApp.app.common as common 
-import FlaskApp.app.reporting as reporting
 
 from_zone = tz.tzutc()
 to_zone = tz.tzlocal()
