@@ -25,6 +25,8 @@ orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
 def serve_layout():
+    global available_columns,available_products,available_colors,available_sizes
+
     byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
     if byte_stream:
         df = pd.read_csv(byte_stream,sep='|',index_col=False)
