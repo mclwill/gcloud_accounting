@@ -41,118 +41,118 @@ size_option_list = [{'label':i, 'value': i} for i in available_sizes]
 
 dash_app.layout = html.Div([
     dcc.Row([
-    	dbc.Card([
-	    	dbc.CardBody([
-	            html.H1("Dashboard"),
-	            html.P('''
+        dbc.Card([
+            dbc.CardBody([
+                html.H1("Dashboard"),
+                html.P('''
                      This is a dashboard for A.Emery
                      '''),
-	        	]),
-	    	],   
-	    	style={"width": "18rem"},
-	    ),
-	]),
-	dcc.Row([
-		dbc.Card([
-			dbc.CardBody([
-				html.P("Product"),
-				html.Div([
-		            dcc.Dropdown(
-	                    id='product_option',
-	                    options=product_option_list,
-	                    value=[],
-	                    placeholder = 'All',
-	                    multi = True,
-	                    clearable = True
-		            ),
-		        ]),
-		    ]),
-		]),
-		dbc.Card([
-			dbc.CardBody([
-				html.P("Color"),
-				html.Div([
-		            dcc.Dropdown(
-	                    id='color_option',
-	                    options=color_option_list,
-	                    value=[],
-	                    placeholder = 'All',
-	                    multi = True,
-	                    clearable = True
-		            ),
-		        ]),
-		    ]),
-		]),
-		dbc.Card([
-			dbc.CardBody([
-				html.P("Size"),
-				html.Div([
-		            dcc.Dropdown(
-	                    id='size_option',
-	                    options=size_option_list,
-	                    value=[],
-	                    placeholder = 'All',
-	                    multi = True,
-	                    clearable = True
-		            ),
-		        ]),
-		    ]),
-		]),
+                ]),
+            ],   
+            style={"width": "18rem"},
+        ),
+    ]),
+    dcc.Row([
+        dbc.Card([
+            dbc.CardBody([
+                html.P("Product"),
+                html.Div([
+                    dcc.Dropdown(
+                        id='product_option',
+                        options=product_option_list,
+                        value=[],
+                        placeholder = 'All',
+                        multi = True,
+                        clearable = True
+                    ),
+                ]),
+            ]),
+        ]),
+        dbc.Card([
+            dbc.CardBody([
+                html.P("Color"),
+                html.Div([
+                    dcc.Dropdown(
+                        id='color_option',
+                        options=color_option_list,
+                        value=[],
+                        placeholder = 'All',
+                        multi = True,
+                        clearable = True
+                    ),
+                ]),
+            ]),
+        ]),
+        dbc.Card([
+            dbc.CardBody([
+                html.P("Size"),
+                html.Div([
+                    dcc.Dropdown(
+                        id='size_option',
+                        options=size_option_list,
+                        value=[],
+                        placeholder = 'All',
+                        multi = True,
+                        clearable = True
+                    ),
+                ]),
+            ]),
+        ]),
 
     ]),
     dcc.Row([
-    	dbc.Card([
-			dbc.CardBody([
-			    dash_table.DataTable(
-			        id='data_table',
-			        columns=[{"name": i, "id": i} for i in available_columns.columns],
-			        data=available_columns.to_dict("records")
-			    )
-			]),
-		]),
-	])
+        dbc.Card([
+            dbc.CardBody([
+                dash_table.DataTable(
+                    id='data_table',
+                    columns=[{"name": i, "id": i} for i in available_columns.columns],
+                    data=available_columns.to_dict("records")
+                )
+            ]),
+        ]),
+    ])
 ])  
 
 @dash_app.callback(
-	Output('color_option', 'options'),
+    Output('color_option', 'options'),
     Input('product_option', 'value')
 )
 def set_dropdown_options(product):
-	dff = df.copy()
-	if product:
-		dff = dff[dff['p_name'].isin(product)]
-	return [{'label':x,'value':x} for x in dff['color'].unique()]
+    dff = df.copy()
+    if product:
+        dff = dff[dff['p_name'].isin(product)]
+    return [{'label':x,'value':x} for x in dff['color'].unique()]
 
 @dash_app.callback(
-	Output('size_option', 'options'),
+    Output('size_option', 'options'),
     [Input('product_option', 'value'),
     Input('color_option','value')]
 )
 def set_dropdown_options(product,color):
-	dff = df.copy()
-	if product:
-		dff = dff[dff['p_name'].isin(product)]
-	if color:
-		dff = dff[dff['color'].isin(color)]
-	return [{'label':x,'value':x} for x in dff['size'].unique()]
+    dff = df.copy()
+    if product:
+        dff = dff[dff['p_name'].isin(product)]
+    if color:
+        dff = dff[dff['color'].isin(color)]
+    return [{'label':x,'value':x} for x in dff['size'].unique()]
 
 
 @dash_app.callback (
-	    Output('data_table', 'data'),
+        Output('data_table', 'data'),
         [Input('product_option', 'value'),
         Input('color_option','value'),
         Input('size_option','value')]
 )
 def update_table(v_product,v_color,v_size):
-	if not v_product or v_product == 'All':
+    if not v_product or v_product == 'All':
         v_product = product_option_list
     if not v_color or v_color == 'All':
         v_color = color_option_list
     if not v_size or v_size == 'All':
         v_size = size_option_list
-    ddf = available_columns.query(	'p_name == @v_product and '
-    				'color == @_color and'
-    				'size == @v_size',
-    				engine = 'python')
+    ddf = available_columns.query(  'p_name == @v_product and '
+                    'color == @_color and'
+                    'size == @v_size',
+                    engine = 'python')
     
     return ddf.to_dict("records")             
