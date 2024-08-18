@@ -70,7 +70,7 @@ dash_app.layout = html.Div([
                         ),
                     ]),
                 ]),
-            ]),
+            ],color='light',outline=True),
         ),
         dbc.Col(
             dbc.Card([
@@ -87,7 +87,7 @@ dash_app.layout = html.Div([
                         ),
                     ]),
                 ]),
-            ]),
+            ],color='light',outline=True),
         ),
         dbc.Col(
             dbc.Card([
@@ -104,7 +104,7 @@ dash_app.layout = html.Div([
                         ),
                     ]),
                 ]),
-            ]),
+            ],color='light',outline=True),
         ),
     ]),
     dbc.Row([
