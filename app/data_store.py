@@ -1,8 +1,9 @@
 import os
 import pandas as pd
-import FlaskApp.app.common as common
 from datetime import datetime
 from dateutil import tz
+
+import FlaskApp.app.common as common
 import FlaskApp.app.cross_docks_polling as cd_polling
 '''
 module for collecting daily information on stock levels, sales, returns and new stock orders
@@ -22,7 +23,7 @@ def dict_append(d,k,v): #used to build row_dict array in format to transfer to p
         return [v]
 
 def get_data_store_info(customer):
-    data_store_folder = common.access_secret_version('customer_parameters',customer,'data_store_folder')
+    data_store_folder = common.data_store[customer]
     stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
     orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 
