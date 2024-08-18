@@ -151,7 +151,7 @@ def update_table(v_product,v_color,v_size):
     if not v_size or v_size == 'All':
         v_size = size_option_list
     ddf = available_columns.query(  'p_name == @v_product and '
-                    'color == @_color and'
+                    'color == @v_color and'
                     'size == @v_size',
                     engine = 'python')
     
