@@ -70,7 +70,7 @@ dash_app.layout = html.Div([
                             multi = True,
                             clearable = True
                         ),
-                    ],width=4),
+                    ],style:{"width":"33%"}),
                 ]),
             ]),
         width = 'auto'),
@@ -87,7 +87,7 @@ dash_app.layout = html.Div([
                             multi = True,
                             clearable = True
                         ),
-                    ],width=4),
+                    ],style:{"width":"33%"}),
                 ]),
             ]),
         width= 'auto'),
@@ -104,7 +104,7 @@ dash_app.layout = html.Div([
                             multi = True,
                             clearable = True
                         ),
-                    ],width=4),
+                    ],style:{"width":"33%"}),
                 ]),
             ]),
         width = 'auto',),
