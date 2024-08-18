@@ -42,7 +42,7 @@ def json_load(file):
         return False
 
 def logging_initiate ():
-    global logger
+    global logger,server
 
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -68,7 +68,7 @@ def logging_initiate ():
     smtp_handler = logging.handlers.SMTPHandler(mailhost=('smtp.gmail.com', 587),
                                                 fromaddr=access_secret_version('global_parameters',None,'from_email'),
                                                 toaddrs=access_secret_version('global_parameters',None,'emails'),
-                                                subject=u"Cross Docks Uphance Google VM Logging",
+                                                subject=u"Cross Docks Uphance Google VM Logging: " + server,
                                                 credentials=(access_secret_version('global_parameters',None,'from_email'), sender_pw),
                                                 secure=())
     smtp_handler.setLevel(logging.INFO)
@@ -280,7 +280,7 @@ def uphance_check_token_status(customer):
 def uphance_initiate(customer:str, **kwargs):
     force_initiate = kwargs.pop('force_initiate',None)
     global uphance_headers, uphance_access_token
-    global logger
+    global logger, server
 
     if uphance_check_token_status(customer):
 
@@ -292,7 +292,10 @@ def uphance_initiate(customer:str, **kwargs):
                 response = requests.post(uphance_register_url,json = uphance_register,headers = uphance_headers[customer])
         
                 if response.status_code == 201:
-                    logger.info('\nLogger Info for ' + customer + ' Uphance initiated and Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
+                    if server == 'Production':
+                        logger.info('\nLogger Info for ' + customer + ' Uphance initiated and Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
+                    else:
+                        logger.debug('\nLogger Info for ' + customer + ' Uphance initiated and Uphance token expires on: '+ uphance_expires.strftime('%Y-%m-%d'))
                     logger.debug(response.json())
                     return True
                 else:
@@ -409,20 +412,22 @@ def store_dropbox_unicode(customer,file_data,file_path):
 
 #initialise parameters
 
-
-
-#initiate logging
-initiate_logging_done = False
-logger = False
-check_logging_initiate()
-
 #get information on google cloud environment
 metadata_server = "http://metadata/computeMetadata/v1/instance/"
 metadata_flavor = {'Metadata-Flavor' : 'Google'}
 gce_id = requests.get(metadata_server + 'id', headers = metadata_flavor).text
 gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor).text
 gce_machine_type = requests.get(metadata_server + 'machine-type', headers = metadata_flavor).text
-logger.info(str(gce_id) + str(gce_name) + str(gce_machine_type))
+
+if 'test' in gce_name:
+    server = "Test"
+else:
+    server = "Production"
+
+#initiate logging
+initiate_logging_done = False
+logger = False
+check_logging_initiate()
 
 #initiate dropbox
 dbx = False
