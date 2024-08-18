@@ -105,7 +105,7 @@ dash_app.layout = html.Div([
             dbc.CardBody([
                 dash_table.DataTable(
                     id='data_table',
-                    columns=[{"name": i, "id": i} for i in available_columns.columns],
+                    #columns=[{"name": i, "id": i} for i in available_columns.columns],
                     data=available_columns.to_dict("records")
                 )
             ]),
@@ -118,7 +118,7 @@ dash_app.layout = html.Div([
     Input('product_option', 'value')
 )
 def set_dropdown_options(product):
-    dff = df.copy()
+    dff = available_columns.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
     return [{'label':x,'value':x} for x in dff['color'].unique()]
@@ -129,7 +129,7 @@ def set_dropdown_options(product):
     Input('color_option','value')]
 )
 def set_dropdown_options(product,color):
-    dff = df.copy()
+    dff = available_columns.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
     if color:
@@ -150,9 +150,6 @@ def update_table(v_product,v_color,v_size):
         v_color = color_option_list
     if not v_size or v_size == 'All':
         v_size = size_option_list
-    ddf = available_columns.query(  'p_name == @v_product and '
-                    'color == @v_color and'
-                    'size == @v_size',
-                    engine = 'python')
+    ddf = available_columns.query(  'p_name == @v_product and color == @v_color and size == @v_size', engine = 'python')
     
     return ddf.to_dict("records")             
