@@ -5,7 +5,7 @@ from flask import request, jsonify
 import FlaskApp.app.common as common
 import FlaskApp.app.uphance_webhook_info as uphance_webhook
 import FlaskApp.app.cross_docks_polling as cross_docks_polling
-import FlaskApp.app.reporting as reporting
+import FlaskApp.app.data_store as data_store
 
 
 @app.route("/")
@@ -49,7 +49,7 @@ def process_aemery_cross_docks_polling():
 
     status_code = cross_docks_polling.cross_docks_poll_request('aemery')
     
-    return 'Procssed', status_code
+    return 'Processed', status_code
 
 @app.route('/two-ts',methods=['POST'])
 def process_two_ts_webhook():
@@ -69,8 +69,8 @@ def process_two_ts_cross_docks_polling():
 
 
 @app.route('/aemery_get_product_data',methods=['POST'])
-def process_aemery_get_uphance_stock_levels():
+def process_aemery_get_data_store_info():
 
-    status_code = reporting.get_uphance_stock_levels('aemery')
+    status_code = data_store.get_data_store_info('aemery')
     
-    return 'Procssed', status_code
+    return 'Processed', status_code
