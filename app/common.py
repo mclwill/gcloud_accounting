@@ -409,6 +409,13 @@ def store_dropbox_unicode(customer,file_data,file_path):
 
 #initialise parameters
 
+
+
+#initiate logging
+initiate_logging_done = False
+logger = False
+check_logging_initiate()
+
 #get information on google cloud environment
 metadata_server = "http://metadata/computeMetadata/v1/instance/"
 metadata_flavor = {'Metadata-Flavor' : 'Google'}
@@ -416,11 +423,6 @@ gce_id = requests.get(metadata_server + 'id', headers = metadata_flavor).text
 gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor).text
 gce_machine_type = requests.get(metadata_server + 'machine-type', headers = metadata_flavor).text
 logger.info(str(gce_id) + str(gce_name) + str(gce_machine_type))
-
-#initiate logging
-initiate_logging_done = False
-logger = False
-check_logging_initiate()
 
 #initiate dropbox
 dbx = False
