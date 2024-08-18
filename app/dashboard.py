@@ -107,7 +107,7 @@ dash_app.layout = html.Div([
             dbc.CardBody([
                 dash_table.DataTable(
                     id='data_table',
-                    columns=[{"name": i, "id": i, 'presentation':'markdown'} for i in available_columns.columns if ('markdown' in i) else {"name": i, "id": i}],
+                    columns=[{"name": i, "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": i, "id": i} for i in available_columns.columns],
                     data=available_columns.to_dict("records")
                 )
             ]),
