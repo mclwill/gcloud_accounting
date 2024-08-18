@@ -1,4 +1,4 @@
-img[src*="#thumbnail"] {
+img[src*="product"] {
    width:200px;
    height:100px;
 }
