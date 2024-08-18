@@ -30,7 +30,7 @@ else:
 available_columns = df[['p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
 available_products = df['p_name'].unique()
 available_colors = df['color'].unique()
-available_size = df['size'].unique()
+available_sizes = df['size'].unique()
 
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
