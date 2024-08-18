@@ -4,6 +4,7 @@ from FlaskApp.app import app
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import dash_table
 from dash.dependencies import Input, Output
 from dash_table import DataTable
@@ -32,26 +33,29 @@ available_products = df['p_name'].unique()
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
 dash_app.layout = html.Div([
-        html.Div([
-                html.H1("Dashboard"),
-                html.Div('''
-                         This is a dashboard for A.Emery
-                         '''),
-                html.Div('')
-        ]),
-        html.Div([
-                dcc.Dropdown(
-                        id='select_column',
-                        options=[{'label':i, 'value': i} for i in available_products],
-                        value='THE ELI SANDAL',
-                        #multi=True
-                )
-        ]),
-        dash_table.DataTable(
-            id='data_table',
-            columns=[{"name": i, "id": i} for i in available_columns.columns],
-            data=available_columns.to_dict("records")
-        )
+    dbc.Card([
+    	dbc.CardBody([
+            html.H1("Dashboard"),
+            html.P('''
+                     This is a dashboard for A.Emery
+                     '''),
+        	]),
+    	],   
+    	style={"width": "18rem"},
+    ),
+    html.Div([
+            dcc.Dropdown(
+                    id='select_column',
+                    options=[{'label':i, 'value': i} for i in available_products],
+                    value='THE ELI SANDAL',
+                    #multi=True
+            )
+    ]),
+    dash_table.DataTable(
+        id='data_table',
+        columns=[{"name": i, "id": i} for i in available_columns.columns],
+        data=available_columns.to_dict("records")
+    )
 ])  
 
 @dash_app.callback (
