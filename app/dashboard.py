@@ -77,10 +77,10 @@ dash_app.layout = html.Div([
                             multi = True,
                             clearable = True
                         ),
-                    ],style={"width":"33%"}),
+                    ]),
                 ]),
             ]),
-        width = 'auto'),
+        ),
         dbc.Col(
             dbc.Card([
                 dbc.CardBody([
@@ -94,10 +94,10 @@ dash_app.layout = html.Div([
                             multi = True,
                             clearable = True
                         ),
-                    ],style={"width":"33%"}),
+                    ]),
                 ]),
             ]),
-        width= 'auto'),
+        ),
         dbc.Col(
             dbc.Card([
                 dbc.CardBody([
@@ -111,10 +111,10 @@ dash_app.layout = html.Div([
                             multi = True,
                             clearable = True
                         ),
-                    ],style={"width":"33%"}),
+                    ]),
                 ]),
             ]),
-        width = 'auto',),
+        ),
     ]),
     dbc.Row([
         dbc.Card([
