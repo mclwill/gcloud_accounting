@@ -429,7 +429,7 @@ data_store = {}
 for c in customers:
     uphance_headers[c] = False
     uphance_running[c] = False
-    data_store[c] = access_secret_version('customer_parameters',c,'date_store_folder')
+    data_store[c] = access_secret_version('customer_parameters',c,'data_store_folder')
 
 uphance_register_url = access_secret_version('global_parameters',None,'uphance_register_url')
 uphance_org_id = access_secret_version('global_parameters',None,'uphance_org_id')
