@@ -47,12 +47,19 @@ dash_app.layout = html.Div([
             dbc.Card([
                 dbc.CardBody([
                     html.H1("Dashboard"),
+                ],   
+                style={"width": "18rem"}),
+            ]),
+        ),
+        dbc.Col(
+            dbc.Card([
+                dbc.CardBody([
                     html.P('''
                          This is a dashboard for A.Emery
                          '''),
                     ]),
                 ],   
-                style={"width": "18rem"},
+                #style={"width": "18rem"},
             ),
         )
     ]),
