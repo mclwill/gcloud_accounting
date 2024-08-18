@@ -47,8 +47,7 @@ dash_app.layout = html.Div([
             dbc.Card([
                 dbc.CardBody([
                     html.H1("Dashboard"),
-                ],   
-                style={"width": "18rem"}),
+                ]),   
             ]),
         ),
         dbc.Col(
