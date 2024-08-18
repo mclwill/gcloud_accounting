@@ -86,7 +86,7 @@ def get_uphance_data_store_info(customer):
     else:
         df = pd.DataFrame() #start with empty dataframe
 
-    queuedFiles =  common.getLocalFiles(os.path.join()'home/gary/data_store',customer) :
+    queuedFiles =  common.getLocalFiles(os.path.join('home/gary/data_store',customer))
     if queuedFiles[0]:
         for file_item in queuedFiles[1]:
             data_lines = file_item['file_data'].split('\n')
@@ -126,29 +126,4 @@ def get_uphance_data_store_info(customer):
     common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
     common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
 
-def pc_file_received(customer,data_lines):
-    global orders_file_path
 
-    byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
-    if byte_stream:
-        df = pd.read_csv(byte_stream,sep='|',index_col=False)
-    else:
-        df = pd.DataFrame() #start with empty dataframe
-
-    data_lines = file_data.split('\n')
-    order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
-    eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
-    qty_shipped = cd_polling.get_CD_parameter(data_lines,'OR2',4)
-    qty_variance =cd_polling.get_CD_parameter(data_lines,'OR2',5)
-    
-    for i in len(eans):
-        row_dict = {}
-        row_dict['order_id'] = [order_id]
-        row_dict['date_shipped'] = [datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
-        row_dict['ean'] = [eans[i]]
-        row_dict['qty_ordered'] = [qty_ordered[i]]
-
-    df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
-    csv_file_data = df.to_csv(sep='|',index=False)
-    common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
-    common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
