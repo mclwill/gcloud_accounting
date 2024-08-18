@@ -43,16 +43,18 @@ size_option_list = sorted(available_columns['size'].unique().tolist())
 
 dash_app.layout = html.Div([
     dbc.Row([
-        dbc.Card([
-            dbc.CardBody([
-                html.H1("Dashboard"),
-                html.P('''
-                     This is a dashboard for A.Emery
-                     '''),
-                ]),
-            ],   
-            style={"width": "18rem"},
-        ),
+        dbc.Col(
+            dbc.Card([
+                dbc.CardBody([
+                    html.H1("Dashboard"),
+                    html.P('''
+                         This is a dashboard for A.Emery
+                         '''),
+                    ]),
+                ],   
+                style={"width": "18rem"},
+            ),
+        )
     ]),
     dbc.Row([
         dbc.Col(
