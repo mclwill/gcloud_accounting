@@ -169,6 +169,42 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
         email_counter -= 1
         return False
 
+def getLocalFiles(folder,**kwargs):
+    customer = kwargs.pop('customer','No customer')
+    error = kwargs.pop('error',None)
+    request_dict = kwargs.pop('request_dict',None)
+    
+    
+    localfiles = []
+    try:
+        for (root,dirs,files) in os.walk(folder,topdown=True):
+            for f in files:
+                with open(os.path.join(folder,f),'r') as text_file:
+                    filedata = text_file.read()
+                t = os.path.getmtime(os.path.join(folder,f))
+                file_item = {'file_name':f,'file_data':filedata,'mod_time':datetime.fromtimestamp(t)}
+                localfiles.append(file_item)
+
+        return True, localfiles
+    
+    except Exception as ex:
+        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
+        return False, None
+
+
+def storeLocalFile(folder,file_name,file_data,**kwargs) :
+    customer = kwargs.pop('customer','No customer')
+    error = kwargs.pop('error',None)
+    request_dict = kwargs.pop('request_dict',None)
+
+    try:
+        with open(os.path.join(folder,file_name),'w') as text_file:
+            text_file.write(file_data)
+        return True 
+    except Exception as ex:
+        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Save Error \nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
+        return False
+
 def dropbox_initiate():
     global dbx
     if not dbx:
@@ -378,8 +414,6 @@ initiate_logging_done = False
 logger = False
 check_logging_initiate()
 
-
-
 #initiate dropbox
 dbx = False
 dropbox_initiate()
@@ -390,10 +424,12 @@ customers = access_secret_version('global_parameters',None,'customers')
 uphance_headers = {}
 uphance_running = {}
 uphance_access_token = False
+data_store = {}
 
 for c in customers:
     uphance_headers[c] = False
     uphance_running[c] = False
+    data_store[c] = access_secret_version('customer_parameters',c,'date_store_active')
 
 uphance_register_url = access_secret_version('global_parameters',None,'uphance_register_url')
 uphance_org_id = access_secret_version('global_parameters',None,'uphance_org_id')
