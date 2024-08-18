@@ -35,9 +35,9 @@ available_sizes = df['size'].unique()
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
 
-product_option_list = [{'label':i, 'value': i} for i in available_products]
-color_option_list = [{'label':i, 'value': i} for i in available_colors]
-size_option_list = [{'label':i, 'value': i} for i in available_sizes]
+product_option_list = sorted(available_columns['p_name'].to_list())
+color_option_list = sorted(available_columns['color'].to_list())
+size_option_list = sorted(available_columns['size'].to_list())
 
 dash_app.layout = html.Div([
     dbc.Row([
@@ -121,6 +121,7 @@ def set_dropdown_options(product):
     dff = available_columns.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
+    return [{'label':x,'value':x} for x in dff['color'].unique()]
     return [{'label':x,'value':x} for x in dff['color'].unique()]
 
 @dash_app.callback(
