@@ -154,6 +154,4 @@ def update_table(v_product,v_color,v_size):
     if not v_size or v_size == 'All':
         v_size = size_option_list
     dff = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
-    if len(dff.index) < 10:
-        dff = available_columns['']
     return dff.to_dict("records")             
