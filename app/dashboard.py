@@ -55,52 +55,58 @@ dash_app.layout = html.Div([
         ),
     ]),
     dbc.Row([
-        dbc.Card([
-            dbc.CardBody([
-                html.P("Product"),
-                html.Div([
-                    dcc.Dropdown(
-                        id='product_option',
-                        options=product_option_list,
-                        value=[],
-                        placeholder = 'All',
-                        multi = True,
-                        clearable = True
-                    ),
+        dbc.Col(
+            dbc.Card([
+                dbc.CardBody([
+                    html.P("Product"),
+                    html.Div([
+                        dcc.Dropdown(
+                            id='product_option',
+                            options=product_option_list,
+                            value=[],
+                            placeholder = 'All',
+                            multi = True,
+                            clearable = True
+                        ),
+                    ]),
                 ]),
             ]),
-        ]),
-        dbc.Card([
-            dbc.CardBody([
-                html.P("Color"),
-                html.Div([
-                    dcc.Dropdown(
-                        id='color_option',
-                        options=color_option_list,
-                        value=[],
-                        placeholder = 'All',
-                        multi = True,
-                        clearable = True
-                    ),
+        ),
+        dbc.Col(
+            dbc.Card([
+                dbc.CardBody([
+                    html.P("Color"),
+                    html.Div([
+                        dcc.Dropdown(
+                            id='color_option',
+                            options=color_option_list,
+                            value=[],
+                            placeholder = 'All',
+                            multi = True,
+                            clearable = True
+                        ),
+                    ]),
                 ]),
             ]),
-        ]),
-        dbc.Card([
-            dbc.CardBody([
-                html.P("Size"),
-                html.Div([
-                    dcc.Dropdown(
-                        id='size_option',
-                        options=size_option_list,
-                        value=[],
-                        placeholder = 'All',
-                        multi = True,
-                        clearable = True
-                    ),
+        ),
+        dbc.Col(
+            dbc.Card([
+                dbc.CardBody([
+                    html.P("Size"),
+                    html.Div([
+                        dcc.Dropdown(
+                            id='size_option',
+                            options=size_option_list,
+                            value=[],
+                            placeholder = 'All',
+                            multi = True,
+                            clearable = True
+                        ),
+                    ]),
                 ]),
             ]),
-        ]),
 
+        ),
     ]),
     dbc.Row([
         dbc.Card([
