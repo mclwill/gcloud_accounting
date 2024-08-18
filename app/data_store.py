@@ -73,7 +73,7 @@ def get_uphance_data_store_info(customer):
                                 row_dict['price_' + pr['name'] + '_mrsp' ] = dict_append(row_dict,'price_' + pr['name'] + '_mrsp' ,pr['msrp_money'])
         
             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
-           page = data['meta']['next_page']
+            page = data['meta']['next_page']
     csv_file_data = df.to_csv(sep='|',index=False)
     common.store_dropbox_unicode(customer,csv_file_data,stock_file_path)
     common.logger.info('Uphance stock DataStore updated for ' + customer + '\nFile Path: ' + stock_file_path)
