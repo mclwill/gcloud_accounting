@@ -1,6 +1,7 @@
 import os
 import pandas as pd
-from FlaskApp.app import dash_app
+from FlaskApp.app import app
+import dash
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_table
@@ -28,7 +29,7 @@ else:
 available_columns = df[['p_identifier','p_name','color','size','sku_id']]
 available_products = df['p_name'].unique()
 
-
+dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
 dash_app.layout = html.Div([
         html.Div([
