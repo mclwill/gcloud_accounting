@@ -34,10 +34,9 @@ available_sizes = df['size'].unique()
 
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
-
-product_option_list = sorted(available_columns['p_name'].unique().to_list())
-color_option_list = sorted(available_columns['color'].unique().to_list())
-size_option_list = sorted(available_columns['size'].unique().to_list())
+product_option_list = sorted(available_columns['p_name'].unique().tolist())
+color_option_list = sorted(available_columns['color'].unique().tolist())
+size_option_list = sorted(available_columns['size'].unique().tolist())
 
 dash_app.layout = html.Div([
     dbc.Row([
