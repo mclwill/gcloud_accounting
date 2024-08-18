@@ -122,6 +122,8 @@ def serve_layout():
         ])
     ])  
 
+dash_app.layout = serve_layout   
+
 @dash_app.callback(
     Output('color_option', 'options'),
     Input('product_option', 'value')
@@ -163,4 +165,4 @@ def update_table(v_product,v_color,v_size):
     dff = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
     return dff.to_dict("records")   
 
-dash_app.layout = serve_layout          
+       
