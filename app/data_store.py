@@ -47,12 +47,12 @@ def get_data_store_info(customer):
         else:
             data = response[1]
             aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
-            df = pd.DataFrame()
+            row_dict = {}
             for p in data['products']:
                 for v in p['variations'] :
                     for sku in v['skus']:  
                         if sku['ean']:
-                            row_dict['date'] = dict_append(row_dict,'date',dt_now)
+                            row_dict['date'] = dict_append(row_dict,'date',aest_now)
                             row_dict['p_id'] = dict_append(row_dict,'p_id',p['id'])
                             row_dict['p_identifier'] = dict_append(row_dict,'p_identifier',p['product_identifier'])
                             row_dict['p_name'] = dict_append(row_dict,'p_name',p['name'])
