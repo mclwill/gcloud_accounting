@@ -49,7 +49,7 @@ dash_app.layout = html.Div([
         dash_table.DataTable(
             id='data_table',
             columns=[{"name": i, "id": i} for i in available_columns.columns],
-            data=available_columns.to_dict("rows")
+            data=available_columns.to_dict("records")
         )
 ])  
 
