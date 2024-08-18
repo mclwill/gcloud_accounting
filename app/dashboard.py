@@ -13,7 +13,7 @@ import plotly.express as px
 
 import FlaskApp.app.common as common
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css',dbc.themes.BOOTSTRAP]
 
 customer = 'aemery'
 
