@@ -72,7 +72,7 @@ dash_app.layout = html.Div([
                         ),
                     ]),
                 ]),
-            ]),
+            ]),width = 'auto'
         ),
         dbc.Col(
             dbc.Card([
@@ -89,7 +89,7 @@ dash_app.layout = html.Div([
                         ),
                     ]),
                 ]),
-            ]),
+            ]),width= 'auto'
         ),
         dbc.Col(
             dbc.Card([
@@ -106,8 +106,7 @@ dash_app.layout = html.Div([
                         ),
                     ]),
                 ]),
-            ]),
-
+            ]),width = 'auto',
         ),
     ]),
     dbc.Row([
