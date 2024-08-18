@@ -28,7 +28,7 @@ if byte_stream:
 else:
     df = pd.DataFrame() #start with empty dataframe
 
-df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + "](https://amery.com)")
+df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
 
 available_columns = df[['url_markdown','p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
 available_products = df['p_name'].unique()
