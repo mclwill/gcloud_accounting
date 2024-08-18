@@ -22,104 +22,105 @@ data_store_folder = common.data_store[customer]
 stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 
-byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
-if byte_stream:
-    df = pd.read_csv(byte_stream,sep='|',index_col=False)
-else:
-    df = pd.DataFrame() #start with empty dataframe
+def serve_layout():
+    byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
+    if byte_stream:
+        df = pd.read_csv(byte_stream,sep='|',index_col=False)
+    else:
+        df = pd.DataFrame() #start with empty dataframe
 
-df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
+    df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
 
-available_columns = df[['url_markdown','date','p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
-available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
-available_products = df['p_name'].unique()
-available_colors = df['color'].unique()
-available_sizes = df['size'].unique()
+    available_columns = df[['url_markdown','date','p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
+    available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
+    available_products = df['p_name'].unique()
+    available_colors = df['color'].unique()
+    available_sizes = df['size'].unique()
 
-dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
+    dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
-product_option_list = sorted(available_columns['p_name'].unique().tolist())
-color_option_list = sorted(available_columns['color'].unique().tolist())
-size_option_list = sorted(available_columns['size'].unique().tolist())
+    product_option_list = sorted(available_columns['p_name'].unique().tolist())
+    color_option_list = sorted(available_columns['color'].unique().tolist())
+    size_option_list = sorted(available_columns['size'].unique().tolist())
 
-dash_app.layout = html.Div([
-    dbc.Row([
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.H1("Dashboard"),
-                    html.P('''
-                         This is a dashboard for A.Emery
-                         '''),
-                ]),   
-            ]),
-        ),
-    ]),
-    dbc.Row([
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.P("Product"),
-                    html.Div([
-                        dcc.Dropdown(
-                            id='product_option',
-                            options=product_option_list,
-                            value=[],
-                            placeholder = 'All',
-                            multi = True,
-                            clearable = True
-                        ),
-                    ]),
+    return html.Div([
+        dbc.Row([
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardBody([
+                        html.H1("Dashboard"),
+                        html.P('''
+                             This is a dashboard for A.Emery
+                             '''),
+                    ]),   
                 ]),
-            ],color='light',outline=True),
-        ),
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.P("Color"),
-                    html.Div([
-                        dcc.Dropdown(
-                            id='color_option',
-                            options=color_option_list,
-                            value=[],
-                            placeholder = 'All',
-                            multi = True,
-                            clearable = True
-                        ),
-                    ]),
-                ]),
-            ],color='light',outline=True),
-        ),
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.P("Size"),
-                    html.Div([
-                        dcc.Dropdown(
-                            id='size_option',
-                            options=size_option_list,
-                            value=[],
-                            placeholder = 'All',
-                            multi = True,
-                            clearable = True
-                        ),
-                    ]),
-                ]),
-            ],color='light',outline=True),
-        ),
-    ]),
-    dbc.Row([
-        dbc.Card([
-            dbc.CardBody([
-                dash_table.DataTable(
-                    id='data_table',
-                    columns=[{"name": i, "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": i, "id": i} for i in available_columns.columns],
-                    data=available_columns.to_dict("records")
-                )
-            ]),
+            ),
         ]),
-    ])
-])  
+        dbc.Row([
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardBody([
+                        html.P("Product"),
+                        html.Div([
+                            dcc.Dropdown(
+                                id='product_option',
+                                options=product_option_list,
+                                value=[],
+                                placeholder = 'All',
+                                multi = True,
+                                clearable = True
+                            ),
+                        ]),
+                    ]),
+                ],color='light',outline=True),
+            ),
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardBody([
+                        html.P("Color"),
+                        html.Div([
+                            dcc.Dropdown(
+                                id='color_option',
+                                options=color_option_list,
+                                value=[],
+                                placeholder = 'All',
+                                multi = True,
+                                clearable = True
+                            ),
+                        ]),
+                    ]),
+                ],color='light',outline=True),
+            ),
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardBody([
+                        html.P("Size"),
+                        html.Div([
+                            dcc.Dropdown(
+                                id='size_option',
+                                options=size_option_list,
+                                value=[],
+                                placeholder = 'All',
+                                multi = True,
+                                clearable = True
+                            ),
+                        ]),
+                    ]),
+                ],color='light',outline=True),
+            ),
+        ]),
+        dbc.Row([
+            dbc.Card([
+                dbc.CardBody([
+                    dash_table.DataTable(
+                        id='data_table',
+                        columns=[{"name": i, "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": i, "id": i} for i in available_columns.columns],
+                        data=available_columns.to_dict("records")
+                    )
+                ]),
+            ]),
+        ])
+    ])  
 
 @dash_app.callback(
     Output('color_option', 'options'),
@@ -160,4 +161,6 @@ def update_table(v_product,v_color,v_size):
     if not v_size or v_size == 'All':
         v_size = size_option_list
     dff = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
-    return dff.to_dict("records")             
+    return dff.to_dict("records")   
+
+dash_app.layout = serve_layout          
