@@ -60,5 +60,5 @@ dash_app.layout = html.Div([
 )
 
 def update_table(value):
-    data=available_columns[available_columns['p_name'].isin(value)]
+    data=available_columns[available_columns['p_name'] == value]
     return data.to_dict("records")             
