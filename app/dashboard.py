@@ -61,6 +61,11 @@ def serve_layout():
         product_option_list = sorted(available_columns['p_name'].unique().tolist())
         color_option_list = sorted(available_columns['color'].unique().tolist())
         size_option_list = sorted(available_columns['size'].unique().tolist())
+        season_option_list = []
+        for ss in available_columns['size'].to_list():
+            for s in ss.split(','):
+                if s not in season_option_list:
+                    season_option_list.append(s)
 
         return html.Div([
             dbc.Row([
@@ -81,6 +86,23 @@ def serve_layout():
                 )
             ],justify='evenly'),
             dbc.Row([
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Size"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='season_option',
+                                    options=season_option_list,
+                                    value=[],
+                                    placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),
+                ),
                 dbc.Col(
                         dbc.Card([
                             dbc.CardBody([
@@ -132,6 +154,7 @@ def serve_layout():
                         ]),
                     ],className="border-0 bg-transparent"),
                 ),
+                
             ]),
             dbc.Row([
                 dbc.Card([
@@ -160,6 +183,22 @@ def serve_layout():
         ) 
 
 @dash_app.callback(
+    Output('product_option', 'options'),
+    Input('season_option', 'value')
+)
+def set_dropdown_options(season):
+    dff = available_columns.copy()
+    if season:
+        seasons = []
+        for ss in available_columns['season'].to_list():
+            for s in ss.split(','):
+                if s not in seasons:
+                    seasons.append(s)
+        dff = dff[dff['season'].str.contains('|'.join(seasons))]
+    return [{'label':x,'value':x} for x in dff['product'].unique()]
+
+
+@dash_app.callback(
     Output('color_option', 'options'),
     Input('product_option', 'value')
 )
@@ -167,7 +206,6 @@ def set_dropdown_options(product):
     dff = available_columns.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
-    return [{'label':x,'value':x} for x in dff['color'].unique()]
     return [{'label':x,'value':x} for x in dff['color'].unique()]
 
 @dash_app.callback(
