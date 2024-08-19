@@ -162,7 +162,7 @@ def serve_layout():
                 dbc.Col([
                     html.Div([
                         html.Div(id='dd-output-container',children='Data Update Complete')
-                    ])
+                    ],style={'backgroundColor':'red','color':'white'})
                 ]),
             ], align='center'),
             dbc.Row([
