@@ -50,7 +50,7 @@ def login():
         user = User()
         user.id = user
         flask_login.login_user(user)
-        return redirect(flask.url_for('protected'))
+        return flask.redirect(flask.url_for('protected'))
 
     return 'Bad login'
 
