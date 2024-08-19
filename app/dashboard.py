@@ -74,7 +74,6 @@ def serve_layout():
         ]),
         dbc.Row([
             dbc.Col(
-                html.Div(
                     dbc.Card([
                         dbc.CardBody([
                             html.P("Product"),
@@ -89,8 +88,7 @@ def serve_layout():
                                 ),
                             ]),
                         ]),
-                    ]),
-                )
+                    ],className="border-0 bg-transparent"),
             ),
             dbc.Col(
                 dbc.Card([
