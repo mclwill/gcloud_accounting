@@ -36,7 +36,7 @@ def serve_layout():
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
         global available_columns,available_products,available_colors,available_sizes
-        global product_option_list,color_option_list,size_option_list
+        global product_option_list,color_option_list,size_option_list,season_option_list
 
         byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
         if byte_stream:
