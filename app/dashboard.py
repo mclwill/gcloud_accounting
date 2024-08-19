@@ -25,7 +25,7 @@ orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
 
-common.logger.info (str(app.view_functions))
+#common.logger.info (str(app.view_functions))
 
 for view_func in app.view_functions:
     if view_func.startswith(dash_app.config['routes_pathname_prefix']):
