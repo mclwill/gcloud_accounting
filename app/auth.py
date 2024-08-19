@@ -47,7 +47,7 @@ def login():
         user = User()
         user.id = username
         flask_login.login_user(user)
-        return flask.redirect(flask.url_for('dashboard'))
+        return flask.redirect(flask.url_for('/dashboard/'))
 
     return 'Bad login'
 
