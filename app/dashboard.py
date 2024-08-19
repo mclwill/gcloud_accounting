@@ -235,11 +235,10 @@ def update_table(v_season,v_product,v_color,v_size):
     else:
         common.logger.info(str(v_season))
         v_seasons = []
-        for sss in v_season:
-            for ss in sss:
-                for s in ss.split(','):
-                    if s not in v_seasons:
-                        v_seasons.append(s)
+        for ss in v_season:
+            for s in ss.split(','):
+                if s not in v_seasons:
+                    v_seasons.append(s)
         common.logger.info(str(v_seasons))
     if not v_product or v_product == 'All':
         v_product = product_option_list
