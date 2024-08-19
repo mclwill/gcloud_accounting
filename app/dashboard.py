@@ -74,21 +74,23 @@ def serve_layout():
         ]),
         dbc.Row([
             dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.P("Product"),
-                        html.Div([
-                            dcc.Dropdown(
-                                id='product_option',
-                                options=product_option_list,
-                                value=[],
-                                placeholder = 'All',
-                                multi = True,
-                                clearable = True
-                            ),
+                html.Div(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Product"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='product_option',
+                                    options=product_option_list,
+                                    value=[],
+                                    placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
                         ]),
-                    ]),
-                ],color='light',outline=True),
+                    ],color='light',outline=True),
+                )
             ),
             dbc.Col(
                 dbc.Card([
