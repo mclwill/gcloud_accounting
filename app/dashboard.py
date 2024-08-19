@@ -234,10 +234,11 @@ def update_table(v_season,v_product,v_color,v_size):
         v_seasons = season_option_list
     else:
         v_seasons = []
-        for ss in v_season:
-            for s in ss.split(','):
-                if s not in v_seasons:
-                    v_seasons.append(s)
+        for sss in v_season:
+            for ss in sss:
+                for s in ss.split(','):
+                    if s not in v_seasons:
+                        v_seasons.append(s)
     if not v_product or v_product == 'All':
         v_product = product_option_list
     if not v_color or v_color == 'All':
