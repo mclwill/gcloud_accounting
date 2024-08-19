@@ -45,6 +45,7 @@ def serve_layout():
     df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
 
     available_columns = df[['url_markdown','date','p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
+    col_title_mapping = {'url_markdown':'Image','date':'Date','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
     available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
     available_products = df['p_name'].unique()
     available_colors = df['color'].unique()
@@ -65,7 +66,7 @@ def serve_layout():
                              '''),
                     ]),   
                 ],className="border-0 bg-transparent"),
-                width={"size":3}
+                width={"size":2}
             ),
             dbc.Col(
                 dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
@@ -130,7 +131,7 @@ def serve_layout():
                 dbc.CardBody([
                     dash_table.DataTable(
                         id='data_table',
-                        columns=[{"name": i, "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": i, "id": i} for i in available_columns.columns],
+                        columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in available_columns.columns],
                         data=available_columns.to_dict("records")
                     )
                 ]),
