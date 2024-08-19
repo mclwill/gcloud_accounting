@@ -47,7 +47,7 @@ def login():
         user = User()
         user.id = username
         flask_login.login_user(user)
-        return flask.redirect(flask.url_for('protected'))
+        return flask.redirect(flask.url_for('dashboard'))
 
     return 'Bad login'
 
@@ -64,4 +64,4 @@ def logout():
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return 'Unauthorized', 401
+    return flask.redirect(flask.url_for('login'))
