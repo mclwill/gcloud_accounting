@@ -230,21 +230,14 @@ def set_dropdown_options(product,color):
         dff = dff[dff['color'].isin(color)]
     return [{'label':x,'value':x} for x in dff['size'].unique()]
 
-@dash_app.callback(
-    Output('dd-output-container', 'children'),
-    [Input('season_option','value'),
-    Input('product_option', 'value'),
-    Input('color_option','value'),
-    Input('size_option','value')])
-def updating_table(value1,value2,value3,value4):
-    return 'Updating Data'
 
 @dash_app.callback (
         Output('data_table', 'data'),
         [Input('season_option','value'),
         Input('product_option', 'value'),
         Input('color_option','value'),
-        Input('size_option','value')]
+        Input('size_option','value')],
+        running=[(Output("dd-output-container","value"),'Data Being Updated', 'Data Update Complete')]
 )
 def update_table(v_season,v_product,v_color,v_size):
     #global season_available_columns,selected_seasons
