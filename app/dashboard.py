@@ -33,6 +33,8 @@ for view_func in app.view_functions:
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
 def serve_layout():
+    #global season_available_columns
+
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
         global available_columns,available_products,available_colors,available_sizes
@@ -67,6 +69,7 @@ def serve_layout():
                 if s not in season_option_list:
                     season_option_list.append(s)
 
+        season_available_columns = available_columns
         return html.Div([
             dbc.Row([
                 dbc.Col(
@@ -230,6 +233,8 @@ def set_dropdown_options(product,color):
         Input('size_option','value')]
 )
 def update_table(v_season,v_product,v_color,v_size):
+    #global season_available_columns,selected_seasons
+
     if not v_season or v_season == 'All':
         v_seasons = season_option_list
     else:
@@ -246,8 +251,8 @@ def update_table(v_season,v_product,v_color,v_size):
         v_color = color_option_list
     if not v_size or v_size == 'All':
         v_size = size_option_list
-    
-    dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))&(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
+    df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
+    dff = df[(df['season'].str.contains('|'.join(v_seasons)))&(df['p_name'].isin(v_product))&(df['color'].isin(v_color))&(df['size'].isin(v_size))]
     return dff.to_dict("records")   
 
 dash_app.layout = serve_layout
