@@ -94,7 +94,7 @@ def serve_layout():
             dbc.Col(
                 dbc.Card([
                     dbc.CardBody([
-                        html.P("Color"),
+                        html.P("Colourr"),
                         html.Div([
                             dcc.Dropdown(
                                 id='color_option',
@@ -132,7 +132,13 @@ def serve_layout():
                     dash_table.DataTable(
                         id='data_table',
                         columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in available_columns.columns],
-                        data=available_columns.to_dict("records")
+                        data=available_columns.to_dict("records"),
+                        style_cell_conditional = [
+                            {
+                                'if':{'column_id':i},
+                                'textAlign':'center'
+                            } for i in ['url_markdown']
+                        ]
                     )
                 ]),
             ]),
