@@ -26,7 +26,7 @@ orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,url_base_pathname="/dashboard/") #previousy 'routes_pathname_prefix'
 
 for view_func in app.view_functions:
-    if view_func.startswith(dash_app.routes_pathname_prefix):
+    if view_func.startswith(dash_app.url_base_pathname):
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
 auth = dash_auth.BasicAuth(
