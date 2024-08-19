@@ -139,7 +139,7 @@ def serve_layout():
                                 'textAlign':'center'
                             } for i in ['url_markdown']
                         ],
-                        css=[dict(selector= "a", rule= "margin: 0; text-align: center")]
+                        css=[dict(selector= "p", rule= "margin: 0; text-align: center")]
                     )
                 ]),
             ]),
