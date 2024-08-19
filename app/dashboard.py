@@ -23,7 +23,7 @@ data_store_folder = common.data_store[customer]
 stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 
-dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
+dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,url_base_pathname="/dashboard/") #previousy 'routes_pathname_prefix'
 
 for view_func in app.view_functions:
     if view_func.startswith(dash_app.routes_pathname_prefix):
