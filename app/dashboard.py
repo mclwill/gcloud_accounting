@@ -236,7 +236,7 @@ def update_table(v_season,v_product,v_color,v_size):
         v_seasons = []
         for ss in v_season:
             for s in ss.split(','):
-                if s not in seasons:
+                if s not in v_seasons:
                     v_seasons.append(s)
     if not v_product or v_product == 'All':
         v_product = product_option_list
@@ -245,7 +245,7 @@ def update_table(v_season,v_product,v_color,v_size):
     if not v_size or v_size == 'All':
         v_size = size_option_list
     
-    dff = available_columns[(available_columns['season'].str.contains('|'.join(seasons)))&(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
+    dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))&(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
     return dff.to_dict("records")   
 
 dash_app.layout = serve_layout
