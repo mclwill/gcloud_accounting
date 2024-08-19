@@ -7,7 +7,6 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_table
-import dash_auth
 from dash.dependencies import Input, Output
 from dash_table import DataTable
 from dash.exceptions import PreventUpdate
@@ -31,11 +30,6 @@ common.logger.info (str(app.view_functions))
 for view_func in app.view_functions:
     if view_func.startswith(dash_app.config['routes_pathname_prefix']):
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
-
-auth = dash_auth.BasicAuth(
-    dash_app,
-    common.access_secret_version('customer_parameters',customer,'dashboard_auth')
-)
 
 def serve_layout():
     #collect data in serve_layout so that latest is retrieved from data_store
