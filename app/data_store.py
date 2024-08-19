@@ -22,10 +22,31 @@ def dict_append(d,k,v): #used to build row_dict array in format to transfer to p
     else:
         return [v]
 
+def decode_season_id(s_id):
+    seasons = []
+    s_list = s_id.split(',')
+    for s in s_list:
+        season = season_df.loc[s,'name'] 
+        seasons.append(season)
+    return ','.join(seasons)
+
 def get_data_store_info(customer):
     data_store_folder = common.data_store[customer]
     stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
     orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
+    
+    #get season data from uphance
+    url_seasons = 'https://api.uphance.com/seasons'
+    response = common.uphance_api_call(customer,'get',url=url_season)
+    
+    if response[0]:
+        common.logger.warning('Uphance Error on Season API call for :' + customer)
+        season_df = None
+    else:
+        data = response[1]
+        season_df = pd.DataFrame.from_dict(response.json()['seasons'])
+        season_df['id'] = season_df['id'].astype(str)
+        season_df.set_index('id',inplace=True)
 
     #get stock level info from Uphance
 
@@ -74,6 +95,8 @@ def get_data_store_info(customer):
         
             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
             page = data['meta']['next_page']
+    if season_df is not None:
+        df['season'] = df.apply(lambda row: decode_season_id(row['season_id']),axis=1)
     csv_file_data = df.to_csv(sep='|',index=False)
     common.store_dropbox_unicode(customer,csv_file_data,stock_file_path)
     common.logger.info('Uphance stock DataStore updated for ' + customer + '\nFile Path: ' + stock_file_path)
@@ -126,4 +149,4 @@ def get_data_store_info(customer):
     common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
     common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
 
-
+    
