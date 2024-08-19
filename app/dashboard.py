@@ -232,7 +232,7 @@ def set_dropdown_options(product,color):
 
 
 @dash_app.callback (
-        Output('data_table', 'data'),,
+        Output('data_table', 'data'),
         [Input('season_option','value'),
         Input('product_option', 'value'),
         Input('color_option','value'),
