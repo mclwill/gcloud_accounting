@@ -46,7 +46,7 @@ def get_data_store_info(customer):
             season_df = None
         else:
             data = response[1]
-            season_df = pd.DataFrame.from_dict(response.json()['seasons'])
+            season_df = pd.DataFrame.from_dict(data['seasons'])
             season_df['id'] = season_df['id'].astype(str)
             season_df.set_index('id',inplace=True)
 
@@ -152,7 +152,7 @@ def get_data_store_info(customer):
         common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
     
     except Exception as ex:
-        b = traceback.format_exc()
+        tb = traceback.format_exc()
         common.logger.warning('Error retrieving data from Uphance' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
     
