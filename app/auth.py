@@ -49,7 +49,7 @@ def login():
     if user in users and flask.request.form['password'] == users[user]:
         user = User()
         user.id = user
-        login_user(user)
+        flask_login.login_user(user)
         return redirect(flask.url_for('protected'))
 
     return 'Bad login'
