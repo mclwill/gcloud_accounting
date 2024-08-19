@@ -45,7 +45,7 @@ def login():
 
     if username in users and flask.request.form['password'] == users[username]:
         user = User()
-        user.id = user
+        user.id = username
         flask_login.login_user(user)
         return flask.redirect(flask.url_for('protected'))
 
