@@ -91,7 +91,7 @@ def serve_layout():
                         ]),
                     ]),
                 )
-            )
+            ),
             dbc.Col(
                 dbc.Card([
                     dbc.CardBody([
