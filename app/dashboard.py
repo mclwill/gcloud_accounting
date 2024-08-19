@@ -237,7 +237,7 @@ def set_dropdown_options(product,color):
         Input('product_option', 'value'),
         Input('color_option','value'),
         Input('size_option','value')],
-        running=[(Output("dd-output-container","children"),'Data Being Updated', 'Data Update Complete')]
+        running=[(Output("dd-output-container","children"),'Data Being Updated.....', 'Data Update Complete')]
 )
 def update_table(v_season,v_product,v_color,v_size):
     #global season_available_columns,selected_seasons
