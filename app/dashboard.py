@@ -26,6 +26,7 @@ dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes
 
 def serve_layout():
     global available_columns,available_products,available_colors,available_sizes
+    global product_option_list,color_option_list,size_option_list
 
     byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
     if byte_stream:
@@ -124,8 +125,6 @@ def serve_layout():
         ])
     ])  
 
-dash_app.layout = serve_layout   
-
 @dash_app.callback(
     Output('color_option', 'options'),
     Input('product_option', 'value')
@@ -167,4 +166,5 @@ def update_table(v_product,v_color,v_size):
     dff = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
     return dff.to_dict("records")   
 
+dash_app.layout = serve_layout
        
