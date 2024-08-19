@@ -23,12 +23,12 @@ data_store_folder = common.data_store[customer]
 stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 
-dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,url_base_pathname="/dashboard/") #previousy 'routes_pathname_prefix'
+dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
 
 common.logger.info (str(app.view_functions))
 
 for view_func in app.view_functions:
-    if view_func.startswith(dash_app.url_base_pathname):
+    if view_func.startswith(dash_app.config['routes_pathname_prefix']):
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
 auth = dash_auth.BasicAuth(
