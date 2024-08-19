@@ -69,7 +69,7 @@ def serve_layout():
                 if s not in season_option_list:
                     season_option_list.append(s)
         season_option_list.sort()
-        
+
         return html.Div([
             dbc.Row([
                 dbc.Col(
@@ -178,7 +178,8 @@ def serve_layout():
                                     'textAlign':'center'
                                 } for i in ['url_markdown']
                             ],
-                            css=[dict(selector= "p", rule= "margin: 0; text-align: center")]
+                            css=[dict(selector= "p", rule= "margin: 0; text-align: center")],
+                            sort_action = 'native',
                         )
                     ]),
                 ]),
