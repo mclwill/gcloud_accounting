@@ -56,7 +56,7 @@ def serve_layout():
 
     return html.Div([
         dbc.Row([
-            dbc.Col(
+            dbc.Col([
                 dbc.Card([
                     dbc.CardBody([
                         html.H1("Dashboard"),
@@ -65,7 +65,13 @@ def serve_layout():
                              '''),
                     ]),   
                 ]),
-            ),
+                dbc.Card([
+                    dbc.CardBody([
+                        html.H1("Logout"),
+                        dbc.CardLink("Logout",href='/logout')
+                    ]),   
+                ]),
+            ]),
         ]),
         dbc.Row([
             dbc.Col(
