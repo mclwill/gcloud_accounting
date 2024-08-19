@@ -68,8 +68,8 @@ def serve_layout():
             for s in ss.split(','):
                 if s not in season_option_list:
                     season_option_list.append(s)
-
-        season_available_columns = available_columns
+        season_option_list.sort()
+        
         return html.Div([
             dbc.Row([
                 dbc.Col(
