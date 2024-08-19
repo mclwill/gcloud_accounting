@@ -24,7 +24,7 @@ def dict_append(d,k,v): #used to build row_dict array in format to transfer to p
         return [v]
 
 def decode_season_id(s_id):
-    globe season_df
+    global season_df
 
     seasons = []
     s_list = s_id.split(',')
