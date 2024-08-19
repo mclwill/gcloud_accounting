@@ -6,6 +6,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_table
+import dash_auth
 from dash.dependencies import Input, Output
 from dash_table import DataTable
 from dash.exceptions import PreventUpdate
@@ -24,7 +25,13 @@ orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/")
 
+auth = dash_auth.BasicAuth(
+    dash_app,
+    common.access_secret_version('customer_parameters',customer,'dashboard_auth')
+)
+
 def serve_layout():
+    #collect data in serve_layout so that latest is retrieved from data_store
     global available_columns,available_products,available_colors,available_sizes
     global product_option_list,color_option_list,size_option_list
 
