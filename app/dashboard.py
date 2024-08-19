@@ -68,10 +68,10 @@ def serve_layout():
                 width={"size":3}
             ),
             dbc.Col(
-                dbc.Button("Logout",href='/logout',external_link=True),
+                dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
                 width={"size":1,'offset':12}
             )
-        ]),
+        ],justifiy='between'),
         dbc.Row([
             dbc.Col(
                 dbc.Card([
