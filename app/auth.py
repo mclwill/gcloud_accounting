@@ -46,7 +46,7 @@ def login():
     common.logger.info(str(users) + ' : ' + user + ' : ' + flask.request.form['password'])
     common.logger.info(str(users[user]))
 
-    if user in users and flask.request.form['password'] == users[user]['password']:
+    if user in users and flask.request.form['password'] == users[user]:
         user = User()
         user.id = user
         login_user(user)
