@@ -161,7 +161,7 @@ def serve_layout():
             dbc.Row([
                 dbc.Col([
                     html.Div([
-                        html.Div(id='dd-output-container',children='Data ')
+                        html.Div(id='dd-output-container',children='Data Update Complete')
                     ])
                 ]),
             ], align='center'),
@@ -232,8 +232,7 @@ def set_dropdown_options(product,color):
 
 
 @dash_app.callback (
-        [Output('data_table', 'data'),
-        Output("dd-output-container","children")],
+        Output('data_table', 'data'),,
         [Input('season_option','value'),
         Input('product_option', 'value'),
         Input('color_option','value'),
