@@ -22,12 +22,12 @@ def load_user(username):
 
 @login_manager.request_loader
 def request_loader(request):
-    user = request.form.get('username')
-    if user not in users:
+    username = request.form.get('username')
+    if username not in users:
         return
 
     user = User()
-    user.id = user
+    user.id = username
     return user
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -41,12 +41,9 @@ def login():
                </form>
                '''
 
-    user = flask.request.form['username']
-    
-    common.logger.info(str(users) + ' : ' + user + ' : ' + flask.request.form['password'])
-    common.logger.info(str(users[user]))
+    username = flask.request.form['username']
 
-    if user in users and flask.request.form['password'] == users[user]:
+    if username in users and flask.request.form['password'] == users[username]:
         user = User()
         user.id = user
         flask_login.login_user(user)
