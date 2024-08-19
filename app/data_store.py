@@ -34,6 +34,8 @@ def decode_season_id(s_id):
     return ','.join(seasons)
 
 def get_data_store_info(customer):
+    global season_df
+    
     try:
         data_store_folder = common.data_store[customer]
         stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
