@@ -44,7 +44,7 @@ def serve_layout():
         else:
             df = pd.DataFrame() #start with empty dataframe
 
-        if df.empty()
+        if df.empty():
             return html.Div(
                 html.P('No Data to Display - need to check Data Store')
             )
