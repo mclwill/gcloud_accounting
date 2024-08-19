@@ -67,7 +67,6 @@ def serve_layout():
                 ]),
                 dbc.Card([
                     dbc.CardBody([
-                        html.H1("Logout"),
                         dbc.CardLink("Logout",href='/logout')
                     ]),   
                 ]),
