@@ -89,9 +89,9 @@ def serve_layout():
                                 ),
                             ]),
                         ]),
-                    ],color='light',outline=True),
+                    ]),
                 )
-            ),
+            )
             dbc.Col(
                 dbc.Card([
                     dbc.CardBody([
