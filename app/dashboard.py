@@ -89,7 +89,7 @@ def serve_layout():
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
-                            html.P("Size"),
+                            html.P("Season"),
                             html.Div([
                                 dcc.Dropdown(
                                     id='season_option',
@@ -190,7 +190,7 @@ def set_dropdown_options(season):
     dff = available_columns.copy()
     if season:
         seasons = []
-        for ss in available_columns['season'].to_list():
+        for ss in season:
             for s in ss.split(','):
                 if s not in seasons:
                     seasons.append(s)
@@ -224,18 +224,28 @@ def set_dropdown_options(product,color):
 
 @dash_app.callback (
         Output('data_table', 'data'),
-        [Input('product_option', 'value'),
+        [Input('season_option','value'),
+        Input('product_option', 'value'),
         Input('color_option','value'),
         Input('size_option','value')]
 )
-def update_table(v_product,v_color,v_size):
+def update_table(v_season,v_product,v_color,v_size):
+    if not v_season or v_season == 'All':
+        v_season = season_option_list
+    else:
+        v_seasons = []
+        for ss in v_season:
+            for s in ss.split(','):
+                if s not in seasons:
+                    v_seasons.append(s)
     if not v_product or v_product == 'All':
         v_product = product_option_list
     if not v_color or v_color == 'All':
         v_color = color_option_list
     if not v_size or v_size == 'All':
         v_size = size_option_list
-    dff = available_columns[(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
+    
+    dff = available_columns[(available_columns['season'].str.contains('|'.join(seasons)))&(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
     return dff.to_dict("records")   
 
 dash_app.layout = serve_layout
