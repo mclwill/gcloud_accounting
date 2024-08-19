@@ -138,7 +138,8 @@ def serve_layout():
                                 'if':{'column_id':i},
                                 'textAlign':'center'
                             } for i in ['url_markdown']
-                        ]
+                        ],
+                        css=[dict(selector= "a", rule= "margin: 0; text-align: center")]
                     )
                 ]),
             ]),
