@@ -410,6 +410,18 @@ def store_dropbox_unicode(customer,file_data,file_path):
         logger.debug('Dropbox Transfer Error')
         return False
 
+def get_users():
+    global customers
+
+    users = {}
+    for c in customers:
+        user_c = access_secret_version('customer_parameters',c,'dashboard_auth')
+        if user_c:
+            for k,v in user_c.items():
+                users[k] = v
+    return users
+
+
 #initialise parameters
 
 #get information on google cloud environment
