@@ -67,11 +67,7 @@ def serve_layout():
                 ])
             ),
             dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        dbc.CardLink("Logout",href='/logout',external_link=True)
-                    ]),   
-                ]),
+                dbc.Button("Logout",href='/logout',external_link=True)
             ),
         ]),
         dbc.Row([
