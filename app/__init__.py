@@ -1,10 +1,5 @@
 from flask import Flask
-from flask_sqlalchemy import SQAlchemy
 import sys
-import os
-
-
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
