@@ -66,13 +66,13 @@ def serve_layout():
                              '''),
                     ]),   
                 ],className="border-0 bg-transparent"),
-                width={"size":2}
+                width={"size":4}
             ),
             dbc.Col(
                 dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
                 width={"size":1,'offset':12}
             )
-        ]),
+        ],justify='evenly'),
         dbc.Row([
             dbc.Col(
                     dbc.Card([
@@ -94,7 +94,7 @@ def serve_layout():
             dbc.Col(
                 dbc.Card([
                     dbc.CardBody([
-                        html.P("Colourr"),
+                        html.P("Colour"),
                         html.Div([
                             dcc.Dropdown(
                                 id='color_option',
