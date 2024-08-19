@@ -156,9 +156,15 @@ def serve_layout():
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                ),
-                
+                ),   
             ]),
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        html.Div(id='dd-output-container')
+                    ])
+                ]),
+            ], align='center'),
             dbc.Row([
                 dbc.Card([
                     dbc.CardBody([
@@ -224,6 +230,14 @@ def set_dropdown_options(product,color):
         dff = dff[dff['color'].isin(color)]
     return [{'label':x,'value':x} for x in dff['size'].unique()]
 
+@dash_app.callback(
+    Output('dd-output-container', 'children'),
+    [Input('season_option','value'),
+    Input('product_option', 'value'),
+    Input('color_option','value'),
+    Input('size_option','value')])
+def updating_table(value1,value2,value3,value4):
+    return 'Updating Data'
 
 @dash_app.callback (
         Output('data_table', 'data'),
