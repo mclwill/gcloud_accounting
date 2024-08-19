@@ -64,7 +64,7 @@ def serve_layout():
                              This is a dashboard for A.Emery
                              '''),
                     ]),   
-                ]),
+                ],className="border-0 bg-transparent"),
                 width={"size":3}
             ),
             dbc.Col(
@@ -105,7 +105,7 @@ def serve_layout():
                             ),
                         ]),
                     ]),
-                ],color='light',outline=True),
+                ],className="border-0 bg-transparent"),
             ),
             dbc.Col(
                 dbc.Card([
@@ -122,7 +122,7 @@ def serve_layout():
                             ),
                         ]),
                     ]),
-                ],color='light',outline=True),
+                ],className="border-0 bg-transparent"),
             ),
         ]),
         dbc.Row([
