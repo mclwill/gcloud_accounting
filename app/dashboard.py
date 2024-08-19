@@ -64,13 +64,14 @@ def serve_layout():
                              This is a dashboard for A.Emery
                              '''),
                     ]),   
-                ])
+                ]),
+                width={"size":1}
             ),
             dbc.Col(
                 dbc.Button("Logout",href='/logout',external_link=True),
-                width={"size":1,"offset":12}
-            ),
-        ]),
+                width={"size":1,}
+            )
+        ],justify='between'),
         dbc.Row([
             dbc.Col(
                 dbc.Card([
