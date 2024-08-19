@@ -231,7 +231,7 @@ def set_dropdown_options(product,color):
 )
 def update_table(v_season,v_product,v_color,v_size):
     if not v_season or v_season == 'All':
-        v_season = season_option_list
+        v_seasons = season_option_list
     else:
         v_seasons = []
         for ss in v_season:
