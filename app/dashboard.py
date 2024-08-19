@@ -68,7 +68,7 @@ def serve_layout():
             ),
             dbc.Col(
                 dbc.Button("Logout",href='/logout',external_link=True),
-                width={"size":1,"order":"last"}
+                width={"size":1,"offset":12}
             ),
         ]),
         dbc.Row([
