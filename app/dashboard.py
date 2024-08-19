@@ -237,7 +237,7 @@ def set_dropdown_options(product,color):
         Input('product_option', 'value'),
         Input('color_option','value'),
         Input('size_option','value')],
-        running=[(Output("dd-output-container","children"),'Data Being Updated.....', 'Data Update Complete'),
+        running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_product,v_color,v_size):
@@ -246,13 +246,11 @@ def update_table(v_season,v_product,v_color,v_size):
     if not v_season or v_season == 'All':
         v_seasons = season_option_list
     else:
-        common.logger.info(str(v_season))
         v_seasons = []
         for ss in v_season:
             for s in ss.split(','):
                 if s not in v_seasons:
                     v_seasons.append(s)
-        common.logger.info(str(v_seasons))
     if not v_product or v_product == 'All':
         v_product = product_option_list
     if not v_color or v_color == 'All':
