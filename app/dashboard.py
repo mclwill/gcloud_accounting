@@ -62,7 +62,7 @@ def serve_layout():
         color_option_list = sorted(available_columns['color'].unique().tolist())
         size_option_list = sorted(available_columns['size'].unique().tolist())
         season_option_list = []
-        for ss in available_columns['size'].to_list():
+        for ss in available_columns['season'].to_list():
             for s in ss.split(','):
                 if s not in season_option_list:
                     season_option_list.append(s)
