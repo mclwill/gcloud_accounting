@@ -272,9 +272,14 @@ def update_table(v_season,v_product,v_color,v_size):
             group_list.append('color')
             present_list.remove('size')
         common.logger.info(str(group_list) + str(sum_list) + str(present_list))
-        dff[sum_list] = dff.groupby(group_list)[sum_list].transform(lambda x: x.astype(int).sum()).reset_index()
-
-        return dff[present_list].to_dict("records")
+        agg_dict = {}
+        for x in present_list:
+            if x in sum_list:
+                agg_dict[x] = 'sum'
+            else:
+                agg_dict[x] = 'first'
+        df_grouped = dff.groupby(group_list)[sum_list].agg(agg_dict).reset_index()
+        return df_grouped[present_list].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
