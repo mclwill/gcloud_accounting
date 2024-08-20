@@ -128,7 +128,7 @@ def get_data_store_info(customer):
                         eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
                         qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',7)
                         
-                        for i in len(eans):
+                        for i in range(len(eans)):
                             row_dict = {}
                             row_dict['date_ordered'] = [file_item['mod_time'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
                             row_dict['order_id'] = [order_id]
@@ -145,7 +145,7 @@ def get_data_store_info(customer):
                     qty_shipped = cd_polling.get_CD_parameter(data_lines,'OR2',4)
                     qty_variance =cd_polling.get_CD_parameter(data_lines,'OR2',5)
                     
-                    for i in len(eans):
+                    for i in range(len(eans)):
                         row_dict = {}
                         row_dict['order_id'] = [order_id]
                         row_dict['date_shipped'] = [file_item['mod_time'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
