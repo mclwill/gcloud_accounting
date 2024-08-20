@@ -144,7 +144,7 @@ def get_data_store_info(customer):
                             if not df.empty:
                                 df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('_x',None))
                                 x_cols = [f for f in df.columns.tolist() if '_x' in f]
-                                    df.drop(x_cols,axis=1,inplace=True)
+                                df.drop(x_cols,axis=1,inplace=True)
                             else:
                                 df = pd.DataFrame.from_dict(row_dict)
                             df.drop_duplicates(['order_id','channel','ean'],inplace=True)
@@ -174,7 +174,7 @@ def get_data_store_info(customer):
                         if not df.empty:
                             df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('_x',None))
                             x_cols = [f for f in df.columns.tolist() if '_x' in f]
-                                df.drop(x_cols,axis=1,inplace=True)
+                            df.drop(x_cols,axis=1,inplace=True)
                         else:
                             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
