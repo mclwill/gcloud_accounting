@@ -290,14 +290,8 @@ def update_table(v_season,v_product,v_color,v_size):
             present_list.remove('color')'''
         if not v_size:
             group_list.append('color')
-            present_list.remove('size')
         if not v_color:
             group_list.append('p_name')
-            try:
-                group_list.remove('color')
-            except ValueError:
-                pass
-            present_list.remove('color')
         if not v_product:
             group_list.append('season')
 
@@ -318,7 +312,7 @@ def update_table(v_season,v_product,v_color,v_size):
         return df_grouped[present_list].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
         return html.Div(
                 html.P('Error processing layout')
         ) 
