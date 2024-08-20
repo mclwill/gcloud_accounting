@@ -170,8 +170,8 @@ def get_data_store_info(customer):
 
                         if not df.empty:
                                 df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
-                            else:
-                                df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
+                        else:
+                            df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                 #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
         if not df.empty:
