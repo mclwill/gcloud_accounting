@@ -53,7 +53,7 @@ def serve_layout():
 
         df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
 
-        available_columns = df[['url_markdown','date','season','p_name','color','size','sku_id','in_stock','available_to_sell','available_to_sell_from_stock']]
+        available_columns = df[['url_markdown','date','season','p_name','color','size','in_stock','available_to_sell','available_to_sell_from_stock']]
         col_title_mapping = {'url_markdown':'Image','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
         available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
         available_products = df['p_name'].unique()
@@ -107,21 +107,21 @@ def serve_layout():
                     ],className="border-0 bg-transparent"),
                 ),
                 dbc.Col(
-                        dbc.Card([
-                            dbc.CardBody([
-                                html.P("Product"),
-                                html.Div([
-                                    dcc.Dropdown(
-                                        id='product_option',
-                                        options=product_option_list,
-                                        value=[],
-                                        placeholder = 'All',
-                                        multi = True,
-                                        clearable = True
-                                    ),
-                                ]),
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Product"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='product_option',
+                                    options=product_option_list,
+                                    value=[],
+                                    #placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
                             ]),
-                        ],className="border-0 bg-transparent"),
+                        ]),
+                    ],className="border-0 bg-transparent"),
                 ),
                 dbc.Col(
                     dbc.Card([
@@ -132,7 +132,7 @@ def serve_layout():
                                     id='color_option',
                                     options=color_option_list,
                                     value=[],
-                                    placeholder = 'All',
+                                    #placeholder = 'All',
                                     multi = True,
                                     clearable = True
                                 ),
@@ -149,7 +149,7 @@ def serve_layout():
                                     id='size_option',
                                     options=size_option_list,
                                     value=[],
-                                    placeholder = 'All',
+                                    #placeholder = 'All',
                                     multi = True,
                                     clearable = True
                                 ),
@@ -242,9 +242,10 @@ def set_dropdown_options(product,color):
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_product,v_color,v_size):
-    #global season_available_columns,selected_seasons
-
-    if not v_season or v_season == 'All':
+    group_list = []
+    sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
+    present_list = available_columns.columns
+    if v_season == 'All':
         v_seasons = season_option_list
     else:
         v_seasons = []
@@ -252,15 +253,26 @@ def update_table(v_season,v_product,v_color,v_size):
             for s in ss.split(','):
                 if s not in v_seasons:
                     v_seasons.append(s)
-    if not v_product or v_product == 'All':
+    if v_product == 'All':
         v_product = product_option_list
-    if not v_color or v_color == 'All':
+    if v_color == 'All':
         v_color = color_option_list
-    if not v_size or v_size == 'All':
+    if v_size == 'All':
         v_size = size_option_list
     df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
-    dff = df[(df['season'].str.contains('|'.join(v_seasons)))&(df['p_name'].isin(v_product))&(df['color'].isin(v_color))&(df['size'].isin(v_size))]
-    return dff.to_dict("records")   
+    dff = df[(df['p_name'].isin(v_product))&(df['color'].isin(v_color))&(df['size'].isin(v_size))]
+    if not v_product:
+        group_list.append('season')
+        present_list.remove('p_name')
+    if not v_color:
+        group_list.append('p_name')
+        present_list.remove('color')
+    if not v_size:
+        group_list.append('color')
+        present_list.remove('size')
+    df_grouped = dff.groupby(group_list)[sum_list].apply(lambda x: x.astype(int).sum()).reset_index()
+    df_grouped = df_grouped[df_grouped[present_list]]
+    return df_grouped.to_dict("records")   
 
 dash_app.layout = serve_layout
        
