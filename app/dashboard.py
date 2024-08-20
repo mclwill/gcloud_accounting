@@ -244,7 +244,7 @@ def set_dropdown_options(product,color):
 def update_table(v_season,v_product,v_color,v_size):
     group_list = []
     sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
-    present_list = available_columns.columns
+    present_list = available_columns.columns.values.to_list()
     if v_season == 'All':
         v_seasons = season_option_list
     else:
