@@ -139,12 +139,11 @@ def get_data_store_info(customer):
                             row_dict['channel'] = [channel]
                             row_dict['ean'] = [eans[i]]
                             row_dict['qty_ordered'] = [qty_ordered[i]]
-                            row_dict['stream_id'] = ['OR']
-
+                            row_dict['OR'] = [True]
 
                             if not df.empty:
-                                df = df.set_index(['order_id','ean']).join(pd.DataFrame.from_dict(row_dict).set_index(['order_id','ean']))
-                                df.reset_index(inplace=True)
+                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('','_y'))
+                                df.drop(['date_ordered_y','channel_y','qty_ordered_y','OR_y'],axis=1,inplace=True)
                             else:
                                 df = pd.DataFrame.from_dict(row_dict)
                             df.drop_duplicates(['order_id','channel','ean'],inplace=True)
@@ -167,14 +166,14 @@ def get_data_store_info(customer):
                         row_dict['ean'] = [eans[i]]
                         row_dict['qty_shipped'] = [qty_shipped[i]]
                         row_dict['qty_variance'] = [qty_variance[i]]
-                        row_dict['stream_id'] = ['PC']
+                        row_dict['PC'] = [True]
                         # empty data
                         row_dict['date_shipped'] = [None]
                         row_dict['channel'] = [None]
 
                         if not df.empty:
-                            df = df.set_index(['order_id','ean']).join(pd.DataFrame.from_dict(row_dict).set_index(['order_id','ean']))
-                            df.reset_index(inplace=True)
+                            df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('','_y'))
+                            df.drop(['date_shipped_y','qty_shipped_y','qty_variance_y','PC_y0'],axis=1,inplace=True)
                         else:
                             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
