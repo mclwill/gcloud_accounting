@@ -248,7 +248,7 @@ def set_dropdown_options(product,color):
 )
 def update_table(v_season,v_product,v_color,v_size):
     global available_columns
-    common.logger.info('1' + str(available_columns.head()))
+
     try:
         dff = available_columns.copy()
         group_list = []
@@ -262,7 +262,6 @@ def update_table(v_season,v_product,v_color,v_size):
                 for s in ss.split(','):
                     if s not in v_seasons:
                         v_seasons.append(s)
-        common.logger.info('1.5' + str(v_seasons) + str(v_product) + str(v_color) + str(v_size))
         dff = dff[(dff['season'].str.contains('|'.join(v_seasons)))]
         '''if v_product == 'All':
             v_product = product_option_list
@@ -279,8 +278,7 @@ def update_table(v_season,v_product,v_color,v_size):
         
         #df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
         #dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))|(available_columns['p_name'].isin(v_product))|(available_columns['color'].isin(v_color))|(available_columns['size'].isin(v_size))]
-        common.logger.info('2' + str(dff.head()))
-        common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))
+        #common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))
         '''if not v_product:
             group_list.append('season')
             present_list.remove('p_name')
@@ -299,11 +297,6 @@ def update_table(v_season,v_product,v_color,v_size):
             present_list.remove('color')
         if not v_product:
             group_list.append('season')
-            try:
-                group_list.remove('p_name')
-            except ValueError:
-                pass 
-            present_list.remove('p_name')
 
         common.logger.info('2 list' + str(group_list) + str(sum_list) + str(present_list))
         agg_dict = {}
@@ -313,9 +306,9 @@ def update_table(v_season,v_product,v_color,v_size):
                     agg_dict[x] = 'sum'
                 else:
                     agg_dict[x] = 'first'
-        common.logger.info('Pre Group By ' + str(dff.head()))
+        #common.logger.info('Pre Group By ' + str(dff.head()))
         df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
-        common.logger.info('Post Group by ' + str(df_grouped.head()))
+        #common.logger.info('Post Group by ' + str(df_grouped.head()))
         return df_grouped[present_list].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
