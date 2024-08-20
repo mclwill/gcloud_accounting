@@ -280,7 +280,8 @@ def update_table(v_season,v_product,v_color,v_size):
         #df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
         #dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))|(available_columns['p_name'].isin(v_product))|(available_columns['color'].isin(v_color))|(available_columns['size'].isin(v_size))]
         common.logger.info('2' + str(dff.head()))
-        common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))if not v_product:
+        common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))
+        if not v_product:
             group_list.append('season')
             present_list.remove('p_name')
         if not v_color:
