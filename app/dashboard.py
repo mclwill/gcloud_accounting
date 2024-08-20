@@ -266,6 +266,7 @@ def update_table(v_season,v_product,v_color,v_size):
             v_color = color_option_list
         if v_size == 'All':
             v_size = size_option_list
+        common.logger.info('1.5' + str(v_seasons) + str(v_product) + str(v_color) + str(v_size))
         #df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
         dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))&(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
         common.logger.info('2' + str(dff.head()))
