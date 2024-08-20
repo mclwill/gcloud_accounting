@@ -147,6 +147,7 @@ def get_data_store_info(customer):
                             else:
                                 df = pd.DataFrame.from_dict(row_dict)
                             df.drop_duplicates(['order_id','channel','ean'],inplace=True)
+                            common.logger.info('OR merge' + str(df.columns) + str(df.head()))
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
                     eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
@@ -177,6 +178,7 @@ def get_data_store_info(customer):
                         else:
                             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
+                        common.logger.info('PC merge' + str(df.columns) + str(df.head()))
                 #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
         if not df.empty:
             csv_file_data = df.to_csv(sep='|',index=False)
