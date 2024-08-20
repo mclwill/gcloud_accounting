@@ -139,12 +139,14 @@ def get_data_store_info(customer):
                             row_dict['channel'] = [channel]
                             row_dict['ean'] = [eans[i]]
                             row_dict['qty_ordered'] = [qty_ordered[i]]
-                            row_dict['OR'] = [True]
+                            row_dict['stream_id'] = ['OR']
+
 
                             if not df.empty:
-                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                                df = df.set_index(['order_id','ean']).join(pd.DataFrame.from_dict(row_dict).set_index(['order_id','ean']))
+                                df.reset_index(inplace=True)
                             else:
-                                df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
+                                df = pd.DataFrame.from_dict(row_dict)
                             df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
@@ -165,11 +167,14 @@ def get_data_store_info(customer):
                         row_dict['ean'] = [eans[i]]
                         row_dict['qty_shipped'] = [qty_shipped[i]]
                         row_dict['qty_variance'] = [qty_variance[i]]
-                        row_dict['PC'] = [True]
-
+                        row_dict['stream_id'] = ['PC']
+                        # empty data
+                        row_dict['date_shipped'] = [None]
+                        row_dict['channel'] = [None]
 
                         if not df.empty:
-                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                            df = df.set_index(['order_id','ean']).join(pd.DataFrame.from_dict(row_dict).set_index(['order_id','ean']))
+                            df.reset_index(inplace=True)
                         else:
                             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
@@ -183,6 +188,6 @@ def get_data_store_info(customer):
     
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error retrieving data from Uphance' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error retrieving data from Uphance' + '/nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
     
