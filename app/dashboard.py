@@ -57,6 +57,7 @@ def serve_layout():
         available_columns = df[['url_markdown','date','season','p_name','color','size','in_stock','available_to_sell','available_to_sell_from_stock']]
         col_title_mapping = {'url_markdown':'Image','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
         available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
+        available_columns.drop('date',axis=1,inplace=True)
         available_products = df['p_name'].unique()
         available_colors = df['color'].unique()
         available_sizes = df['size'].unique()
@@ -270,16 +271,16 @@ def update_table(v_season,v_product,v_color,v_size):
         if v_size == 'All':
             v_size = size_option_list'''
         if v_product : 
-            dff = dff['p_name'].isin(v_product)
+            dff = dff[dff['p_name'].isin(v_product)]
         if v_color :
-            dff = dff['color'].isin(v_color)
+            dff = dff[dff['color'].isin(v_color)]
         if v_size :
-            dff = dff['size'].isin(v_size)
+            dff = dff[dff['size'].isin(v_size)]
         
         #df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
         #dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))|(available_columns['p_name'].isin(v_product))|(available_columns['color'].isin(v_color))|(available_columns['size'].isin(v_size))]
         common.logger.info('2' + str(dff.head()))
-        if not v_product:
+        common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))if not v_product:
             group_list.append('season')
             present_list.remove('p_name')
         if not v_color:
@@ -288,7 +289,7 @@ def update_table(v_season,v_product,v_color,v_size):
         if not v_size:
             group_list.append('color')
             present_list.remove('size')
-        common.logger.info(str(group_list) + str(sum_list) + str(present_list))
+        common.logger.info('2 list' + str(group_list) + str(sum_list) + str(present_list))
         agg_dict = {}
         for x in present_list:
             if x not in group_list:
