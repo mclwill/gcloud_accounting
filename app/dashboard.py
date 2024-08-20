@@ -54,7 +54,7 @@ def serve_layout():
 
         df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
 
-        available_columns = df[['url_markdown','date','season','p_name','color','size','in_stock','available_to_sell','available_to_sell_from_stock']]
+        available_columns = df[['url_markdown','date','season','p_name','color','size','available_to_sell']]
         col_title_mapping = {'url_markdown':'Image','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
         available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
         available_columns.drop('date',axis=1,inplace=True)
@@ -252,7 +252,7 @@ def update_table(v_season,v_product,v_color,v_size):
     try:
         dff = available_columns.copy()
         group_list = []
-        sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
+        sum_list = ['available_to_sell']
         present_list = available_columns.columns.values.tolist()
         if not v_season or v_season == 'All':
             v_seasons = season_option_list
