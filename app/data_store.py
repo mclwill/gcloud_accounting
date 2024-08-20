@@ -178,7 +178,7 @@ def get_data_store_info(customer):
                             y_cols = [f for f in df.columns.tolist() if '_y' in f]
                             df.drop(y_cols,axis=1,inplace=True)
                         else:'''
-                        pcdf = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
+                        pc_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
                         #df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                         #common.logger.info('PC merge' + str(df.columns) + '\n' + df.head().to_string())
                 #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
