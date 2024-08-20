@@ -242,38 +242,45 @@ def set_dropdown_options(product,color):
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_product,v_color,v_size):
-    group_list = []
-    sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
-    present_list = available_columns.columns.values.tolist()
-    if v_season == 'All':
-        v_seasons = season_option_list
-    else:
-        v_seasons = []
-        for ss in v_season:
-            for s in ss.split(','):
-                if s not in v_seasons:
-                    v_seasons.append(s)
-    if v_product == 'All':
-        v_product = product_option_list
-    if v_color == 'All':
-        v_color = color_option_list
-    if v_size == 'All':
-        v_size = size_option_list
-    df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
-    dff = df[(df['season'].str.contains('|'.join(v_seasons)))&(df['p_name'].isin(v_product))&(df['color'].isin(v_color))&(df['size'].isin(v_size))]
-    if not v_product:
-        group_list.append('season')
-        present_list.remove('p_name')
-    if not v_color:
-        group_list.append('p_name')
-        present_list.remove('color')
-    if not v_size:
-        group_list.append('color')
-        present_list.remove('size')
-    common.logger.info(str(group_list) + str(sum_list) + str(present_list))
-    df_grouped = dff.groupby(group_list)[sum_list].apply(lambda x: x.astype(int).sum()).reset_index()
-    df_grouped = df_grouped[df_grouped[present_list]]
-    return df_grouped.to_dict("records")   
+    try:
+        group_list = []
+        sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
+        present_list = available_columns.columns.values.tolist()
+        if v_season == 'All':
+            v_seasons = season_option_list
+        else:
+            v_seasons = []
+            for ss in v_season:
+                for s in ss.split(','):
+                    if s not in v_seasons:
+                        v_seasons.append(s)
+        if v_product == 'All':
+            v_product = product_option_list
+        if v_color == 'All':
+            v_color = color_option_list
+        if v_size == 'All':
+            v_size = size_option_list
+        df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
+        dff = df[(df['p_name'].isin(v_product))&(df['color'].isin(v_color))&(df['size'].isin(v_size))]
+        if not v_product:
+            group_list.append('season')
+            present_list.remove('p_name')
+        if not v_color:
+            group_list.append('p_name')
+            present_list.remove('color')
+        if not v_size:
+            group_list.append('color')
+            present_list.remove('size')
+        common.logger.info(str(group_list) + str(sum_list) + str(present_list))
+        df_grouped = dff.groupby(group_list)[sum_list].apply(lambda x: x.astype(int).sum()).reset_index()
+        df_grouped = df_grouped[df_grouped[present_list]]
+        return df_grouped.to_dict("records")
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        return html.Div(
+                html.P('Error processing layout')
+        ) 
 
 dash_app.layout = serve_layout
        
