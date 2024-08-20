@@ -128,7 +128,7 @@ def get_data_store_info(customer):
                         eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
                         if type(eans) == str:
                             eans = [eans]
-                        qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',7)
+                        qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',5)
                         if type(qty_ordered) == str:
                             qty_ordered = [qty_ordered]
                         
@@ -147,7 +147,7 @@ def get_data_store_info(customer):
                                 df.drop(x_cols,axis=1,inplace=True)
                             else:
                                 df = pd.DataFrame.from_dict(row_dict)
-                            df.drop_duplicates(['order_id','channel','ean'],inplace=True)
+                            #df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                             common.logger.info('OR merge' + str(df.columns) + '\n' + str(df.head()))
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
@@ -177,7 +177,7 @@ def get_data_store_info(customer):
                             df.drop(x_cols,axis=1,inplace=True)
                         else:
                             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
-                        df.drop_duplicates(['order_id','channel','ean'],inplace=True)
+                        #df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                         common.logger.info('PC merge' + str(df.columns) + '\n' + str(df.head()))
                 #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
         if not df.empty:
