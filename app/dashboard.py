@@ -278,7 +278,7 @@ def update_table(v_season,v_product,v_color,v_size):
                 agg_dict[x] = 'sum'
             else:
                 agg_dict[x] = 'first'
-        df_grouped = dff.groupby(group_list)[sum_list].agg(agg_dict).reset_index()
+        df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
         return df_grouped[present_list].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
