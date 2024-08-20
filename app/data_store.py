@@ -119,9 +119,9 @@ def get_data_store_info(customer):
         if queuedFiles[0]:
             for file_item in queuedFiles[1]:
                 data_lines = file_item['file_data'].split('\n')
-                stream_id = get_CD_parameter(data_lines,'HD',3)
+                stream_id = cd_polling.get_CD_parameter(data_lines,'HD',3)
                 if stream_id == 'OR':
-                    action_id = get_CD_paramenter(data_lines,'OR1',2)
+                    action_id = cd_polling.get_CD_paramenter(data_lines,'OR1',2)
                     if action_id == 'A':
                         channel = cd_polling.get_CD_parameter(data_lines,'OR1',12)
                         order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
