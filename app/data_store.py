@@ -123,7 +123,7 @@ def get_data_store_info(customer):
                 if stream_id == 'OR':
                     action_id = cd_polling.get_CD_parameter(data_lines,'OR1',2)
                     if action_id == 'A':
-                        channel = cd_polling.get_CD_parameter(data_lines,'OR1',12)
+                        channel = cd_polling.get_CD_parameter(data_lines,'OR1',14)
                         order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
                         eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
                         if type(eans) == str:
@@ -142,10 +142,9 @@ def get_data_store_info(customer):
                             row_dict['OR'] = [True]
 
                             if not df.empty:
-                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('','_y'))
-                                if 'date_shipped_y' in df.columns.tolist():
-                                    df.drop(['date_shipped_y','qty_shipped_y','qty_variance_y','PC_y'],axis=1,inplace=True)
-                                
+                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('_x',None))
+                                y_cols = [f for f in df.columns.tolist() if '_x' in f]
+                                    df.drop(y_cols,axis=1,inplace=True)
                             else:
                                 df = pd.DataFrame.from_dict(row_dict)
                             df.drop_duplicates(['order_id','channel','ean'],inplace=True)
@@ -173,9 +172,9 @@ def get_data_store_info(customer):
                         # empty data
 
                         if not df.empty:
-                            df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('','_y'))
-                            if 'date_ordered_y' in df.columns.tolist():
-                                df.drop(['date_ordered_y','channel_y','qty_ordered_y','OR_y'],axis=1,inplace=True)
+                            df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('_x',None))
+                            y_cols = [f for f in df.columns.tolist() if '_x' in f]
+                                df.drop(y_cols,axis=1,inplace=True)
                         else:
                             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
