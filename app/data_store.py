@@ -150,13 +150,13 @@ def get_data_store_info(customer):
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
                     eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
                     if type(eans) == str:
-                            eans = [eans]
-                    qty_shipped = cd_polling.get_CD_parameter(data_lines,'OR2',4)
+                        eans = [eans]
+                    qty_shipped = cd_polling.get_CD_parameter(data_lines,'OS2',4)
                     if type(qty_shipped) == str:
-                            qty_shipped = [qty_shipped]
-                    qty_variance =cd_polling.get_CD_parameter(data_lines,'OR2',5)
+                        qty_shipped = [qty_shipped]
+                    qty_variance =cd_polling.get_CD_parameter(data_lines,'OS2',5)
                     if type(qty_variance) == str:
-                            qty_variance = [qty_variance]
+                        qty_variance = [qty_variance]
                     
                     for i in range(len(eans)):
                         row_dict = {}
