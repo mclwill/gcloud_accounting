@@ -94,7 +94,7 @@ def serve_layout():
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
-                            html.P("Season"),
+                            html.P("Season(s)"),
                             html.Div([
                                 dcc.Dropdown(
                                     id='season_option',
@@ -298,7 +298,7 @@ def update_table(v_season,v_product,v_color,v_size):
         if not v_product:
             group_list.append('season')
 
-        common.logger.info('2 list' + str(group_list) + str(sum_list) + str(present_list))
+        #common.logger.info('2 list' + str(group_list) + str(sum_list) + str(present_list))
         agg_dict = {}
         for x in present_list:
             if x not in group_list:
@@ -310,7 +310,7 @@ def update_table(v_season,v_product,v_color,v_size):
         if group_list:
             df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
         else:
-            df_group = dff
+            df_grouped = dff
         #common.logger.info('Post Group by ' + str(df_grouped.head()))
         return df_grouped[present_list].to_dict("records")
     except Exception as ex:
