@@ -272,7 +272,7 @@ def update_table(v_season,v_product,v_color,v_size):
             group_list.append('color')
             present_list.remove('size')
         common.logger.info(str(group_list) + str(sum_list) + str(present_list))
-        df_grouped = dff.groupby(group_list)[sum_list].apply(lambda x: x.astype(int).sum()).reset_index()
+        df_grouped = dff.groupby(group_list)[sum_list].transform(lambda x: x.astype(int).sum()).reset_index()
         df_grouped = df_grouped[df_grouped[present_list]]
         return df_grouped.to_dict("records")
     except Exception as ex:
