@@ -35,7 +35,7 @@ def decode_season_id(s_id):
 
 def get_data_store_info(customer):
     global season_df
-    
+
     try:
         data_store_folder = common.data_store[customer]
         stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
@@ -121,21 +121,24 @@ def get_data_store_info(customer):
                 data_lines = file_item['file_data'].split('\n')
                 stream_id = get_CD_parameter(data_lines,'HD',3)
                 if stream_id == 'OR':
-                    channel = cd_polling.get_CD_parameter(data_lines,'OR1',12)
-                    order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
-                    eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
-                    qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',7)
-                    
-                    for i in len(eans):
-                        row_dict = {}
-                        row_dict['date_ordered'] = [file_item['mod_time'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
-                        row_dict['order_id'] = [order_id]
-                        row_dict['channel'] = [channel]
-                        row_dict['ean'] = [eans[i]]
-                        row_dict['qty_ordered'] = [qty_ordered[i]]
+                    action_id = get_CD_paramenter(data_lines,'OR1',2)
+                    if action_id == 'A':
+                        channel = cd_polling.get_CD_parameter(data_lines,'OR1',12)
+                        order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
+                        eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
+                        qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',7)
+                        
+                        for i in len(eans):
+                            row_dict = {}
+                            row_dict['date_ordered'] = [file_item['mod_time'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
+                            row_dict['order_id'] = [order_id]
+                            row_dict['channel'] = [channel]
+                            row_dict['ean'] = [eans[i]]
+                            row_dict['qty_ordered'] = [qty_ordered[i]]
+                            row_dict['OR'] = True
 
-                        df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
-                
+                            df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                            df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
                     eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
@@ -149,8 +152,12 @@ def get_data_store_info(customer):
                         row_dict['ean'] = [eans[i]]
                         row_dict['qty_shipped'] = [qty_shipped[i]]
                         row_dict['qty_variance'] = [qty_variance[i]]
+                        row_dict['PC'] = True
+
 
                         df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                        df.drop_duplicates(['order_id','channel','ean'],inplace=True)
+                #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
         csv_file_data = df.to_csv(sep='|',index=False)
         common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
         common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
