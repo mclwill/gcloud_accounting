@@ -247,6 +247,7 @@ def set_dropdown_options(product,color):
 )
 def update_table(v_season,v_product,v_color,v_size):
     global available_columns
+    common.logger.info('1' + str(available_columns.head()))
     try:
         group_list = []
         sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
@@ -267,6 +268,7 @@ def update_table(v_season,v_product,v_color,v_size):
             v_size = size_option_list
         #df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
         dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))&(available_columns['p_name'].isin(v_product))&(available_columns['color'].isin(v_color))&(available_columns['size'].isin(v_size))]
+        common.logger.info('2' + str(dff.head()))
         if not v_product:
             group_list.append('season')
             present_list.remove('p_name')
