@@ -307,7 +307,10 @@ def update_table(v_season,v_product,v_color,v_size):
                 else:
                     agg_dict[x] = 'first'
         #common.logger.info('Pre Group By ' + str(dff.head()))
-        df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
+        if group_list:
+            df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
+        else:
+            df_group = dff
         #common.logger.info('Post Group by ' + str(df_grouped.head()))
         return df_grouped[present_list].to_dict("records")
     except Exception as ex:
