@@ -173,7 +173,7 @@ def get_data_store_info(customer):
 
                         if not df.empty:
                             df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = ('','_y'))
-                            df.drop(['date_shipped_y','qty_shipped_y','qty_variance_y','PC_y'],axis=1,inplace=True)
+                            df.drop(['date_shipped_y','qty_shipped_y','qty_variance_y','PC_y'],axis=1,inplace=True,errors='ignore')
                         else:
                             df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
