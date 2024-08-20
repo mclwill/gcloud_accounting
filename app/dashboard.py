@@ -54,7 +54,7 @@ def serve_layout():
             return html.Div(
                 html.P('No Data to Display - need to check Data Store')
             )
-
+        df['date'] = pd.to_datetime(df['date'])
         df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         df['e_date'] = df.apply(lambda row: get_earliest_product_inventory_date(row,df=df),axis=1).dt.date #get earliest inventory date for each sku_id
         available_columns = df[['url_markdown','e_date','date','season','p_name','color','size','available_to_sell']]
