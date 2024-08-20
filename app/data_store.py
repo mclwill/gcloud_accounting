@@ -126,7 +126,11 @@ def get_data_store_info(customer):
                         channel = cd_polling.get_CD_parameter(data_lines,'OR1',12)
                         order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
                         eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
+                        if type(eans) == str:
+                            eans = [eans]
                         qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',7)
+                        if type(qty_ordered) == str:
+                            qty_ordered = [qty_ordered]
                         
                         for i in range(len(eans)):
                             row_dict = {}
@@ -135,15 +139,21 @@ def get_data_store_info(customer):
                             row_dict['channel'] = [channel]
                             row_dict['ean'] = [eans[i]]
                             row_dict['qty_ordered'] = [qty_ordered[i]]
-                            row_dict['OR'] = True
+                            row_dict['OR'] = [True]
 
                             df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
                             df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
                     eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
+                    if type(eans) == str:
+                            eans = [eans]
                     qty_shipped = cd_polling.get_CD_parameter(data_lines,'OR2',4)
+                    if type(qty_shipped) == str:
+                            qty_shipped = [qty_shipped]
                     qty_variance =cd_polling.get_CD_parameter(data_lines,'OR2',5)
+                    if type(qty_variance) == str:
+                            qty_variance = [qty_variance]
                     
                     for i in range(len(eans)):
                         row_dict = {}
@@ -152,7 +162,7 @@ def get_data_store_info(customer):
                         row_dict['ean'] = [eans[i]]
                         row_dict['qty_shipped'] = [qty_shipped[i]]
                         row_dict['qty_variance'] = [qty_variance[i]]
-                        row_dict['PC'] = True
+                        row_dict['PC'] = [True]
 
 
                         df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
