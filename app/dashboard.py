@@ -281,15 +281,30 @@ def update_table(v_season,v_product,v_color,v_size):
         #dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))|(available_columns['p_name'].isin(v_product))|(available_columns['color'].isin(v_color))|(available_columns['size'].isin(v_size))]
         common.logger.info('2' + str(dff.head()))
         common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))
-        if not v_product:
+        '''if not v_product:
             group_list.append('season')
             present_list.remove('p_name')
         if not v_color:
             group_list.append('p_name')
-            present_list.remove('color')
+            present_list.remove('color')'''
         if not v_size:
             group_list.append('color')
             present_list.remove('size')
+        if not v_color:
+            group_list.append('p_name')
+            try:
+                group_list.remove('color')
+            except ValueError:
+                pass
+            present_list.remove('color')
+        if not v_product:
+            group_list.append('season')
+            try:
+                group_list.remove('p_name')
+            except ValueError:
+                pass 
+            present_list.remove('p_name')
+
         common.logger.info('2 list' + str(group_list) + str(sum_list) + str(present_list))
         agg_dict = {}
         for x in present_list:
