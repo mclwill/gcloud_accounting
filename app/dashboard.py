@@ -34,6 +34,7 @@ for view_func in app.view_functions:
 
 def serve_layout():
     #global season_available_columns
+    global available_columns
 
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
@@ -197,6 +198,7 @@ def serve_layout():
     Input('season_option', 'value')
 )
 def set_dropdown_options(season):
+    global available_columns
     dff = available_columns.copy()
     if season:
         seasons = []
@@ -213,6 +215,7 @@ def set_dropdown_options(season):
     Input('product_option', 'value')
 )
 def set_dropdown_options(product):
+    global available_columns
     dff = available_columns.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
@@ -224,6 +227,7 @@ def set_dropdown_options(product):
     Input('color_option','value')]
 )
 def set_dropdown_options(product,color):
+    global available_columns
     dff = available_columns.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
@@ -242,6 +246,7 @@ def set_dropdown_options(product,color):
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_product,v_color,v_size):
+    global available_columns
     try:
         group_list = []
         sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
