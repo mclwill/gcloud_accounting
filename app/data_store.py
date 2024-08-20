@@ -141,7 +141,10 @@ def get_data_store_info(customer):
                             row_dict['qty_ordered'] = [qty_ordered[i]]
                             row_dict['OR'] = [True]
 
-                            df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                            if not df.empty:
+                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                            else:
+                                df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                             df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
@@ -165,7 +168,10 @@ def get_data_store_info(customer):
                         row_dict['PC'] = [True]
 
 
-                        df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                        if not df.empty:
+                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
+                            else:
+                                df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                 #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
         if not df.empty:
