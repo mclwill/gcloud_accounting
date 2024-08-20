@@ -158,9 +158,12 @@ def get_data_store_info(customer):
                         df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how='outer')
                         df.drop_duplicates(['order_id','channel','ean'],inplace=True)
                 #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
-        csv_file_data = df.to_csv(sep='|',index=False)
-        common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
-        common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
+        if not df.empty:
+            csv_file_data = df.to_csv(sep='|',index=False)
+            common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
+            common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
+        else:
+            common.logger.info('Uphance orders DataStore not updated as dataframe was emtpy')
     
     except Exception as ex:
         tb = traceback.format_exc()
