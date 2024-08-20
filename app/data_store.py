@@ -121,7 +121,7 @@ def get_data_store_info(customer):
                 data_lines = file_item['file_data'].split('\n')
                 stream_id = cd_polling.get_CD_parameter(data_lines,'HD',3)
                 if stream_id == 'OR':
-                    action_id = cd_polling.get_CD_paramenter(data_lines,'OR1',2)
+                    action_id = cd_polling.get_CD_parameter(data_lines,'OR1',2)
                     if action_id == 'A':
                         channel = cd_polling.get_CD_parameter(data_lines,'OR1',12)
                         order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
