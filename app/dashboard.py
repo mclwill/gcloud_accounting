@@ -249,6 +249,7 @@ def update_table(v_season,v_product,v_color,v_size):
     global available_columns
     common.logger.info('1' + str(available_columns.head()))
     try:
+        dff = available_columns.copy()
         group_list = []
         sum_list = ['in_stock','available_to_sell','available_to_sell_from_stock']
         present_list = available_columns.columns.values.tolist()
@@ -260,15 +261,23 @@ def update_table(v_season,v_product,v_color,v_size):
                 for s in ss.split(','):
                     if s not in v_seasons:
                         v_seasons.append(s)
-        if v_product == 'All':
+        common.logger.info('1.5' + str(v_seasons) + str(v_product) + str(v_color) + str(v_size))
+        dff = dff[(dff['season'].str.contains('|'.join(v_seasons)))]
+        '''if v_product == 'All':
             v_product = product_option_list
         if v_color == 'All':
             v_color = color_option_list
         if v_size == 'All':
-            v_size = size_option_list
-        common.logger.info('1.5' + str(v_seasons) + str(v_product) + str(v_color) + str(v_size))
+            v_size = size_option_list'''
+        if v_product : 
+            dff = dff['p_name'].isin(v_product)
+        if v_color :
+            dff = dff['color'].isin(v_color)
+        if v_size :
+            dff = dff['size'].isin(v_size)
+        
         #df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
-        dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))|(available_columns['p_name'].isin(v_product))|(available_columns['color'].isin(v_color))|(available_columns['size'].isin(v_size))]
+        #dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))|(available_columns['p_name'].isin(v_product))|(available_columns['color'].isin(v_color))|(available_columns['size'].isin(v_size))]
         common.logger.info('2' + str(dff.head()))
         if not v_product:
             group_list.append('season')
