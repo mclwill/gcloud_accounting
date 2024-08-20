@@ -32,6 +32,9 @@ for view_func in app.view_functions:
     if view_func.startswith(dash_app.config['routes_pathname_prefix']):
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
+def get_earliest_product_inventory_date(x,df):
+    return df['date'][df['sku_id'] == x['sku_id']].min()
+
 def serve_layout():
     #global season_available_columns
     global available_columns
@@ -52,10 +55,10 @@ def serve_layout():
                 html.P('No Data to Display - need to check Data Store')
             )
 
-        df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")
-
-        available_columns = df[['url_markdown','date','season','p_name','color','size','available_to_sell']]
-        col_title_mapping = {'url_markdown':'Image','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
+        df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
+        df['e_date'] = df.apply(lambda row: get_earliest_product_inventory_date(row,df=df),axis=1).dt.date #get earliest inventory date for each sku_id
+        available_columns = df[['url_markdown','e_date','date','season','p_name','color','size','available_to_sell']]
+        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
         available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
         available_columns.drop('date',axis=1,inplace=True)
         available_products = df['p_name'].unique()
