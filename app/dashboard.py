@@ -260,7 +260,7 @@ def update_table(v_season,v_product,v_color,v_size):
     if v_size == 'All':
         v_size = size_option_list
     df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
-    dff = df[(df['p_name'].isin(v_product))&(df['color'].isin(v_color))&(df['size'].isin(v_size))]
+    dff = df[(df['season'].str.contains('|'.join(v_seasons)))&(df['p_name'].isin(v_product))&(df['color'].isin(v_color))&(df['size'].isin(v_size))]
     if not v_product:
         group_list.append('season')
         present_list.remove('p_name')
@@ -270,6 +270,7 @@ def update_table(v_season,v_product,v_color,v_size):
     if not v_size:
         group_list.append('color')
         present_list.remove('size')
+    common.logger.info(str(group_list) + str(sum_list) + str(present_list))
     df_grouped = dff.groupby(group_list)[sum_list].apply(lambda x: x.astype(int).sum()).reset_index()
     df_grouped = df_grouped[df_grouped[present_list]]
     return df_grouped.to_dict("records")   
