@@ -274,10 +274,11 @@ def update_table(v_season,v_product,v_color,v_size):
         common.logger.info(str(group_list) + str(sum_list) + str(present_list))
         agg_dict = {}
         for x in present_list:
-            if x in sum_list:
-                agg_dict[x] = 'sum'
-            else:
-                agg_dict[x] = 'first'
+            if x not in group_list:
+                if x in sum_list:
+                    agg_dict[x] = 'sum'
+                else:
+                    agg_dict[x] = 'first'
         df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
         return df_grouped[present_list].to_dict("records")
     except Exception as ex:
