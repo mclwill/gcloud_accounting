@@ -113,7 +113,7 @@ def get_data_store_info(customer):
 
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
-            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':int,'qty_shipped':int,qty_variance:int,'OR':bool,'PC':bool})
+            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':int,'qty_shipped':int,'qty_variance':int,'OR':bool,'PC':bool})
         else:
             df = pd.DataFrame() #start with empty dataframe
 
