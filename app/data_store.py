@@ -122,7 +122,7 @@ def get_data_store_info(customer):
             or_df = pd.DataFrame(columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR'])
             pc_df = pd.DataFrame(columns = ['order_id','ean','date_shipped','qty_shipped','qty_variance','PC'])
             for file_item in queuedFiles[1]:
-                byte_stream = read_dropbox_bytestream('aemery',file_item['path_display'])
+                byte_stream = common.read_dropbox_bytestream('aemery',file_item['path_display'])
                 data_lines = bytestream.read().decode('utf=8').split('\n')
                 stream_id = cd_polling.get_CD_parameter(data_lines,'HD',3)
                 if stream_id == 'OR':
