@@ -60,7 +60,7 @@ def get_data_store_info(customer):
 
         byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
         if byte_stream:
-            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'in_stock':int,'available_to_sell':int,'available_to_sell_from_stock':int})
+            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'in_stock':'Int64','available_to_sell':'Int64','available_to_sell_from_stock':'Int64'})
         else:
             df = pd.DataFrame() #start with empty dataframe
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
@@ -113,13 +113,13 @@ def get_data_store_info(customer):
 
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
-            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':int,'qty_shipped':int,'qty_variance':int,'OR':bool,'PC':bool})
+            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':'Int64','qty_shipped':'Int64','qty_variance':'Int64','OR':bool,'PC':bool})
         else:
             df = pd.DataFrame() #start with empty dataframe
 
         byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
         if byte_stream:
-            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':int})
+            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':'Int64'})
         else:
             po_df = pd.DataFrame() #start with empty dataframe
 
