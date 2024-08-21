@@ -393,21 +393,37 @@ def read_dropbox_bytestream(customer,file_path):
         return False
 
 
-def store_dropbox_unicode(customer,file_data,file_path):
+def store_dropbox_unicode(customer,file_data,file_path,retry=False):
     global dbx
     #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
     try:
+        if not retry:
+            raise 'Simulate Dropbox error'
         with io.BytesIO(file_data.encode()) as stream:
             stream.seek(0)
             dbx.files_upload(stream.read(), file_path, mode=dropbox.files.WriteMode.overwrite)
-        logger.debug('Dropbox Transferred Successfully')
+        logger.debug('Dropbox Transferred Successfully : ' + file_path)
+        #check for any failed dropbox transfers
+        if not retry:
+            dbx_folder = access_secret_version('customer_parameters',customer,'dbx_folder')
+            for (root,dirs,files) in os.walk(os.path.join('/home/gary/dropbox',customer,topdown=True)):
+                for d in dirs:
+                    queuedFiles = getLocalFiles(d,customer=customer)
+                    if queuedFiles[0] : #only process files if no errors on getting Local files
+                        for file_item in queuedFiles[1]:
+                            if store_dropbox_unicode(customer,file_item['file_data'],os.path.join(dbx_folder,os.path.basename(os.path.normpath(d)),file_item['file_name']),True): #flag this is a retry to avoid another saving on error
+                                os.remove(os.path.join(d,file_item['file_name'])) #remove file if dropbox store is successful successful
+                                common.logger.info('Logger Info for ' + customer + '\nLocal file successully transferred to dropbox and removed locally\nFile: ' + file_item['file_name'])
         return True 
 
     except Exception as ex:
         tb = traceback.format_exc()
         logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data)
         logger.warning(tb)
-        logger.debug('Dropbox Transfer Error')
+        logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
+        if not retry:
+            file_loc = os.path.basename(os.path.normpath(file_path))
+            storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
         return False
 
 def get_users():
@@ -421,6 +437,46 @@ def get_users():
                 users[k] = v
     return users
 
+def get_dropbox_file_info(customer,file_path,**kwargs):
+    try:
+        from_date = kwargs.pop('from_date',None)
+        files_list = []
+        files_info = dbx.files_list_folder(file_path)
+        more_info = True
+        cursor = None
+        while more_info:
+            if not cursor :
+                files_info = dbx.files_list_folder(file_path)
+            else:
+                files_info = dbx.files_list_folder_continue(cursor)
+            for file in files_info.entries:
+                if isinstance(file, dropbox.files.FileMetadata):
+                    metadata = {
+                        'name': file.name,
+                        'path_display': file.path_display,
+                        'client_modified': file.client_modified,
+                        'server_modified': file.server_modified
+                    }
+                    files_list.append(metadata)
+            more_info = files_info.has_more
+            cursor = files_info.cursor
+        
+        if from_date:
+            if type(from_date) is not datetime:
+                from_date = datetime.strptime(from_date,'%d/%m/%Y')
+            filtered_list = []
+            for files in files_list:
+                if files['client_modified'] >= from_date:
+                    filtered_list.append(files)
+            return filtered_list
+        else:
+            return files_list
+    except Exception as ex:
+        tb = traceback.format_exc()
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in get_dropbox_file_info\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex))
+        logger.warning(tb)
+        logger.debug('Dropbox Read Error')
+        return False
 
 #initialise parameters
 

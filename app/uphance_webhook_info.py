@@ -268,8 +268,8 @@ def process_pick_ticket(customer,event_data):
         file_data = process_all_record_indicators(customer,event_data,stream_id)
         file_name = stream_id + event_date + '_' + str(event_id).zfill(4) + '_' + str(event_shipment_number).zfill(4) + '.csv'
         process_file(customer,file_data,file_name)
-        if common.data_store[customer]:
-            common.storeLocalFile(os.path.join('home/gary/data_store',customer),file_name,file_data,customer=customer,error=error,request_dict=request_dict)
+        #if common.data_store[customer]:   no longer need as polling dropbox files
+        #    common.storeLocalFile(os.path.join('home/gary/data_store',customer),file_name,file_data,customer=customer,error=error,request_dict=request_dict)
         return file_data
     else:
         return "Not Sent to Cross Docks - Already in Packing State"
