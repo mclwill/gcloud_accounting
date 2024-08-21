@@ -62,7 +62,7 @@ def serve_layout():
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
         latest_date = latest_stock_info['date'].max().to_pydatetime()
         earliest_date = latest_stock_info['date'].min().to_pydatetime()
-        common.logger.info(str(type(latest_date)) + str(latest_date))
+        common.logger.info(str(type(latest_date)) + str(latest_date) + str(type(date(1995,8,5))))
         latest_stock_info = latest_stock_info[latest_stock_info['date'] == latest_date]
         latest_stock_info.drop('date',axis=1,inplace=True)
 
@@ -98,8 +98,9 @@ def serve_layout():
             ],justify='evenly'),
             dbc.Row([
                 dbc.Col(
-                    html.Div([
-                            html.P("Start Date - earliest is " + earliest_date.strftime('%d-%m-%Y)')),
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Start Date - earliest is " + earliest_date.strftime('%d-%m-%Y')),
                             html.Div([
                                 dcc.DatePickerSingle(
                                     id='start_date_picker',
@@ -113,7 +114,8 @@ def serve_layout():
                                     #date = earliest_date.date
                                 ),
                             ]),
-                    ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),]
                 ),
                 dbc.Col(
                     dbc.Card([
