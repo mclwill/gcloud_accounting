@@ -36,12 +36,12 @@ def get_earliest_product_inventory_date(x,df):
     return df['date'][df['sku_id'] == x['sku_id']].min()
 
 def serve_layout():
-    #global season_available_columns
-    global available_columns
+    #global season_latest_stock_info
+    global latest_stock_info
 
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
-        global available_columns,available_products,available_colors,available_sizes
+        global latest_stock_info
         global product_option_list,color_option_list,size_option_list,season_option_list
 
         byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
@@ -57,19 +57,18 @@ def serve_layout():
         df['date'] = pd.to_datetime(df['date'])
         df['url_markdown'] = df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         df['e_date'] = df.apply(lambda row: get_earliest_product_inventory_date(row,df=df),axis=1).dt.date #get earliest inventory date for each sku_id
-        available_columns = df[['url_markdown','e_date','date','season','p_name','color','size','available_to_sell']]
+        latest_stock_info = df[['url_markdown','e_date','date','season','p_name','color','size','available_to_sell']]
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
-        available_columns = available_columns[available_columns['date'] == available_columns['date'].max()]
-        available_columns.drop('date',axis=1,inplace=True)
-        available_products = df['p_name'].unique()
-        available_colors = df['color'].unique()
-        available_sizes = df['size'].unique()
+        latest_date = latest_stock_info['date'].max()
+        earliest_date = latest_stock_info['date'].min()
+        latest_stock_info = latest_stock_info[latest_stock_info['date'] == latest_date]
+        latest_stock_info.drop('date',axis=1,inplace=True)
 
-        product_option_list = sorted(available_columns['p_name'].unique().tolist())
-        color_option_list = sorted(available_columns['color'].unique().tolist())
-        size_option_list = sorted(available_columns['size'].unique().tolist())
+        product_option_list = sorted(latest_stock_info['p_name'].unique().tolist())
+        color_option_list = sorted(latest_stock_info['color'].unique().tolist())
+        size_option_list = sorted(latest_stock_info['size'].unique().tolist())
         season_option_list = []
-        for ss in available_columns['season'].to_list():
+        for ss in latest_stock_info['season'].to_list():
             for s in ss.split(','):
                 if s not in season_option_list:
                     season_option_list.append(s)
@@ -94,6 +93,22 @@ def serve_layout():
                 )
             ],justify='evenly'),
             dbc.Row([
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Start Date - earliest is " + earliest_date.strftime('%d-%m-%Y)')),
+                            html.Div([
+                                dcc.DatePickerSingle(
+                                    id='start_date_picker',
+                                    min_date_allowed = earlest_date.date,
+                                    max_date_allowed = latest_date.date,
+                                    initial_visible_month = earlest_date.date,
+                                    date = earliest_date.date
+                                ),
+                            ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),
+                ),
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
@@ -175,8 +190,8 @@ def serve_layout():
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in available_columns.columns],
-                            data=available_columns.to_dict("records"),
+                            columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in latest_stock_info.columns],
+                            data=latest_stock_info.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -192,18 +207,20 @@ def serve_layout():
         ])
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '/nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '/nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
         return html.Div(
                 html.P('Error processing layout')
         ) 
+
+
 
 @dash_app.callback(
     Output('product_option', 'options'),
     Input('season_option', 'value')
 )
 def set_dropdown_options(season):
-    global available_columns
-    dff = available_columns.copy()
+    global latest_stock_info
+    dff = latest_stock_info.copy()
     if season:
         seasons = []
         for ss in season:
@@ -219,8 +236,8 @@ def set_dropdown_options(season):
     Input('product_option', 'value')
 )
 def set_dropdown_options(product):
-    global available_columns
-    dff = available_columns.copy()
+    global latest_stock_info
+    dff = latest_stock_info.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
     return [{'label':x,'value':x} for x in dff['color'].unique()]
@@ -231,8 +248,8 @@ def set_dropdown_options(product):
     Input('color_option','value')]
 )
 def set_dropdown_options(product,color):
-    global available_columns
-    dff = available_columns.copy()
+    global latest_stock_info
+    dff = latest_stock_info.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
     if color:
@@ -250,13 +267,13 @@ def set_dropdown_options(product,color):
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_product,v_color,v_size):
-    global available_columns
+    global latest_stock_info
 
     try:
-        dff = available_columns.copy()
+        dff = latest_stock_info.copy()
         group_list = []
         sum_list = ['available_to_sell']
-        present_list = available_columns.columns.values.tolist()
+        present_list = latest_stock_info.columns.values.tolist()
         if not v_season or v_season == 'All':
             v_seasons = season_option_list
         else:
@@ -279,8 +296,8 @@ def update_table(v_season,v_product,v_color,v_size):
         if v_size :
             dff = dff[dff['size'].isin(v_size)]
         
-        #df = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))]
-        #dff = available_columns[(available_columns['season'].str.contains('|'.join(v_seasons)))|(available_columns['p_name'].isin(v_product))|(available_columns['color'].isin(v_color))|(available_columns['size'].isin(v_size))]
+        #df = latest_stock_info[(latest_stock_info['season'].str.contains('|'.join(v_seasons)))]
+        #dff = latest_stock_info[(latest_stock_info['season'].str.contains('|'.join(v_seasons)))|(latest_stock_info['p_name'].isin(v_product))|(latest_stock_info['color'].isin(v_color))|(latest_stock_info['size'].isin(v_size))]
         #common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))
         '''if not v_product:
             group_list.append('season')

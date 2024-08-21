@@ -382,7 +382,7 @@ def read_dropbox_bytestream(customer,file_path):
         _, res = dbx.files_download(file_path)
         with closing(res) as result:
             byte_data = result.content
-            logger.debug('Dropbox Read done successfully')
+            logger.debug('Dropbox Read done successfully:' + file_path)
             return io.BytesIO(byte_data)
 
     except Exception as ex:
