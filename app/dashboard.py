@@ -61,6 +61,7 @@ def serve_layout():
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
         latest_date = latest_stock_info['date'].max()
         earliest_date = latest_stock_info['date'].min()
+        common.logger.info(str(type(latest_date)) + str(latest_date))
         latest_stock_info = latest_stock_info[latest_stock_info['date'] == latest_date]
         latest_stock_info.drop('date',axis=1,inplace=True)
 
