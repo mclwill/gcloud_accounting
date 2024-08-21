@@ -397,8 +397,8 @@ def store_dropbox_unicode(customer,file_data,file_path,retry=False):
     global dbx
     #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
     try:
-        if not retry:
-            raise 'Simulate Dropbox error'
+        #if not retry:
+        #    raise Exception('Simulate Dropbox error')
         with io.BytesIO(file_data.encode()) as stream:
             stream.seek(0)
             dbx.files_upload(stream.read(), file_path, mode=dropbox.files.WriteMode.overwrite)
