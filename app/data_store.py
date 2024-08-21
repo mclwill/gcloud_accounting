@@ -194,7 +194,7 @@ def get_data_store_info(customer):
                     
                     for i in range(len(eans)):
                         row_dict = {}
-                        row_dict['po_id'] = [order_id]
+                        row_dict['po_id'] = [po_id]
                         row_dict['date_received'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
                         row_dict['ean'] = [eans[i]]
                         row_dict['qty_received'] = [qty_received[i]]
