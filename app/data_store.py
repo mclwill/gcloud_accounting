@@ -119,7 +119,7 @@ def get_data_store_info(customer):
 
         byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
         if byte_stream:
-            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':'Int64'})
+            po_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':'Int64'})
         else:
             po_df = pd.DataFrame() #start with empty dataframe
 
@@ -128,7 +128,7 @@ def get_data_store_info(customer):
         if queuedFiles:
             or_df = pd.DataFrame(columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR'])
             pc_df = pd.DataFrame(columns = ['order_id','ean','date_shipped','qty_shipped','qty_variance','PC'])
-            tp_df = pd.DataFrame(columns = ['po_number','date_received','ean','qty_received'])
+            po_df = pd.DataFrame(columns = ['po_number','date_received','ean','qty_received'])
             for file_item in queuedFiles:
                 byte_stream = common.read_dropbox_bytestream('aemery',file_item['path_display'])
                 data_lines = byte_stream.read().decode('utf=8').split('\n')
@@ -199,7 +199,7 @@ def get_data_store_info(customer):
                         row_dict['ean'] = [eans[i]]
                         row_dict['qty_received'] = [qty_received[i]]
 
-                        po_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
+                        po_df = pd.concat([po_df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True)
 
 
