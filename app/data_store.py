@@ -194,13 +194,13 @@ def get_data_store_info(customer):
                     
                     for i in range(len(eans)):
                         row_dict = {}
-                        row_dict['po_id'] = [po_id]
+                        row_dict['po_number'] = [po_id]
                         row_dict['date_received'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
                         row_dict['ean'] = [eans[i]]
                         row_dict['qty_received'] = [qty_received[i]]
 
                         po_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
-                        df.drop_duplicates(subset=['po_id','ean','date_received'],inplace=True,ignore_index=True)
+                        df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True)
 
 
             merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
