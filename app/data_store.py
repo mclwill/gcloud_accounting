@@ -155,7 +155,7 @@ def get_data_store_info(customer):
                             row_dict['OR'] = [True]
 
                             or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
-                            df.drop_duplicates(subset=['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
+                            or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
                             
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
@@ -179,7 +179,7 @@ def get_data_store_info(customer):
                         row_dict['PC'] = [True]
 
                         pc_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
-                        df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
+                        pc_df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
 
                 elif stream_id == 'TP':
                     po_id = cd_polling.get_CD_parameter(data_lines,'TP',2)
@@ -200,7 +200,7 @@ def get_data_store_info(customer):
                         row_dict['qty_received'] = [qty_received[i]]
 
                         po_df = pd.concat([po_df,pd.DataFrame.from_dict(row_dict)])
-                        df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True)
+                        po_df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True)
 
 
             merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
@@ -225,6 +225,6 @@ def get_data_store_info(customer):
     
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error retrieving data from Uphance' + '/nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
+        common.logger.warning('Error retrieving data from Uphance' + '/nException Info: ' + str(ex) + '\nTraceback Info: \n' + str(tb))
 
     
