@@ -112,7 +112,7 @@ def serve_layout():
                                     max_date_allowed = latest_date.date(),
                                     initial_visible_month = earliest_date.date(),
                                     date = earliest_date.date(),
-                                    display_formate = 'D-M-Y'
+                                    display_format = 'D-M-Y'
                                 ),
                             ]),
                         ]),
