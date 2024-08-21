@@ -40,6 +40,7 @@ def get_data_store_info(customer):
         data_store_folder = common.data_store[customer]
         stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
         orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
+        po_file_path = os.path.join(data_store_folder,'data_po.csv')
         orders_retrieve_path = common.access_secret_version('customer_parameters',customer,'dbx_folder')
         
         #get season data from uphance
@@ -59,7 +60,7 @@ def get_data_store_info(customer):
 
         byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
         if byte_stream:
-            df = pd.read_csv(byte_stream,sep='|',index_col=False)
+            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'in_stock':int,'available_to_sell':int,'available_to_sell_from_stock':int})
         else:
             df = pd.DataFrame() #start with empty dataframe
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
@@ -112,15 +113,22 @@ def get_data_store_info(customer):
 
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
-            df = pd.read_csv(byte_stream,sep='|',index_col=False)
+            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':int,'qty_shipped':int,qty_variance:int,'OR':bool,'PC':bool})
         else:
             df = pd.DataFrame() #start with empty dataframe
+
+        byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
+        if byte_stream:
+            df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':int})
+        else:
+            po_df = pd.DataFrame() #start with empty dataframe
 
         queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=10)) #use utc time as that is how dropbox stores file dates
         queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10))
         if queuedFiles:
             or_df = pd.DataFrame(columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR'])
             pc_df = pd.DataFrame(columns = ['order_id','ean','date_shipped','qty_shipped','qty_variance','PC'])
+            tp_df = pd.DataFrame(columns = ['po_number','date_received','ean','qty_received'])
             for file_item in queuedFiles:
                 byte_stream = common.read_dropbox_bytestream('aemery',file_item['path_display'])
                 data_lines = byte_stream.read().decode('utf=8').split('\n')
@@ -146,14 +154,9 @@ def get_data_store_info(customer):
                             row_dict['qty_ordered'] = [qty_ordered[i]]
                             row_dict['OR'] = [True]
 
-                            '''if not df.empty:
-                                df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = (None))
-                                x_cols = [f for f in df.columns.tolist() if '_x' in f]
-                                df.drop(x_cols,axis=1,inplace=True)
-                            else:'''
                             or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
-                            df.drop_duplicates(['order_id','channel','ean','date_ordered','date_shipped'],inplace=True)
-                            #common.logger.info('OR merge' + str(df.columns) + '\n' + df.head().to_string())
+                            df.drop_duplicates(subset=['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
+                            
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
                     eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
@@ -174,28 +177,51 @@ def get_data_store_info(customer):
                         row_dict['qty_shipped'] = [qty_shipped[i]]
                         row_dict['qty_variance'] = [qty_variance[i]]
                         row_dict['PC'] = [True]
-                        # empty data
 
-                        '''if not df.empty:
-                            df = df.merge(pd.DataFrame.from_dict(row_dict),on=['order_id','ean'],how = 'outer',suffixes = (None,'_y'))
-                            y_cols = [f for f in df.columns.tolist() if '_y' in f]
-                            df.drop(y_cols,axis=1,inplace=True)
-                        else:'''
                         pc_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
-                        df.drop_duplicates(['order_id','channel','ean','date_ordered','date_shipped'],inplace=True)
-                        #common.logger.info('PC merge' + str(df.columns) + '\n' + df.head().to_string())
-                #os.remove(os.path.join('home/gary/data_store',customer,file_item['file_name']))
+                        df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
+
+                elif stream_id == 'TP':
+                    po_id = cd_polling.get_CD_parameter(data_lines,'TP',2)
+                    if type(po_id) == str:
+                        eans = [eans]
+                    eans = cd_polling.get_CD_parameter(data_lines,'TP',4)
+                    if type(eans) == str:
+                        eans = [eans]
+                    qty_received = cd_polling.get_CD_parameter(data_lines,'TP',5)
+                    if type(qty_received) == str:
+                        qty_received = [qty_received]
+                    
+                    for i in range(len(eans)):
+                        row_dict = {}
+                        row_dict['po_id'] = [order_id]
+                        row_dict['date_received'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
+                        row_dict['ean'] = [eans[i]]
+                        row_dict['qty_received'] = [qty_shipped[i]]
+
+                        po_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
+                        df.drop_duplicates(subset=['po_id','ean','date_received'],inplace=True,ignore_index=True)
+
+
             merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
 
             if len(merged_df.index) > 0:
                 df = pd.concat([df,merged_df])
-                df.drop_duplicates(['order_id','channel','ean'],inplace=True)
+                df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
+
         if not df.empty:
             csv_file_data = df.to_csv(sep='|',index=False)
             common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
             common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
         else:
             common.logger.info('Uphance orders DataStore not updated as dataframe was emtpy')
+
+        if not po_df.empty:
+            csv_file_data = po_df.to_csv(sep='|',index=False)
+            common.store_dropbox_unicode(customer,csv_file_data,po_file_path)
+            common.logger.info('Uphance purchase orders DataStore updated for ' + customer + '\nFile Path: ' + po_file_path)
+        else:
+            common.logger.info('Uphance purchase orders DataStore not updated as dataframe was emtpy')
     
     except Exception as ex:
         tb = traceback.format_exc()

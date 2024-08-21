@@ -39,6 +39,7 @@ def get_earliest_product_inventory_date(x,df):
 def serve_layout():
     #global season_latest_stock_info
     global latest_stock_info
+    global base_start_date
 
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
@@ -62,7 +63,8 @@ def serve_layout():
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
         latest_date = latest_stock_info['date'].max().to_pydatetime()
         earliest_date = latest_stock_info['date'].min().to_pydatetime()
-        common.logger.info(str(type(latest_date)) + str(latest_date) + str(type(date(1995,8,5))) + str(type(earliest_date.date())))
+        base_start_date = earliest_date.date()
+        #common.logger.info(str(type(latest_date)) + str(latest_date) + str(type(date(1995,8,5))) + str(type(earliest_date.date())))
         latest_stock_info = latest_stock_info[latest_stock_info['date'] == latest_date]
         latest_stock_info.drop('date',axis=1,inplace=True)
 
@@ -104,10 +106,6 @@ def serve_layout():
                             html.Div([
                                 dcc.DatePickerSingle(
                                     id='start_date_picker',
-                                    #min_date_allowed=date(1995, 8, 5),
-                                    #max_date_allowed=date(2017, 9, 19),
-                                    #initial_visible_month=date(2017, 8, 5),
-                                    #date=date(2017, 8, 25)
                                     min_date_allowed = earliest_date.date(),
                                     max_date_allowed = latest_date.date(),
                                     initial_visible_month = earliest_date.date(),
@@ -221,7 +219,13 @@ def serve_layout():
                 html.P('Error processing layout')
         ) 
 
-
+@dash_app.callback(
+    Input('start_date_picker', 'date'))
+def update_output(date_value):
+    global base_start_date
+    if date_value is not None:
+        base_start_date = date.fromisoformat(date_value)
+    return None
 
 @dash_app.callback(
     Output('product_option', 'options'),
