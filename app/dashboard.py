@@ -100,9 +100,9 @@ def serve_layout():
                             html.Div([
                                 dcc.DatePickerSingle(
                                     id='start_date_picker',
-                                    min_date_allowed = earlest_date.date,
+                                    min_date_allowed = earliest_date.date,
                                     max_date_allowed = latest_date.date,
-                                    initial_visible_month = earlest_date.date,
+                                    initial_visible_month = earliest_date.date,
                                     date = earliest_date.date
                                 ),
                             ]),
