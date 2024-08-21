@@ -96,6 +96,7 @@ def serve_layout():
             ],justify='evenly'),
             dbc.Row([
                 dbc.Col(
+                    html.Div([
                             html.P("Start Date - earliest is " + earliest_date.strftime('%d-%m-%Y)')),
                             html.Div([
                                 dcc.DatePickerSingle(
@@ -106,7 +107,7 @@ def serve_layout():
                                     date = earliest_date.date
                                 ),
                             ]),
-                        ),
+                    ]),
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
