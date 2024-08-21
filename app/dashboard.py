@@ -12,7 +12,7 @@ from dash_table import DataTable
 from dash.exceptions import PreventUpdate
 import plotly.express as px
 import traceback
-from datetime import datetime
+from datetime import datetime,date
 
 import FlaskApp.app.common as common
 
@@ -66,6 +66,8 @@ def serve_layout():
         latest_stock_info = latest_stock_info[latest_stock_info['date'] == latest_date]
         latest_stock_info.drop('date',axis=1,inplace=True)
 
+
+
         product_option_list = sorted(latest_stock_info['p_name'].unique().tolist())
         color_option_list = sorted(latest_stock_info['color'].unique().tolist())
         size_option_list = sorted(latest_stock_info['size'].unique().tolist())
@@ -101,10 +103,14 @@ def serve_layout():
                             html.Div([
                                 dcc.DatePickerSingle(
                                     id='start_date_picker',
-                                    min_date_allowed = earliest_date.date,
-                                    max_date_allowed = latest_date.date,
-                                    initial_visible_month = earliest_date.date,
-                                    date = earliest_date.date
+                                    min_date_allowed=date(1995, 8, 5),
+                                    max_date_allowed=date(2017, 9, 19),
+                                    initial_visible_month=date(2017, 8, 5),
+                                    date=date(2017, 8, 25)
+                                    #min_date_allowed = earliest_date.date,
+                                    #max_date_allowed = latest_date.date,
+                                    #initial_visible_month = earliest_date.date,
+                                    #date = earliest_date.date
                                 ),
                             ]),
                     ]),
