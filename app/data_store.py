@@ -197,7 +197,7 @@ def get_data_store_info(customer):
                         row_dict['po_id'] = [order_id]
                         row_dict['date_received'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
                         row_dict['ean'] = [eans[i]]
-                        row_dict['qty_received'] = [qty_shipped[i]]
+                        row_dict['qty_received'] = [qty_received[i]]
 
                         po_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
                         df.drop_duplicates(subset=['po_id','ean','date_received'],inplace=True,ignore_index=True)
