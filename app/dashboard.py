@@ -12,6 +12,7 @@ from dash_table import DataTable
 from dash.exceptions import PreventUpdate
 import plotly.express as px
 import traceback
+from datetime import datetime
 
 import FlaskApp.app.common as common
 
@@ -59,8 +60,8 @@ def serve_layout():
         df['e_date'] = df.apply(lambda row: get_earliest_product_inventory_date(row,df=df),axis=1).dt.date #get earliest inventory date for each sku_id
         latest_stock_info = df[['url_markdown','e_date','date','season','p_name','color','size','available_to_sell']]
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU','in_stock':'In Stock','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock'}
-        latest_date = latest_stock_info['date'].max()
-        earliest_date = latest_stock_info['date'].min()
+        latest_date = pd.to_pydatetime(latest_stock_info['date'].max())
+        earliest_date = pd.to_ptydatetime(latest_stock_info['date'].min())
         common.logger.info(str(type(latest_date)) + str(latest_date))
         latest_stock_info = latest_stock_info[latest_stock_info['date'] == latest_date]
         latest_stock_info.drop('date',axis=1,inplace=True)
