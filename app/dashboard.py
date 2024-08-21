@@ -207,7 +207,7 @@ def serve_layout():
         ])
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '/nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
         return html.Div(
                 html.P('Error processing layout')
         ) 
