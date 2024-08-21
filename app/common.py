@@ -406,7 +406,7 @@ def store_dropbox_unicode(customer,file_data,file_path,retry=False):
         #check for any failed dropbox transfers
         if not retry:
             dbx_folder = access_secret_version('customer_parameters',customer,'dbx_folder')
-            for (root,dirs,files) in os.walk(os.path.join('/home/gary/dropbox',customer,topdown=True)):
+            for (root,dirs,files) in os.walk(os.path.join('/home/gary/dropbox',customer),topdown=True):
                 for d in dirs:
                     queuedFiles = getLocalFiles(d,customer=customer)
                     if queuedFiles[0] : #only process files if no errors on getting Local files
@@ -423,7 +423,8 @@ def store_dropbox_unicode(customer,file_data,file_path,retry=False):
         logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
         if not retry:
             file_loc = os.path.basename(os.path.normpath(file_path))
-            storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
+            if file_loc in ['sent','rejected']: #filter out only regular CD file saving errors
+                storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
         return False
 
 def get_users():
