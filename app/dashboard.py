@@ -59,7 +59,7 @@ def get_base_available_to_sell(row,df):
     #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values))
     return df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values[0]
 
-def get_extra_data(row,df,po_df,orders_df):
+def get_extra_data(row,po_df,orders_df):
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
     
     row['additional_purchases'] = po_df['qty_received'][(po_df['ean'] == row['ean'])&((po_df['date_received']>base_start_date))].sum()
@@ -144,7 +144,7 @@ def serve_layout():
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)]
         stock_info_df.drop('date',axis=1,inplace=True)
 
-        stock_info_df = stock_info_df.apply(get_extra_data(row,df=df,po_df=po_df,orders_df=orders_df),axis=1) #get available to sell as of base date
+        stock_info_df = stock_info_df.apply(get_extra_data(po_df=po_df,orders_df=orders_df),axis=1) #get available to sell as of base date
 
         stock_info_df = stock_info_df[['url_markdown','e_date','date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_sales_last_week', \
                              'wholesale_sales_last_week','online_sales_since_start','wholesale_sales_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
