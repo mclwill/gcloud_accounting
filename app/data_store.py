@@ -215,7 +215,7 @@ def get_data_store_info(customer):
                         po_df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True) 
 
 
-            merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer',suffixes)
+            merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
 
             if len(merged_df.index) > 0:
                 orders_df = pd.concat([orders_df,merged_df])
