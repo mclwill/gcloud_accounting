@@ -66,16 +66,16 @@ def get_extra_data(row,po_df,orders_df):
     row['additional_purchases'] = po_df['qty_received'][(po_df['ean'] == row['ean'])&((po_df['date_received']>base_start_date))].sum()
     row['base_stock'] = row['base_available_to_sell'] + row['additional_purchases']
     
-    last_week_mask = (orders_df['date_shipped'] >= start_of_previous_week) & (orders_df['date_shipped'] <= end_of_previous_week)
+    last_week_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= start_of_previous_week) & (orders_df['date_shipped'] <= end_of_previous_week)
     row['online_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']=='eCommerce')].sum()
     row['wholesale_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']!='eCommerce')].sum()
     
-    online_since_start_mask = (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']=='eCommerce')
+    online_since_start_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']=='eCommerce')
     row['online_sales_since_start'] = orders_df['qty_shipped'][online_since_start_mask].sum()
-    wholesale_since_start_mask = (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
+    wholesale_since_start_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
     row['wholesale_sales_since_start'] = orders_df['qty_shipped'][wholesale_since_start_mask].sum()
-    row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * row['price_eCommerce_mrsp']).sum()
-    row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * row['price_eCommerce_mrsp']).sum()
+    row['online_revenue_since_start'] = row['online_sales_since_start'] * row['price_eCommerce_mrsp']
+    row['wholesale_revenue_since_start'] = row['wholesale_sales_since_start'] * row['price_eCommerce_mrsp']
 
 
     '''
@@ -137,23 +137,29 @@ def serve_layout():
         if po_df.empty:
             return html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
 
+        common.logger.info('Date Manipulation')
         po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
         orders_df['date_ordered'] = pd.to_datetime(orders_df['date_ordered']).dt.date
         orders_df['date_shipped'] = pd.to_datetime(orders_df['date_shipped']).dt.date
         
         stock_info_df['date'] = stock_info_df['date'].dt.date
 
+        common.logger.info('1st apply')
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
+        common.logger.info('2nd apply')
         stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
 
+        common.logger.info('drop date column')
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
         stock_info_df.drop('date',axis=1,inplace=True)
         
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         
+        common.logger.info('start get_extra_data_apply')
         stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
+        common.logger.info('finishget_extra_data apply')
 
-        stock_info_df = stock_info_df[['url_markdown','e_date','date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_sales_last_week', \
+        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_sales_last_week', \
                              'wholesale_sales_last_week','online_sales_since_start','wholesale_sales_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
 
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU', \
