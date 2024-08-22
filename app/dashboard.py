@@ -109,6 +109,8 @@ def serve_layout():
         if stock_info_df.empty:
             return html.Div(html.P('No Stock Data retrieved from Data Store'))
 
+        
+        stock_info_df['date'] = pd.to_datetime(stock_info_dfdf['date']).dt.date
         latest_date = stock_info_df['date'].max().to_pydatetime()
         earliest_date = stock_info_df['date'].min().to_pydatetime()
         base_start_date = earliest_date.date()
@@ -136,7 +138,6 @@ def serve_layout():
             return html.Div(html.P('No Purchase Orders Data tretrieved from Data Store'))
 
 
-        stock_info_df['date'] = pd.to_datetime(stock_info_dfdf['date']).dt.date
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_stock_info(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
         stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stOck_info_df),axis=1)
