@@ -197,10 +197,10 @@ def get_data_store_info(customer):
                     po_id = cd_polling.get_CD_parameter(data_lines,'TP',2)
                     if type(po_id) == str:
                         po_id = [po_id]
-                    eans = cd_polling.get_CD_parameter(data_lines,'TP',4)
+                    eans = cd_polling.get_CD_parameter(data_lines,'TP',5)
                     if type(eans) == str:
                         eans = [eans]
-                    qty_received = cd_polling.get_CD_parameter(data_lines,'TP',5)
+                    qty_received = cd_polling.get_CD_parameter(data_lines,'TP',6)
                     if type(qty_received) == str:
                         qty_received = [qty_received]
                     
