@@ -145,7 +145,7 @@ def serve_layout():
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)]
         stock_info_df.drop('date',axis=1,inplace=True)
 
-        stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df)) #get extra data based on order and po info
+        stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
 
         stock_info_df = stock_info_df[['url_markdown','e_date','date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_sales_last_week', \
                              'wholesale_sales_last_week','online_sales_since_start','wholesale_sales_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
