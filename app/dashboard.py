@@ -103,6 +103,20 @@ def get_extra_data(row,po_df,orders_df):
 
     return row
 
+def get_last_week_orders(df):
+    global start_of_previous_week,end_of_previous_week
+    groups = df.groupby(by='ean')
+    return groups.apply(lambda g: g[(g['date_shipped']>=start_of_previous_week)&(g['date_shipped']<=end_of_previous_week)].sum())
+
+def get_orders_since_start(df):
+    global base_start_date
+    groups = df.groupby(by='ean')
+    return groups.apply(lambda g: g[(g['date_shipped']>=base_start_date)].sum())
+
+def get_additonal_purchases(df):
+    global base_start_date
+    groups = df.groupby(by='ean')
+    return groups.apply(lambda g: g[(g['date_received']>=base_start_date)].sum())
 
 def serve_layout():
     #global season_stock_info_df
@@ -173,7 +187,24 @@ def serve_layout():
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         
         common.logger.debug('start get_extra_data_apply')
-        stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
+
+        additional_purchases_df = get_additonal_purchases(po_df)
+        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce'])
+        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce'])
+
+        online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce']))
+        wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce']))   
+
+        stock_info_df.join(additional_purchases_df,on='ean')
+        stock_info_df.join(online_orders_prev_week_df, on='ean')
+        stock_info_df.join(wholesale_orders_prev_week_df, on='ean')
+        stock_info_df.join(onlines_sales_prev_week_df, on='ean')
+        stock_info_df.join(online_sales__prev_week_df, on='ean')
+
+        check_file_data = stock_info_df.to_csv(sep='|',index=False)
+        common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_stock.csv'))
+
+        #stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
         common.logger.debug('start vectored operations')
         stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
         stock_info_df['online_revenue_since_start'] = stock_info_df['online_sales_since_start'] * stock_info_df['price_eCommerce_mrsp']
@@ -192,7 +223,7 @@ def serve_layout():
         #common.logger.info(str(type(latest_date)) + str(latest_date) + str(type(date(1995,8,5))) + str(type(earliest_date.date())))
         
 
-        diplay_columns = stock_info_df.columns.tolist()
+        display_columns = stock_info_df.columns.tolist()
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
         color_option_list = sorted(stock_info_df['color'].unique().tolist())
