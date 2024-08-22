@@ -140,7 +140,7 @@ def serve_layout():
 
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
-        stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stOck_info_df),axis=1)
+        stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
 
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)]
         stock_info_df.drop('date',axis=1,inplace=True)
