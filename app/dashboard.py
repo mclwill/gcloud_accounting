@@ -110,9 +110,9 @@ def serve_layout():
             return html.Div(html.P('No Stock Data retrieved from Data Store'))
 
         
-        stock_info_df['date'] = pd.to_datetime(stock_info_df['date']).dt.date
-        latest_date = stock_info_df['date'].max().to_pydatetime()
-        earliest_date = stock_info_df['date'].min().to_pydatetime()
+        stock_info_df['date'] = pd.to_datetime(stock_info_df['date'])
+        latest_date = stock_info_df['date'].max().to_pydatetime().date()
+        earliest_date = stock_info_df['date'].min().to_pydatetime().date()
         base_start_date = earliest_date.date()
         end_season_date = last_day_of_month(aest_now.date())
         start_of_previous_week = get_start_of_previous_week(aest_now.date())  #this should be the Monday of the previous week
