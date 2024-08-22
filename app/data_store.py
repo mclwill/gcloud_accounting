@@ -167,7 +167,7 @@ def get_data_store_info(customer):
                             row_dict['OR'] = [True]
 
                             or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
-                            or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True) 
+                            or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered'],inplace=True,ignore_index=True) 
                             
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
@@ -191,7 +191,7 @@ def get_data_store_info(customer):
                         row_dict['PC'] = [True]
 
                         pc_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
-                        pc_df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True) 
+                        pc_df.drop_duplicates(subset = ['order_id','ean','date_shipped'],inplace=True,ignore_index=True) 
 
                 elif stream_id == 'TP':
                     po_id = cd_polling.get_CD_parameter(data_lines,'TP',2)
