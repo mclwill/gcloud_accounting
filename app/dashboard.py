@@ -159,7 +159,7 @@ def serve_layout():
         orders_df['date_ordered'] = pd.to_datetime(orders_df['date_ordered']).dt.date
         orders_df['date_shipped'] = pd.to_datetime(orders_df['date_shipped']).dt.date
         
-        stock_debug_df['date'] = stock_info_df['date'].dt.date
+        stock_info_df['date'] = stock_info_df['date'].dt.date
 
         common.logger.debug('1st apply')
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
