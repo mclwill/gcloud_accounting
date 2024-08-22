@@ -219,7 +219,9 @@ def get_data_store_info(customer):
 
             if len(merged_df.index) > 0:
                 orders_df = pd.concat([orders_df,merged_df])
-                orders_df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True) 
+                orders_df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
+                dedup_col_list = orders_df.columns.tolist() #list of columns to drop after merge
+                orders_df.drop([c for c in dedup_col_list if (('_x' in c) or ('_y' in c))],inplace=True,errors='ignore')
 
         if not orders_df.empty:
             orders_csv_file_data = orders_df.to_csv(sep='|',index=False)
