@@ -74,8 +74,8 @@ def get_extra_data(row,po_df,orders_df):
     row['online_sales_since_start'] = orders_df['qty_shipped'][online_since_start_mask].sum()
     wholesale_since_start_mask = (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
     row['wholesale_sales_since_start'] = orders_df['qty_shipped'][wholesale_since_start_mask].sum()
-    row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * orders_df['price_eCommerce_mrsp'][online_since_start_mask]).sum()
-    row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * orders_df['price_eCommerce_mrsp'][wholesale_since_start_mask]).sum()
+    row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * row['price_eCommerce_mrsp'][online_since_start_mask]).sum()
+    row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * row['price_eCommerce_mrsp'][wholesale_since_start_mask]).sum()
 
 
     '''
