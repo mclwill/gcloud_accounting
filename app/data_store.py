@@ -138,8 +138,8 @@ def get_data_store_info(customer):
         queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10))
         if queuedFiles:
             
-            or_df = pd.DataFrame(columns = stock_columns)
-            pc_df = pd.DataFrame(columns = stock_columns)
+            or_df = pd.DataFrame(columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR'])
+            pc_df = pd.DataFrame(columns = ['order_id','ean','date_shipped','qty_shipped','qty_variance','PC'])
 
             for file_item in queuedFiles:
                 byte_stream = common.read_dropbox_bytestream('aemery',file_item['path_display'])
@@ -215,22 +215,22 @@ def get_data_store_info(customer):
                         po_df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True) 
 
 
-            merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
+            merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer',suffixes)
 
             if len(merged_df.index) > 0:
                 orders_df = pd.concat([orders_df,merged_df])
                 orders_df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True) 
 
         if not orders_df.empty:
-            csv_file_data = orders_df.to_csv(sep='|',index=False)
-            common.store_dropbox_unicode(customer,csv_file_data,orders_file_path)
+            orders_csv_file_data = orders_df.to_csv(sep='|',index=False)
+            common.store_dropbox_unicode(customer,orders_csv_file_data,orders_file_path)
             common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
         else:
             common.logger.info('Uphance orders DataStore not updated as dataframe was emtpy')
 
         if not po_df.empty:
-            csv_file_data = po_df.to_csv(sep='|',index=False)
-            common.store_dropbox_unicode(customer,csv_file_data,po_file_path)
+            po_csv_file_data = po_df.to_csv(sep='|',index=False)
+            common.store_dropbox_unicode(customer,po_csv_file_data,po_file_path)
             common.logger.info('Uphance purchase orders DataStore updated for ' + customer + '\nFile Path: ' + po_file_path)
         else:
             common.logger.info('Uphance purchase orders DataStore not updated as dataframe was emtpy')
