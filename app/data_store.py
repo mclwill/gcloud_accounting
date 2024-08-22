@@ -120,26 +120,27 @@ def get_data_store_info(customer):
             common.logger.info('Uphance stock DataStore updated for ' + customer + '\nFile Path: ' + stock_file_path)
 
         #get order info from locally stored files
-
+        stock_columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR','date_shipped','qty_shipped','qty_variance','PC']
+        po_columns = ['po_number','date_received','ean','qty_received']
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
             orders_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':'Int64','qty_shipped':'Int64','qty_variance':'Int64','OR':"boolean",'PC':"boolean"})
         else:
-            orders_df = pd.DataFrame() #start with empty dataframe
+            orders_df = pd.DataFrame(columns = stock_columns) #start with empty dataframe
 
         byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
         if byte_stream:
             po_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':'Int64'})
         else:
-            po_df = pd.DataFrame() #start with empty dataframe
+            po_df = pd.DataFrame(columns=po_columns) #start with empty dataframe
 
         queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=10)) #use utc time as that is how dropbox stores file dates
         queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10))
         if queuedFiles:
-            stock_columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR','date_shipped','qty_shipped','qty_variance','PC']
+            
             or_df = pd.DataFrame(columns = stock_columns)
             pc_df = pd.DataFrame(columns = stock_columns)
-            po_df = pd.DataFrame(columns = ['po_number','date_received','ean','qty_received'])
+
             for file_item in queuedFiles:
                 byte_stream = common.read_dropbox_bytestream('aemery',file_item['path_display'])
                 data_lines = byte_stream.read().decode('utf=8').split('\n')
