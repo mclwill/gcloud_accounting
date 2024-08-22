@@ -56,23 +56,21 @@ def get_earliest_date(row,df):
 
 def get_base_available_to_sell(row,df):
     global base_start_date
-    return df['available_to_sell'][(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].to_list()[0]
+    return df['available_to_sell'][(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].values[0]
 
 def get_extra_data(row,df,po_df,orders_df):
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
     
-    row['e_date'] = earliest_date = df['date'].min()
-    row['base_available_to_sell'] = df['available_to_sell'][(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].to_list()[0]
     row['additional_purchases'] = po_df['qty_received'][(po_df['ean'] == row['ean'])&((po_df['date_received']>base_start_date))].sum()
     row['base_stock'] = row['base_available_to_sell'] + row['additional_purchases']
     
-    last_week_mask = orders_df[(orders_df['date_shipped'] >= start_of_previous_week) & (orders_df['date_shipped'] <= end_of_previous_week)]
+    last_week_mask = (orders_df['date_shipped'] >= start_of_previous_week) & (orders_df['date_shipped'] <= end_of_previous_week)
     row['online_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']=='eCommerce')].sum()
     row['wholesale_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']!='eCommerce')].sum()
     
-    online_since_start_mask = orders_df[(orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']=='eCommerce')]
+    online_since_start_mask = (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']=='eCommerce')
     row['online_sales_since_start'] = orders_df['qty_shipped'][online_since_start_mask].sum()
-    wholesale_since_start_mask = orders_df[(orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')]
+    wholesale_since_start_mask = (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
     row['wholesale_sales_since_start'] = orders_df['qty_shipped'][wholesale_since_start_mask].sum()
     row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * orders_df['price_eCommerce_msrp'][online_since_start_mask]).sum()
     row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * orders_df['price_eCommerce_msrp'][wholesale_since_start_mask]).sum()
