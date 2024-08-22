@@ -166,7 +166,7 @@ def get_data_store_info(customer):
                             row_dict['OR'] = [True]
 
                             or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
-                            or_df.drop_duplicates(subset=tuple(['order_id','channel','ean','date_ordered','date_shipped']),inplace=True,ignore_index=True) #need tuple to avoid TypeError: unhashable type: 'list'
+                            or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True) 
                             
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
@@ -190,12 +190,12 @@ def get_data_store_info(customer):
                         row_dict['PC'] = [True]
 
                         pc_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
-                        pc_df.drop_duplicates(subset = tuple(['order_id','channel','ean','date_ordered','date_shipped']),inplace=True,ignore_index=True) #need tuple to avoid TypeError: unhashable type: 'list'
+                        pc_df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True) 
 
                 elif stream_id == 'TP':
                     po_id = cd_polling.get_CD_parameter(data_lines,'TP',2)
                     if type(po_id) == str:
-                        eans = [eans]
+                        po_id = [po_id]
                     eans = cd_polling.get_CD_parameter(data_lines,'TP',4)
                     if type(eans) == str:
                         eans = [eans]
@@ -211,14 +211,14 @@ def get_data_store_info(customer):
                         row_dict['qty_received'] = [qty_received[i]]
 
                         po_df = pd.concat([po_df,pd.DataFrame.from_dict(row_dict)])
-                        po_df.drop_duplicates(subset=tuple(['po_number','ean','date_received']),inplace=True,ignore_index=True) #need tuple to avoid TypeError: unhashable type: 'list'
+                        po_df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True) 
 
 
             merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
 
             if len(merged_df.index) > 0:
                 df = pd.concat([df,merged_df])
-                df.drop_duplicates(subset = tuple(['order_id','channel','ean','date_ordered','date_shipped']),inplace=True,ignore_index=True) #need tuple to avoid TypeError: unhashable type: 'list'
+                df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True) 
 
         if not df.empty:
             csv_file_data = df.to_csv(sep='|',index=False)
