@@ -56,8 +56,8 @@ def get_earliest_date(row,df):
 
 def get_base_available_to_sell(row,df):
     global base_start_date
-    common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:'available_to_sell'].values))
-    return df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:'available_to_sell'].values[0]
+    common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values))
+    return df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values[0]
 
 def get_extra_data(row,df,po_df,orders_df):
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
