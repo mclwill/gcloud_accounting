@@ -74,8 +74,8 @@ def get_extra_data(row,po_df,orders_df):
     row['online_sales_since_start'] = orders_df['qty_shipped'][online_since_start_mask].sum()
     wholesale_since_start_mask = (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
     row['wholesale_sales_since_start'] = orders_df['qty_shipped'][wholesale_since_start_mask].sum()
-    row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * row['price_eCommerce_mrsp'][online_since_start_mask]).sum()
-    row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * row['price_eCommerce_mrsp'][wholesale_since_start_mask]).sum()
+    row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * row['price_eCommerce_mrsp']).sum()
+    row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * row['price_eCommerce_mrsp']).sum()
 
 
     '''
@@ -135,20 +135,22 @@ def serve_layout():
             po_df = pd.DataFrame() #start with empty dataframe
 
         if po_df.empty:
-            return html.Div(html.P('No Purchase Orders Data tretrieved from Data Store'))
+            return html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
 
         po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
         orders_df['date_ordered'] = pd.to_datetime(orders_df['date_ordered']).dt.date
         orders_df['date_shipped'] = pd.to_datetime(orders_df['date_shipped']).dt.date
         
         stock_info_df['date'] = stock_info_df['date'].dt.date
-        stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
+
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
         stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
 
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
         stock_info_df.drop('date',axis=1,inplace=True)
-
+        
+        stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
+        
         stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
 
         stock_info_df = stock_info_df[['url_markdown','e_date','date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_sales_last_week', \
