@@ -15,7 +15,7 @@ from dash_table import DataTable
 from dash.exceptions import PreventUpdate
 import plotly.express as px
 import traceback
-ffrom datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time, timedelta
 from dateutil import tz
 
 import FlaskApp.app.common as common
