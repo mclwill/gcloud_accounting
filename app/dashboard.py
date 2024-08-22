@@ -106,17 +106,17 @@ def get_extra_data(row,po_df,orders_df):
 def get_last_week_orders(df):
     global start_of_previous_week,end_of_previous_week
     groups = df.groupby(by='ean')
-    return groups.apply(lambda g: g[(g['date_shipped']>=start_of_previous_week)&(g['date_shipped']<=end_of_previous_week)].sum())
+    return groups.apply(lambda g: g['qty_shipped'][(g['date_shipped']>=start_of_previous_week)&(g['date_shipped']<=end_of_previous_week)].sum())
 
 def get_orders_since_start(df):
     global base_start_date
     groups = df.groupby(by='ean')
-    return groups.apply(lambda g: g[(g['date_shipped']>=base_start_date)].sum())
+    return groups.apply(lambda g: g['qty_shipped'][(g['date_shipped']>=base_start_date)].sum())
 
 def get_additonal_purchases(df):
     global base_start_date
     groups = df.groupby(by='ean')
-    return groups.apply(lambda g: g[(g['date_received']>=base_start_date)].sum())
+    return groups.apply(lambda g: g['qty_received'][(g['date_received']>=base_start_date)].sum())
 
 def serve_layout():
     #global season_stock_info_df
