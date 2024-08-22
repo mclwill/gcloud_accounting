@@ -62,7 +62,7 @@ def get_base_available_to_sell(row,df):
 def get_extra_data(row,po_df,orders_df):
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
     
-    common.logger.info(str(row))
+    #common.logger.info(str(row))
     row['additional_purchases'] = po_df['qty_received'][(po_df['ean'] == row['ean'])&((po_df['date_received']>base_start_date))].sum()
     row['base_stock'] = row['base_available_to_sell'] + row['additional_purchases']
     
@@ -137,6 +137,10 @@ def serve_layout():
         if po_df.empty:
             return html.Div(html.P('No Purchase Orders Data tretrieved from Data Store'))
 
+        po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
+        orders_df['date_ordered'] = pd.to_datetime(po_df['date_ordered']).dt.date
+        orders_df['date_shipped'] = pd.to_datetime(po_df['date_shipped']).dt.date
+        
         stock_info_df['date'] = stock_info_df['date'].dt.date
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
