@@ -195,11 +195,13 @@ def serve_layout():
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce']))
         wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce']))   
 
-        stock_info_df.join(additional_purchases_df,on='ean')
-        stock_info_df.join(online_orders_prev_week_df, on='ean')
-        stock_info_df.join(wholesale_orders_prev_week_df, on='ean')
-        stock_info_df.join(onlines_sales_prev_week_df, on='ean')
-        stock_info_df.join(online_sales__prev_week_df, on='ean')
+        common.logger.info(str(additional_purchases_df))
+        stock_info_df.set_index('ean',inplace=True)
+        stock_info_df.join(additional_purchases_df)
+        stock_info_df.join(online_orders_prev_week_df)
+        stock_info_df.join(wholesale_orders_prev_week_df,)
+        stock_info_df.join(onlines_sales_prev_week_df,)
+        stock_info_df.join(online_sales__prev_week_df)
 
         check_file_data = stock_info_df.to_csv(sep='|',index=False)
         common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_stock.csv'))
