@@ -138,8 +138,8 @@ def serve_layout():
             return html.Div(html.P('No Purchase Orders Data tretrieved from Data Store'))
 
         po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
-        orders_df['date_ordered'] = pd.to_datetime(po_df['date_ordered']).dt.date
-        orders_df['date_shipped'] = pd.to_datetime(po_df['date_shipped']).dt.date
+        orders_df['date_ordered'] = pd.to_datetime(orders_df['date_ordered']).dt.date
+        orders_df['date_shipped'] = pd.to_datetime(orders_df['date_shipped']).dt.date
         
         stock_info_df['date'] = stock_info_df['date'].dt.date
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
