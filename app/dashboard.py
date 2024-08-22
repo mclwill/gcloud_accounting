@@ -74,8 +74,8 @@ def get_extra_data(row,po_df,orders_df):
     row['online_sales_since_start'] = orders_df['qty_shipped'][online_since_start_mask].sum()
     wholesale_since_start_mask = (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
     row['wholesale_sales_since_start'] = orders_df['qty_shipped'][wholesale_since_start_mask].sum()
-    row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * orders_df['price_eCommerce_msrp'][online_since_start_mask]).sum()
-    row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * orders_df['price_eCommerce_msrp'][wholesale_since_start_mask]).sum()
+    row['online_revenue_since_start'] = (orders_df['qty_shipped'][online_since_start_mask] * orders_df['price_eCommerce_mrsp'][online_since_start_mask]).sum()
+    row['wholesale_revenue_since_start'] = (orders_df['qty_shipped'][wholesale_since_start_mask] * orders_df['price_eCommerce_mrsp'][wholesale_since_start_mask]).sum()
 
 
     '''
@@ -146,7 +146,7 @@ def serve_layout():
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
         stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
 
-        stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)]
+        stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
         stock_info_df.drop('date',axis=1,inplace=True)
 
         stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
