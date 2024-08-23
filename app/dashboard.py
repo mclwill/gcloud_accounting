@@ -182,7 +182,6 @@ def serve_layout():
 
         common.logger.debug('drop old date rows')
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
-        stock_info_df.drop(stock_info_df[stock_info_df['date']<latest_date].index,inplace=True)
         
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         
