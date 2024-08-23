@@ -162,7 +162,7 @@ def serve_layout():
 
         additional_purchases_df = get_additonal_purchases(po_df).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
-        common.logger.info(str(additional_purchases_df))
+        #common.logger.info(str(additional_purchases_df))
 
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename(columns={'result':'online_orders_prev_week'})#.rename('online_orders_prev_week')
         online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
@@ -178,25 +178,29 @@ def serve_layout():
         #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
         #common.logger.info(str(additional_purchases_df))
         stock_info_df.set_index('ean',inplace=True)
-        common.logger.info(str(stock_info_df.dtypes) + '\n' + str(stock_info_df.index.dtype))
-        common.logger.info(str(online_orders_prev_week_df.dtypes) + str(online_orders_prev_week_df.index.dtype))
+        #common.logger.info(str(stock_info_df.dtypes) + '\n' + str(stock_info_df.index.dtype))
+        #common.logger.info(str(online_orders_prev_week_df.dtypes) + str(online_orders_prev_week_df.index.dtype))
         
         stock_info_df.index = stock_info_df.index.astype(str)
-        common.logger.info(str(stock_info_df.index) + '\n' + str(additional_purchases_df.index))
+        #common.logger.info(str(stock_info_df.index) + '\n' + str(additional_purchases_df.index))
         stock_info_df = stock_info_df.join(additional_purchases_df)
-        stock_info_df['additional_purchases'].fillna(0,inplace=True)
-        
         stock_info_df = stock_info_df.join(online_orders_prev_week_df)
         stock_info_df = stock_info_df.join(wholesale_orders_prev_week_df)
         stock_info_df = stock_info_df.join(online_orders_since_start_df)
         stock_info_df = stock_info_df.join(wholesale_orders_since_start_df)
+
+        stock_info_df['additional_purchases'].fillna(0,inplace=True)
+        stock_info_df['online_orders_prev_week'].fillna(0,inplace=True)
+        stock_info_df['wholesale_orders_prev_week'].fillna(0,inplace=True)
+        stock_info_df['online_orders_since_start'].fillna(0,inplace=True)
+        stock_info_df['wholesale_orders_since_start'].fillna(0,inplace=True)
         stock_info_df.reset_index(inplace=True)
         #check_file_data = stock_info_df.to_csv(sep='|',index=False)
         #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_stock.csv'))
 
         #stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
         common.logger.debug('start vectored operations')
-        common.logger.info(str(stock_info_df['additional_purchases']) + '\n' + str(stock_info_df['base_available_to_sell']))
+        #common.logger.info(str(stock_info_df['additional_purchases']) + '\n' + str(stock_info_df['base_available_to_sell']))
         stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
         common.logger.info(str(stock_info_df['base_stock']))
         stock_info_df['online_revenue_since_start'] = stock_info_df['online_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
