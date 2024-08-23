@@ -158,6 +158,7 @@ def serve_layout():
         #stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
         base_available_to_sell_df = get_base_available_to_sell(stock_info_df).rename('base_available_to_sell')
         common.logger.info(str(base_available_to_sell_df))
+        stock_info_df.set_index('ean',inplace=True)
         stock_info_df = stock_info_df.join(base_available_to_sell_df)
         
         common.logger.debug('drop old date rows')
@@ -177,7 +178,7 @@ def serve_layout():
         check_file_data = additional_purchases_df.to_csv(sep='|')
         common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
         #common.logger.info(str(additional_purchases_df))
-        stock_info_df.set_index('ean',inplace=True)
+        #stock_info_df.set_index('ean',inplace=True)
         stock_info_df = stock_info_df.join(additional_purchases_df)
         stock_info_df = stock_info_df.join(online_orders_prev_week_df)
         stock_info_df = stock_info_df.join(wholesale_orders_prev_week_df)
