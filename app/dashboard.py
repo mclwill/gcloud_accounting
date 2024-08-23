@@ -207,7 +207,7 @@ def serve_layout():
         stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_orders_prev_week', \
                              'wholesale_orders_prev_week','online_orders_since_start','wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
 
-        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU', \
+        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Base Available To Sell','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
                              'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
                              'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
