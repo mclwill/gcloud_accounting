@@ -54,10 +54,11 @@ def get_start_of_previous_week(date_value):
 def get_earliest_date(row,df):
     return df['date'][df['sku_id'] == row['sku_id']].min()
 
-def get_base_available_to_sell(row,df):
+def get_base_available_to_sell(df):
     global base_start_date
     #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values))
-    return df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values[0]
+    groups = df.groupby(by='ean')
+    return groups.apply(lambda g: g['available_to_sell'][(g['date']==base_start_date)]).iloc[0]
 
 '''def get_extra_data(row,po_df,orders_df):
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
@@ -78,30 +79,6 @@ def get_base_available_to_sell(row,df):
     row['wholesale_revenue_since_start'] = row['wholesale_sales_since_start'] * row['price_eCommerce_mrsp']
 '''
 
-def get_extra_data(row,po_df,orders_df):
-    global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
-    
-    #common.logger.info(str(row))
-    row['additional_purchases'] = po_df['qty_received'][(po_df['ean'] == row['ean'])&((po_df['date_received']>base_start_date))].sum()
-    #row['base_stock'] = row['base_available_to_sell'] + row['additional_purchases']
-    
-    last_week_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= start_of_previous_week) & (orders_df['date_shipped'] <= end_of_previous_week)
-    row['online_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']=='eCommerce')].sum()
-    row['wholesale_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']!='eCommerce')].sum()
-    
-    online_since_start_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']=='eCommerce')
-    row['online_sales_since_start'] = orders_df['qty_shipped'][online_since_start_mask].sum()
-    wholesale_since_start_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
-    row['wholesale_sales_since_start'] = orders_df['qty_shipped'][wholesale_since_start_mask].sum()
-    #row['online_revenue_since_start'] = row['online_sales_since_start'] * row['price_eCommerce_mrsp']
-    #row['wholesale_revenue_since_start'] = row['wholesale_sales_since_start'] * row['price_eCommerce_mrsp']
-    '''
-    online_percentage = online_sales_since_start / (online_sales_since_start + wholesale_sales_since_start)
-    wholesale_percentage = wholesale_sales_since_start / (online_sales_since_start + wholesale_sales_since_start)
-
-    seasonal_sell_through = (online_sales_since_start + wholesale_sales_since_start) / (base_available_to_sell + additional_purchases)'''
-
-    return row
 
 def get_last_week_orders(df):
     global start_of_previous_week,end_of_previous_week
@@ -177,15 +154,17 @@ def serve_layout():
 
         common.logger.debug('1st apply')
         stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
-        common.logger.debug('2nd apply')
-        stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
-
+        common.logger.debug('1st join')
+        #stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
+        base_available_to_sell_df = get_base_available_to_sell(stock_info_df).rename('base_available_to_sell')
+        stock_info_df = stock_info_df.join(base_available_to_sell_df)
+        
         common.logger.debug('drop old date rows')
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
         
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         
-        common.logger.debug('start get_extra_data_apply')
+        common.logger.debug('start other joins')
 
         additional_purchases_df = get_additonal_purchases(po_df).rename('additional_purchases')
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename('online_orders_prev_week')
@@ -210,8 +189,8 @@ def serve_layout():
         #stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
         common.logger.debug('start vectored operations')
         stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
-        stock_info_df['online_revenue_since_start'] = stock_info_df['online_sales_since_start'] * stock_info_df['price_eCommerce_mrsp']
-        stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_sales_since_start'] * stock_info_df['price_eCommerce_mrsp']
+        stock_info_df['online_revenue_since_start'] = stock_info_df['online_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
+        stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         common.logger.debug('finish vector operations')
 
         stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_sales_last_week', \
