@@ -77,7 +77,7 @@ def get_orders_since_start(df):
 
 def get_additonal_purchases(df):
     global base_start_date
-    return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby('ean').agg({'result':sum})
+    return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby(by=['ean']).agg({'result':sum})
 
 
 
