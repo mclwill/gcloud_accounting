@@ -459,8 +459,8 @@ def update_table(v_season,v_product,v_color,v_size):
     try:
         dff = stock_info_df.copy()
         group_list = []
-        sum_list = ['available_to_sell','additional_purchases','base_stock','online_sales_last_week','wholesale_sales_last_week','online_sales_since_start',\
-                    'wholesale_sales_since_start','online_revenue_since_start','wholesale_revenue_since_start']
+        sum_list = ['available_to_sell','additional_purchases','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
+                    'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
         present_list = display_columns
         if not v_season or v_season == 'All':
             v_seasons = season_option_list
