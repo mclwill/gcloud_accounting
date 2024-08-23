@@ -161,15 +161,19 @@ def serve_layout():
         common.logger.debug('start other joins')
 
         additional_purchases_df = get_additonal_purchases(po_df).rename(columns={'result':'additional_purchases'})
-        #additional_purchases_df.index = additional_purchases_df.index.astype('Int64')
+        additional_purchases_df.index = additional_purchases_df.index.astype(str)
         common.logger.info(str(additional_purchases_df))
 
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename(columns={'result':'online_orders_prev_week'})#.rename('online_orders_prev_week')
+        online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
         wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename(columns={'result':'wholesale_orders_prev_week'})#.rename('wholesale_orders_prev_week')
+        wholesale_orders_prev_week_df.index = wholesale_orders_prev_week_df.index.astype(str)
 
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce'])).rename(columns={'result':'online_orders_since_start'})#.rename('online_orders_since_start')
+        online_orders_since_start_df.index = online_orders_since_start_df.index.astype(str)
         wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce'])).rename(columns={'result':'wholesale_orders_since_start'})#.rename('wholesale_orders_since_start')  
-
+        wholesale_orders_since_start_df.index = wholesale_orders_since_start_df.index.astype(str)
+        
         #check_file_data = additional_purchases_df.to_csv(sep='|')
         #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
         #common.logger.info(str(additional_purchases_df))
