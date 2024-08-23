@@ -344,6 +344,7 @@ def serve_layout():
                                     'textAlign':'center'
                                 } for i in ['url_markdown']
                             ],
+                            style_cell={'maxWidth':'50px','whiteSpace':'normal'},
                             css=[dict(selector= "p", rule= "margin: 0; text-align: center")],
                             sort_action = 'native',
                         )
