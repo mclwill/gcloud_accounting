@@ -62,32 +62,6 @@ def get_base_available_to_sell(df):
     return_df.set_index('ean',inplace=True)
     return return_df['base_available_to_sell']
 
-
-    #groups = df.groupby(by='ean')
-    #return_df = groups.apply(lambda g: g['available_to_sell'][(g['date']==base_start_date)])
-    #common.logger.info(#return_df.drop(return_df.columns[0],axis=1,inplace=True)
-    #return return_df
-
-'''def get_extra_data(row,po_df,orders_df):
-    global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
-    
-    #common.logger.info(str(row))
-    row['additional_purchases'] = po_df['qty_received'][(po_df['ean'] == row['ean'])&((po_df['date_received']>base_start_date))].sum()
-    row['base_stock'] = row['base_available_to_sell'] + row['additional_purchases']
-    
-    last_week_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= start_of_previous_week) & (orders_df['date_shipped'] <= end_of_previous_week)
-    row['online_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']=='eCommerce')].sum()
-    row['wholesale_sales_last_week'] = orders_df['qty_shipped'][last_week_mask & (orders_df['channel']!='eCommerce')].sum()
-    
-    online_since_start_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']=='eCommerce')
-    row['online_sales_since_start'] = orders_df['qty_shipped'][online_since_start_mask].sum()
-    wholesale_since_start_mask = (orders_df['ean'] == row['ean']) & (orders_df['date_shipped'] >= base_start_date)&(orders_df['channel']!='eCommerce')
-    row['wholesale_sales_since_start'] = orders_df['qty_shipped'][wholesale_since_start_mask].sum()
-    row['online_revenue_since_start'] = row['online_sales_since_start'] * row['price_eCommerce_mrsp']
-    row['wholesale_revenue_since_start'] = row['wholesale_sales_since_start'] * row['price_eCommerce_mrsp']
-'''
-
-
 def get_last_week_orders(df):
     global start_of_previous_week,end_of_previous_week
     groups = df.groupby(by='ean')
@@ -204,10 +178,10 @@ def serve_layout():
         stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         common.logger.debug('finish vector operations')
 
-        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_orders_prev_week', \
+        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','category','sub_category','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_orders_prev_week', \
                              'wholesale_orders_prev_week','online_orders_since_start','wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
 
-        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU', \
+        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Base Available To Sell','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
                              'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
                              'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
