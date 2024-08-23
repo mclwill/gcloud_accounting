@@ -175,7 +175,7 @@ def serve_layout():
         #common.logger.info(str(additional_purchases_df))
         stock_info_df.set_index('ean',inplace=True)
         common.logger.info(str(stock_info_df.dtypes) + '\n' + str(stock_info_df.index.dtype))
-        common.logger.info(str(additional_purchases_df.dtypes) + str(additional_purchases_df.index.dtype))
+        common.logger.info(str(online_orders_prev_week_df.dtypes) + str(online_orders_prev_week_df.index.dtype))
         stock_info_df.index = stock_info_df.index.astype(str)
         stock_info_df = stock_info_df.join(additional_purchases_df)
         stock_info_df = stock_info_df.join(online_orders_prev_week_df)
