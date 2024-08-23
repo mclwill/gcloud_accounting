@@ -64,16 +64,19 @@ def get_base_available_to_sell(df):
 
 def get_last_week_orders(df):
     global start_of_previous_week,end_of_previous_week
+    df['qty_shipped'].fillna(0,inplace=True)
     groups = df.groupby(by='ean')
     return groups.apply(lambda g: g['qty_shipped'][(g['date_shipped']>=start_of_previous_week)&(g['date_shipped']<=end_of_previous_week)].sum())
 
 def get_orders_since_start(df):
     global base_start_date
+    df['qty_shipped'].fillna(0,inplace=True)
     groups = df.groupby(by='ean')
     return groups.apply(lambda g: g['qty_shipped'][(g['date_shipped']>=base_start_date)].sum())
 
 def get_additonal_purchases(df):
     global base_start_date
+    df['qty_received'].fillna(0,inplace=True)
     groups = df.groupby(by='ean')
     return groups.apply(lambda g: g['qty_received'][(g['date_received']>=base_start_date)].sum())
 
@@ -127,9 +130,9 @@ def serve_layout():
         if po_df.empty:
             return html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
 
-        stock_info_df.fillna(0,inplace=True)
-        orders_df.fillna(0,inplace=True)
-        po_df.fillna(0,inplace=True)
+        #stock_info_df.fillna(0,inplace=True)
+        #orders_df.fillna(0,inplace=True)
+        #po_df.fillna(0,inplace=True)
 
         common.logger.debug('Date Manipulation')
         po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
