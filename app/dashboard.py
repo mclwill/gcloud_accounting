@@ -438,7 +438,7 @@ def update_table(v_season,v_product,v_color,v_size):
         group_list = []
         sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                     'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
-        present_list = display_columns
+        present_list = display_columns.copy()
         if not v_season or v_season == 'All':
             v_seasons = season_option_list
         else:
@@ -473,6 +473,8 @@ def update_table(v_season,v_product,v_color,v_size):
         if not v_size:
             group_list.append('color')
             present_list.remove('size')
+            if 'sku_id' in present_list:
+                present_list.remove('sku_id')
         if not v_color:
             group_list.append('p_name')
             present_list.remove('color')
