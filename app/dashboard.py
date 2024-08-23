@@ -514,7 +514,7 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
         #common.logger.info('Post Group by ' + str(df_grouped.head()))
-        return df_grouped[present_list][df_grouped['date']==latest_date].to_dict("records")
+        return df_grouped[present_list].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
