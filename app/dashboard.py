@@ -77,7 +77,7 @@ def get_orders_since_start(df):
 
 def get_additonal_purchases(df):
     global base_start_date
-    return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby(by=['ean']).agg({'result':sum})
+    return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby('ean').agg({'result':sum})
 
 
 
@@ -164,7 +164,9 @@ def serve_layout():
         
         common.logger.debug('start other joins')
 
-        additional_purchases_df = get_additonal_purchases(po_df).rename('additional_purchases')
+        additional_purchases_df = get_additonal_purchases(po_df)#.rename('additional_purchases')
+    common.logger.info(str(stock_info_df['additional_purchases']))
+
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename('online_orders_prev_week')
         wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename('wholesale_orders_prev_week')
 
