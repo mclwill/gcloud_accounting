@@ -194,8 +194,8 @@ def serve_layout():
         stock_info_df = stock_info_df.join(online_orders_since_start_df)
         stock_info_df = stock_info_df.join(wholesale_orders_since_start_df)
         stock_info_df.reset_index(inplace=True)
-        check_file_data = stock_info_df.to_csv(sep='|',index=False)
-        common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_stock.csv'))
+        #check_file_data = stock_info_df.to_csv(sep='|',index=False)
+        #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_stock.csv'))
 
         #stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
         common.logger.debug('start vectored operations')
