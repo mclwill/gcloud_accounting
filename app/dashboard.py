@@ -204,8 +204,8 @@ def serve_layout():
         stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         common.logger.debug('finish vector operations')
 
-        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_sales_last_week', \
-                             'wholesale_sales_last_week','online_sales_since_start','wholesale_sales_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
+        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_orders_last_week', \
+                             'wholesale_orders_last_week','online_orders_since_start','wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
 
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Base Available To Sell','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
