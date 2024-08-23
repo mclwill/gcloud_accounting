@@ -127,6 +127,10 @@ def serve_layout():
         if po_df.empty:
             return html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
 
+        stock_info_df.fillna(0,inplace=True)
+        orders_df.fillna(0,inplace=True)
+        po_df.fillna(0,inplace=True)
+
         common.logger.debug('Date Manipulation')
         po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
         orders_df['date_ordered'] = pd.to_datetime(orders_df['date_ordered']).dt.date
