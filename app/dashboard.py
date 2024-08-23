@@ -65,7 +65,7 @@ def get_base_available_to_sell(df):
 
 def get_last_week_orders(df,):
     global start_of_previous_week,end_of_previous_week
-    return df.assign(result=np.where((df['date_shipped']>=start_of_previous_week)&(df['date_shipped']<=nd_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
+    return df.assign(result=np.where((df['date_shipped']>=start_of_previous_week)&(df['date_shipped']<=end_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
 
 def get_orders_since_start(df):
     global base_start_date
@@ -160,7 +160,7 @@ def serve_layout():
         
         common.logger.debug('start other joins')
 
-        additional_purchases_df = get_additonal_purchases(po_df).rename(columns={'results':'additional_purchases'})#.rename('additional_purchases')
+        additional_purchases_df = get_additonal_purchases(po_df).rename(columns={'result':'additional_purchases'})#.rename('additional_purchases')
         common.logger.info(str(additional_purchases_df))
 
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce'])#.rename('online_orders_prev_week')
