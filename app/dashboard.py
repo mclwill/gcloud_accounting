@@ -184,8 +184,8 @@ def serve_layout():
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce'])).rename('online_orders_since_start')
         wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce'])).rename('wholesale_orders_since_start')  
 
-        check_file_data = additional_purchases_df.to_csv(sep='|')
-        common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
+        #check_file_data = additional_purchases_df.to_csv(sep='|')
+        #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
         #common.logger.info(str(additional_purchases_df))
         #stock_info_df.set_index('ean',inplace=True)
         stock_info_df = stock_info_df.join(additional_purchases_df)
@@ -209,7 +209,7 @@ def serve_layout():
 
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Base Available To Sell','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
-                             'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_prev_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
+                             'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
                              'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
                              'wholesale_revenue_since_start':'Wholesale $$$ Since Start'}
     
