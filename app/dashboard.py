@@ -363,7 +363,7 @@ def serve_layout():
                         dash_table.DataTable(
                             id='data_table',
                             columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=stock_info_df[display_columns][stock_info_df['date']==latest_date].to_dict("records"),
+                            data=stock_info_df[display_columns].to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
