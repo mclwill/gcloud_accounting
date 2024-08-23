@@ -209,8 +209,8 @@ def serve_layout():
 
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','date':'Date','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Base Available To Sell','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
-                             'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_sales_prev_week': 'Online Units Last Week','wholesale_sales_prev_week' : 'Wholesale Units Last Week', \
-                             'online_sales_since_start' : 'Online Units Since Start','wholesale_sales_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
+                             'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_prev_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
+                             'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
                              'wholesale_revenue_since_start':'Wholesale $$$ Since Start'}
     
         #common.logger.info(str(type(latest_date)) + str(latest_date) + str(type(date(1995,8,5))) + str(type(earliest_date.date())))
