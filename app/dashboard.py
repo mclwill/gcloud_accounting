@@ -176,7 +176,7 @@ def serve_layout():
         stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
         stock_info_df['online_revenue_since_start'] = stock_info_df['online_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
-        stock_info_df['base_available_to_sell'] = stock_info_df['base_available_to_sell_df'] + stock_info_df['additional_purchases']
+        stock_info_df['base_available_to_sell'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
         common.logger.debug('finish vector operations')
 
         stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','online_orders_prev_week', \
