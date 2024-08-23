@@ -78,8 +78,8 @@ def get_additonal_purchases(df):
     global base_start_date
     df['qty_received'].fillna(0,inplace=True)
     groups = df.groupby(by='ean')
-    common.logger.info(str(groups.head()))
-    return groups.apply(lambda g: g['qty_received'][(g['date_received']>=base_start_date)].sum())
+    #common.logger.info(str(groups.head()))
+    return groups.apply(lambda g: g[(g['date_received']>=base_start_date)]['qty_received'].sum())
 
 def serve_layout():
     #global season_stock_info_df
