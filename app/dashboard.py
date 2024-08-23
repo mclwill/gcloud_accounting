@@ -17,6 +17,7 @@ import plotly.express as px
 import traceback
 from datetime import datetime, date, time, timedelta
 from dateutil import tz
+import numpy as np
 
 import FlaskApp.app.common as common
 
@@ -76,10 +77,14 @@ def get_orders_since_start(df):
 
 def get_additonal_purchases(df):
     global base_start_date
-    df['qty_received'].fillna(0,inplace=True)
-    groups = df.groupby(by='ean')
+    return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby('ean').agg({'result':sum})
+
+
+
+    #df['qty_received'].fillna(0,inplace=True)
+    #groups = df.groupby(by='ean')
     #common.logger.info(str(groups.head()))
-    return groups.apply(lambda g: g[(g['date_received']>=base_start_date)]['qty_received'].sum())
+    #return groups.apply(lambda g: g[(g['date_received']>=base_start_date)]['qty_received'].sum())
 
 def serve_layout():
     #global season_stock_info_df
