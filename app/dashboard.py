@@ -165,7 +165,7 @@ def serve_layout():
         common.logger.debug('start other joins')
 
         additional_purchases_df = get_additonal_purchases(po_df)#.rename('additional_purchases')
-        common.logger.info(str(stock_info_df['additional_purchases']))
+        common.logger.info(str(additional_purchases_df))
 
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename('online_orders_prev_week')
         wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename('wholesale_orders_prev_week')
