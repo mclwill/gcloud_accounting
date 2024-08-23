@@ -63,17 +63,13 @@ def get_base_available_to_sell(df):
     return_df.set_index('ean',inplace=True)
     return return_df['base_available_to_sell']
 
-def get_last_week_orders(df):
+def get_last_week_orders(df,):
     global start_of_previous_week,end_of_previous_week
-    df['qty_shipped'].fillna(0,inplace=True)
-    groups = df.groupby(by='ean')
-    return groups.apply(lambda g: g['qty_shipped'][(g['date_shipped']>=start_of_previous_week)&(g['date_shipped']<=end_of_previous_week)].sum())
+    return df.assign(result=np.where((df['date_shipped']>=start_of_previous_week)&(df['date_shipped']<=nd_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
 
 def get_orders_since_start(df):
     global base_start_date
-    df['qty_shipped'].fillna(0,inplace=True)
-    groups = df.groupby(by='ean')
-    return groups.apply(lambda g: g['qty_shipped'][(g['date_shipped']>=base_start_date)].sum())
+    return df.assign(result=np.where(df['date_shipped']>=base_start_date,df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
 
 def get_additonal_purchases(df):
     global base_start_date
@@ -164,14 +160,14 @@ def serve_layout():
         
         common.logger.debug('start other joins')
 
-        additional_purchases_df = get_additonal_purchases(po_df)#.rename('additional_purchases')
+        additional_purchases_df = get_additonal_purchases(po_df).rename(columns{'results':'additional_purchases'})#.rename('additional_purchases')
         common.logger.info(str(additional_purchases_df))
 
-        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename('online_orders_prev_week')
-        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename('wholesale_orders_prev_week')
+        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce'])#.rename('online_orders_prev_week')
+        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce'])#.rename('wholesale_orders_prev_week')
 
-        online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce'])).rename('online_orders_since_start')
-        wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce'])).rename('wholesale_orders_since_start')  
+        online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce']))#.rename('online_orders_since_start')
+        wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce']))#.rename('wholesale_orders_since_start')  
 
         #check_file_data = additional_purchases_df.to_csv(sep='|')
         #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
