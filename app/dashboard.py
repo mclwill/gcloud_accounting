@@ -189,7 +189,7 @@ def serve_layout():
 
         additional_purchases_df = get_additonal_purchases(po_df).rename('additional_purchases')
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename('online_orders_prev_week')
-        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename('wholesale_orders_since_start')
+        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename('wholesale_orders_prev_week')
 
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce'])).rename('online_orders_since_start')
         wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce'])).rename('wholesale_orders_since_start')  
