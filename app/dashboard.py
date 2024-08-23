@@ -176,13 +176,14 @@ def serve_layout():
         stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
         stock_info_df['online_revenue_since_start'] = stock_info_df['online_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
+        stock_info_df['base_available_to_sell'] = stock_info_df['base_available_to_sell_df'] + stock_info_df['additional_purchases']
         common.logger.debug('finish vector operations')
 
-        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_orders_prev_week', \
+        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','online_orders_prev_week', \
                              'wholesale_orders_prev_week','online_orders_since_start','wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
 
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
-                             'in_stock':'In Stock','base_available_to_sell':'Base Available To Sell','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
+                             'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
                              'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
                              'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
                              'wholesale_revenue_since_start':'Wholesale $$$ Since Start'}
@@ -435,7 +436,7 @@ def update_table(v_season,v_product,v_color,v_size):
     try:
         dff = stock_info_df.copy()
         group_list = []
-        sum_list = ['base_available_to_sell','available_to_sell','additional_purchases','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
+        sum_list = ['base_available_to_sell','available_to_sell','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                     'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
         present_list = display_columns
         if not v_season or v_season == 'All':
