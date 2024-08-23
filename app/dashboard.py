@@ -295,7 +295,7 @@ def serve_layout():
                                     id='product_option',
                                     options=product_option_list,
                                     value=[],
-                                    #placeholder = 'All',
+                                    placeholder = 'All',
                                     multi = True,
                                     clearable = True
                                 ),
