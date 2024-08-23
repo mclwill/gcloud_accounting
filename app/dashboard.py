@@ -78,7 +78,7 @@ def get_additonal_purchases(df):
     global base_start_date
     df['qty_received'].fillna(0,inplace=True)
     groups = df.groupby(by='ean')
-    common.logger.info(str(groups))
+    common.logger.info(str(groups.head()))
     return groups.apply(lambda g: g['qty_received'][(g['date_received']>=base_start_date)].sum())
 
 def serve_layout():
