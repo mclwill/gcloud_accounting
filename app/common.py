@@ -417,7 +417,7 @@ def store_dropbox_unicode(customer,file_data,file_path,retry=False):
 
     except Exception as ex:
         tb = traceback.format_exc()
-        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) + 'Output file:\n' + file_data  + '\nTraceback:\n' + str(tb))
+        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) + file_data  + '\nTraceback:\n' + str(tb))
         logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
         if not retry:
             file_loc = os.path.basename(os.path.normpath(file_path))
