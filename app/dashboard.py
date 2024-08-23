@@ -168,6 +168,7 @@ def serve_layout():
         common.logger.info(str(base_available_to_sell_df))
         stock_info_df.set_index('ean',inplace=True)
         stock_info_df = stock_info_df.join(base_available_to_sell_df)
+        stock_info_df.reset_index(inplace=True)
         
         common.logger.debug('drop old date rows')
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
