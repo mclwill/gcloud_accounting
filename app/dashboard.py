@@ -58,7 +58,9 @@ def get_base_available_to_sell(df):
     global base_start_date
     #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values))
     groups = df.groupby(by='ean')
-    return groups.apply(lambda g: g['available_to_sell'][(g['date']==base_start_date)])
+    return_df = groups.apply(lambda g: g['available_to_sell'][(g['date']==base_start_date)])
+    return_df.drop(return_df.columns[0],axis=1,inplace=True)
+    return return_df
 
 '''def get_extra_data(row,po_df,orders_df):
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
