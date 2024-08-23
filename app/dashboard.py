@@ -509,7 +509,7 @@ def update_table(v_season,v_product,v_color,v_size):
             present_list.remove('color')
         if not v_product:
             group_list.append('season')
-            present_list.remove('p_name')
+            #present_list.remove('p_name')  #don't remove product as should always be displayed
 
         #common.logger.info('2 list' + str(group_list) + str(sum_list) + str(present_list))
         agg_dict = {}
