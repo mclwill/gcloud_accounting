@@ -58,7 +58,7 @@ def get_base_available_to_sell(df):
     global base_start_date
     #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values))
     groups = df.groupby(by='ean')
-    return groups.apply(lambda g: g['available_to_sell'][(g['date']==base_start_date)]).iloc[0]
+    return groups.apply(lambda g: g['available_to_sell'][(g['date']==base_start_date)])
 
 '''def get_extra_data(row,po_df,orders_df):
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
@@ -157,6 +157,7 @@ def serve_layout():
         common.logger.debug('1st join')
         #stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
         base_available_to_sell_df = get_base_available_to_sell(stock_info_df).rename('base_available_to_sell')
+        common.logger.info(str(base_available_to_sell_df))
         stock_info_df = stock_info_df.join(base_available_to_sell_df)
         
         common.logger.debug('drop old date rows')
