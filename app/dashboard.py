@@ -180,9 +180,9 @@ def serve_layout():
         common.logger.debug('2nd apply')
         stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
 
-        common.logger.debug('drop date column')
+        common.logger.debug('drop old date rows')
         stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
-        stock_info_df.drop('date',axis=1,inplace=True)
+        stock_info_df.drop(stock_info_df[stock_info_df['date']<latest_date],inplace=True)
         
         stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
         
@@ -195,11 +195,13 @@ def serve_layout():
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce'])).rename('online_orders_since_start')
         wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce'])).rename('wholesale_orders_since_start')  
 
+        check_file_data = additional_purchases_df.to_csv(sep='|',index=False)
+        common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
         #common.logger.info(str(additional_purchases_df))
         stock_info_df.set_index('ean',inplace=True)
         stock_info_df.join(additional_purchases_df)
         stock_info_df.join(online_orders_prev_week_df)
-        stock_info_df.join(wholesale_orders_prev_week_df,)
+        stock_info_df.join(wholesale_orders_prev_week_df)
         stock_info_df.join(online_orders_since_start_df)
         stock_info_df.join(wholesale_orders_since_start_df)
         stock_info_df.reset_index(inplace=True)
