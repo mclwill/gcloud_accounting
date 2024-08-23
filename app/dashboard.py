@@ -184,7 +184,8 @@ def serve_layout():
         stock_info_df.index = stock_info_df.index.astype(str)
         common.logger.info(str(stock_info_df.index) + '\n' + str(additional_purchases_df.index))
         stock_info_df = stock_info_df.join(additional_purchases_df)
-
+        stock_info_df['additional_purchases'].fillna(0,inplace=True)
+        
         stock_info_df = stock_info_df.join(online_orders_prev_week_df)
         stock_info_df = stock_info_df.join(wholesale_orders_prev_week_df)
         stock_info_df = stock_info_df.join(online_orders_since_start_df)
