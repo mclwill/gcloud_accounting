@@ -208,7 +208,7 @@ def serve_layout():
 
 
         display_columns = stock_info_df.columns.tolist()
-        display_stock_info = stock_info_df.copy()
+        display_stock_info_df = stock_info_df.copy()
         curr_display_columns = display_columns
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
