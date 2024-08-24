@@ -300,7 +300,7 @@ def process_all_record_indicators(customer,event_data,stream_id):
     #print('Error info2:',error,error.keys(),len(error.keys()))
     
 def process_file(customer,file_data,file_name):
-    global error, request_dict
+    global error, stream_id,request_dict
     #common.get_CD_FTP_credentials(customer)
     common.dropbox_initiate()
 
@@ -341,6 +341,7 @@ def process_file(customer,file_data,file_name):
 
     
 def process_pick_ticket(customer,event_data):
+    global error,stream_id
     if event_data['service'] != 'Packing':
         stream_id = 'OR'
         event_id = event_data['id']
@@ -356,10 +357,9 @@ def process_pick_ticket(customer,event_data):
         return "Not Sent to Cross Docks - Already in Packing State"
 
 def process_pick_ticket_delete(customer,event_data):
-    
+    global error,stream_id
     #need to send to CD regardless of packing state as unable to check state as pick ticket has been deleted.
-    event_id = event_data['id']
-    
+ 
     stream_id = 'OR'
     event_id = event_data['id']
 
@@ -371,7 +371,7 @@ def process_pick_ticket_delete(customer,event_data):
     return file_data
 
 def process_product_update(customer,event_data):
-    global error
+    global error,stream_id
     stream_id = 'IT'
     event_id = event_data['id']
     event_date = str(datetime.now().strftime("%Y%m%dT%H%M%S"))
@@ -387,7 +387,7 @@ def process_product_update(customer,event_data):
     return file_data
 
 def process_production_order(customer,event_data):
-    global stream_id
+    global error,stream_id
     if event_data['status'] != 'checked in':
         stream_id = 'PT'
         event_id = str(event_data['production_order_number'])
@@ -401,10 +401,8 @@ def process_production_order(customer,event_data):
         return "Not Sent to Cross Docks - Already Checked In"
 
 def process_production_order_delete(customer,event_data):
-    
+    global error,stream_id
     #need to send to CD regardless of packing state as unable to check state as pick ticket has been deleted.
-    event_id = event_data['id']
-    
     stream_id = 'PT'
     event_id = event_data['id']
 
