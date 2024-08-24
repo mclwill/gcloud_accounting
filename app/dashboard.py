@@ -207,9 +207,9 @@ def serve_layout():
                              'daily_sell_rate':'Daily Sell Rate','estimated_sell_out_weeks':'Estimated Weeks to Sell Out'}
 
 
-        display_columns = stock_info_df.columns.tolist()
         display_stock_info_df = stock_info_df.copy()
-        curr_display_columns = display_columns
+        display_stock_info_df = display_stock_info_df.reindex(columns = stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate''estimated_sell_out_weeks','daily_sell_rate'])
+        display_columns = display_stock_info_df.columns.tolist()
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
         color_option_list = sorted(stock_info_df['color'].unique().tolist())
@@ -356,7 +356,7 @@ def serve_layout():
                         dash_table.DataTable(
                             id='data_table',
                             columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=display_stock_info_df.to_dict("records"),
+                            data=stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
