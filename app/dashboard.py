@@ -209,7 +209,7 @@ def serve_layout():
             {'id':'season','name':'Season(s)'},
             {'id':'p_name','name':'Product'},
             {'id':'color','name':'Colour'},
-            {'id':'size','name':'Size',}
+            {'id':'size','name':'Size'}
             {'id':'category','name':'Category'},
             {'id':'sub_category','name':'Sub Category'},
             {'id':'sku_id','name':'SKU'},
