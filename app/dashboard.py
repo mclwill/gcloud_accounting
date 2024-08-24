@@ -203,7 +203,7 @@ def serve_layout():
                              'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                              'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
 
-        '''
+        
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
                              'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
@@ -239,11 +239,11 @@ def serve_layout():
             'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':'percentage'},
             'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)},
             'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)}
-        }
+        }'''
 
-        display_stock_info_df = stock_info_df.copy()
+        #display_stock_info_df = stock_info_df.copy()
         #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
-        display_columns = display_stock_info_df.columns.tolist()
+        display_columns = stock_info_df.columns.tolist()
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
         color_option_list = sorted(stock_info_df['color'].unique().tolist())
@@ -389,8 +389,8 @@ def serve_layout():
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
-                            #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
+                            #columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
+                            columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
                             data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
@@ -531,7 +531,7 @@ def update_table(v_season,v_product,v_color,v_size):
 
 
     try:
-        dff = display_stock_info_df.copy()
+        dff = stock_info_df.copy()
         group_list = []
         sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                     'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
