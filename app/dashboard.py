@@ -208,7 +208,7 @@ def serve_layout():
             {'id':'e_date','name':'Earliest Data'},
             {'id':'season','name':'Season(s)'},
             {'id':'p_name','name':'Product'},
-            {'id':'color','name':'Colour'}
+            {'id':'color','name':'Colour'},
             {'id':'size','name':'Size',}
             {'id':'category','name':'Category'},
             {'id':'sub_category','name':'Sub Category'},
