@@ -84,7 +84,7 @@ def get_additonal_purchases(df):
 
 def serve_layout():
     #global season_stock_info_df
-    global stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
+    global stock_info_df,display_stock_info,display_columns,latest_date,earliest_date
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
     global product_option_list,color_option_list,size_option_list,season_option_list
 
@@ -208,6 +208,7 @@ def serve_layout():
 
 
         display_columns = stock_info_df.columns.tolist()
+        display_stock_info = stock_info_df.copy()
         curr_display_columns = display_columns
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
@@ -355,7 +356,7 @@ def serve_layout():
                         dash_table.DataTable(
                             id='data_table',
                             columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=stock_info_df.to_dict("records"),
+                            data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -478,7 +479,7 @@ def add_additional_calcs(df):
         else:
             new_found=False
  
-    return new_cols, df[new_cols]
+    return df[new_cols]
         
 @dash_app.callback (
         Output('data_table', 'data'),
@@ -543,8 +544,8 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        curr_display_columns, stock_info_df = add_additional_calcs(df_grouped[present_list])
-        return stock_info_df.to_dict("records")
+        display_stock_info_df = add_additional_calcs(df_grouped[present_list]).copy()
+        return display_stock_info_df.to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
