@@ -468,8 +468,9 @@ def add_additional_calcs(df):
                 col = k
                 break
         i += 1
-        col = old_cols[i]
-        new_cols.append(col)
+        if i <= len(old_cols):
+            col = old_cols[i]
+            new_cols.append(col)
 
     common.logger.info('New Cols:' + str(new_cols))
 
