@@ -84,7 +84,7 @@ def get_additonal_purchases(df):
 
 def serve_layout():
     #global season_stock_info_df
-    global stock_info_df,display_stock_info,display_columns,latest_date,earliest_date
+    global stock_info_df,display_stock_info_df,display_columns,latest_date,earliest_date
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
     global product_option_list,color_option_list,size_option_list,season_option_list
 
