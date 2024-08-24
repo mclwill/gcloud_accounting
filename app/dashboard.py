@@ -207,7 +207,7 @@ def serve_layout():
             {'id':'url_markdown','name':'Image'},
             {'id':'e_date','name':'Earliest Data'},
             {'id':'season','name':'Season(s)'},
-            {'id':'p_name','Product'},
+            {'id':'p_name','name':'Product'},
             {'id':'color','name':'Colour'}
             {'id':'size','name':'Size',}
             {'id':'category','name':'Category'},
