@@ -477,6 +477,7 @@ def add_additional_calcs(df):
                 new_cols.append(col)
         else:
             new_found=False
+        common.logger.info(str(col) + '\n' + str(i) + '\n' + str(old_cols) + str(new_cols) + )
 
     common.logger.info('New Cols:' + str(new_cols))
 
