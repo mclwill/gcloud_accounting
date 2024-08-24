@@ -203,7 +203,14 @@ def serve_layout():
                              'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                              'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
 
-        col_title_mapping = [
+        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
+                             'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
+                             'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
+                             'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
+                             'wholesale_revenue_since_start':'Wholesale $$$ Since Start','online_pc_since_start':'Online %','wholesale_pc_since_start':'Wholesale %','seasonal_sell_through_pc':'Seasonal Sell Through %',\
+                             'daily_sell_rate':'Daily Sell Rate','estimated_sell_out_weeks':'Estimated Weeks to Sell Out'}
+
+        '''col_title_mapping = [
             {'id':'url_markdown','name':'Image','presentation':'markdown'},
             {'id':'e_date','name':'Earliest Data'},
             {'id':'season','name':'Season(s)'},
@@ -230,7 +237,7 @@ def serve_layout():
             {'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':'percentage'},
             {'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)},
             {'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)}
-        ]
+        ]'''
 
         display_stock_info_df = stock_info_df.copy()
         #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
@@ -380,7 +387,7 @@ def serve_layout():
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=col_title_mapping,
+                            columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
                             data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
