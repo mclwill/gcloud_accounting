@@ -91,10 +91,9 @@ def serve_layout():
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
 
-
-
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
 
+        #get stock info from data store
         byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
         if byte_stream:
             stock_info_df = pd.read_csv(byte_stream,sep='|',index_col=False)
@@ -105,15 +104,15 @@ def serve_layout():
             return html.Div(html.P('No Stock Data retrieved from Data Store'))
 
         
-        stock_info_df['date'] = pd.to_datetime(stock_info_df['date'])
-        latest_date = stock_info_df['date'].max().to_pydatetime().date()
+        stock_info_df['date'] = pd.to_datetime(stock_info_df['date']) #convert date column to_datetime
+        latest_date = stock_info_df['date'].max().to_pydatetime().date() #get latest and earliest as pure dates (ie. drop time info)
         earliest_date = stock_info_df['date'].min().to_pydatetime().date()
-        base_start_date = earliest_date
-        end_season_date = last_day_of_month(aest_now.date())
+        base_start_date = earliest_date #establish base date for calculating percentages etc (ie. start of season) as earliest date ---> need to modify this when this can be set through the dashboard using 'Start Date'
+        end_season_date = last_day_of_month(aest_now.date()) #default data as end of this month
         start_of_previous_week = get_start_of_previous_week(aest_now.date())  #this should be the Monday of the previous week
         end_of_previous_week = start_of_previous_week + timedelta(days=6) #this should be the Sunday of the previous week
 
-
+        #get order info from data store
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
             orders_df = pd.read_csv(byte_stream,sep='|',index_col=False)
@@ -123,6 +122,7 @@ def serve_layout():
         if orders_df.empty:
             return html.Div(html.P('No Orders Data retrieved from Data Store'))
 
+        #get po info from data store
         byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
         if byte_stream:
             po_df = pd.read_csv(byte_stream,sep='|',index_col=False)
@@ -132,81 +132,66 @@ def serve_layout():
         if po_df.empty:
             return html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
 
-        #stock_info_df.fillna(0,inplace=True)
-        #orders_df.fillna(0,inplace=True)
-        #po_df.fillna(0,inplace=True)
-
-        common.logger.debug('Date Manipulation')
+        #convert date column to_datetime in all dfs - ie drop time info
         po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
         orders_df['date_ordered'] = pd.to_datetime(orders_df['date_ordered']).dt.date
         orders_df['date_shipped'] = pd.to_datetime(orders_df['date_shipped']).dt.date
-        
         stock_info_df['date'] = stock_info_df['date'].dt.date
 
-        common.logger.debug('1st apply')
-        stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id
-        common.logger.debug('1st join')
-        #stock_info_df['base_available_to_sell'] = stock_info_df.apply(lambda row: get_base_available_to_sell(row,df=stock_info_df),axis=1)
-        base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell']]).rename('base_available_to_sell')
-        #common.logger.info(str(base_available_to_sell_df))
-        stock_info_df.set_index('ean',inplace=True)
-        stock_info_df = stock_info_df.join(base_available_to_sell_df)
-        stock_info_df.reset_index(inplace=True)
+        #begin data merge of order and po into stock df
+        common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
         
-        common.logger.debug('drop old date rows')
-        stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()
-        
-        stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
-        
-        common.logger.debug('start other joins')
+        stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id - uses simply apply to find minimum on a SKU basis
+        base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell']]).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
 
+        stock_info_df.set_index('ean',inplace=True) #set stock DF with 'ean' as index in preparation for join
+        stock_info_df = stock_info_df.join(base_available_to_sell_df) #do join on 'ean'
+        stock_info_df.reset_index(inplace=True) #reset index 
+        
+        common.logger.debug('Base data merge complete - starting collection of po and orders DFs')
+        stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()#get rid of all stock rows that are before latest date - don't need them anymore
+        stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
+
+        #get  in additional purchase information with 'ean' as index of type string
         additional_purchases_df = get_additonal_purchases(po_df).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
-        #common.logger.info(str(additional_purchases_df))
 
+        #get online and wholesale last week orders with 'ean' as index of type string
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename(columns={'result':'online_orders_prev_week'})#.rename('online_orders_prev_week')
         online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
         wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename(columns={'result':'wholesale_orders_prev_week'})#.rename('wholesale_orders_prev_week')
         wholesale_orders_prev_week_df.index = wholesale_orders_prev_week_df.index.astype(str)
 
+        #get online and wholesale since start orders with 'ean' as index of type string
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce'])).rename(columns={'result':'online_orders_since_start'})#.rename('online_orders_since_start')
         online_orders_since_start_df.index = online_orders_since_start_df.index.astype(str)
         wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce'])).rename(columns={'result':'wholesale_orders_since_start'})#.rename('wholesale_orders_since_start')  
         wholesale_orders_since_start_df.index = wholesale_orders_since_start_df.index.astype(str)
 
-        #check_file_data = additional_purchases_df.to_csv(sep='|')
-        #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_add_stock.csv'))
-        #common.logger.info(str(additional_purchases_df))
-        stock_info_df.set_index('ean',inplace=True)
-        #common.logger.info(str(stock_info_df.dtypes) + '\n' + str(stock_info_df.index.dtype))
-        #common.logger.info(str(online_orders_prev_week_df.dtypes) + str(online_orders_prev_week_df.index.dtype))
-        
+        common.logger.debug('Finished collection of po and order info - starting merge of PO and order info into Stock DF')
+        stock_info_df.set_index('ean',inplace=True)#preparation for merge on 'ean' as index of type string
         stock_info_df.index = stock_info_df.index.astype(str)
-        #common.logger.info(str(stock_info_df.index) + '\n' + str(additional_purchases_df.index))
+        
+        #do the joins (ie. merges) of po and orders info into Stock DF
         stock_info_df = stock_info_df.join(additional_purchases_df)
         stock_info_df = stock_info_df.join(online_orders_prev_week_df)
         stock_info_df = stock_info_df.join(wholesale_orders_prev_week_df)
         stock_info_df = stock_info_df.join(online_orders_since_start_df)
         stock_info_df = stock_info_df.join(wholesale_orders_since_start_df)
 
+        #make sure any non joined info NaNs are replaced by zeroes for calcs to work
         stock_info_df['additional_purchases'].fillna(0,inplace=True)
         stock_info_df['online_orders_prev_week'].fillna(0,inplace=True)
         stock_info_df['wholesale_orders_prev_week'].fillna(0,inplace=True)
         stock_info_df['online_orders_since_start'].fillna(0,inplace=True)
         stock_info_df['wholesale_orders_since_start'].fillna(0,inplace=True)
         stock_info_df.reset_index(inplace=True)
-        #check_file_data = stock_info_df.to_csv(sep='|',index=False)
-        #common.store_dropbox_unicode(customer,check_file_data,os.path.join(data_store_folder,'test_stock.csv'))
-
-        #stock_info_df = stock_info_df.apply(get_extra_data, args = (po_df,orders_df),axis=1) #get extra data based on order and po info
-        common.logger.debug('start vectored operations')
-        #common.logger.info(str(stock_info_df['additional_purchases']) + '\n' + str(stock_info_df['base_available_to_sell']))
+        
+        common.logger.debug('start vectored operations for calculating extra columns')
         stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
-        common.logger.info(str(stock_info_df['base_stock']))
         stock_info_df['online_revenue_since_start'] = stock_info_df['online_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
-        #stock_info_df['base_available_to_sell'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
-        common.logger.debug('finish vector operations')
+        common.logger.debug('finished vectored operations - data manipulation and merge complete')
 
         stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
                              'wholesale_orders_prev_week','online_orders_since_start','wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
