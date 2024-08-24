@@ -454,7 +454,7 @@ def add_additional_calcs(df):
 
     #loop to insert new cols into DF
     new_cols = []
-    old_cols = df.columns.tolist():
+    old_cols = df.columns.tolist()
     i = 0
     col = old_cols[i]
     new_cols.append(col)
