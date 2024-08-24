@@ -356,7 +356,7 @@ def serve_layout():
                         dash_table.DataTable(
                             id='data_table',
                             columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=stock_info_df.to_dict("records"),
+                            data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -491,7 +491,7 @@ def add_additional_calcs(df):
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_product,v_color,v_size):
-    global stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
+    global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
 
 
     try:
