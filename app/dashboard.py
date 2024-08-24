@@ -204,7 +204,7 @@ def serve_layout():
                              'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
 
         col_title_mapping = [
-            {'id':'url_markdown','name':'Image'},
+            {'id':'url_markdown','name':'Image','presentation':'markdown'},
             {'id':'e_date','name':'Earliest Data'},
             {'id':'season','name':'Season(s)'},
             {'id':'p_name','name':'Product'},
@@ -465,7 +465,7 @@ def set_dropdown_options(product,color):
 
 def add_additional_calcs(df):
     global latest_date,base_start_date
-    
+    df = df.copy()
     #new columns and the column they come after
     '''calc_cols_positions = {'online_pc_since_start':'online_revenue_since_start','wholesale_pc_since_start':'wholesale_revenue_since_start','seasonal_sell_through_pc':'wholesale_pc_since_start',\
                            'daily_sell_rate':'seasonal_sell_through_pc','estimated_sell_out_weeks':'daily_sell_rate'}
