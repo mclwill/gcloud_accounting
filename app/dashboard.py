@@ -447,6 +447,8 @@ def add_additional_calcs(df):
     #stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
     #                         'online_orders_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_revenue_since_start']]
 
+    old_cols = df.columns.tolist()
+    
     df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['seasonal_sell_through_pc'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / df['base_stock'] * 100
@@ -458,7 +460,7 @@ def add_additional_calcs(df):
 
     #loop to insert new cols into DF
     new_cols = []
-    old_cols = df.columns.tolist()
+
     common.logger.info('Old Cols:\n' + str(old_cols))
     i = 0
     new_found = False
