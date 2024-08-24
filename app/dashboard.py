@@ -197,7 +197,8 @@ def serve_layout():
         stock_info_df['seasonal_sell_through_pc'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / stock_info_df['base_stock'] * 100
         stock_info_df['daily_sell_rate'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
         stock_info_df['estimated_sell_out_weeks'] = stock_info_df['available_to_sell'] / stock_info_df['daily_sell_rate']
-    
+        
+        #fix up any divide by zeroes
         stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],0)
         
         common.logger.debug('finished vectored operations - data manipulation and merge complete')
@@ -363,7 +364,7 @@ def serve_layout():
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
+                            columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
                             data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
@@ -552,7 +553,7 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        display_stock_info_df = add_additional_calcs(df_grouped[present_list])
+        display_stock_info_df = add_additional_calcs(df_grouped[present_list]).copy()
         common.logger.info(str(display_stock_info_df.columns.tolist()))
         return display_stock_info_df.to_dict("records")
     except Exception as ex:
