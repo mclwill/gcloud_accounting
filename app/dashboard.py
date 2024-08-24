@@ -227,7 +227,7 @@ def serve_layout():
             {'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'},
             {'id':'online_pc_since_start','name':'Online %','type':'numeric','format':'percentage'},
             {'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':'percentage'},
-            {'id':'seasonal_sell_through_pc''name':'Seasonal Sell Through %','type':'numeric','format':'percentage'},
+            {'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':'percentage'},
             {'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)},
             {'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)}
         ]
