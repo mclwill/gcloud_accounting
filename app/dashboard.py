@@ -201,7 +201,7 @@ def serve_layout():
 
         display_stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
                              'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
-                             'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
+                             'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].copy() #seem to need to take copy
 
         
         '''
@@ -248,14 +248,14 @@ def serve_layout():
 
         #display_stock_info_df = stock_info_df.copy()
         #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
-        display_columns = stock_info_df.columns.tolist()
+        display_columns = display_stock_info_df.columns.tolist()
 
-        product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
-        color_option_list = sorted(stock_info_df['color'].unique().tolist())
-        size_option_list = sorted(stock_info_df['size'].unique().tolist())
+        product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
+        color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
+        size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
         season_option_list = []
         
-        for ss in stock_info_df['season'].to_list():
+        for ss in display_stock_info_df['season'].to_list():
             for s in ss.split(','):
                 if s not in season_option_list:
                     season_option_list.append(s)
@@ -395,7 +395,7 @@ def serve_layout():
                         dash_table.DataTable(
                             id='data_table',
                             columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
-                            #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
+                            #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
                             data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
@@ -440,8 +440,8 @@ def update_output(date_value):
     Input('season_option', 'value')
 )
 def set_dropdown_options(season):
-    global stock_info_df
-    dff = stock_info_df.copy()
+    global display_stock_info_df
+    dff = display_stock_info_df.copy()
     if season:
         seasons = []
         for ss in season:
@@ -457,8 +457,8 @@ def set_dropdown_options(season):
     Input('product_option', 'value')
 )
 def set_dropdown_options(product):
-    global stock_info_df
-    dff = stock_info_df.copy()
+    global display_stock_info_df
+    dff = display_stock_info_df.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
     return [{'label':x,'value':x} for x in dff['color'].unique()]
@@ -469,8 +469,8 @@ def set_dropdown_options(product):
     Input('color_option','value')]
 )
 def set_dropdown_options(product,color):
-    global stock_info_df
-    dff = stock_info_df.copy()
+    global display_stock_info_df
+    dff = display_stock_info_df.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
     if color:
@@ -481,14 +481,7 @@ def set_dropdown_options(product,color):
 def add_additional_calcs(df):
     global latest_date,base_start_date
     df = df.copy()
-    #new columns and the column they come after
-    '''calc_cols_positions = {'online_pc_since_start':'online_revenue_since_start','wholesale_pc_since_start':'wholesale_revenue_since_start','seasonal_sell_through_pc':'wholesale_pc_since_start',\
-                           'daily_sell_rate':'seasonal_sell_through_pc','estimated_sell_out_weeks':'daily_sell_rate'}
-    calc_cols = list(calc_cols_positions.keys())
-    #stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
-    #                         'online_orders_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_revenue_since_start']]
 
-    old_cols = df.columns.tolist()'''
 
     df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
