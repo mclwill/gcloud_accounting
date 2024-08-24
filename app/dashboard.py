@@ -208,6 +208,7 @@ def serve_layout():
 
 
         display_columns = stock_info_df.columns.tolist()
+        curr_display_columns = display_columns
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
         color_option_list = sorted(stock_info_df['color'].unique().tolist())
@@ -354,7 +355,7 @@ def serve_layout():
                         dash_table.DataTable(
                             id='data_table',
                             columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=stock_info_df[display_columns].to_dict("records"),
+                            data=stock_info_df[curr_display_columns].to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -470,15 +471,16 @@ def add_additional_calcs(df):
                 new_found = True
                 break
         if not new_found:
-            new_found = False
             i += 1
             if i < len(old_cols):
                 col = old_cols[i]
                 new_cols.append(col)
+        else:
+            new_found=False
 
     common.logger.info('New Cols:' + str(new_cols))
 
-    return df[new_cols]
+    return new_cols, df[new_cols]
         
 @dash_app.callback (
         Output('data_table', 'data'),
@@ -490,7 +492,7 @@ def add_additional_calcs(df):
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_product,v_color,v_size):
-    global stock_info_df,display_columns,latest_date,earliest_date
+    global stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
 
 
     try:
@@ -543,7 +545,8 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        return add_additional_calcs(df_grouped[present_list]).to_dict("records")
+        curr_display_columns, df_display = add_additional_calcs(df_grouped[present_list])
+        return df_display[curr_display_columns].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
