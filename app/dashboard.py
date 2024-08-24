@@ -190,7 +190,7 @@ def serve_layout():
         stock_info_df['wholesale_pc_since_start'] = stock_info_df['wholesale_orders_since_start'] / (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start'])
         stock_info_df['seasonal_sell_through_pc'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / stock_info_df['base_stock']
         stock_info_df['daily_sell_rate'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
-        stock_info_df['estimated_sell_out_weeks'] = stock_info_df['available_to_sell'] / stock_info_df['daily_sell_rate']
+        stock_info_df['estimated_sell_out_weeks'] = stock_info_df['available_to_sell'] / stock_info_df['daily_sell_rate'] / 7
         
         #fix up any divide by zeroes
         stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
@@ -487,7 +487,7 @@ def add_additional_calcs(df):
     df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) 
     df['seasonal_sell_through_pc'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / df['base_stock']
     df['daily_sell_rate'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
-    df['estimated_sell_out_weeks'] = df['available_to_sell'] / df['daily_sell_rate']
+    df['estimated_sell_out_weeks'] = df['available_to_sell'] / df['daily_sell_rate'] / 7
     
     df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
         df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
