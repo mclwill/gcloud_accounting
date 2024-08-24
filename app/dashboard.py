@@ -442,15 +442,18 @@ def add_additional_calcs(df):
     #new columns and the column they come after
     calc_cols_positions = {'online_pc_since_start':'online_revenue_since_start','wholesale_pc_since_start':'wholesale_revenue_since_start','seasonal_sell_through_pc':'wholesale_pc_since_start',\
                            'daily_sell_rate':'seasonal_sell_through_pc','estimated_sell_out_weeks':'daily_sell_rate'}
-    #stock info columns copied from above
+    calc_cols = list(calc_cols_positions.keys())
     #stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
     #                         'online_orders_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_revenue_since_start']]
 
     df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['seasonal_sell_through_pc'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / df['base_stock'] * 100
-    df['daily_sell_rate'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / (latest_date - base_start_date)
+    df['daily_sell_rate'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
     df['estimated_sell_out_weeks'] = df['available_to_sell'] / df['daily_sell_rate']
+    
+    df[calc_cols] = df[calc_cols].replace([np.inf,-np.inf],0)
+
 
     #loop to insert new cols into DF
     new_cols = []
