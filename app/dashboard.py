@@ -208,7 +208,7 @@ def serve_layout():
 
 
         display_stock_info_df = stock_info_df.copy()
-        display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks','daily_sell_rate'])
+        display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks','daily_sell_rate'],axis=1)
         display_columns = display_stock_info_df.columns.tolist()
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
@@ -544,8 +544,8 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        display_stock_info_df = add_additional_calcs(df_grouped[present_list]).copy()
-        return display_stock_info_df.to_dict("records")
+        #display_stock_info_df = add_additional_calcs(df_grouped[present_list]).copy()
+        return df_grouped[present_list].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
