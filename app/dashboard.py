@@ -470,6 +470,7 @@ def add_additional_calcs(df):
                 new_found = True
                 break
         if not new_found:
+            new_found = False
             i += 1
             if i < len(old_cols):
                 col = old_cols[i]
