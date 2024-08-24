@@ -224,7 +224,7 @@ def serve_layout():
             {'id':'online_orders_since_start','name':'Online Units Since Start'},
             {'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
             {'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':'money'},
-            {'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'}
+            {'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'},
             {'id':'online_pc_since_start','name':'Online %','type':'numeric','format':'percentage'},
             {'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':'percentage'},
             {'id':'seasonal_sell_through_pc''name':'Seasonal Sell Through %','type':'numeric','format':'percentage'},
