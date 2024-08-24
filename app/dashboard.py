@@ -193,17 +193,18 @@ def serve_layout():
         stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         common.logger.debug('finished vectored operations - data manipulation and merge complete')
 
+        
+        #from here all about presenting the data table
+
         stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
-                             'wholesale_orders_prev_week','online_orders_since_start','wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']]
+                             'online_orders_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_revenue_since_start']]
 
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
                              'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
                              'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
                              'wholesale_revenue_since_start':'Wholesale $$$ Since Start'}
-    
-        #common.logger.info(str(type(latest_date)) + str(latest_date) + str(type(date(1995,8,5))) + str(type(earliest_date.date())))
-        
+
 
         display_columns = stock_info_df.columns.tolist()
 
@@ -453,6 +454,7 @@ def update_table(v_season,v_product,v_color,v_size):
         sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                     'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
         present_list = display_columns.copy()
+        
         if not v_season or v_season == 'All':
             v_seasons = season_option_list
         else:
@@ -462,12 +464,7 @@ def update_table(v_season,v_product,v_color,v_size):
                     if s not in v_seasons:
                         v_seasons.append(s)
         dff = dff[(dff['season'].str.contains('|'.join(v_seasons)))]
-        '''if v_product == 'All':
-            v_product = product_option_list
-        if v_color == 'All':
-            v_color = color_option_list
-        if v_size == 'All':
-            v_size = size_option_list'''
+
         if v_product : 
             dff = dff[dff['p_name'].isin(v_product)]
         if v_color :
@@ -475,15 +472,7 @@ def update_table(v_season,v_product,v_color,v_size):
         if v_size :
             dff = dff[dff['size'].isin(v_size)]
         
-        #df = stock_info_df[(stock_info_df['season'].str.contains('|'.join(v_seasons)))]
-        #dff = stock_info_df[(stock_info_df['season'].str.contains('|'.join(v_seasons)))|(stock_info_df['p_name'].isin(v_product))|(stock_info_df['color'].isin(v_color))|(stock_info_df['size'].isin(v_size))]
-        #common.logger.info('1 list' + str(group_list) + str(sum_list) + str(present_list))
-        '''if not v_product:
-            group_list.append('season')
-            present_list.remove('p_name')
-        if not v_color:
-            group_list.append('p_name')
-            present_list.remove('color')'''
+
         if not v_size:
             group_list.append('color')
             present_list.remove('size')
@@ -494,9 +483,8 @@ def update_table(v_season,v_product,v_color,v_size):
             present_list.remove('color')
         if not v_product:
             group_list.append('season')
-            #present_list.remove('p_name')  #don't remove product as should always be displayed
+            #present_list.remove('p_name')  #don't remove product as should always be displayed  ########
 
-        #common.logger.info('2 list' + str(group_list) + str(sum_list) + str(present_list))
         agg_dict = {}
         for x in present_list:
             if x not in group_list:
@@ -504,12 +492,12 @@ def update_table(v_season,v_product,v_color,v_size):
                     agg_dict[x] = 'sum'
                 else:
                     agg_dict[x] = 'first'
-        #common.logger.info('Pre Group By ' + str(dff.head()))
+
         if group_list:
             df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
         else:
             df_grouped = dff
-        #common.logger.info('Post Group by ' + str(df_grouped.head()))
+
         return df_grouped[present_list].to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
