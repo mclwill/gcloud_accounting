@@ -233,7 +233,7 @@ def serve_layout():
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Units Since Start'},
             'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
-            'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start'},#'type':'numeric','format':'money'},
+            'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':'money'},
             'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'},#'type':'numeric','format':'money'},
             'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %'},#'type':'numeric','format':'percentage'},
             'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %'},#'type':'numeric','format':'percentage'},
