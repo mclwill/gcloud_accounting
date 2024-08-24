@@ -468,7 +468,7 @@ def add_additional_calcs(df):
                 col = k
                 break
         i += 1
-        if i <= len(old_cols):
+        if i < len(old_cols):
             col = old_cols[i]
             new_cols.append(col)
 
