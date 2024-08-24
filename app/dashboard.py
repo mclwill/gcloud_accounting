@@ -13,6 +13,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from dash_table import DataTable
 from dash.exceptions import PreventUpdate
+from dash.dash_table.Format import Format, Scheme, Trim
 import plotly.express as px
 import traceback
 from datetime import datetime, date, time, timedelta
@@ -74,13 +75,6 @@ def get_orders_since_start(df):
 def get_additonal_purchases(df):
     global base_start_date
     return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby('ean').agg({'result':sum})
-
-
-
-    #df['qty_received'].fillna(0,inplace=True)
-    #groups = df.groupby(by='ean')
-    #common.logger.info(str(groups.head()))
-    #return groups.apply(lambda g: g[(g['date_received']>=base_start_date)]['qty_received'].sum())
 
 def serve_layout():
     #global season_stock_info_df
@@ -209,13 +203,34 @@ def serve_layout():
                              'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                              'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
 
-        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
-                             'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
-                             'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
-                             'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
-                             'wholesale_revenue_since_start':'Wholesale $$$ Since Start','online_pc_since_start':'Online %','wholesale_pc_since_start':'Wholesale %','seasonal_sell_through_pc':'Seasonal Sell Through %',\
-                             'daily_sell_rate':'Daily Sell Rate','estimated_sell_out_weeks':'Estimated Weeks to Sell Out'}
-
+        col_title_mapping = [
+            {'id':'url_markdown','name':'Image'},
+            {'id':'e_date','name':'Earliest Data'},
+            {'id':'season','name':'Season(s)'},
+            {'id':'p_name','Product'},
+            {'id':'color','name':'Colour'}
+            {'id':'size','name':'Size',}
+            {'id':'category','name':'Category'},
+            {'id':'sub_category','name':'Sub Category'},
+            {'id':'sku_id','name':'SKU'},
+            {'id':'in_stock','name':'In Stock'},
+            {'id':'base_available_to_sell','name':'Seasonal Units Ordered'},
+            {'id':'available_to_sell','name':'Available To Sell'},
+            {'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
+            {'id':'additional_purchases','name':'Additional Purchases'},
+            {'id':'base_stock','name':'Base Stock'},
+            {'id':'online_orders_prev_week','name':'Online Units Last Week'},
+            {'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
+            {'id':'online_orders_since_start','name':'Online Units Since Start'}
+            {'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
+            {'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':'money'},
+            {'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'}
+            {'id':'online_pc_since_start','name':'Online %','type':'numeric','format':'percentage'},
+            {'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':'percentage'},
+            {'id':'seasonal_sell_through_pc''name':'Seasonal Sell Through %','type':'numeric','format':'percentage'},
+            {'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)},
+            {'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)}
+        ]
 
         display_stock_info_df = stock_info_df.copy()
         #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
@@ -365,7 +380,7 @@ def serve_layout():
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
+                            columns=col_title_mapping,
                             data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
