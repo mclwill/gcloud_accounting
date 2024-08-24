@@ -191,9 +191,17 @@ def serve_layout():
         stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
         stock_info_df['online_revenue_since_start'] = stock_info_df['online_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
         stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
+
+        stock_info_df['online_pc_since_start'] = stock_info_df['online_orders_since_start'] / (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) * 100
+        stock_info_df['wholesale_pc_since_start'] = stock_info_df['wholesale_orders_since_start'] / (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) * 100
+        stock_info_df['seasonal_sell_through_pc'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / stock_info_df['base_stock'] * 100
+        stock_info_df['daily_sell_rate'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
+        stock_info_df['estimated_sell_out_weeks'] = stock_info_df['available_to_sell'] / stock_info_df['daily_sell_rate']
+    
+        stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],0)
+        
         common.logger.debug('finished vectored operations - data manipulation and merge complete')
 
-        
         #from here all about presenting the data table
 
         stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
@@ -208,7 +216,7 @@ def serve_layout():
 
 
         display_stock_info_df = stock_info_df.copy()
-        display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
+        #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
         display_columns = display_stock_info_df.columns.tolist()
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
