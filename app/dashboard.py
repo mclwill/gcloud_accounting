@@ -463,7 +463,7 @@ def add_additional_calcs(df):
     new_cols.append(col)
     while i < len(old_cols):
         for k,v in calc_cols_positions.items():
-            if (v not in new_cols) and (v == col):
+            if (k not in new_cols) and (v == col):
                 new_cols.append(k)
                 col = k
                 break
