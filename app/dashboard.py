@@ -241,7 +241,7 @@ def serve_layout():
             'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start','type':'numeric','format':money},
             'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %','type':'numeric','format':percentage},
             'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':percentage},
-            'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':pecentage},
+            'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':percentage},
             'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':fixed},
             'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':fixed}
         }
