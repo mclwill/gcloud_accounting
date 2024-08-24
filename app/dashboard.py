@@ -11,7 +11,7 @@ from dash import dash_table
 import dash_bootstrap_components as dbc
 #import dash_table
 from dash.dependencies import Input, Output
-from dash_table import DataTable
+from dash_table import DataTable, FormatTemplate
 from dash.exceptions import PreventUpdate
 from dash.dash_table.Format import Format, Scheme, Trim
 import plotly.express as px
@@ -213,6 +213,10 @@ def serve_layout():
                              'daily_sell_rate':'Daily Sell Rate','estimated_sell_out_weeks':'Estimated Weeks to Sell Out'}
         '''
         
+        money = FormatTemplate.money(2)
+        percentage = FormatTemplate.percentage(2)
+        fixed = Format(precision=2, scheme=Scheme.fixed)
+
         col_title_mapping = {
             'url_markdown':{'id':'url_markdown','name':'Image','presentation':'markdown'},
             'e_date':{'id':'e_date','name':'Earliest Data'},
@@ -233,13 +237,13 @@ def serve_layout():
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Units Since Start'},
             'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
-            'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':'money'},
-            'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'},#'type':'numeric','format':'money'},
-            'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %'},#'type':'numeric','format':'percentage'},
-            'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %'},#'type':'numeric','format':'percentage'},
-            'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %'},#'type':'numeric','format':'percentage'},
-            'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate'},#'type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)},
-            'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out'}#,'type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)}
+            'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':money},
+            'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start','type':'numeric','format':money},
+            'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %','type':'numeric','format':percentage},
+            'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':percentage},
+            'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':pecentage},
+            'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':fixed},
+            'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':fixed}
         }
 
         #display_stock_info_df = stock_info_df.copy()
