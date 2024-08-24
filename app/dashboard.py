@@ -221,7 +221,7 @@ def serve_layout():
             {'id':'base_stock','name':'Base Stock'},
             {'id':'online_orders_prev_week','name':'Online Units Last Week'},
             {'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
-            {'id':'online_orders_since_start','name':'Online Units Since Start'}
+            {'id':'online_orders_since_start','name':'Online Units Since Start'},
             {'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
             {'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':'money'},
             {'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'}
