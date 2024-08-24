@@ -199,7 +199,7 @@ def serve_layout():
 
         #from here all about presenting the data table
 
-        stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
+        display_stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
                              'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                              'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
 
@@ -394,9 +394,9 @@ def serve_layout():
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=[col_title_mapping[i] for i in stock_info_df.columns],
+                            columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
                             #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=stock_info_df.to_dict("records"),
+                            data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -536,7 +536,7 @@ def update_table(v_season,v_product,v_color,v_size):
 
 
     try:
-        dff = stock_info_df.copy()
+        dff = display_stock_info_df.copy()
         group_list = []
         sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                     'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
