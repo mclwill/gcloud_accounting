@@ -391,7 +391,7 @@ def serve_layout():
                             id='data_table',
                             #columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
                             columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=display_stock_info_df.to_dict("records"),
+                            data=stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
