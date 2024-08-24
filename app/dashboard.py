@@ -199,15 +199,15 @@ def serve_layout():
         stock_info_df['estimated_sell_out_weeks'] = stock_info_df['available_to_sell'] / stock_info_df['daily_sell_rate']
         
         #fix up any divide by zeroes
-        stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],0)
+        stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
         
         common.logger.debug('finished vectored operations - data manipulation and merge complete')
 
         #from here all about presenting the data table
 
         stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
-                             'online_orders_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_revenue_since_start',\
-                             'online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
+                             'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
+                             'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']]
 
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
@@ -452,13 +452,13 @@ def add_additional_calcs(df):
     global latest_date,base_start_date
     
     #new columns and the column they come after
-    calc_cols_positions = {'online_pc_since_start':'online_revenue_since_start','wholesale_pc_since_start':'wholesale_revenue_since_start','seasonal_sell_through_pc':'wholesale_pc_since_start',\
+    '''calc_cols_positions = {'online_pc_since_start':'online_revenue_since_start','wholesale_pc_since_start':'wholesale_revenue_since_start','seasonal_sell_through_pc':'wholesale_pc_since_start',\
                            'daily_sell_rate':'seasonal_sell_through_pc','estimated_sell_out_weeks':'daily_sell_rate'}
     calc_cols = list(calc_cols_positions.keys())
     #stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
     #                         'online_orders_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_revenue_since_start']]
 
-    old_cols = df.columns.tolist()
+    old_cols = df.columns.tolist()'''
 
     df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
@@ -466,9 +466,10 @@ def add_additional_calcs(df):
     df['daily_sell_rate'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
     df['estimated_sell_out_weeks'] = df['available_to_sell'] / df['daily_sell_rate']
     
-    df[calc_cols] = df[calc_cols].replace([np.inf,-np.inf],0)
+    df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
+        df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
 
-    #loop to insert new cols into DF
+    '''#loop to insert new cols into DF
     new_cols = []
     i = 0
     new_found = False
@@ -487,9 +488,9 @@ def add_additional_calcs(df):
                 col = old_cols[i]
                 new_cols.append(col)
         else:
-            new_found=False
+            new_found=False'''
  
-    return df[new_cols]
+    return df
         
 @dash_app.callback (
         Output('data_table', 'data'),
@@ -554,9 +555,7 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        display_stock_info_df = add_additional_calcs(df_grouped[present_list]).copy()
-        common.logger.info(str(display_stock_info_df.columns.tolist()))
-        return display_stock_info_df.to_dict("records")
+        return add_additional_calcs(df_grouped[present_list]).to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
