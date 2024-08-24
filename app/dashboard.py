@@ -459,6 +459,7 @@ def add_additional_calcs(df):
     #loop to insert new cols into DF
     new_cols = []
     old_cols = df.columns.tolist()
+    common.logger.info('Old Cols:\n' + str(old_cols))
     i = 0
     new_found = False
     col = old_cols[i]
@@ -477,10 +478,10 @@ def add_additional_calcs(df):
                 new_cols.append(col)
         else:
             new_found=False
-        common.logger.info(str(col) + '\n' + str(i) + '\n' + str(old_cols) + str(new_cols))
+        common.logger.info(str(col) + '\n' + str(i) + '\n' + str(old_cols) + '\n' + str(new_cols))
 
-    common.logger.info('New Cols:' + str(new_cols))
-
+    common.logger.info('New Cols:\n' + str(new_cols))
+ 
     return new_cols, df[new_cols]
         
 @dash_app.callback (
