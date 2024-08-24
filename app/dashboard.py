@@ -233,11 +233,11 @@ def serve_layout():
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Units Since Start'},
             'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
-            'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':'money'},
-            'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'},
-            'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %','type':'numeric','format':'percentage'},
-            'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':'percentage'},
-            'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':'percentage'},
+            'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start'},#'type':'numeric','format':'money'},
+            'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start'},#'type':'numeric','format':'money'},
+            'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %'},#'type':'numeric','format':'percentage'},
+            'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %'},#'type':'numeric','format':'percentage'},
+            'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %'},#'type':'numeric','format':'percentage'},
             'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate'},#'type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)},
             'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out'}#,'type':'numeric','format':Format(precision=2, scheme=Scheme.fixed)}
         }
