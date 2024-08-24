@@ -84,7 +84,7 @@ def get_additonal_purchases(df):
 
 def serve_layout():
     #global season_stock_info_df
-    global stock_info_df,display_columns,latest_date,earliest_date
+    global stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
     global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
     global product_option_list,color_option_list,size_option_list,season_option_list
 
@@ -448,7 +448,7 @@ def add_additional_calcs(df):
     #                         'online_orders_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_revenue_since_start']]
 
     old_cols = df.columns.tolist()
-    
+
     df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) * 100
     df['seasonal_sell_through_pc'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / df['base_stock'] * 100
@@ -457,11 +457,8 @@ def add_additional_calcs(df):
     
     df[calc_cols] = df[calc_cols].replace([np.inf,-np.inf],0)
 
-
     #loop to insert new cols into DF
     new_cols = []
-
-    common.logger.info('Old Cols:\n' + str(old_cols))
     i = 0
     new_found = False
     col = old_cols[i]
@@ -480,9 +477,6 @@ def add_additional_calcs(df):
                 new_cols.append(col)
         else:
             new_found=False
-        common.logger.info(str(col) + '\n' + str(i) + '\n' + str(old_cols) + '\n' + str(new_cols))
-
-    common.logger.info('New Cols:\n' + str(new_cols))
  
     return new_cols, df[new_cols]
         
