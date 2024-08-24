@@ -355,7 +355,7 @@ def serve_layout():
                         dash_table.DataTable(
                             id='data_table',
                             columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in stock_info_df.columns],
-                            data=stock_info_df[curr_display_columns].to_dict("records"),
+                            data=stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -543,8 +543,8 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        curr_display_columns, df_display = add_additional_calcs(df_grouped[present_list])
-        return df_display[curr_display_columns].to_dict("records")
+        curr_display_columns, stock_info_df = add_additional_calcs(df_grouped[present_list])
+        return stock_info_df.to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
