@@ -459,6 +459,7 @@ def add_additional_calcs(df):
     new_cols = []
     old_cols = df.columns.tolist()
     i = 0
+    new_found = False
     col = old_cols[i]
     new_cols.append(col)
     while i < len(old_cols):
@@ -466,11 +467,13 @@ def add_additional_calcs(df):
             if (k not in new_cols) and (v == col):
                 new_cols.append(k)
                 col = k
+                new_found = True
                 break
-        i += 1
-        if i < len(old_cols):
-            col = old_cols[i]
-            new_cols.append(col)
+        if not new_found:
+            i += 1
+            if i < len(old_cols):
+                col = old_cols[i]
+                new_cols.append(col)
 
     common.logger.info('New Cols:' + str(new_cols))
 
