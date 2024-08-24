@@ -50,8 +50,8 @@ def last_day_of_month(any_day):
 
 def get_start_of_previous_week(date_value):
     weekday = date_value.weekday()
-    sunday_delta = timedelta(days=weekday,weeks=1)
-    return date_value - sunday_delta
+    monday_delta = timedelta(days=weekday,weeks=1)
+    return date_value - monday_delta
 
 def get_earliest_date(row,df):
     return df['date'][df['sku_id'] == row['sku_id']].min()
@@ -65,8 +65,13 @@ def get_base_available_to_sell(df):
     return return_df['base_available_to_sell']
 
 def get_last_week_orders(df,):
-    global start_of_previous_week,end_of_previous_week
-    return df.assign(result=np.where((df['date_shipped']>=start_of_previous_week)&(df['date_shipped']<=end_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
+    global start_of_previous_week,end_of_previous_week,base_start_date
+    if start_of_previous_week < base_start_date :
+        start_date = base_start_date
+    else:
+        start_date = start_of_previous_week
+
+    return df.assign(result=np.where((df['date_shipped']>=start_date)&(df['date_shipped']<=end_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
 
 def get_orders_since_start(df):
     global base_start_date
@@ -213,6 +218,7 @@ def serve_layout():
                              'daily_sell_rate':'Daily Sell Rate','estimated_sell_out_weeks':'Estimated Weeks to Sell Out'}
         '''
         
+        #data table formats and mapping
         money = FormatTemplate.money(2)
         percentage = FormatTemplate.percentage(2)
         fixed = Format(precision=2, scheme=Scheme.fixed)
