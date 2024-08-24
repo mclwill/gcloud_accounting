@@ -208,7 +208,7 @@ def serve_layout():
 
 
         display_stock_info_df = stock_info_df.copy()
-        display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks','daily_sell_rate'])
+        display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
         display_columns = display_stock_info_df.columns.tolist()
 
         product_option_list = sorted(stock_info_df['p_name'].unique().tolist())
