@@ -544,8 +544,9 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        #display_stock_info_df = add_additional_calcs(df_grouped[present_list]).copy()
-        return df_grouped[present_list].to_dict("records")
+        display_stock_info_df = add_additional_calcs(df_grouped[present_list])
+        common.logger.info(str(display_stock_info_df.columns.tolist()))
+        return display_stock_info_df.to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
