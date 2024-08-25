@@ -19,6 +19,7 @@ import traceback
 from datetime import datetime, date, time, timedelta
 from dateutil import tz
 import numpy as np
+from flask_caching import Cache
 
 import FlaskApp.app.common as common
 
@@ -33,6 +34,14 @@ data_store_folder = common.data_store[customer]
 stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 po_file_path = os.path.join(data_store_folder,'data_po.csv')
+
+CACHE_CONFIG = {
+    # try 'FileSystemCache' if you don't want to setup redis
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'redis://localhost:6379')
+}
+cache = Cache()
+cache.init_app(app.server, config=CACHE_CONFIG)
 
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
 
@@ -56,16 +65,16 @@ def get_start_of_previous_week(date_value):
 def get_earliest_date(row,df):
     return df['date'][df['sku_id'] == row['sku_id']].min()
 
-def get_base_available_to_sell(df):
-    global base_start_date
+def get_base_available_to_sell(df,base_start_date):
+    #global base_start_date
     #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values))
     return_df = df[['ean','available_to_sell']][(df['date']==base_start_date)]
     return_df.rename({'available_to_sell':'base_available_to_sell'},inplace=True,axis=1)
     return_df.set_index('ean',inplace=True)
     return return_df['base_available_to_sell']
 
-def get_last_week_orders(df,):
-    global start_of_previous_week,end_of_previous_week,base_start_date
+def get_last_week_orders(df,base_start_date):
+    global start_of_previous_week,end_of_previous_week#base_start_date
     if start_of_previous_week < base_start_date :
         start_date = base_start_date
     else:
@@ -73,19 +82,19 @@ def get_last_week_orders(df,):
 
     return df.assign(result=np.where((df['date_shipped']>=start_date)&(df['date_shipped']<=end_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
 
-def get_orders_since_start(df):
-    global base_start_date
+def get_orders_since_start(df,base_start_date):
+    #global base_start_date
     return df.assign(result=np.where(df['date_shipped']>=base_start_date,df['qty_shipped'],0)).groupby('ean').agg({'result':sum})
 
-def get_additonal_purchases(df):
-    global base_start_date
+def get_additonal_purchases(df,base_start_date):
+    #global base_start_date
     return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby('ean').agg({'result':sum})
 
-def serve_layout():
-    #global season_stock_info_df
-    global stock_info_df,display_stock_info_df,display_columns,latest_date,earliest_date
-    global base_start_date,end_season_date,start_of_previous_week,end_of_previous_week
-    global product_option_list,color_option_list,size_option_list,season_option_list
+def get_data_from_data_store():
+
+    global stock_info_df,orders_df,po_df
+    global latest_date,earliest_date
+    
 
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
@@ -100,16 +109,14 @@ def serve_layout():
             stock_info_df = pd.DataFrame() #start with empty dataframe
 
         if stock_info_df.empty:
-            return html.Div(html.P('No Stock Data retrieved from Data Store'))
+            return html.Div(html.P('No Stock Data retrieved from Data Store'))  
 
         
         stock_info_df['date'] = pd.to_datetime(stock_info_df['date']) #convert date column to_datetime
         latest_date = stock_info_df['date'].max().to_pydatetime().date() #get latest and earliest as pure dates (ie. drop time info)
         earliest_date = stock_info_df['date'].min().to_pydatetime().date()
-        base_start_date = earliest_date #establish base date for calculating percentages etc (ie. start of season) as earliest date ---> need to modify this when this can be set through the dashboard using 'Start Date'
-        end_season_date = last_day_of_month(aest_now.date()) #default data as end of this month
-        start_of_previous_week = get_start_of_previous_week(aest_now.date())  #this should be the Monday of the previous week
-        end_of_previous_week = start_of_previous_week + timedelta(days=6) #this should be the Sunday of the previous week
+        #base_start_date = earliest_date #establish base date for calculating percentages etc (ie. start of season) as earliest date ---> need to modify this when this can be set through the dashboard using 'Start Date'
+        
 
         #get order info from data store
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
@@ -137,74 +144,104 @@ def serve_layout():
         orders_df['date_shipped'] = pd.to_datetime(orders_df['date_shipped']).dt.date
         stock_info_df['date'] = stock_info_df['date'].dt.date
 
+        stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id - uses simply apply to find minimum on a SKU basis
+
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))     
+
+        
+def process_data(base_start_date): #process data based on base_start_date --> need to call it whenever base_start_date changes
+    global stock_info_df,orders_df,po_df
+    global latest_date,earliest_date
+    #global end_season_date,start_of_previous_week,end_of_previous_week
+    
+    try:
+
         #begin data merge of order and po into stock df
         common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
-        
-        stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id - uses simply apply to find minimum on a SKU basis
-        base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell']]).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
+        end_season_date = last_day_of_month(aest_now.date()) #default data as end of this month
+        start_of_previous_week = get_start_of_previous_week(aest_now.date())  #this should be the Monday of the previous week
+        end_of_previous_week = start_of_previous_week + timedelta(days=6) #this should be the Sunday of the previous week
 
-        stock_info_df.set_index('ean',inplace=True) #set stock DF with 'ean' as index in preparation for join
-        stock_info_df = stock_info_df.join(base_available_to_sell_df) #do join on 'ean'
-        stock_info_df.reset_index(inplace=True) #reset index 
+        base_stock_info_df = stock_info_df.copy()
+        
+        base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell']],base_start_date).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
+
+        base_stock_info_df.set_index('ean',inplace=True) #set stock DF with 'ean' as index in preparation for join
+        base_tock_info_df = base_stock_info_df.join(base_available_to_sell_df) #do join on 'ean'
+        base_stock_info_df.reset_index(inplace=True) #reset index 
         
         common.logger.debug('Base data merge complete - starting collection of po and orders DFs')
-        stock_info_df = stock_info_df[(stock_info_df['date'] == latest_date)].copy()#get rid of all stock rows that are before latest date - don't need them anymore
-        stock_info_df['url_markdown'] = stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
+        base_stock_info_df = base_stock_info_df[(base_stock_info_df['date'] == latest_date)].copy()#get rid of all stock rows that are before latest date - don't need them anymore
+        base_stock_info_df['url_markdown'] = base_stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
 
         #get  in additional purchase information with 'ean' as index of type string
-        additional_purchases_df = get_additonal_purchases(po_df).rename(columns={'result':'additional_purchases'})
+        additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
 
         #get online and wholesale last week orders with 'ean' as index of type string
-        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce']).rename(columns={'result':'online_orders_prev_week'})#.rename('online_orders_prev_week')
+        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce'],base_start_date).rename(columns={'result':'online_orders_prev_week'})#.rename('online_orders_prev_week')
         online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
-        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce']).rename(columns={'result':'wholesale_orders_prev_week'})#.rename('wholesale_orders_prev_week')
+        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce'],base_start_date).rename(columns={'result':'wholesale_orders_prev_week'})#.rename('wholesale_orders_prev_week')
         wholesale_orders_prev_week_df.index = wholesale_orders_prev_week_df.index.astype(str)
 
         #get online and wholesale since start orders with 'ean' as index of type string
-        online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce'])).rename(columns={'result':'online_orders_since_start'})#.rename('online_orders_since_start')
+        online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce']),base_start_date).rename(columns={'result':'online_orders_since_start'})#.rename('online_orders_since_start')
         online_orders_since_start_df.index = online_orders_since_start_df.index.astype(str)
-        wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce'])).rename(columns={'result':'wholesale_orders_since_start'})#.rename('wholesale_orders_since_start')  
+        wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']!='eCommerce']),base_start_date).rename(columns={'result':'wholesale_orders_since_start'})#.rename('wholesale_orders_since_start')  
         wholesale_orders_since_start_df.index = wholesale_orders_since_start_df.index.astype(str)
 
         common.logger.debug('Finished collection of po and order info - starting merge of PO and order info into Stock DF')
-        stock_info_df.set_index('ean',inplace=True)#preparation for merge on 'ean' as index of type string
-        stock_info_df.index = stock_info_df.index.astype(str)
+        base_stock_info_df.set_index('ean',inplace=True)#preparation for merge on 'ean' as index of type string
+        base_stock_info_df.index = base_stock_info_df.index.astype(str)
         
         #do the joins (ie. merges) of po and orders info into Stock DF
-        stock_info_df = stock_info_df.join(additional_purchases_df)
-        stock_info_df = stock_info_df.join(online_orders_prev_week_df)
-        stock_info_df = stock_info_df.join(wholesale_orders_prev_week_df)
-        stock_info_df = stock_info_df.join(online_orders_since_start_df)
-        stock_info_df = stock_info_df.join(wholesale_orders_since_start_df)
+        base_stock_info_df = base_stock_info_df.join(additional_purchases_df)
+        base_stock_info_df = base_stock_info_df.join(online_orders_prev_week_df)
+        base_stock_info_df = base_stock_info_df.join(wholesale_orders_prev_week_df)
+        base_stock_info_df = base_stock_info_df.join(online_orders_since_start_df)
+        base_stock_info_df = base_stock_info_df.join(wholesale_orders_since_start_df)
 
         #make sure any non joined info NaNs are replaced by zeroes for calcs to work
-        stock_info_df['additional_purchases'].fillna(0,inplace=True)
-        stock_info_df['online_orders_prev_week'].fillna(0,inplace=True)
-        stock_info_df['wholesale_orders_prev_week'].fillna(0,inplace=True)
-        stock_info_df['online_orders_since_start'].fillna(0,inplace=True)
-        stock_info_df['wholesale_orders_since_start'].fillna(0,inplace=True)
-        stock_info_df.reset_index(inplace=True)
+        base_stock_info_df['additional_purchases'].fillna(0,inplace=True)
+        base_stock_info_df['online_orders_prev_week'].fillna(0,inplace=True)
+        base_stock_info_df['wholesale_orders_prev_week'].fillna(0,inplace=True)
+        base_stock_info_df['online_orders_since_start'].fillna(0,inplace=True)
+        base_stock_info_df['wholesale_orders_since_start'].fillna(0,inplace=True)
+        base_stock_info_df.reset_index(inplace=True)
         
         common.logger.debug('start vectored operations for calculating extra columns')
-        stock_info_df['base_stock'] = stock_info_df['base_available_to_sell'] + stock_info_df['additional_purchases']
-        stock_info_df['online_revenue_since_start'] = stock_info_df['online_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
-        stock_info_df['wholesale_revenue_since_start'] = stock_info_df['wholesale_orders_since_start'] * stock_info_df['price_eCommerce_mrsp']
+        base_stock_info_df['base_stock'] = base_stock_info_df['base_available_to_sell'] + base_stock_info_df['additional_purchases']
+        base_stock_info_df['online_revenue_since_start'] = base_stock_info_df['online_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
+        base_stock_info_df['wholesale_revenue_since_start'] = base_stock_info_df['wholesale_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
 
-        stock_info_df['online_pc_since_start'] = stock_info_df['online_orders_since_start'] / (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start'])
-        stock_info_df['wholesale_pc_since_start'] = stock_info_df['wholesale_orders_since_start'] / (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start'])
-        stock_info_df['seasonal_sell_through_pc'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / stock_info_df['base_stock']
-        stock_info_df['daily_sell_rate'] = (stock_info_df['online_orders_since_start'] + stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
-        stock_info_df['estimated_sell_out_weeks'] = stock_info_df['available_to_sell'] / stock_info_df['daily_sell_rate'] / 7
+        base_stock_info_df['online_pc_since_start'] = base_stock_info_df['online_orders_since_start'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
+        base_stock_info_df['wholesale_pc_since_start'] = base_stock_info_df['wholesale_orders_since_start'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
+        base_stock_info_df['seasonal_sell_through_pc'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / base_stock_info_df['base_stock']
+        base_stock_info_df['daily_sell_rate'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
+        base_stock_info_df['estimated_sell_out_weeks'] = base_stock_info_df['available_to_sell'] / base_stock_info_df['daily_sell_rate'] / 7
         
         #fix up any divide by zeroes
-        stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
+        base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
         
         common.logger.debug('finished vectored operations - data manipulation and merge complete')
 
+        return base_stock_info_df
+
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+
+def serve_layout():
+    global earliest_date, latest_date
+    #global base_stock_info_df,display_stock_info_df
+    #global product_option_list,color_option_list,size_option_list,season_option_list    
+
+
         #from here all about presenting the data table
 
-        display_stock_info_df = stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
+        display_stock_info_df = base_stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
                              'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                              'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].copy() #seem to need to take copy
 
@@ -400,7 +437,7 @@ def serve_layout():
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
+                            columns=col_title_mapping,   #[col_title_mapping[i] for i in display_stock_info_df.columns],
                             #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
                             data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
@@ -416,7 +453,8 @@ def serve_layout():
                         )
                     ]),
                 ]),
-            ])
+            ]),
+            dcc.Store(id='signal')
         ])
     except Exception as ex:
         tb = traceback.format_exc()
@@ -425,18 +463,22 @@ def serve_layout():
                 html.P('Error processing layout')
         ) 
 
-@dash_app.callback(
-    Input('start_date_picker', 'date'))
+@cache.memoize()
+def global_store(base_start_date):
+    return process_data(base_start_date)
+
+@dash_app.callback(Output('signal','data'),Input('start_date_picker', 'date'))
 def update_output(date_value):
-    global base_start_date
+    #global base_start_date
     if date_value is not None:
         base_start_date = date.fromisoformat(date_value)
-    return None
+        global_store(base_start_date)#process_data(base_start_date) #need to reprocess data since 
+    return base_start_date
 
 @dash_app.callback(
     Input('end_date_picker', 'date'))
 def update_output(date_value):
-    global end_season_date
+    #global end_season_date
     if date_value is not None:
         end_season_date = date.fromisoformat(date_value)
     return None
@@ -446,7 +488,7 @@ def update_output(date_value):
     Input('season_option', 'value')
 )
 def set_dropdown_options(season):
-    global display_stock_info_df
+    #global display_stock_info_df
     dff = display_stock_info_df.copy()
     if season:
         seasons = []
@@ -463,7 +505,7 @@ def set_dropdown_options(season):
     Input('product_option', 'value')
 )
 def set_dropdown_options(product):
-    global display_stock_info_df
+    #global display_stock_info_df
     dff = display_stock_info_df.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
@@ -475,7 +517,7 @@ def set_dropdown_options(product):
     Input('color_option','value')]
 )
 def set_dropdown_options(product,color):
-    global display_stock_info_df
+    #global display_stock_info_df
     dff = display_stock_info_df.copy()
     if product:
         dff = dff[dff['p_name'].isin(product)]
@@ -484,8 +526,8 @@ def set_dropdown_options(product,color):
     return [{'label':x,'value':x} for x in dff['size'].unique()]
 
 
-def add_additional_calcs(df):
-    global latest_date,base_start_date
+def add_additional_calcs(df,base_start_date):
+    global latest_date
     df = df.copy()
 
 
@@ -526,16 +568,17 @@ def add_additional_calcs(df):
         [Input('season_option','value'),
         Input('product_option', 'value'),
         Input('color_option','value'),
-        Input('size_option','value')],
+        Input('size_option','value'),
+        Input('signal','data')],
         running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
-def update_table(v_season,v_product,v_color,v_size):
-    global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
-
+def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
+    #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
 
     try:
-        dff = display_stock_info_df.copy()
+        
+        dff = global_store(v_base_start_date)
         group_list = []
         sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                     'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
@@ -584,13 +627,16 @@ def update_table(v_season,v_product,v_color,v_size):
         else:
             df_grouped = dff
 
-        return add_additional_calcs(df_grouped[present_list]).to_dict("records")
+        return add_additional_calcs(df_grouped[present_list],v_base_start).to_dict("records")
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
         return html.Div(
                 html.P('Error processing layout')
         ) 
+
+get_data_from_data_store()
+#process_data(earliest_date)
 
 dash_app.layout = serve_layout
        
