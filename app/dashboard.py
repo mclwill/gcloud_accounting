@@ -691,7 +691,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
                 present_list.remove('size')
                 if 'sku_id' in present_list:
                     present_list.remove('sku_id')
-            if not v_color or v_color ==' All':
+            if not v_color or v_color == 'All':
                 group_list.append('p_name')
                 present_list.remove('color')
             if not v_product:
@@ -711,7 +711,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             else:
                 df_grouped = dff
 
-            common.logger.info('size choice after:' + str(v_size) + '\n' + str(df_grouped['size'].unique().tolist()))
+            #common.logger.info('size choice after:' + str(v_size) + '\n' + str(df_grouped['size'].unique().tolist()))
 
             return add_additional_calcs(df_grouped[present_list],v_base_start_date).to_dict("records")
         else:
