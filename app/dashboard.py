@@ -21,6 +21,7 @@ from dateutil import tz
 import numpy as np
 from flask_caching import Cache
 import redis
+from functools import partial
 
 import FlaskApp.app.common as common
 
@@ -234,7 +235,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-def serve_layout():
+def serve_layout(base_stock_info_df):
     global earliest_date, latest_date
     #global base_stock_info_df,display_stock_info_df
     #global product_option_list,color_option_list,size_option_list,season_option_list    
@@ -638,7 +639,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
         ) 
 
 get_data_from_data_store()
-#process_data(earliest_date)
 
-dash_app.layout = serve_layout
+
+dash_app.layout = partial(serve_layout, process_data(earliest_date))
        
