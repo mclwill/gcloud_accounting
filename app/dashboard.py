@@ -586,7 +586,7 @@ def add_additional_calcs(df,base_start_date):
 )
 def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
-
+    global season_option_list, product_option_list, color_option_list, size_option_list
     try:
         common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
         #if type(v_base_start_date) == str:
