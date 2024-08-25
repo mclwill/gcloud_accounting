@@ -598,13 +598,14 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
         if v_base_start_date:
             dff = global_store(v_base_start_date).copy()
             
-            display_columns = display_stock_info_df.columns.tolist()
-            product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
-            color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
-            size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
+            #for some reason can't seem to get these from global variables
+            display_columns = dff.columns.tolist()
+            product_option_list = sorted(dff['p_name'].unique().tolist())
+            color_option_list = sorted(dff['color'].unique().tolist())
+            size_option_list = sorted(dff['size'].unique().tolist())
             season_option_list = []
             
-            for ss in display_stock_info_df['season'].to_list():
+            for ss in dff['season'].to_list():
                 for s in ss.split(','):
                     if s not in season_option_list:
                         season_option_list.append(s)
