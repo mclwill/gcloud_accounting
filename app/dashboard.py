@@ -156,7 +156,7 @@ def get_data_from_data_store():
 def process_data(base_start_date): #process data based on base_start_date --> need to call it whenever base_start_date changes
     global stock_info_df,orders_df,po_df
     global latest_date,earliest_date
-    #global end_season_date,start_of_previous_week,end_of_previous_week
+    global start_of_previous_week,end_of_previous_week
     
     try:
 
