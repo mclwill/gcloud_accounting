@@ -476,7 +476,10 @@ def global_store(base_start_date):
             base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
     return process_data(base_start_date)
 
-@dash_app.callback(Output('signal','data'),Input('start_date_picker', 'date'))
+@dash_app.callback(Output('signal','data'),
+                  Input('start_date_picker', 'date'),
+                  running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
+                           (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})])
 def update_output(date_value):
     #global base_start_date
     #common.logger.info('start Date Picker ' + str(type(date_value)) + '\n' + str(date_value))
@@ -485,7 +488,7 @@ def update_output(date_value):
         #common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
         #store base_start_date as string
         global_store(date_value)#process_data(base_start_date) #need to reprocess data since 
-        common.logger.info('start Date Picker 2' + str(type(date_value)) + '\n' + str(date_value))
+        #common.logger.info('start Date Picker 2' + str(type(date_value)) + '\n' + str(date_value))
         return date_value
 
 @dash_app.callback(
