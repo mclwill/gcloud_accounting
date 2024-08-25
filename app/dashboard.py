@@ -361,7 +361,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             html.Div([
                                 dcc.Dropdown(
                                     id='season_option',
-                                    options=season_option_list,
+                                    options=[{'label':x, 'value':x for x in season_option_list}],
                                     value=[],
                                     placeholder = 'All',
                                     multi = True,
