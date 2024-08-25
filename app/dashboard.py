@@ -37,7 +37,7 @@ stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 po_file_path = os.path.join(data_store_folder,'data_po.csv')
 
-config = {
+CACHE_CONFIG = {
     "DEBUG": True,          # some Flask specific configs
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
     "CACHE_DEFAULT_TIMEOUT": 300
