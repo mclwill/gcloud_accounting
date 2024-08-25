@@ -597,7 +597,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
         #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
         if v_base_start_date:
             dff = global_store(v_base_start_date).copy()
-            
+            common.logger.info(str(dff.head()))
             #for some reason can't seem to get these from global variables
             display_columns = dff.columns.tolist()
             product_option_list = sorted(dff['p_name'].unique().tolist())
