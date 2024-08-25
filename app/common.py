@@ -439,6 +439,7 @@ def get_users():
 def get_dropbox_file_info(customer,file_path,**kwargs):
     try:
         from_date = kwargs.pop('from_date',None)
+        file_spec = kwargs.pop('file_spec',None)  #list of strings to be contained in file name
         files_list = []
         files_info = dbx.files_list_folder(file_path)
         more_info = True
@@ -466,7 +467,12 @@ def get_dropbox_file_info(customer,file_path,**kwargs):
             filtered_list = []
             for files in files_list:
                 if files['client_modified'] >= from_date:
-                    filtered_list.append(files)
+                    if not file_spec : 
+                        filtered_list.append(files)
+                    else:
+                        for f in file_spec:
+                            if f in files['name']:
+                                filtered_list.append(files)
             return filtered_list
         else:
             return files_list
