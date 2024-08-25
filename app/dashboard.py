@@ -480,10 +480,11 @@ def update_output(date_value):
     common.logger.info('start Date Picker ' + str(type(date_value)) + '\n' + str(date_value))
     if date_value is not None:
         #base_start_date = date.fromisoformat(date_value)
-        common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
+        #common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
         #store base_start_date as string
-        global_store(base_start_date)#process_data(base_start_date) #need to reprocess data since 
-    return base_start_date
+        global_store(date_value)#process_data(base_start_date) #need to reprocess data since 
+        common.logger.info('start Date Picker 2' + str(type(date_value)) + '\n' + str(date_value))
+        return date_value
 
 @dash_app.callback(
     Input('end_date_picker', 'date'))
