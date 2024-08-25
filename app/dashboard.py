@@ -498,45 +498,57 @@ def update_output(date_value):
 
 @dash_app.callback(
     Output('product_option', 'options'),
-    Input('season_option', 'value')
+    [Input('season_option', 'value'),
+    Input('signal','data')]
 )
-def set_dropdown_options(season):
+def set_dropdown_options(season,v_base_start_date):
     #global display_stock_info_df
-    dff = display_stock_info_df.copy()
-    if season:
-        seasons = []
-        for ss in season:
-            for s in ss.split(','):
-                if s not in seasons:
-                    seasons.append(s)
-        dff = dff[dff['season'].str.contains('|'.join(seasons))]
-    return [{'label':x,'value':x} for x in dff['p_name'].unique()]
+    if v_base_start_date:
+        dff = global_store(v_base_start_date).copy()
+        if season:
+            seasons = []
+            for ss in season:
+                for s in ss.split(','):
+                    if s not in seasons:
+                        seasons.append(s)
+            dff = dff[dff['season'].str.contains('|'.join(seasons))]
+        return [{'label':x,'value':x} for x in dff['p_name'].unique()]
+    else 
+        return None
 
 
 @dash_app.callback(
     Output('color_option', 'options'),
-    Input('product_option', 'value')
+    [Input('product_option', 'value'),
+    Input('signal','data')]
 )
-def set_dropdown_options(product):
+def set_dropdown_options(product,v_base_start_date):
     #global display_stock_info_df
-    dff = display_stock_info_df.copy()
-    if product:
-        dff = dff[dff['p_name'].isin(product)]
-    return [{'label':x,'value':x} for x in dff['color'].unique()]
+    if v_base_start_date:
+        dff = global_store(v_base_start_date).copy()
+        if product:
+            dff = dff[dff['p_name'].isin(product)]
+        return [{'label':x,'value':x} for x in dff['color'].unique()]
+    else 
+        return None
 
 @dash_app.callback(
     Output('size_option', 'options'),
     [Input('product_option', 'value'),
-    Input('color_option','value')]
+    Input('color_option','value'),
+    Input('signal','data')]
 )
-def set_dropdown_options(product,color):
+def set_dropdown_options(product,color,v_base_start_date):
     #global display_stock_info_df
-    dff = display_stock_info_df.copy()
-    if product:
-        dff = dff[dff['p_name'].isin(product)]
-    if color:
-        dff = dff[dff['color'].isin(color)]
-    return [{'label':x,'value':x} for x in dff['size'].unique()]
+    if v_base_start_date:
+        dff = global_store(v_base_start_date).copy()
+        if product:
+            dff = dff[dff['p_name'].isin(product)]
+        if color:
+            dff = dff[dff['color'].isin(color)]
+        return [{'label':x,'value':x} for x in dff['size'].unique()]
+    else 
+        return None
 
 
 def add_additional_calcs(df,base_start_date):
