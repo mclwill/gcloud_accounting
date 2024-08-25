@@ -557,7 +557,7 @@ def set_dropdown_options(product,color,v_base_start_date):
             dff = dff[dff['p_name'].isin(product)]
         if color:
             dff = dff[dff['color'].isin(color)]
-        return [{'label':x,'value':x} for x in (['All'] + sorted(dff['size'].unique().tolist() + ['All']))]
+        return [{'label':x,'value':x} for x in (['All'] + sorted(dff['size'].unique().tolist()))]
     else:
         return None
 
