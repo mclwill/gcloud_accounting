@@ -53,6 +53,10 @@ for view_func in app.view_functions:
     if view_func.startswith(dash_app.config['routes_pathname_prefix']):
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
+def flush_cache():
+    with app.app_context():
+        cache.clear()
+
 def last_day_of_month(any_day):
     # The day 28 exists in every month. 4 days later, it's always next month
     next_month = any_day.replace(day=28) + timedelta(days=4)
@@ -101,6 +105,8 @@ def get_data_from_data_store():
 
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
+
+        flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
 
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
 
