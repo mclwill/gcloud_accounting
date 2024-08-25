@@ -171,7 +171,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell']],base_start_date).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
 
         base_stock_info_df.set_index('ean',inplace=True) #set stock DF with 'ean' as index in preparation for join
-        base_tock_info_df = base_stock_info_df.join(base_available_to_sell_df) #do join on 'ean'
+        base_stock_info_df = base_stock_info_df.join(base_available_to_sell_df) #do join on 'ean'
         base_stock_info_df.reset_index(inplace=True) #reset index 
         
         common.logger.debug('Base data merge complete - starting collection of po and orders DFs')
