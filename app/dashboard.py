@@ -310,7 +310,7 @@ def serve_layout(base_stock_info_df,end_season_date):
         size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
         season_option_list = []
 
-        common.logger.info('product list 1 :' + str(product_option_list))
+        #common.logger.info('product list 1 :' + str(product_option_list))
         
         for ss in display_stock_info_df['season'].to_list():
             for s in ss.split(','):
@@ -361,7 +361,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             html.Div([
                                 dcc.Dropdown(
                                     id='season_option',
-                                    options=[{'label':x, 'value':x} for x in sorted(season_option_list)],
+                                    options=season_option_list,
                                     value=[],
                                     placeholder = 'All',
                                     multi = True,
@@ -628,7 +628,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             size_option_list = sorted(dff['size'].unique().tolist())
             season_option_list = []
 
-            common.logger.info('product list 1 :' + str(product_option_list))
+            #common.logger.info('product list 1 :' + str(product_option_list))
             
             for ss in dff['season'].to_list():
                 for s in ss.split(','):
