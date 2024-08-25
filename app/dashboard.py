@@ -471,7 +471,7 @@ def serve_layout(base_stock_info_df,end_season_date):
 def global_store(base_start_date):
     common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
     if type(base_start_date) == str:
-            base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d')
+            base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date
     return process_data(base_start_date)
 
 @dash_app.callback(Output('signal','data'),Input('start_date_picker', 'date'))
