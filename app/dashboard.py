@@ -711,6 +711,8 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             else:
                 df_grouped = dff
 
+            common.logger.info('size choice after:' + str(v_size) + '\n' + str(df_grouped['size'].unique().tolist()))
+
             return add_additional_calcs(df_grouped[present_list],v_base_start_date).to_dict("records")
         else:
             return None
