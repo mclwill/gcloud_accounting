@@ -478,8 +478,9 @@ def global_store(base_start_date):
 def update_output(date_value):
     #global base_start_date
     if date_value is not None:
-        base_start_date = date.fromisoformat(date_value)
+        #base_start_date = date.fromisoformat(date_value)
         common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
+        #store base_start_date as string
         global_store(base_start_date)#process_data(base_start_date) #need to reprocess data since 
     return base_start_date
 
