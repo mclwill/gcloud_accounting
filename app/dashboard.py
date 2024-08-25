@@ -654,10 +654,10 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             if v_product : 
                 dff = dff[dff['p_name'].isin(v_product)]
             if v_color :
-                if v_color != 'All':
+                if 'All' not in v_color : 
                     dff = dff[dff['color'].isin(v_color)]
             if v_size :
-                if v_size != 'All':
+                if 'All' not in v_size :
                     dff = dff[dff['size'].isin(v_size)]
             
 
