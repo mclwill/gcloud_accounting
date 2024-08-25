@@ -657,6 +657,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
                 if 'All' not in v_color : 
                     dff = dff[dff['color'].isin(v_color)]
             if v_size :
+                common.logger.info('size choice:' + str(v_size))
                 if 'All' not in v_size :
                     dff = dff[dff['size'].isin(v_size)]
             
