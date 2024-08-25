@@ -540,7 +540,8 @@ def set_dropdown_options(product,color):
 def add_additional_calcs(df,base_start_date):
     global latest_date
     df = df.copy()
-
+    if type(v_base_start_date) == str:
+        base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d').date()
 
     df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start'])
     df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) 
@@ -586,7 +587,8 @@ def add_additional_calcs(df,base_start_date):
 )
 def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
-    global season_option_list, product_option_list, color_option_list, size_option_list
+    global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
+    
     try:
         common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
         #if type(v_base_start_date) == str:
@@ -596,7 +598,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
-            present_list = dff.columns.tolist().copy()
+            present_list = display_columns.copy()
             
             if not v_season or v_season == 'All':
                 v_seasons = season_option_list
