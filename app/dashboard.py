@@ -477,6 +477,7 @@ def global_store(base_start_date):
 @dash_app.callback(Output('signal','data'),Input('start_date_picker', 'date'))
 def update_output(date_value):
     #global base_start_date
+    common.logger.info('start Date Picker ' + str(type(date_value)) + '\n' + str(date_value))
     if date_value is not None:
         #base_start_date = date.fromisoformat(date_value)
         common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
