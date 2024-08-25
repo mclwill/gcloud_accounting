@@ -541,20 +541,20 @@ def set_dropdown_options(product,color):
 
 def add_additional_calcs(df,base_start_date):
     global latest_date
-    df = df.copy()
+    dfd = df.copy()
     if type(base_start_date) == str:
         base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
 
-    df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start'])
-    df['wholesale_pc_since_start'] = df['wholesale_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start']) 
-    df['seasonal_sell_through_pc'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / df['base_stock']
-    df['daily_sell_rate'] = (df['online_orders_since_start'] + df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
-    df['estimated_sell_out_weeks'] = df['available_to_sell'] / df['daily_sell_rate'] / 7
+    dff['online_pc_since_start'] = dff['online_orders_since_start'] / (dff['online_orders_since_start'] + dff['wholesale_orders_since_start'])
+    dff['wholesale_pc_since_start'] = dff['wholesale_orders_since_start'] / (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) 
+    dff['seasonal_sell_through_pc'] = (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) / dff['base_stock']
+    dff['daily_sell_rate'] = (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) / (latest_date - base_start_date).days
+    dff['estimated_sell_out_weeks'] = dff['available_to_sell'] / dff['daily_sell_rate'] / 7
     
-    df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
-        df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
+    dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
+        dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
 
-    '''#loop to insert new cols into DF
+    '''#loop to insert new cols into dff
     new_cols = []
     i = 0
     new_found = False
@@ -574,8 +574,8 @@ def add_additional_calcs(df,base_start_date):
                 new_cols.append(col)
         else:
             new_found=False'''
-    common.logger.info('df from calcs' + str(df.head()))
-    return df
+    common.logger.info('dff from calcs' + str(dff.head()))
+    return dff
         
 @dash_app.callback (
         Output('data_table', 'data'),
