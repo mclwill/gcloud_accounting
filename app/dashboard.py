@@ -470,7 +470,8 @@ def serve_layout(base_stock_info_df,end_season_date):
 @cache.memoize()
 def global_store(base_start_date):
     common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
-
+    if type(base_start_date) == str:
+            base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
     return process_data(base_start_date)
 
 @dash_app.callback(Output('signal','data'),Input('start_date_picker', 'date'))
@@ -585,6 +586,8 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
 
     try:
         common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
+        #if type(v_base_start_date) == str:
+        #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
         dff = global_store(v_base_start_date)
         group_list = []
         sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
