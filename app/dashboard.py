@@ -41,7 +41,7 @@ CACHE_CONFIG = {
     'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'redis://localhost:6379')
 }
 cache = Cache()
-cache.init_app(app.server, config=CACHE_CONFIG)
+cache.init_app(app, config=CACHE_CONFIG)
 
 dash_app = dash.Dash(server=app,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
 
