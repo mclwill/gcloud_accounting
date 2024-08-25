@@ -297,7 +297,6 @@ def serve_layout(base_stock_info_df,end_season_date):
         #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
         
 
-        '''
         display_columns = display_stock_info_df.columns.tolist()
 
         product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
@@ -310,7 +309,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                 if s not in season_option_list:
                     season_option_list.append(s)
         season_option_list.sort()
-        '''
+        
         return html.Div([
             dbc.Row([
                 dbc.Col(
@@ -590,7 +589,7 @@ def add_additional_calcs(df,base_start_date):
 )
 def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
-    global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
+    #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
     
     try:
         common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
@@ -598,8 +597,8 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
         #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
         if v_base_start_date:
             dff = global_store(v_base_start_date).copy()
+            
             display_columns = display_stock_info_df.columns.tolist()
-
             product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
             color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
             size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
@@ -610,7 +609,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
                     if s not in season_option_list:
                         season_option_list.append(s)
             season_option_list.sort()
-            
+
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
