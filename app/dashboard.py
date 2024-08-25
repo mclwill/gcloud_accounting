@@ -237,231 +237,232 @@ def serve_layout():
     global earliest_date, latest_date
     #global base_stock_info_df,display_stock_info_df
     #global product_option_list,color_option_list,size_option_list,season_option_list    
-
-
-    #from here all about presenting the data table
-
-    display_stock_info_df = base_stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
-                         'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
-                         'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].copy() #seem to need to take copy
-
     
-    '''
-    col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
-                         'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
-                         'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
-                         'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
-                         'wholesale_revenue_since_start':'Wholesale $$$ Since Start','online_pc_since_start':'Online %','wholesale_pc_since_start':'Wholesale %','seasonal_sell_through_pc':'Seasonal Sell Through %',\
-                         'daily_sell_rate':'Daily Sell Rate','estimated_sell_out_weeks':'Estimated Weeks to Sell Out'}
-    '''
-    
-    #data table formats and mapping
-    money = FormatTemplate.money(2)
-    percentage = FormatTemplate.percentage(2)
-    fixed = Format(precision=2, scheme=Scheme.fixed)
+    try:
 
-    col_title_mapping = {
-        'url_markdown':{'id':'url_markdown','name':'Image','presentation':'markdown'},
-        'e_date':{'id':'e_date','name':'Earliest Data'},
-        'season':{'id':'season','name':'Season(s)'},
-        'p_name':{'id':'p_name','name':'Product'},
-        'color':{'id':'color','name':'Colour'},
-        'size':{'id':'size','name':'Size'},
-        'category':{'id':'category','name':'Category'},
-        'sub_category':{'id':'sub_category','name':'Sub Category'},
-        'sku_id':{'id':'sku_id','name':'SKU'},
-        'in_stock':{'id':'in_stock','name':'In Stock'},
-        'base_available_to_sell':{'id':'base_available_to_sell','name':'Seasonal Units Ordered'},
-        'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
-        'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
-        'additional_purchases':{'id':'additional_purchases','name':'Additional Purchases'},
-        'base_stock':{'id':'base_stock','name':'Base Stock'},
-        'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Units Last Week'},
-        'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
-        'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Units Since Start'},
-        'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
-        'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':money},
-        'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start','type':'numeric','format':money},
-        'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %','type':'numeric','format':percentage},
-        'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':percentage},
-        'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':percentage},
-        'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':fixed},
-        'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':fixed}
-    }
+        #from here all about presenting the data table
 
-    #display_stock_info_df = stock_info_df.copy()
-    #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
-    display_columns = display_stock_info_df.columns.tolist()
+        display_stock_info_df = base_stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
+                             'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
+                             'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].copy() #seem to need to take copy
 
-    product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
-    color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
-    size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
-    season_option_list = []
-    
-    for ss in display_stock_info_df['season'].to_list():
-        for s in ss.split(','):
-            if s not in season_option_list:
-                season_option_list.append(s)
-    season_option_list.sort()
+        
+        '''
+        col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
+                             'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
+                             'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
+                             'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
+                             'wholesale_revenue_since_start':'Wholesale $$$ Since Start','online_pc_since_start':'Online %','wholesale_pc_since_start':'Wholesale %','seasonal_sell_through_pc':'Seasonal Sell Through %',\
+                             'daily_sell_rate':'Daily Sell Rate','estimated_sell_out_weeks':'Estimated Weeks to Sell Out'}
+        '''
+        
+        #data table formats and mapping
+        money = FormatTemplate.money(2)
+        percentage = FormatTemplate.percentage(2)
+        fixed = Format(precision=2, scheme=Scheme.fixed)
 
-    return html.Div([
-        dbc.Row([
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.H1("Dashboard"),
-                        html.P('''
-                             This is a dashboard for A.Emery
-                             '''),
-                    ]),   
-                ],className="border-0 bg-transparent"),
-                width={"size":4}
-            ),
-            dbc.Col(
-                dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
-                width={"size":1,'offset':12}
-            )
-        ],justify='evenly'),
-        dbc.Row([
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.P("Start Date - earliest is " + earliest_date.strftime('%d-%m-%Y')),
-                        html.Div([
-                            dcc.DatePickerSingle(
-                                id='start_date_picker',
-                                min_date_allowed = earliest_date,
-                                max_date_allowed = latest_date,
-                                initial_visible_month = earliest_date,
-                                date = earliest_date,
-                                display_format = 'D-M-Y'
-                            ),
+        col_title_mapping = {
+            'url_markdown':{'id':'url_markdown','name':'Image','presentation':'markdown'},
+            'e_date':{'id':'e_date','name':'Earliest Data'},
+            'season':{'id':'season','name':'Season(s)'},
+            'p_name':{'id':'p_name','name':'Product'},
+            'color':{'id':'color','name':'Colour'},
+            'size':{'id':'size','name':'Size'},
+            'category':{'id':'category','name':'Category'},
+            'sub_category':{'id':'sub_category','name':'Sub Category'},
+            'sku_id':{'id':'sku_id','name':'SKU'},
+            'in_stock':{'id':'in_stock','name':'In Stock'},
+            'base_available_to_sell':{'id':'base_available_to_sell','name':'Seasonal Units Ordered'},
+            'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
+            'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
+            'additional_purchases':{'id':'additional_purchases','name':'Additional Purchases'},
+            'base_stock':{'id':'base_stock','name':'Base Stock'},
+            'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Units Last Week'},
+            'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
+            'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Units Since Start'},
+            'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
+            'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':money},
+            'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start','type':'numeric','format':money},
+            'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %','type':'numeric','format':percentage},
+            'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':percentage},
+            'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':percentage},
+            'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':fixed},
+            'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':fixed}
+        }
+
+        #display_stock_info_df = stock_info_df.copy()
+        #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
+        display_columns = display_stock_info_df.columns.tolist()
+
+        product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
+        color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
+        size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
+        season_option_list = []
+        
+        for ss in display_stock_info_df['season'].to_list():
+            for s in ss.split(','):
+                if s not in season_option_list:
+                    season_option_list.append(s)
+        season_option_list.sort()
+
+        return html.Div([
+            dbc.Row([
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.H1("Dashboard"),
+                            html.P('''
+                                 This is a dashboard for A.Emery
+                                 '''),
+                        ]),   
+                    ],className="border-0 bg-transparent"),
+                    width={"size":4}
+                ),
+                dbc.Col(
+                    dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
+                    width={"size":1,'offset':12}
+                )
+            ],justify='evenly'),
+            dbc.Row([
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Start Date - earliest is " + earliest_date.strftime('%d-%m-%Y')),
+                            html.Div([
+                                dcc.DatePickerSingle(
+                                    id='start_date_picker',
+                                    min_date_allowed = earliest_date,
+                                    max_date_allowed = latest_date,
+                                    initial_visible_month = earliest_date,
+                                    date = earliest_date,
+                                    display_format = 'D-M-Y'
+                                ),
+                            ]),
                         ]),
-                    ]),
-                ],className="border-0 bg-transparent"),
-            ),
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.P("Season(s)"),
-                        html.Div([
-                            dcc.Dropdown(
-                                id='season_option',
-                                options=season_option_list,
-                                value=[],
-                                placeholder = 'All',
-                                multi = True,
-                                clearable = True
-                            ),
+                    ],className="border-0 bg-transparent"),
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Season(s)"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='season_option',
+                                    options=season_option_list,
+                                    value=[],
+                                    placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
                         ]),
-                    ]),
-                ],className="border-0 bg-transparent"),
-            ),
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.P("Product"),
-                        html.Div([
-                            dcc.Dropdown(
-                                id='product_option',
-                                options=product_option_list,
-                                value=[],
-                                placeholder = 'All',
-                                multi = True,
-                                clearable = True
-                            ),
+                    ],className="border-0 bg-transparent"),
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Product"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='product_option',
+                                    options=product_option_list,
+                                    value=[],
+                                    placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
                         ]),
-                    ]),
-                ],className="border-0 bg-transparent"),
-            ),
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.P("Colour"),
-                        html.Div([
-                            dcc.Dropdown(
-                                id='color_option',
-                                options=color_option_list,
-                                value=[],
-                                #placeholder = 'All',
-                                multi = True,
-                                clearable = True
-                            ),
+                    ],className="border-0 bg-transparent"),
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Colour"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='color_option',
+                                    options=color_option_list,
+                                    value=[],
+                                    #placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
                         ]),
-                    ]),
-                ],className="border-0 bg-transparent"),
-            ),
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.P("Size"),
-                        html.Div([
-                            dcc.Dropdown(
-                                id='size_option',
-                                options=size_option_list,
-                                value=[],
-                                #placeholder = 'All',
-                                multi = True,
-                                clearable = True
-                            ),
+                    ],className="border-0 bg-transparent"),
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Size"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='size_option',
+                                    options=size_option_list,
+                                    value=[],
+                                    #placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
                         ]),
-                    ]),
-                ],className="border-0 bg-transparent"),
-            ),
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.P("End Season Date"),
-                        html.Div([
-                            dcc.DatePickerSingle(
-                                id='end_date_picker',
-                                min_date_allowed = (aest_now + timedelta(days=1)).date(),
-                                initial_visible_month = aest_now.date(),
-                                date = end_season_date,
-                                display_format = 'D-M-Y'
-                            ),
+                    ],className="border-0 bg-transparent"),
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("End Season Date"),
+                            html.Div([
+                                dcc.DatePickerSingle(
+                                    id='end_date_picker',
+                                    min_date_allowed = (aest_now + timedelta(days=1)).date(),
+                                    initial_visible_month = aest_now.date(),
+                                    date = end_season_date,
+                                    display_format = 'D-M-Y'
+                                ),
+                            ]),
                         ]),
-                    ]),
-                ],className="border-0 bg-transparent"),   
-            ),
-        ]),
-        dbc.Row([
-            dbc.Col([
-                html.Div([
-                    html.Div(id='dd-output-container',children='Data Update Complete')
-                ],style={'backgroundColor':'red','color':'white'})
+                    ],className="border-0 bg-transparent"),   
+                ),
             ]),
-        ], align='center'),
-        dbc.Row([
-            dbc.Card([
-                dbc.CardBody([
-                    dash_table.DataTable(
-                        id='data_table',
-                        columns=col_title_mapping,   #[col_title_mapping[i] for i in display_stock_info_df.columns],
-                        #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
-                        data=display_stock_info_df.to_dict("records"),
-                        style_cell_conditional = [
-                            {
-                                'if':{'column_id':i},
-                                'textAlign':'center'
-                            } for i in ['url_markdown']
-                        ],
-                        style_cell={'maxWidth':'50px','whiteSpace':'normal'},
-                        style_header={'textAlign':'center'},
-                        css=[dict(selector= "p", rule= "margin: 0; text-align: center")],
-                        sort_action = 'native',
-                    )
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        html.Div(id='dd-output-container',children='Data Update Complete')
+                    ],style={'backgroundColor':'red','color':'white'})
+                ]),
+            ], align='center'),
+            dbc.Row([
+                dbc.Card([
+                    dbc.CardBody([
+                        dash_table.DataTable(
+                            id='data_table',
+                            columns=col_title_mapping,   #[col_title_mapping[i] for i in display_stock_info_df.columns],
+                            #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
+                            data=display_stock_info_df.to_dict("records"),
+                            style_cell_conditional = [
+                                {
+                                    'if':{'column_id':i},
+                                    'textAlign':'center'
+                                } for i in ['url_markdown']
+                            ],
+                            style_cell={'maxWidth':'50px','whiteSpace':'normal'},
+                            style_header={'textAlign':'center'},
+                            css=[dict(selector= "p", rule= "margin: 0; text-align: center")],
+                            sort_action = 'native',
+                        )
+                    ]),
                 ]),
             ]),
-        ]),
-        dcc.Store(id='signal')
-    ])
-except Exception as ex:
-    tb = traceback.format_exc()
-    common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
-    return html.Div(
-            html.P('Error processing layout')
-    ) 
+            dcc.Store(id='signal')
+        ])
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
+        return html.Div(
+                html.P('Error processing layout')
+        ) 
 
 @cache.memoize()
 def global_store(base_start_date):
