@@ -395,7 +395,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             html.Div([
                                 dcc.Dropdown(
                                     id='color_option',
-                                    options=color_option_list,
+                                    options=['All'] + color_option_list,
                                     value=[],
                                     #placeholder = 'All',
                                     multi = True,
@@ -412,7 +412,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             html.Div([
                                 dcc.Dropdown(
                                     id='size_option',
-                                    options=size_option_list,
+                                    options=['All'] + size_option_list,
                                     value=[],
                                     #placeholder = 'All',
                                     multi = True,
@@ -654,9 +654,11 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             if v_product : 
                 dff = dff[dff['p_name'].isin(v_product)]
             if v_color :
-                dff = dff[dff['color'].isin(v_color)]
+                if v_color != 'All':
+                    dff = dff[dff['color'].isin(v_color)]
             if v_size :
-                dff = dff[dff['size'].isin(v_size)]
+                if v_size != 'All':
+                    dff = dff[dff['size'].isin(v_size)]
             
 
             if not v_size:
