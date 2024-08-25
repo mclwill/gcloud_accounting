@@ -469,6 +469,7 @@ def serve_layout(base_stock_info_df,end_season_date):
 
 @cache.memoize()
 def global_store(base_start_date):
+    common.logger.info('Base Start Date in global_store' + str(type(base_start_date)))
     return process_data(base_start_date)
 
 @dash_app.callback(Output('signal','data'),Input('start_date_picker', 'date'))
@@ -476,6 +477,7 @@ def update_output(date_value):
     #global base_start_date
     if date_value is not None:
         base_start_date = date.fromisoformat(date_value)
+        common.logger.info('Base Start Date in update_output' + str(type(base_start_date)))
         global_store(base_start_date)#process_data(base_start_date) #need to reprocess data since 
     return base_start_date
 
