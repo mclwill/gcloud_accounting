@@ -162,7 +162,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
     global start_of_previous_week,end_of_previous_week
     
     try:
-
+        common.logger.info('Base Start Date Type' + str(type(base_start_date)))
         #begin data merge of order and po into stock df
         common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
         
@@ -443,7 +443,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             id='data_table',
                             columns=col_title_mapping,   #[col_title_mapping[i] for i in display_stock_info_df.columns],
                             #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
-                            data=base_display_stock_info_df.to_dict("records"),
+                            data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -640,7 +640,6 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
         ) 
 
 get_data_from_data_store()
-
 
 dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
        
