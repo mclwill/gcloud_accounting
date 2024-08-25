@@ -542,7 +542,7 @@ def set_dropdown_options(product,color):
 def add_additional_calcs(df,base_start_date):
     global latest_date
     df = df.copy()
-    if type(v_base_start_date) == str:
+    if type(base_start_date) == str:
         base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
 
     df['online_pc_since_start'] = df['online_orders_since_start'] / (df['online_orders_since_start'] + df['wholesale_orders_since_start'])
