@@ -96,6 +96,7 @@ def get_data_from_data_store():
 
     global stock_info_df,orders_df,po_df
     global latest_date,earliest_date,aest_now,default_end_season_date
+    global start_of_previous_week,end_of_previous_week
     
 
     try:
