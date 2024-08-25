@@ -443,7 +443,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                     dbc.CardBody([
                         dash_table.DataTable(
                             id='data_table',
-                            columns=col_title_mapping,   #[col_title_mapping[i] for i in display_stock_info_df.columns],
+                            columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
                             #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
                             data=display_stock_info_df.to_dict("records"),
                             style_cell_conditional = [
@@ -574,7 +574,7 @@ def add_additional_calcs(df,base_start_date):
                 new_cols.append(col)
         else:
             new_found=False'''
- 
+    common.logger.info('df from calcs' + str(df.head()))
     return df
         
 @dash_app.callback (
