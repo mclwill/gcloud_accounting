@@ -555,7 +555,7 @@ def set_dropdown_options(product,color,v_base_start_date):
         dff = global_store(v_base_start_date).copy()
         if product:
             dff = dff[dff['p_name'].isin(product)]
-        if color and 'All' is not in color:
+        if color and ('All' not in color):
             dff = dff[dff['color'].isin(color)]
         return [{'label':x,'value':x} for x in (['All'] + sorted(dff['size'].unique().tolist()))]
     else:
