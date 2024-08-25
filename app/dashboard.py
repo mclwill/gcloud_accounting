@@ -659,7 +659,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             else:
                 df_grouped = dff
 
-            return add_additional_calcs(df_grouped[present_list],v_base_start).to_dict("records")
+            return add_additional_calcs(df_grouped[present_list],v_base_start_date).to_dict("records")
         else:
             return None
     except Exception as ex:
