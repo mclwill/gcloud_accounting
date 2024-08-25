@@ -584,7 +584,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
 
     try:
-        common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(base_start_date))
+        common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
         dff = global_store(v_base_start_date)
         group_list = []
         sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
