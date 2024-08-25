@@ -121,6 +121,7 @@ def get_data_store_info(customer):
             common.store_dropbox_unicode(customer,csv_file_data,stock_file_path)
             common.logger.info('Uphance stock DataStore updated for ' + customer + '\nFile Path: ' + stock_file_path)
 
+        common.logger.info('debug data_orders')
         #get order info from locally stored files
         stock_columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR','date_shipped','qty_shipped','qty_variance','PC']
         po_columns = ['po_number','date_received','ean','qty_received']
