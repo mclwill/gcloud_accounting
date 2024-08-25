@@ -40,7 +40,7 @@ po_file_path = os.path.join(data_store_folder,'data_po.csv')
 CACHE_CONFIG = {
     "DEBUG": True,          # some Flask specific configs
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
-    "CACHE_DEFAULT_TIMEOUT": 300
+    "CACHE_DEFAULT_TIMEOUT": 86400  #extend cache across time period of one day.
 }
 cache = Cache()
 cache.init_app(app, config=CACHE_CONFIG)
@@ -309,6 +309,8 @@ def serve_layout(base_stock_info_df,end_season_date):
         color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
         size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
         season_option_list = []
+
+        common.logger.info('product list :' + str(product_option_list))
         
         for ss in display_stock_info_df['season'].to_list():
             for s in ss.split(','):
