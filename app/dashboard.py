@@ -523,7 +523,7 @@ def set_dropdown_options(season,v_base_start_date):
                     if s not in seasons:
                         seasons.append(s)
             dff = dff[dff['season'].str.contains('|'.join(seasons))]
-        return [{'label':x,'value':x} for x in dff['p_name'].unique()]
+        return [{'label':x,'value':x} for x in sorted(dff['p_name'].unique().tolist())]
     else:
         return None
 
