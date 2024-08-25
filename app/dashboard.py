@@ -118,7 +118,9 @@ def get_data_from_data_store():
         latest_date = stock_info_df['date'].max().to_pydatetime().date() #get latest and earliest as pure dates (ie. drop time info)
         earliest_date = stock_info_df['date'].min().to_pydatetime().date()
         #base_start_date = earliest_date #establish base date for calculating percentages etc (ie. start of season) as earliest date ---> need to modify this when this can be set through the dashboard using 'Start Date'
-        
+        default_end_season_date = last_day_of_month(aest_now.date()) #default data as end of this month
+        start_of_previous_week = get_start_of_previous_week(aest_now.date())  #this should be the Monday of the previous week
+        end_of_previous_week = start_of_previous_week + timedelta(days=6) #this should be the Sunday of the previous week
 
         #get order info from data store
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
@@ -162,9 +164,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
 
         #begin data merge of order and po into stock df
         common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
-        end_season_date = last_day_of_month(aest_now.date()) #default data as end of this month
-        start_of_previous_week = get_start_of_previous_week(aest_now.date())  #this should be the Monday of the previous week
-        end_of_previous_week = start_of_previous_week + timedelta(days=6) #this should be the Sunday of the previous week
+        
 
         base_stock_info_df = stock_info_df.copy()
         
@@ -235,7 +235,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-def serve_layout(base_stock_info_df):
+def serve_layout(base_stock_info_df,end_season_date):
     global earliest_date, latest_date
     #global base_stock_info_df,display_stock_info_df
     #global product_option_list,color_option_list,size_option_list,season_option_list    
@@ -641,5 +641,5 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
 get_data_from_data_store()
 
 
-dash_app.layout = partial(serve_layout, process_data(earliest_date))
+dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
        
