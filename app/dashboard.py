@@ -479,10 +479,14 @@ def serve_layout(base_stock_info_df,end_season_date):
 
 @cache.memoize()
 def global_store(base_start_date):
-    #common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
-    if type(base_start_date) == str:
-            base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
-    return process_data(base_start_date)
+    try:
+        #common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
+        if type(base_start_date) == str:
+                base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
+        return process_data(base_start_date)
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 @dash_app.callback(Output('signal','data'),
                   Input('start_date_picker', 'date'),
@@ -491,21 +495,29 @@ def global_store(base_start_date):
 def update_output(date_value):
     #global base_start_date
     #common.logger.info('start Date Picker ' + str(type(date_value)) + '\n' + str(date_value))
-    if date_value is not None:
-        #base_start_date = date.fromisoformat(date_value)
-        #common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
-        #store base_start_date as string
-        global_store(date_value)#process_data(base_start_date) #need to reprocess data since 
-        #common.logger.info('start Date Picker 2' + str(type(date_value)) + '\n' + str(date_value))
-        return date_value
+    try:
+        if date_value is not None:
+            #base_start_date = date.fromisoformat(date_value)
+            #common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
+            #store base_start_date as string
+            global_store(date_value)#process_data(base_start_date) #need to reprocess data since 
+            #common.logger.info('start Date Picker 2' + str(type(date_value)) + '\n' + str(date_value))
+            return date_value
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 @dash_app.callback(
     Input('end_date_picker', 'date'))
 def update_output(date_value):
-    #global end_season_date
-    if date_value is not None:
-        end_season_date = date.fromisoformat(date_value)
-    return None
+    try:
+        #global end_season_date
+        if date_value is not None:
+            end_season_date = date.fromisoformat(date_value)
+        return None
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 @dash_app.callback(
     Output('product_option', 'options'),
@@ -513,19 +525,23 @@ def update_output(date_value):
     Input('signal','data')]
 )
 def set_dropdown_options(season,v_base_start_date):
-    #global display_stock_info_df
-    if v_base_start_date:
-        dff = global_store(v_base_start_date).copy()
-        if season:
-            seasons = []
-            for ss in season:
-                for s in ss.split(','):
-                    if s not in seasons:
-                        seasons.append(s)
-            dff = dff[dff['season'].str.contains('|'.join(seasons))]
-        return [{'label':x,'value':x} for x in sorted(dff['p_name'].unique().tolist())]
-    else:
-        return None
+    try:
+        #global display_stock_info_df
+        if v_base_start_date:
+            dff = global_store(v_base_start_date).copy()
+            if season:
+                seasons = []
+                for ss in season:
+                    for s in ss.split(','):
+                        if s not in seasons:
+                            seasons.append(s)
+                dff = dff[dff['season'].str.contains('|'.join(seasons))]
+            return [{'label':x,'value':x} for x in sorted(dff['p_name'].unique().tolist())]
+        else:
+            return None
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 
 @dash_app.callback(
@@ -534,14 +550,18 @@ def set_dropdown_options(season,v_base_start_date):
     Input('signal','data')]
 )
 def set_dropdown_options(product,v_base_start_date):
-    #global display_stock_info_df
-    if v_base_start_date:
-        dff = global_store(v_base_start_date).copy()
-        if  product:
-            dff = dff[dff['p_name'].isin(product)]
-        return [{'label':x,'value':x} for x in (['All'] + sorted(dff['color'].unique().to_list()))]
-    else: 
-        return None
+    try:
+        #global display_stock_info_df
+        if v_base_start_date:
+            dff = global_store(v_base_start_date).copy()
+            if  product:
+                dff = dff[dff['p_name'].isin(product)]
+            return [{'label':x,'value':x} for x in (['All'] + sorted(dff['color'].unique().tolist()))]
+        else: 
+            return None
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 @dash_app.callback(
     Output('size_option', 'options'),
@@ -551,15 +571,19 @@ def set_dropdown_options(product,v_base_start_date):
 )
 def set_dropdown_options(product,color,v_base_start_date):
     #global display_stock_info_df
-    if v_base_start_date:
-        dff = global_store(v_base_start_date).copy()
-        if product:
-            dff = dff[dff['p_name'].isin(product)]
-        if color and ('All' not in color):
-            dff = dff[dff['color'].isin(color)]
-        return [{'label':x,'value':x} for x in (['All'] + sorted(dff['size'].unique().tolist()))]
-    else:
-        return None
+    try:
+        if v_base_start_date:
+            dff = global_store(v_base_start_date).copy()
+            if product:
+                dff = dff[dff['p_name'].isin(product)]
+            if color and ('All' not in color):
+                dff = dff[dff['color'].isin(color)]
+            return [{'label':x,'value':x} for x in (['All'] + sorted(dff['size'].unique().tolist()))]
+        else:
+            return None
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 
 def add_additional_calcs(df,base_start_date):
