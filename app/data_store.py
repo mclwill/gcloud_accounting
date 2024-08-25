@@ -139,6 +139,7 @@ def get_data_store_info(customer):
 
         queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=10)) #use utc time as that is how dropbox stores file dates
         queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10))
+        common.logger.info('debug data_orders 2')
         if queuedFiles:
             
             or_df = pd.DataFrame(columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR'])
@@ -226,6 +227,7 @@ def get_data_store_info(customer):
                 dedup_col_list = orders_df.columns.tolist() #list of columns to drop after merge
                 orders_df.drop([c for c in dedup_col_list if (('_x' in c) or ('_y' in c))],inplace=True,errors='ignore')
 
+        common.logger.info('debug data_orders 3')
         if not orders_df.empty:
             orders_csv_file_data = orders_df.to_csv(sep='|',index=False)
             common.store_dropbox_unicode(customer,orders_csv_file_data,orders_file_path)
