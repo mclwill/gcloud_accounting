@@ -6,6 +6,8 @@ import traceback
 
 import FlaskApp.app.common as common
 import FlaskApp.app.cross_docks_polling as cd_polling
+from FlaskApp.app.dashboard import get_data_from_data_store
+
 '''
 module for collecting daily information on stock levels, sales, returns and new stock orders
 Columns
@@ -236,6 +238,8 @@ def get_data_store_info(customer):
             common.logger.info('Uphance purchase orders DataStore updated for ' + customer + '\nFile Path: ' + po_file_path)
         else:
             common.logger.info('Uphance purchase orders DataStore not updated as dataframe was emtpy')
+
+        get_data_from_data_store()
     
     except Exception as ex:
         tb = traceback.format_exc()

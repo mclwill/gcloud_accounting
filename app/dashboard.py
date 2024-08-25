@@ -20,7 +20,7 @@ from datetime import datetime, date, time, timedelta
 from dateutil import tz
 import numpy as np
 from flask_caching import Cache
-import redis
+#import redis
 from functools import partial
 
 import FlaskApp.app.common as common
@@ -37,10 +37,10 @@ stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 po_file_path = os.path.join(data_store_folder,'data_po.csv')
 
-CACHE_CONFIG = {
-    # try 'FileSystemCache' if you don't want to setup redis
-    'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'redis://localhost:6379')
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
 }
 cache = Cache()
 cache.init_app(app, config=CACHE_CONFIG)
