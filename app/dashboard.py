@@ -95,7 +95,7 @@ def get_additonal_purchases(df,base_start_date):
 def get_data_from_data_store():
 
     global stock_info_df,orders_df,po_df
-    global latest_date,earliest_date,aest_now
+    global latest_date,earliest_date,aest_now,default_end_season_date
     
 
     try:
