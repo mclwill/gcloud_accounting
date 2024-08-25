@@ -592,11 +592,11 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
         #if type(v_base_start_date) == str:
         #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
         if v_base_start_date:
-            dff = global_store(v_base_start_date)
+            dff = global_store(v_base_start_date).copy()
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
-            present_list = display_columns.copy()
+            present_list = dff.columns.tolist().copy()
             
             if not v_season or v_season == 'All':
                 v_seasons = season_option_list
