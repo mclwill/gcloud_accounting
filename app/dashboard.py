@@ -589,56 +589,59 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
         common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
         #if type(v_base_start_date) == str:
         #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
-        dff = global_store(v_base_start_date)
-        group_list = []
-        sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
-                    'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
-        present_list = display_columns.copy()
-        
-        if not v_season or v_season == 'All':
-            v_seasons = season_option_list
+        if v_base_start_date:
+            dff = global_store(v_base_start_date)
+            group_list = []
+            sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
+                        'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
+            present_list = display_columns.copy()
+            
+            if not v_season or v_season == 'All':
+                v_seasons = season_option_list
+            else:
+                v_seasons = []
+                for ss in v_season:
+                    for s in ss.split(','):
+                        if s not in v_seasons:
+                            v_seasons.append(s)
+            dff = dff[(dff['season'].str.contains('|'.join(v_seasons)))]
+
+            if v_product : 
+                dff = dff[dff['p_name'].isin(v_product)]
+            if v_color :
+                dff = dff[dff['color'].isin(v_color)]
+            if v_size :
+                dff = dff[dff['size'].isin(v_size)]
+            
+
+            if not v_size:
+                group_list.append('color')
+                present_list.remove('size')
+                if 'sku_id' in present_list:
+                    present_list.remove('sku_id')
+            if not v_color:
+                group_list.append('p_name')
+                present_list.remove('color')
+            if not v_product:
+                group_list.append('season')
+                #present_list.remove('p_name')  #don't remove product as should always be displayed  ########
+
+            agg_dict = {}
+            for x in present_list:
+                if x not in group_list:
+                    if x in sum_list:
+                        agg_dict[x] = 'sum'
+                    else:
+                        agg_dict[x] = 'first'
+
+            if group_list:
+                df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
+            else:
+                df_grouped = dff
+
+            return add_additional_calcs(df_grouped[present_list],v_base_start).to_dict("records")
         else:
-            v_seasons = []
-            for ss in v_season:
-                for s in ss.split(','):
-                    if s not in v_seasons:
-                        v_seasons.append(s)
-        dff = dff[(dff['season'].str.contains('|'.join(v_seasons)))]
-
-        if v_product : 
-            dff = dff[dff['p_name'].isin(v_product)]
-        if v_color :
-            dff = dff[dff['color'].isin(v_color)]
-        if v_size :
-            dff = dff[dff['size'].isin(v_size)]
-        
-
-        if not v_size:
-            group_list.append('color')
-            present_list.remove('size')
-            if 'sku_id' in present_list:
-                present_list.remove('sku_id')
-        if not v_color:
-            group_list.append('p_name')
-            present_list.remove('color')
-        if not v_product:
-            group_list.append('season')
-            #present_list.remove('p_name')  #don't remove product as should always be displayed  ########
-
-        agg_dict = {}
-        for x in present_list:
-            if x not in group_list:
-                if x in sum_list:
-                    agg_dict[x] = 'sum'
-                else:
-                    agg_dict[x] = 'first'
-
-        if group_list:
-            df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
-        else:
-            df_grouped = dff
-
-        return add_additional_calcs(df_grouped[present_list],v_base_start).to_dict("records")
+            return None
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
