@@ -162,7 +162,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
     global start_of_previous_week,end_of_previous_week
     
     try:
-        common.logger.info('Base Start Date Type' + str(type(base_start_date)))
+        #common.logger.info('Base Start Date Type' + str(type(base_start_date)))
         #begin data merge of order and po into stock df
         common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
         
@@ -471,7 +471,7 @@ def serve_layout(base_stock_info_df,end_season_date):
 
 @cache.memoize()
 def global_store(base_start_date):
-    common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
+    #common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
     if type(base_start_date) == str:
             base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
     return process_data(base_start_date)
@@ -479,7 +479,7 @@ def global_store(base_start_date):
 @dash_app.callback(Output('signal','data'),Input('start_date_picker', 'date'))
 def update_output(date_value):
     #global base_start_date
-    common.logger.info('start Date Picker ' + str(type(date_value)) + '\n' + str(date_value))
+    #common.logger.info('start Date Picker ' + str(type(date_value)) + '\n' + str(date_value))
     if date_value is not None:
         #base_start_date = date.fromisoformat(date_value)
         #common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
@@ -586,7 +586,7 @@ def add_additional_calcs(df,base_start_date):
                 new_cols.append(col)
         else:
             new_found=False'''
-    common.logger.info('dff from calcs' + str(dff.head()))
+    #common.logger.info('dff from calcs' + str(dff.head()))
     return dff
         
 @dash_app.callback (
@@ -604,12 +604,12 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
     #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
     
     try:
-        common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
+        #common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
         #if type(v_base_start_date) == str:
         #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
         if v_base_start_date:
             dff = global_store(v_base_start_date).copy()
-            common.logger.info(str(dff.head()))
+            #common.logger.info(str(dff.head()))
             #for some reason can't seem to get these from global variables
             display_columns = dff.columns.tolist()
             product_option_list = sorted(dff['p_name'].unique().tolist())
