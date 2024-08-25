@@ -137,8 +137,8 @@ def get_data_store_info(customer):
         else:
             po_df = pd.DataFrame(columns=po_columns) #start with empty dataframe
 
-        queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=10)) #use utc time as that is how dropbox stores file dates
-        queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10))
+        queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=10),file_spec=['OR']) #use utc time as that is how dropbox stores file dates
+        queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10),file_spec=['PC','TP'])
         common.logger.info('debug data_orders 2')
         if queuedFiles:
             
