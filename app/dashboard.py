@@ -541,7 +541,7 @@ def set_dropdown_options(product,color):
 
 def add_additional_calcs(df,base_start_date):
     global latest_date
-    dfd = df.copy()
+    dff = df.copy()
     if type(base_start_date) == str:
         base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
 
