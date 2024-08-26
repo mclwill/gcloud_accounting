@@ -728,7 +728,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             else:
                 df_grouped = dff
 
-            debug_csv_file_data = display_stock_info_df.to_csv()
+            debug_csv_file_data = df_grouped.to_csv()
             common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
             return add_additional_calcs(df_grouped[present_list],v_base_start_date).to_dict("records")
         else:
