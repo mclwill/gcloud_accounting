@@ -693,7 +693,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
 
             if not v_size:
                 group_list.append('color')
-                present_list.remove('size')
+                #present_list.remove('size')
                 if 'sku_id' in present_list:
                     present_list.remove('sku_id')
             if not v_color:
