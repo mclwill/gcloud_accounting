@@ -243,7 +243,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 def serve_layout(base_stock_info_df,end_season_date):
-    global earliest_date, latest_date
+    global earliest_date, latest_date, display_columns
     #global base_stock_info_df,display_stock_info_df
     #global product_option_list,color_option_list,size_option_list,season_option_list    
     
@@ -251,11 +251,12 @@ def serve_layout(base_stock_info_df,end_season_date):
 
         #from here all about presenting the data table
 
-        display_stock_info_df = base_stock_info_df[['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
-                             'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
-                             'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].copy() #seem to need to take copy
+        display_columns = ['url_markdown','e_date','season','p_name','color','size','sku_id','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
+                           'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
+                           'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']
 
-        
+        display_stock_info_df = base_stock_info_df[display_columns].copy() #seem to need to take copy
+
         '''
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
                              'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
@@ -302,8 +303,6 @@ def serve_layout(base_stock_info_df,end_season_date):
         #display_stock_info_df = stock_info_df.copy()
         #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
         
-
-        display_columns = display_stock_info_df.columns.tolist()
 
         product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
         color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
@@ -640,13 +639,14 @@ def add_additional_calcs(df,base_start_date):
 def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
     #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
-    
+    global display_columns
+
     try:
         #common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
         #if type(v_base_start_date) == str:
         #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
         if v_base_start_date:
-            dff = global_store(v_base_start_date).copy()
+            dff = global_store(v_base_start_date)[display_columns].copy()
             #common.logger.info(str(dff.head()))
             #for some reason can't seem to get these from global variables
             display_columns = dff.columns.tolist()
@@ -692,14 +692,10 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
                 #common.logger.info('size choice:' + str(v_size) + '\n' + str(dff['size'].unique().tolist()))
                 dff = dff[dff['size'].isin(v_size)]
             
-
-            if not v_product:
-                group_list.append('season')
-                #present_list.remove('p_name')  #don't remove product as should always be displayed  ########
-                if 'sku_id' in present_list:
-                    present_list.remove('sku_id')
+            group_list.append('season') #always group season
+            group_list.append('p_name') #always group products
+            
             if not v_color:
-                group_list.append('p_name')
                 present_list.remove('color')
                 if 'sku_id' in present_list:
                     present_list.remove('sku_id')
