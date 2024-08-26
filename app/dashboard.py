@@ -708,7 +708,8 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             #else:
             #    group_list.append('size')
             
-            
+            common.logger.info('v_season' + str(v_season) + '\nv_product: ' + str(v_product) + '\nv_color: ' + str(v_color) + '\n' + \
+                               'v_size: ' + str(v_size) + '\nGroup List: ' + str(group_list) + '\nPresent List: ' + str(present_list))
 
             agg_dict = {}
             for x in present_list:
