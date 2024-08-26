@@ -318,7 +318,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                     season_option_list.append(s)
         season_option_list.sort()
 
-        debug_csv_file_data = display_stock_info_df.to_csv(sep='|',index=False)
+        debug_csv_file_data = display_stock_info_df.to_csv()
         common.store_dropbox_unicode(customer,po_csv_file_data,os.path.join(data_store_folder,'debug.csv'))
         
         return html.Div([
