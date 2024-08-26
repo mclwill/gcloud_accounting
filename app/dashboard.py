@@ -686,7 +686,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             if 'All' in v_size:
                 v_size = dff['size'].unique().tolist()
             if v_size :
-                c3ommon.logger.info('size choice:' + str(v_size) + '\n' + str(dff['size'].unique().tolist()))
+                common.logger.info('size choice:' + str(v_size) + '\n' + str(dff['size'].unique().tolist()))
                 dff = dff[dff['size'].isin(v_size)]
             
 
