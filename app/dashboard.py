@@ -680,11 +680,11 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             if v_product : 
                 dff = dff[dff['p_name'].isin(v_product)]
             if 'All' in v_color : 
-                v_color = dff[dff['color']].unique().tolist()
+                v_color = dff['color'].unique().tolist()
             if v_color :
                 dff = dff[dff['color'].isin(v_color)]
             if 'All' in v_size:
-                v_size = dff[dff['size']].unique().tolist()
+                v_size = dff['size'].unique().tolist()
             if v_size :
                 common.logger.info('size choice:' + str(v_size) + '\n' + str(dff['size'].unique().tolist()))
                 if 'All' not in v_size :
