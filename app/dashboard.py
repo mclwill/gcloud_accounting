@@ -705,8 +705,8 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
                 present_list.remove('size')
                 if 'sku_id' in present_list:
                     present_list.remove('sku_id')
-            else:
-                group_list.append('size')
+            #else:
+            #    group_list.append('size')
             
             
 
