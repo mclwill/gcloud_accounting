@@ -687,23 +687,26 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
                 v_size = dff['size'].unique().tolist()
             if v_size :
                 common.logger.info('size choice:' + str(v_size) + '\n' + str(dff['size'].unique().tolist()))
-                if 'All' not in v_size :
-                    dff = dff[dff['size'].isin(v_size)]
+                dff = dff[dff['size'].isin(v_size)]
             
 
             if not v_product:
                 group_list.append('season')
                 #present_list.remove('p_name')  #don't remove product as should always be displayed  ########
+                if 'sku_id' in present_list:
+                    present_list.remove('sku_id')
             if not v_color:
                 group_list.append('p_name')
                 present_list.remove('color')
+                if 'sku_id' in present_list:
+                    present_list.remove('sku_id')
             if not v_size:
                 group_list.append('color')
                 present_list.remove('size')
-                if 'color' not in present_list:
-                    present_list.append('color')
                 if 'sku_id' in present_list:
                     present_list.remove('sku_id')
+            else:
+                group_list.append('size')
             
             
 
