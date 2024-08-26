@@ -318,8 +318,8 @@ def serve_layout(base_stock_info_df,end_season_date):
                     season_option_list.append(s)
         season_option_list.sort()
 
-        debug_csv_file_data = display_stock_info_df.to_csv()
-        common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug.csv'))
+        #debug_csv_file_data = display_stock_info_df.to_csv()
+        #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug.csv'))
         
         return html.Div([
             dbc.Row([
@@ -664,7 +664,7 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             season_option_list.sort()
 
             group_list = []
-            sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_last_week','wholesale_orders_last_week','online_orders_since_start',\
+            sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
             present_list = display_columns.copy()
             
