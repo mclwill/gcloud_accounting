@@ -351,7 +351,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                                  '''),
                         ]),   
                     ],className="border-0 bg-transparent"),
-                    width={"size":4}
+                    width={"size":3}
                 ),
                 dbc.Col(
                     dbc.Card([
@@ -368,7 +368,25 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width = {"size":3}
+                    width = {"size":2}
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Start Date"),
+                            html.Div([
+                                dcc.DatePickerSingle(
+                                    id='start_date_picker',
+                                    min_date_allowed = earliest_date,
+                                    max_date_allowed = latest_date,
+                                    initial_visible_month = earliest_date,
+                                    date = earliest_date,
+                                    display_format = 'D-M-Y'
+                                ),
+                            ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),
+                    width = {'size':2}
                 ),
                 dbc.Col(
                     dbc.Card([
@@ -392,23 +410,6 @@ def serve_layout(base_stock_info_df,end_season_date):
                 )
             ]),
             dbc.Row([
-                dbc.Col(
-                    dbc.Card([
-                        dbc.CardBody([
-                            html.P("Start Date"),
-                            html.Div([
-                                dcc.DatePickerSingle(
-                                    id='start_date_picker',
-                                    min_date_allowed = earliest_date,
-                                    max_date_allowed = latest_date,
-                                    initial_visible_month = earliest_date,
-                                    date = earliest_date,
-                                    display_format = 'D-M-Y'
-                                ),
-                            ]),
-                        ]),
-                    ],className="border-0 bg-transparent"),
-                ),
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
