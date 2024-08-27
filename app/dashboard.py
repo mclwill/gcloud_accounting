@@ -673,40 +673,21 @@ def add_additional_calcs(df,base_start_date):
     dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
         dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
 
-    '''#loop to insert new cols into dff
-    new_cols = []
-    i = 0
-    new_found = False
-    col = old_cols[i]
-    new_cols.append(col)
-    while i < len(old_cols):
-        for k,v in calc_cols_positions.items():
-            if (k not in new_cols) and (v == col):
-                new_cols.append(k)
-                col = k
-                new_found = True
-                break
-        if not new_found:
-            i += 1
-            if i < len(old_cols):
-                col = old_cols[i]
-                new_cols.append(col)
-        else:
-            new_found=False'''
-    #common.logger.info('dff from calcs' + str(dff.head()))
     return dff
         
 @dash_app.callback (
         Output('data_table', 'data'),
         [Input('season_option','value'),
-        Input('product_option', 'value'),
-        Input('color_option','value'),
-        Input('size_option','value'),
-        Input('signal','data')],
+         Input('category_option','value'),
+         Input('sub_cat_option','value'),
+         Input('product_option', 'value'),
+         Input('color_option','value'),
+         Input('size_option','value'),
+         Input('signal','data')],
         running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
-def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
+def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
     #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
     global display_columns
@@ -749,7 +730,10 @@ def update_table(v_season,v_product,v_color,v_size,v_base_start_date):
             dff = dff[(dff['season'].str.contains('|'.join(v_seasons)))]
 
             
-
+            if v_category : 
+                dff = dff[dff['category'].isin(v_category)]
+            if v_sub_cat : 
+                dff = dff[dff['sub_category'].isin(v_sub_cat)]
             if v_product : 
                 dff = dff[dff['p_name'].isin(v_product)]
             if 'All' in v_color : 
