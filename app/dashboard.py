@@ -10,7 +10,7 @@ from dash import dcc
 from dash import dash_table
 import dash_bootstrap_components as dbc
 #import dash_table
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from dash_table import DataTable, FormatTemplate
 from dash.exceptions import PreventUpdate
 from dash.dash_table.Format import Format, Scheme, Trim
@@ -370,10 +370,10 @@ def serve_layout(base_stock_info_df,end_season_date):
                     ],className="border-0 bg-transparent"),
                     width = {"size":3, 'offset':1}
                 ),
-                dbc.Col([
-                    dbc.Button("Download Excel", id="btn_csv",color='light',size='lg'),
+                dbc.Col(
+                    dbc.Button("Download CSV", id="btn_csv",color='light',size='lg'),
                     dcc.Download(id="download-dataframe-csv"),
-                ],width={"size":2}),
+                    ,width={"size":2}),
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
                     width={"size":1}
@@ -703,8 +703,8 @@ def set_dropdown_options(product,color,v_base_start_date):
 
 @dash_app.callback(
     Output("download-dataframe-csv", "data"),
-    [Input("download", "data"),
-     Input('btn_csv','n_clicks')],
+    Input('btn_csv','n_clicks'),
+    State("download", "data"),
     prevent_initial_call=True,
 )
 def func(df_dict,n_clicks):
