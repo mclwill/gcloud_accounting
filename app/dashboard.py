@@ -499,12 +499,13 @@ def serve_layout(base_stock_info_df,end_season_date):
                                     'textAlign':'center'
                                 } for i in ['url_markdown']
                             ],
-                            style_cell={'maxWidth':'50px','whiteSpace':'normal'},
+                            style_cell={'maxWidth':'50px','minWidth':'40px','whiteSpace':'normal'},
                             style_header={'textAlign':'center'},
                             css=[dict(selector= "p", rule= "margin: 0; text-align: center")],
                             sort_action = 'native',
                         )
-                , xs=12, md=12, lg=6)
+                )
+                #, xs=12, md=12, lg=6) some sizing parameters
                 #    ]),
                 #]),
             ]),
