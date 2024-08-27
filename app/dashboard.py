@@ -823,9 +823,9 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             df_display = add_additional_calcs(df_grouped[present_columns],v_base_start_date)
 
             if v_shortcut == 'Top 10 Sellers':
-                df_display.sort_values('seasonal_sell_through_pc',ascending=False,inplace=True,ignore_index=True).head(10)
+                df_display = df_display.sort_values('seasonal_sell_through_pc',ascending=False,ignore_index=True).head(10)
             elif v_shortcut == 'Bottom 10 Sellers':
-                df_display.sort_values('seasonal_sell_through_pc',ascending=True,inplace=True,ignore_index=True).head(10)
+                df_display = df_display.sort_values('seasonal_sell_through_pc',ascending=True,ignore_index=True).head(10)
 
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
