@@ -295,7 +295,7 @@ def serve_layout(base_stock_info_df,end_season_date):
             'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
             'returns':{'id':'returns','name':' Returns Since Start'},
-             'additional_purchases':{'id':'additional_purchases','name':'Purchases Since Start'},
+            'additional_purchases':{'id':'additional_purchases','name':'Purchases Since Start'},
              #'base_stock':{'id':'base_stock','name':'Base Stock','hidden':True},
             'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
@@ -329,6 +329,12 @@ def serve_layout(base_stock_info_df,end_season_date):
                     season_option_list.append(s)
         season_option_list.sort()
 
+        presentation_shortcuts = [
+            'None',
+            'Top 10 Sellers',
+            'Bottom 10 Sellers'
+        ]
+
         #debug_csv_file_data = display_stock_info_df.to_csv()
         #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug.csv'))
         
@@ -344,6 +350,23 @@ def serve_layout(base_stock_info_df,end_season_date):
                         ]),   
                     ],className="border-0 bg-transparent"),
                     width={"size":4}
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Presentation Shortcuts"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='presentation_shortcut',
+                                    options=presentation_shortcuts,
+                                    value='None',
+                                    #placeholder = 'All',
+                                    multi = False,
+                                    clearable = False
+                                ),
+                            ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),
                 ),
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
@@ -698,11 +721,12 @@ def add_additional_calcs(df,base_start_date):
          Input('product_option', 'value'),
          Input('color_option','value'),
          Input('size_option','value'),
+         Input('presentation_shortcut','value')
          Input('signal','data')],
         running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
-def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_base_start_date):
+def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortcut,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
     #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
     global display_columns
