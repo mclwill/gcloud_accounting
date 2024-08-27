@@ -223,6 +223,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
 
         #make sure any non joined info NaNs are replaced by zeroes for calcs to work
         base_stock_info_df['additional_purchases'].fillna(0,inplace=True)
+        base_stock_info_df['returns'].fillna(0,inplace=True)
         base_stock_info_df['online_orders_prev_week'].fillna(0,inplace=True)
         base_stock_info_df['wholesale_orders_prev_week'].fillna(0,inplace=True)
         base_stock_info_df['online_orders_since_start'].fillna(0,inplace=True)
