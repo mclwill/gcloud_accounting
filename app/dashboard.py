@@ -368,8 +368,12 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width = {"size":3, 'offset':3}
+                    width = {"size":3, 'offset':1}
                 ),
+                dbc.Col([
+                    html.Button("Download Excel", id="btn_xlsx",color='light',size='lg'),
+                    dcc.Download(id="download-dataframe-csv"),
+                ],width={"size":2})
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
                     width={"size":1}
@@ -545,7 +549,8 @@ def serve_layout(base_stock_info_df,end_season_date):
                 #    ]),
                 #]),
             ]),
-            dcc.Store(id='signal')
+            dcc.Store(id='signal'),
+            dcc.Store(idd='download')
         ])
     except Exception as ex:
         tb = traceback.format_exc()
@@ -696,6 +701,13 @@ def set_dropdown_options(product,color,v_base_start_date):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
+@dash_app.callback(
+    Output("download-dataframe-csv", "data"),
+    Input("download", "data"),
+    prevent_initial_call=True,
+)
+def func(n_clicks,df_dict):
+    return dcc.send_data_frame(pd.DataFrame.from_dict(df_dict).to_csv, "data.csv")
 
 def add_additional_calcs(df,base_start_date):
     global latest_date
@@ -717,7 +729,8 @@ def add_additional_calcs(df,base_start_date):
         
 @dash_app.callback (
         [Output('data_table', 'data'),
-         Output('data_table', 'hidden_columns')],
+         Output('data_table', 'hidden_columns'),
+         Output('download', 'data')],
         [Input('season_option','value'),
          Input('category_option','value'),
          Input('sub_cat_option','value'),
@@ -732,7 +745,7 @@ def add_additional_calcs(df,base_start_date):
 def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortcut,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
     #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
-    global display_columns
+    global display_columns, download_csv_df
 
     try:
         #common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
@@ -831,7 +844,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
-            return df_display.to_dict("records"), list(set(display_columns) - set(present_columns))
+            return df_display.to_dict("records"), hidden_columns, df_display.to_dict("records")
         else:
             return None
     except Exception as ex:
