@@ -331,9 +331,8 @@ def serve_layout(base_stock_info_df,end_season_date):
         season_option_list.sort()
 
         presentation_shortcuts = [
-            'None',
             'Top 10 Sellers',
-            'Bottom 10 Sellers'
+            'Bottom 10 Sellers',
         ]
 
         #debug_csv_file_data = display_stock_info_df.to_csv()
@@ -361,9 +360,8 @@ def serve_layout(base_stock_info_df,end_season_date):
                                     id='presentation_shortcut',
                                     options=presentation_shortcuts,
                                     value='Top 10 Sellers',
-                                    #placeholder = 'All',
                                     multi = False,
-                                    clearable = False
+                                    clearable = True
                                 ),
                             ]),
                         ]),
