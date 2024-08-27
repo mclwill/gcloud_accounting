@@ -368,11 +368,11 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width = {"size":3}
+                    width = {"size":3, 'offset':3}
                 ),
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
-                    width={"size":1,'offset':3}
+                    width={"size":1}
                 )
             ]),
             dbc.Row([
