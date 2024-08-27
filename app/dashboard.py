@@ -843,9 +843,11 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             elif v_shortcut == 'Bottom 10 Sellers':
                 df_display = df_display.sort_values('seasonal_sell_through_pc',ascending=True,ignore_index=True).head(10)
 
+            df_download = df_display.drop('url_markdown',axis=1).copy()
+
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
-            return df_display.to_dict("records"), hidden_columns, df_display.drop('url_markdown',inplace=True,axis=1).to_dict("records")
+            return df_display.to_dict("records"), hidden_columns, df_download.to_dict("records")
         else:
             return None
     except Exception as ex:
