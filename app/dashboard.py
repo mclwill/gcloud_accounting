@@ -373,7 +373,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                 dbc.Col([
                     html.Button("Download Excel", id="btn_xlsx",color='light',size='lg'),
                     dcc.Download(id="download-dataframe-csv"),
-                ],width={"size":2})
+                ],width={"size":2}),
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
                     width={"size":1}
