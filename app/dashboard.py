@@ -487,6 +487,7 @@ def serve_layout(base_stock_info_df,end_season_date):
             dbc.Row([
                 #dbc.Card([
                 #    dbc.CardBody([
+                dbc.Col(
                         dash_table.DataTable(
                             id='data_table',
                             columns=[col_title_mapping[i] for i in display_stock_info_df.columns],
@@ -503,6 +504,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             css=[dict(selector= "p", rule= "margin: 0; text-align: center")],
                             sort_action = 'native',
                         )
+                , xs=12, md=12, lg=6)
                 #    ]),
                 #]),
             ]),
