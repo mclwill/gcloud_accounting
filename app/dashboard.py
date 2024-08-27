@@ -792,7 +792,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_base_s
             else:
                 df_grouped = dff
 
-            hidden_columns = display_columns - present_columns
+            hidden_columns = list(set(display_columns) - set(present_columns))
 
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
