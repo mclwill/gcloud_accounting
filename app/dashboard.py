@@ -239,6 +239,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df['wholesale_pc_since_start'] = base_stock_info_df['wholesale_orders_since_start'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
         base_stock_info_df['seasonal_sell_through_pc'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / base_stock_info_df['base_stock']
         base_stock_info_df['daily_sell_rate'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
+        base_stock_info_df['return_rate'] = base_stock_info_df['returns'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
         base_stock_info_df['estimated_sell_out_weeks'] = base_stock_info_df['available_to_sell'] / base_stock_info_df['daily_sell_rate'] / 7
         
         #fix up any divide by zeroes
@@ -308,6 +309,7 @@ def serve_layout(base_stock_info_df,end_season_date):
             'wholesale_pc_since_start':{'id':'wholesale_pc_since_start','name':'Wholesale %','type':'numeric','format':percentage},
             'seasonal_sell_through_pc':{'id':'seasonal_sell_through_pc','name':'Seasonal Sell Through %','type':'numeric','format':percentage},
             'daily_sell_rate':{'id':'daily_sell_rate','name':'Daily Sell Rate','type':'numeric','format':fixed},
+            'return_rate':{'id':'return_rate','name':'Return Rate %','type':'numeric','format':percentage},
             'estimated_sell_out_weeks':{'id':'estimated_sell_out_weeks','name':'Estimated Weeks to Sell Out','type':'numeric','format':fixed}
         }
 
@@ -705,6 +707,7 @@ def add_additional_calcs(df,base_start_date):
     dff['wholesale_pc_since_start'] = dff['wholesale_orders_since_start'] / (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) 
     dff['seasonal_sell_through_pc'] = (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) / dff['base_stock']
     dff['daily_sell_rate'] = (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) / (latest_date - base_start_date).days
+    dff['return_rate'] = dff['returns'] / (dff['online_orders_since_start'] + dff['wholesale_orders_since_start'])
     dff['estimated_sell_out_weeks'] = dff['available_to_sell'] / dff['daily_sell_rate'] / 7
     
     dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
