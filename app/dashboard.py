@@ -587,7 +587,7 @@ def set_dropdown_options(season,category,v_base_start_date):
 
 @dash_app.callback(
     Output('product_option', 'options'),
-    [Input('season_option', 'value')
+    [Input('season_option', 'value'),
      Input('category_option','value'),
      Input('sub_cat_option','value'),
      Input('signal','data')]
