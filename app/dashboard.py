@@ -251,7 +251,7 @@ def serve_layout(base_stock_info_df,end_season_date):
 
         #from here all about presenting the data table
 
-        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week', \
+        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','additional_purchases','available_to_sell','online_orders_prev_week', \
                            'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                            'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']
 
@@ -282,15 +282,15 @@ def serve_layout(base_stock_info_df,end_season_date):
             'sub_category':{'id':'sub_category','name':'Sub Category'},
             'sku_id':{'id':'sku_id','name':'SKU'},
             'in_stock':{'id':'in_stock','name':'In Stock'},
-            'base_available_to_sell':{'id':'base_available_to_sell','name':'Seasonal Units Ordered'},
+            'base_available_to_sell':{'id':'base_available_to_sell','name':'Starting Available To Sell'},
             'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
-            'additional_purchases':{'id':'additional_purchases','name':'Additional Purchases'},
+            'additional_purchases':{'id':'additional_purchases','name':' Returns + Purchases'},
             'base_stock':{'id':'base_stock','name':'Base Stock'},
-            'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Units Last Week'},
-            'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Units Last Week'},
-            'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Units Since Start'},
-            'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Units Since Start'},
+            'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
+            'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
+            'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Sales Since Start'},
+            'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Sales Since Start'},
             'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':money},
             'wholesale_revenue_since_start':{'id':'wholesale_revenue_since_start','name':'Wholesale $$$ Since Start','type':'numeric','format':money},
             'online_pc_since_start':{'id':'online_pc_since_start','name':'Online %','type':'numeric','format':percentage},
