@@ -708,7 +708,7 @@ def set_dropdown_options(product,color,v_base_start_date):
     prevent_initial_call=True,
 )
 def func(n_clicks,df_dict):
-    return dcc.send_data_frame(pd.DataFrame.from_dict(df_dict).to_csv, "data.csv")
+    return dcc.send_data_frame(pd.DataFrame.from_dict(df_dict).to_csv, "data.csv", index=False)
 
 def add_additional_calcs(df,base_start_date):
     global latest_date
@@ -845,7 +845,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
-            return df_display.to_dict("records"), hidden_columns, df_display.to_dict("records")
+            return df_display.to_dict("records"), hidden_columns, df_display.drop('url_markdown',inplace=True,axis=1).to_dict("records")
         else:
             return None
     except Exception as ex:
