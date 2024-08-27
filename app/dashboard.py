@@ -264,7 +264,7 @@ def serve_layout(base_stock_info_df,end_season_date):
 
         display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell','online_orders_prev_week', \
                            'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
-                           'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']
+                           'seasonal_sell_through_pc','daily_sell_rate','return_rate','estimated_sell_out_weeks']
 
         display_stock_info_df = base_stock_info_df[display_columns].copy() #seem to need to take copy
 
