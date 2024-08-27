@@ -558,6 +558,34 @@ def update_output(date_value):
 #        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 @dash_app.callback(
+    Output('sub_cat_option', 'options'),
+    [Input('season_option', 'value'),
+    Input('category_option', 'value')
+    Input('signal','data')]
+)
+def set_dropdown_options(season,category,v_base_start_date):
+    try:
+        #global display_stock_info_df
+        if v_base_start_date:
+            dff = global_store(v_base_start_date).copy()
+            if season:
+                seasons = []
+                for ss in season:
+                    for s in ss.split(','):
+                        if s not in seasons:
+                            seasons.append(s)
+                dff = dff[dff['season'].str.contains('|'.join(seasons))]
+            if category:
+                dff = dff[dff['category'].isin(category)]
+            return [{'label':x,'value':x} for x in sorted(dff['sub_category'].unique().tolist())]
+        else:
+            return None
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+
+
+@dash_app.callback(
     Output('product_option', 'options'),
     [Input('season_option', 'value'),
     Input('signal','data')]
