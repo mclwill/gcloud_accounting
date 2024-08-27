@@ -94,7 +94,11 @@ def get_orders_since_start(df,base_start_date):
 
 def get_additonal_purchases(df,base_start_date):
     #global base_start_date
-    return df.assign(result=np.where(df['date_received']>=base_start_date,df['qty_received'],0)).groupby('ean').agg({'result':sum})
+    return df.assign(result=np.where((df['date_received']>=base_start_date)&(~df['po_number'].str.contains('CRN')),0)).groupby('ean').agg({'result':sum})
+
+def get_returns(df,base_start_date):
+    #global base_start_date
+    return df.assign(result=np.where((df['date_received']>=base_start_date)&(df['po_number'].str.contains('CRN')),df['qty_received'],0)).groupby('ean').agg({'result':sum})
 
 def get_data_from_data_store():
 
@@ -189,6 +193,10 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
 
+        #get  in returns information with 'ean' as index of type string
+        returns_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'returns'})
+        returns_df.index = returns_df.index.astype(str)
+
         #get online and wholesale last week orders with 'ean' as index of type string
         online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce'],base_start_date).rename(columns={'result':'online_orders_prev_week'})#.rename('online_orders_prev_week')
         online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
@@ -207,6 +215,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         
         #do the joins (ie. merges) of po and orders info into Stock DF
         base_stock_info_df = base_stock_info_df.join(additional_purchases_df)
+        base_stock_info_df = base_stock_info_df.join(returns_df)
         base_stock_info_df = base_stock_info_df.join(online_orders_prev_week_df)
         base_stock_info_df = base_stock_info_df.join(wholesale_orders_prev_week_df)
         base_stock_info_df = base_stock_info_df.join(online_orders_since_start_df)
@@ -221,7 +230,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df.reset_index(inplace=True)
         
         common.logger.debug('start vectored operations for calculating extra columns')
-        base_stock_info_df['base_stock'] = base_stock_info_df['base_available_to_sell'] + base_stock_info_df['additional_purchases']
+        base_stock_info_df['base_stock'] = base_stock_info_df['base_available_to_sell'] + base_stock_info_df['additional_purchases'] + base_stock_info_df['returns']
         base_stock_info_df['online_revenue_since_start'] = base_stock_info_df['online_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
         base_stock_info_df['wholesale_revenue_since_start'] = base_stock_info_df['wholesale_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
 
@@ -251,7 +260,7 @@ def serve_layout(base_stock_info_df,end_season_date):
 
         #from here all about presenting the data table
 
-        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','additional_purchases','base_stock','available_to_sell','online_orders_prev_week', \
+        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell','online_orders_prev_week', \
                            'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                            'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']
 
@@ -285,7 +294,8 @@ def serve_layout(base_stock_info_df,end_season_date):
             'base_available_to_sell':{'id':'base_available_to_sell','name':'Starting Available To Sell'},
             'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
-            'additional_purchases':{'id':'additional_purchases','name':' Returns + Purchases'},
+            'returns':{'id':'returns','name':' Returns'},
+             #'additional_purchases':{'id':'additional_purchases','name':'Additional Purchases'},
              #'base_stock':{'id':'base_stock','name':'Base Stock','hidden':True},
             'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
