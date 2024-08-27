@@ -367,6 +367,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
+                    width = {"size":2}
                 ),
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
@@ -819,9 +820,16 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
             hidden_columns = list(set(display_columns) - set(present_columns))
 
+            df_display = add_additional_calcs(df_grouped[present_columns],v_base_start_date)
+
+            if v_shortcut == 'Top 10 Sellers':
+                df_display.sort_values('seasonal_sell_through_pc',ascending=False,inplace=True,ignore_index=True).head(10)
+            elif v_shortcut == 'Bottom 10 Sellers':
+                df_display.sort_values('seasonal_sell_through_pc',ascending=True,inplace=True,ignore_index=True).head(10)
+
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
-            return add_additional_calcs(df_grouped[present_columns],v_base_start_date).to_dict("records"), list(set(display_columns) - set(present_columns))
+            return df_display.to_dict("records"), list(set(display_columns) - set(present_columns))
         else:
             return None
     except Exception as ex:
