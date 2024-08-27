@@ -355,7 +355,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
-                            html.H2("Presentation Shortcuts"),
+                            html.H3("Presentation Shortcuts"),
                             html.Div([
                                 dcc.Dropdown(
                                     id='presentation_shortcut',
@@ -368,11 +368,11 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width = {"size":2}
+                    width = {"size":3}
                 ),
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
-                    width={"size":2,'offset':12}
+                    width={"size":3}
                 )
             ],justify='evenly'),
             dbc.Row([
