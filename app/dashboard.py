@@ -550,7 +550,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                 #]),
             ]),
             dcc.Store(id='signal'),
-            dcc.Store(idd='download')
+            dcc.Store(id='download')
         ])
     except Exception as ex:
         tb = traceback.format_exc()
