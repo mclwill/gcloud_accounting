@@ -721,7 +721,7 @@ def add_additional_calcs(df,base_start_date):
          Input('product_option', 'value'),
          Input('color_option','value'),
          Input('size_option','value'),
-         Input('presentation_shortcut','value')
+         Input('presentation_shortcut','value'),
          Input('signal','data')],
         running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
