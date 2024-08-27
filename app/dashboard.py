@@ -355,7 +355,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
-                            html.P("Presentation Shortcuts"),
+                            html.H2("Presentation Shortcuts"),
                             html.Div([
                                 dcc.Dropdown(
                                     id='presentation_shortcut',
@@ -372,7 +372,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                 ),
                 dbc.Col(
                     dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,),
-                    width={"size":1,'offset':12}
+                    width={"size":2,'offset':12}
                 )
             ],justify='evenly'),
             dbc.Row([
@@ -801,7 +801,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 if 'sku_id' in present_columns:
                     present_columns.remove('sku_id')
             else:
-                group_list.append('size')
+                group_list.append('size') #need this to make sure all sizes selected are displayed
             
             #common.logger.info('v_season' + str(v_season) + '\nv_product: ' + str(v_product) + '\nv_color: ' + str(v_color) + '\n' + \
             #                   'v_size: ' + str(v_size) + '\nGroup List: ' + str(group_list) + '\nPresent List: ' + str(present_columns))
