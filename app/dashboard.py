@@ -384,7 +384,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                     dbc.Card([
                         dbc.CardBody([
                             html.Div([
-                                dbc.Button("Logout",href='/logout',color='light',size='lg',external_link=True,)
+                                dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
@@ -395,7 +395,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
-                            html.P("Start Date - earliest is " + earliest_date.strftime('%d-%m-%Y')),
+                            html.P("Start Date"),
                             html.Div([
                                 dcc.DatePickerSingle(
                                     id='start_date_picker',
