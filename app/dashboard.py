@@ -757,7 +757,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             season_option_list.sort()
 
             group_list = []
-            sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
+            sum_list = ['base_available_to_sell','available_to_sell','additional_purchases','returns','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
             present_columns = display_columns.copy()
             
