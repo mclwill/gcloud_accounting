@@ -707,7 +707,7 @@ def set_dropdown_options(product,color,v_base_start_date):
     State("download", "data"),
     prevent_initial_call=True,
 )
-def func(df_dict,n_clicks):
+def func(n_clicks,df_dict):
     return dcc.send_data_frame(pd.DataFrame.from_dict(df_dict).to_csv, "data.csv")
 
 def add_additional_calcs(df,base_start_date):
