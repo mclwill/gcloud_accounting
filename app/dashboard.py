@@ -94,7 +94,7 @@ def get_orders_since_start(df,base_start_date):
 
 def get_additonal_purchases(df,base_start_date):
     #global base_start_date
-    return df.assign(result=np.where((df['date_received']>=base_start_date)&(~df['po_number'].str.contains('CRN')),0)).groupby('ean').agg({'result':sum})
+    return df.assign(result=np.where((df['date_received']>=base_start_date)&(~df['po_number'].str.contains('CRN')),df['qty_received'],0)).groupby('ean').agg({'result':sum})
 
 def get_returns(df,base_start_date):
     #global base_start_date
