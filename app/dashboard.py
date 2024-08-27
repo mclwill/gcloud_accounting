@@ -286,7 +286,7 @@ def serve_layout(base_stock_info_df,end_season_date):
             'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
             'additional_purchases':{'id':'additional_purchases','name':' Returns + Purchases'},
-            'base_stock':{'id':'base_stock','name':'Base Stock','hidden':True},
+             #'base_stock':{'id':'base_stock','name':'Base Stock','hidden':True},
             'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Sales Since Start'},
