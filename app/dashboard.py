@@ -424,22 +424,22 @@ def serve_layout(base_stock_info_df,end_season_date):
                         ]),
                     ],className="border-0 bg-transparent"),
                 ),
-                dbc.Col(
-                    dbc.Card([
-                        dbc.CardBody([
-                            html.P("End Season Date"),
-                            html.Div([
-                                dcc.DatePickerSingle(
-                                    id='end_date_picker',
-                                    min_date_allowed = (aest_now + timedelta(days=1)).date(),
-                                    initial_visible_month = aest_now.date(),
-                                    date = end_season_date,
-                                    display_format = 'D-M-Y'
-                                ),
-                            ]),
-                        ]),
-                    ],className="border-0 bg-transparent"),   
-                ),
+                #dbc.Col(
+                #    dbc.Card([
+                #        dbc.CardBody([
+                #            html.P("End Season Date"),
+                #            html.Div([
+                #                dcc.DatePickerSingle(
+                #                    id='end_date_picker',
+                #                    min_date_allowed = (aest_now + timedelta(days=1)).date(),
+                #                    initial_visible_month = aest_now.date(),
+                #                    date = end_season_date,
+                #                    display_format = 'D-M-Y'
+                #                ),
+                #            ]),
+                #        ]),
+                #    ],className="border-0 bg-transparent"),   
+                #),
             ]),
             dbc.Row([
                 dbc.Col([
@@ -509,17 +509,17 @@ def update_output(date_value):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-@dash_app.callback(
-    Input('end_date_picker', 'date'))
-def update_output(date_value):
-    try:
-        #global end_season_date
-        if date_value is not None:
-            end_season_date = date.fromisoformat(date_value)
-        return None
-    except Exception as ex:
-        tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+#@dash_app.callback(
+#    Input('end_date_picker', 'date'))
+#def update_output(date_value):
+#    try:
+#        #global end_season_date
+#        if date_value is not None:
+#            end_season_date = date.fromisoformat(date_value)
+#        return None
+#    except Exception as ex:
+#        tb = traceback.format_exc()
+#        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 @dash_app.callback(
     Output('product_option', 'options'),
