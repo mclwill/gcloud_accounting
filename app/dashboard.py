@@ -500,7 +500,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                                 } for i in ['url_markdown']
                             ],
                             style_cell={'maxWidth':'50px','minWidth':'50px','whiteSpace':'normal'},
-                            style_header={'textAlign':'center'},
+                            style_header={'textAlign':'center','fontsize':'10px'},
                             css=[dict(selector= "p", rule= "margin: 0; text-align: center")],
                             sort_action = 'native',
                         )
