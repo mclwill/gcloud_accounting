@@ -194,7 +194,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
 
         #get returns information with 'ean' as index of type string
-        returns_df = get_return_purchases(po_df,base_start_date).rename(columns={'result':'returns'})
+        returns_df = get_return(po_df,base_start_date).rename(columns={'result':'returns'})
         returns_df.index = returns_df.index.astype(str)
 
         #get online and wholesale last week orders with 'ean' as index of type string
