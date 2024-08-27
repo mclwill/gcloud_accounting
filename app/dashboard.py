@@ -251,7 +251,7 @@ def serve_layout(base_stock_info_df,end_season_date):
 
         #from here all about presenting the data table
 
-        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','additional_purchases','available_to_sell','online_orders_prev_week', \
+        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','additional_purchases','base_stock','available_to_sell','online_orders_prev_week', \
                            'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                            'seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']
 
@@ -286,7 +286,7 @@ def serve_layout(base_stock_info_df,end_season_date):
             'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
             'additional_purchases':{'id':'additional_purchases','name':' Returns + Purchases'},
-            'base_stock':{'id':'base_stock','name':'Base Stock'},
+            'base_stock':{'id':'base_stock','name':'Base Stock','hidden':True},
             'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Sales Since Start'},
