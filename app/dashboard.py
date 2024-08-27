@@ -351,7 +351,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                                  '''),
                         ]),   
                     ],className="border-0 bg-transparent"),
-                    width={"size":5}
+                    width={"size":4}
                 ),
                 dbc.Col(
                     dbc.Card([
@@ -379,7 +379,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width={"size":2}),
+                    width={"size":2,'offset':2}),
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
@@ -388,7 +388,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width={"size":2}
+                    width={"size":1}
                 )
             ]),
             dbc.Row([
