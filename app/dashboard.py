@@ -297,7 +297,7 @@ def serve_layout(base_stock_info_df,end_season_date):
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
             'returns':{'id':'returns','name':' Returns Since Start'},
             'additional_purchases':{'id':'additional_purchases','name':'Purchases Since Start'},
-             'base_stock':{'id':'base_stock','name':'Base Stock'},
+            #'base_stock':{'id':'base_stock','name':'Base Stock'},
             'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Sales Since Start'},
@@ -800,8 +800,8 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 present_columns.remove('size')
                 if 'sku_id' in present_columns:
                     present_columns.remove('sku_id')
-            #else:
-            #    group_list.append('size')
+            else:
+                group_list.append('size')
             
             #common.logger.info('v_season' + str(v_season) + '\nv_product: ' + str(v_product) + '\nv_color: ' + str(v_color) + '\n' + \
             #                   'v_size: ' + str(v_size) + '\nGroup List: ' + str(group_list) + '\nPresent List: ' + str(present_columns))
