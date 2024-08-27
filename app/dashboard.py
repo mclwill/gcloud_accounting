@@ -511,8 +511,8 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ],
                             style_cell={'maxWidth':'50px','minWidth':'50px','whiteSpace':'normal'},
                             style_header={'textAlign':'center','fontsize':'8px','font-weight':'bold'},
-                            css=[dict(selector= "p", rule= "margin: 0; text-align: center"),\   #used to center images 
-                                     {"selector": ".show-hide", "rule": "display: none"}],  \   #used to hide the toggle columns selector
+                            css=[dict(selector= "p", rule= "margin: 0; text-align: center"),  \   
+                                     {"selector": ".show-hide", "rule": "display: none"}],  \   
                             sort_action = 'native',
                         )
                 )
