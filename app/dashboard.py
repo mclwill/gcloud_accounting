@@ -190,7 +190,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df['url_markdown'] = base_stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
 
         #get additional purchase information with 'ean' as index of type string
-        common.logger.info(str(po_df.head(),str(po_df.dtypes)))
+        common.logger.info(str(po_df.head()),str(po_df.dtypes))
         additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
 
