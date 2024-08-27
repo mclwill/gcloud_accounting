@@ -689,7 +689,8 @@ def add_additional_calcs(df,base_start_date):
     return dff
         
 @dash_app.callback (
-        Output('data_table', 'data'),
+        [Output('data_table', 'data'),
+         Output('data_table', 'hidden_columns')],
         [Input('season_option','value'),
          Input('category_option','value'),
          Input('sub_cat_option','value'),
@@ -730,7 +731,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_base_s
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
-            present_list = display_columns.copy()
+            present_columns = display_columns.copy()
             
             if not v_season or v_season == 'All':
                 v_seasons = season_option_list
@@ -763,23 +764,23 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_base_s
             group_list.append('p_name') #always group products
             
             if not v_color:
-                present_list.remove('color')
-                if 'sku_id' in present_list:
-                    present_list.remove('sku_id')
+                present_columns.remove('color')
+                if 'sku_id' in present_columns:
+                    present_columns.remove('sku_id')
             if not v_size:
-                if 'color' in present_list:
+                if 'color' in present_columns:
                     group_list.append('color')
-                present_list.remove('size')
-                if 'sku_id' in present_list:
-                    present_list.remove('sku_id')
+                present_columns.remove('size')
+                if 'sku_id' in present_columns:
+                    present_columns.remove('sku_id')
             #else:
             #    group_list.append('size')
             
             #common.logger.info('v_season' + str(v_season) + '\nv_product: ' + str(v_product) + '\nv_color: ' + str(v_color) + '\n' + \
-            #                   'v_size: ' + str(v_size) + '\nGroup List: ' + str(group_list) + '\nPresent List: ' + str(present_list))
+            #                   'v_size: ' + str(v_size) + '\nGroup List: ' + str(group_list) + '\nPresent List: ' + str(present_columns))
 
             agg_dict = {}
-            for x in present_list:
+            for x in present_columns:
                 if x not in group_list:
                     if x in sum_list:
                         agg_dict[x] = 'sum'
@@ -791,9 +792,11 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_base_s
             else:
                 df_grouped = dff
 
+            hidden_columns = display_columns - present_columns
+
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
-            return add_additional_calcs(df_grouped[present_list],v_base_start_date).to_dict("records")
+            return add_additional_calcs(df_grouped[present_columns],v_base_start_date).to_dict("records"), hidden_columns
         else:
             return None
     except Exception as ex:
