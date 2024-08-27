@@ -360,7 +360,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                                 dcc.Dropdown(
                                     id='presentation_shortcut',
                                     options=presentation_shortcuts,
-                                    value='None',
+                                    value='Top 10 Sellers',
                                     #placeholder = 'All',
                                     multi = False,
                                     clearable = False
