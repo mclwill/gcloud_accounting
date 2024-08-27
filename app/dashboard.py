@@ -94,11 +94,11 @@ def get_orders_since_start(df,base_start_date):
 
 def get_additonal_purchases(df,base_start_date):
     #global base_start_date
-    return df.assign(result=np.where((df['date_received']>=base_start_date)&(~df['po_number'].str.contains('CRN',regex=False)),df['qty_received'],0)).groupby('ean').agg({'result':sum})
+    return df.assign(result=np.where((df['date_received']>=base_start_date) & (~df['po_number'].str.contains('CRN')),df['qty_received'],0)).groupby('ean').agg({'result':sum})
 
 def get_returns(df,base_start_date):
     #global base_start_date
-    return df.assign(result=np.where((df['date_received']>=base_start_date)&(df['po_number'].str.contains('CRN',regex=False)),df['qty_received'],0)).groupby('ean').agg({'result':sum})
+    return df.assign(result=np.where((df['date_received']>=base_start_date) & (df['po_number'].str.contains('CRN')),df['qty_received'],0)).groupby('ean').agg({'result':sum})
 
 def get_data_from_data_store():
 
@@ -190,12 +190,11 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df['url_markdown'] = base_stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
 
         #get additional purchase information with 'ean' as index of type string
-        common.logger.info(str(po_df.head()) + '\n' + str(po_df.dtypes))
         additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
 
         #get returns information with 'ean' as index of type string
-        returns_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'returns'})
+        returns_df = get_return_purchases(po_df,base_start_date).rename(columns={'result':'returns'})
         returns_df.index = returns_df.index.astype(str)
 
         #get online and wholesale last week orders with 'ean' as index of type string
