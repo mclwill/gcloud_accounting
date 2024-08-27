@@ -371,7 +371,7 @@ def serve_layout(base_stock_info_df,end_season_date):
                     width = {"size":3, 'offset':1}
                 ),
                 dbc.Col([
-                    html.Button("Download Excel", id="btn_xlsx",color='light',size='lg'),
+                    dbc.Button("Download Excel", id="btn_csv",color='light',size='lg'),
                     dcc.Download(id="download-dataframe-csv"),
                 ],width={"size":2}),
                 dbc.Col(
@@ -703,10 +703,11 @@ def set_dropdown_options(product,color,v_base_start_date):
 
 @dash_app.callback(
     Output("download-dataframe-csv", "data"),
-    Input("download", "data"),
+    [Input("download", "data"),
+     Input('btn_csv','n_clicks')],
     prevent_initial_call=True,
 )
-def func(n_clicks,df_dict):
+def func(df_dict,n_clicks):
     return dcc.send_data_frame(pd.DataFrame.from_dict(df_dict).to_csv, "data.csv")
 
 def add_additional_calcs(df,base_start_date):
