@@ -560,8 +560,8 @@ def update_output(date_value):
 @dash_app.callback(
     Output('sub_cat_option', 'options'),
     [Input('season_option', 'value'),
-    Input('category_option', 'value')
-    Input('signal','data')]
+     Input('category_option', 'value'),
+     Input('signal','data')]
 )
 def set_dropdown_options(season,category,v_base_start_date):
     try:
