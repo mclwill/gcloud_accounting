@@ -304,6 +304,8 @@ def serve_layout(base_stock_info_df,end_season_date):
         #display_stock_info_df = display_stock_info_df.reindex(columns = display_stock_info_df.columns.tolist() + ['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks'])
         
 
+        category_option_list = sorted(display_stock_info_df['category'].unique().tolist())
+        sub_cat_option_list = orted(display_stock_info_df['sub_category'].unique().tolist())
         product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
         color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
         size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
@@ -364,6 +366,40 @@ def serve_layout(base_stock_info_df,end_season_date):
                                 dcc.Dropdown(
                                     id='season_option',
                                     options=season_option_list,
+                                    value=[],
+                                    placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Category"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='category_option',
+                                    options=category_option_list,
+                                    value=[],
+                                    placeholder = 'All',
+                                    multi = True,
+                                    clearable = True
+                                ),
+                            ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.P("Sub Category"),
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='sub_cat_option',
+                                    options=sub_cat_option_list,
                                     value=[],
                                     placeholder = 'All',
                                     multi = True,
