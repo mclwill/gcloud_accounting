@@ -294,8 +294,8 @@ def serve_layout(base_stock_info_df,end_season_date):
             'base_available_to_sell':{'id':'base_available_to_sell','name':'Starting Available To Sell'},
             'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
-            'returns':{'id':'returns','name':' Returns'},
-             #'additional_purchases':{'id':'additional_purchases','name':'Additional Purchases'},
+            'returns':{'id':'returns','name':' Returns Since Start'},
+             'additional_purchases':{'id':'additional_purchases','name':'Purchases Since Start'},
              #'base_stock':{'id':'base_stock','name':'Base Stock','hidden':True},
             'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
             'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
@@ -511,7 +511,8 @@ def serve_layout(base_stock_info_df,end_season_date):
                             ],
                             style_cell={'maxWidth':'50px','minWidth':'50px','whiteSpace':'normal'},
                             style_header={'textAlign':'center','fontsize':'8px','font-weight':'bold'},
-                            css=[dict(selector= "p", rule= "margin: 0; text-align: center"),{"selector": ".show-hide", "rule": "display: none"}],
+                            css=[dict(selector= "p", rule= "margin: 0; text-align: center"),\   #used to center images 
+                                     {"selector": ".show-hide", "rule": "display: none"}],  \   #used to hide the toggle columns selector
                             sort_action = 'native',
                         )
                 )
