@@ -305,7 +305,7 @@ def serve_layout(base_stock_info_df,end_season_date):
         
 
         category_option_list = sorted(display_stock_info_df['category'].unique().tolist())
-        sub_cat_option_list = orted(display_stock_info_df['sub_category'].unique().tolist())
+        sub_cat_option_list = sorted(display_stock_info_df['sub_category'].unique().tolist())
         product_option_list = sorted(display_stock_info_df['p_name'].unique().tolist())
         color_option_list = sorted(display_stock_info_df['color'].unique().tolist())
         size_option_list = sorted(display_stock_info_df['size'].unique().tolist())
