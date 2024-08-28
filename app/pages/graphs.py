@@ -11,6 +11,6 @@ def layout(**kwargs):
 	        ) for k,v in kwargs.items()
 	    ])
 	else:
-		eturn html.Div([
+		return html.Div([
 	        html.Div('No parameters in URL')
 	    ])
