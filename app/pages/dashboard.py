@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from FlaskApp.app import app, dash_app
+from FlaskApp.app import app
 
 from flask_login import login_required
 import dash
@@ -586,7 +586,7 @@ def global_store(base_start_date):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-@dash_app.callback(Output('signal','data'),
+@callback(Output('signal','data'),
                   Input('start_date_picker', 'date'),
                   running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
                            (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})])
@@ -605,7 +605,7 @@ def update_output(date_value):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-#@dash_app.callback(
+#@callback(
 #    Input('end_date_picker', 'date'))
 #def update_output(date_value):
 #    try:
@@ -617,7 +617,7 @@ def update_output(date_value):
 #        tb = traceback.format_exc()
 #        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-@dash_app.callback(
+@callback(
     Output('sub_cat_option', 'options'),
     [Input('season_option', 'value'),
      Input('category_option', 'value'),
@@ -645,7 +645,7 @@ def set_dropdown_options(season,category,v_base_start_date):
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 
-@dash_app.callback(
+@callback(
     Output('product_option', 'options'),
     [Input('season_option', 'value'),
      Input('category_option','value'),
@@ -676,7 +676,7 @@ def set_dropdown_options(season,category,sub_cat,v_base_start_date):
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 
-@dash_app.callback(
+@callback(
     Output('color_option', 'options'),
     [Input('product_option', 'value'),
     Input('signal','data')]
@@ -695,7 +695,7 @@ def set_dropdown_options(product,v_base_start_date):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-@dash_app.callback(
+@callback(
     Output('size_option', 'options'),
     [Input('product_option', 'value'),
     Input('color_option','value'),
@@ -717,7 +717,7 @@ def set_dropdown_options(product,color,v_base_start_date):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-@dash_app.callback(
+@callback(
     Output("download-dataframe-csv", "data"),
     Input('btn_csv','n_clicks'),
     State("download", "data"),
@@ -744,7 +744,7 @@ def add_additional_calcs(df,base_start_date):
 
     return dff
         
-@dash_app.callback (
+@callback (
         [Output('data_table', 'data'),
          Output('data_table', 'hidden_columns'),
          Output('download', 'data')],
