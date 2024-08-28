@@ -1,6 +1,7 @@
 import os
 import pandas as pd
-from FlaskApp.app import app
+from FlaskApp.app import app, dash_app
+
 from flask_login import login_required
 import dash
 #import dash_html_components as html
