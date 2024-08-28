@@ -278,8 +278,8 @@ def serve_layout(base_stock_info_df,end_season_date):
         '''
         
         #data table formats and mapping
-        money = FormatTemplate.money(2)
-        percentage = FormatTemplate.percentage(2)
+        money = FormatTemplate.money(0)
+        percentage = FormatTemplate.percentage(0)
         fixed = Format(precision=2, scheme=Scheme.fixed)
 
         col_title_mapping = {
