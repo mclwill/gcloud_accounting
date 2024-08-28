@@ -389,7 +389,7 @@ def layout(**kwargs):
                     ],className="border-0 bg-transparent"),
                     width = {'size':1,'offset':4}
                 ),
-                dbc.Col(
+                dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
                             html.Div([
@@ -398,7 +398,15 @@ def layout(**kwargs):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width={"size":1}),
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.Div([
+                                dcc.Button("Plot Graphs", id="btn_graphs",href = '/graphs',color='light',size='lg')
+                            ]),
+                        ]),
+                    ],className="border-0 bg-transparent"),
+                ],
+                width={"size":1}),
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
@@ -546,6 +554,8 @@ def layout(**kwargs):
                             columns=[col_title_mapping[i] for i in display_columns if i in col_title_mapping.keys()],
                             #columns=[{"name": col_title_mapping[i], "id": i, 'presentation':'markdown'} if ('markdown' in i) else {"name": col_title_mapping[i], "id": i} for i in display_stock_info_df.columns],
                             data=display_stock_info_df.to_dict("records"),
+                            rows_selectable = 'multi',
+                            selected_rows = [],
                             style_cell_conditional = [
                                 {
                                     'if':{'column_id':i},
@@ -564,7 +574,8 @@ def layout(**kwargs):
                 #]),
             ]),
             dcc.Store(id='signal'),
-            dcc.Store(id='download')
+            dcc.Store(id='download'),
+            dcc.Store(id='graph-rows')
         ])
     except Exception as ex:
         tb = traceback.format_exc()
@@ -870,6 +881,17 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
         return html.Div(
                 html.P('Error processing layout')
         ) 
+
+@callback (
+    Input('data_table','selected_rows'),
+    Output('graph-rows','data')
+)
+def updated_selected_rows(v_rows):
+    return v_rows
+
+'''@callback (
+    Input('btn_graphs','n_clicks'),
+    Output('')'''
 
 get_data_from_data_store()
 
