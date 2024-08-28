@@ -887,8 +887,8 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
     Input('data_table','selected_rows'),
 )
 def updated_selected_rows(v_rows):
-
-    return '/dashboard/graphs?plots' + str(v_rows)
+    common.logger.info(str(v_rows))
+    return '/dashboard/graphs?plots=' + str(v_rows)
 
 '''@callback (
     Input('btn_graphs','n_clicks'),
