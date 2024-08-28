@@ -17,7 +17,7 @@ with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
 
 external_stylesheets = [dbc.themes.BOOTSTRAP,'https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
+dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_stylesheets,routes_pathname_prefix="/") #previousy 'routes_pathname_prefix'
 
 for view_func in app.view_functions:
     if view_func.startswith(dash_app.config['routes_pathname_prefix']):
