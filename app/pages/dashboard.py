@@ -401,7 +401,7 @@ def layout(**kwargs):
                     dbc.Card([
                         dbc.CardBody([
                             html.Div([
-                                dbc.Button("Plot Graphs", id="btn_graphs",href = '/graphs',color='light',size='lg')
+                                dbc.Button("Plot Graphs", id="btn_graphs",href = '/dashboard/graphs',color='light',size='lg')
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
@@ -883,11 +883,12 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
         ) 
 
 @callback (
-    Output('graph-rows','data'),
+    Output('btn-graphs','href'),
     Input('data_table','selected_rows'),
 )
 def updated_selected_rows(v_rows):
-    return v_rows
+
+    return '/dashboard/graphs?plots' + str(selected_rows)
 
 '''@callback (
     Input('btn_graphs','n_clicks'),
