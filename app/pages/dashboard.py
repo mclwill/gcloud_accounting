@@ -889,7 +889,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 def updated_selected_rows(v_rows):
     common.logger.info(str(v_rows))
     if v_rows:
-        return '/dashboard/graphs?plots=' + ','.join(v_rows)
+        return '/dashboard/graphs?plots=' + ','.join(map(str,v_rows))
 
 '''@callback (
     Input('btn_graphs','n_clicks'),
