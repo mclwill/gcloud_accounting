@@ -18,6 +18,10 @@ external_stylesheets = [dbc.themes.BOOTSTRAP,'https://codepen.io/chriddyp/pen/bW
 
 dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
 
+for view_func in app.view_functions:
+    if view_func.startswith(dash_app.config['routes_pathname_prefix']):
+        app.view_functions[view_func] = login_required(app.view_functions[view_func])
+
 from FlaskApp.app.pages import dashboard
 
 dash_app.layout = html.Div([
