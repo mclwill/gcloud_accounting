@@ -883,7 +883,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
         ) 
 
 @callback (
-    Output('btn-graphs','href'),
+    Output('btn_graphs','href'),
     Input('data_table','selected_rows'),
 )
 def updated_selected_rows(v_rows):
