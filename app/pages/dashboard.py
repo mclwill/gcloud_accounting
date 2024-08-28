@@ -1,8 +1,6 @@
 import os
 import pandas as pd
 from FlaskApp.app import app
-
-from flask_login import login_required
 import dash
 #import dash_html_components as html
 #import dash_core_components as dcc
@@ -44,7 +42,7 @@ CACHE_CONFIG = {
 cache = Cache()
 cache.init_app(app, config=CACHE_CONFIG)
 
-dash.register_page(__name__)
+dash.register_page(__name__,path='/')
 #dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
 
 #common.logger.info (str(app.view_functions))
