@@ -50,9 +50,9 @@ dash.register_page(__name__)
 
 #common.logger.info (str(app.view_functions))
 
-for view_func in app.view_functions:
-    if view_func.startswith(dash_app.config['routes_pathname_prefix']):
-        app.view_functions[view_func] = login_required(app.view_functions[view_func])
+#for view_func in app.view_functions:
+#    if view_func.startswith(dash_app.config['routes_pathname_prefix']):
+#        app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
 def flush_cache():
     with app.app_context():
