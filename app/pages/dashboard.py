@@ -259,7 +259,7 @@ def layout(**kwargs):
     #global product_option_list,color_option_list,size_option_list,season_option_list    
     
     try:
-        common.logger.info('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()) + '\n' + str(type(base_start_date)) + '\n' + str(base_start_date))
+        common.logger.info('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()))
         base_stock_info_df = global_store(earliest_date)
         #from here all about presenting the data table
 
