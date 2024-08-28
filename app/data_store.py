@@ -6,7 +6,7 @@ import traceback
 
 import FlaskApp.app.common as common
 import FlaskApp.app.cross_docks_polling as cd_polling
-from FlaskApp.app.dashboard import get_data_from_data_store
+#from FlaskApp.app.dashboard import get_data_from_data_store
 
 '''
 module for collecting daily information on stock levels, sales, returns and new stock orders
