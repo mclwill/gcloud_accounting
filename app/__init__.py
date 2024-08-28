@@ -21,5 +21,7 @@ dash_app.layout = html.Div([
     dash.page_container
 ])
 
+dashboard.get_data_from_data_store
+
 if __name__ == "__main__":
     dash_app.run_server(debug=True)
