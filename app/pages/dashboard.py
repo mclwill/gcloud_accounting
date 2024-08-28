@@ -19,6 +19,7 @@ import numpy as np
 from flask_caching import Cache
 #import redis
 from functools import partial
+import uuid
 
 import FlaskApp.app.common as common
 
@@ -173,8 +174,8 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         #common.logger.info('Base Start Date Type' + str(type(base_start_date)))
         #begin data merge of order and po into stock df
         common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
-        
-
+                
+        common.logger.info('New process data :' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()) +'\n' + str(type(base_start_date)) + '\n' +  str(base_start_date))
         base_stock_info_df = stock_info_df.copy()
         
         base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell']],base_start_date).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
@@ -258,6 +259,7 @@ def layout(**kwargs):
     #global product_option_list,color_option_list,size_option_list,season_option_list    
     
     try:
+        common.logger.info('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()) + '\n' + str(type(base_start_date)) + '\n' + str(base_start_date))
         base_stock_info_df = global_store(earliest_date)
         #from here all about presenting the data table
 
