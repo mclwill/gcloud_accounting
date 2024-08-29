@@ -12,7 +12,7 @@ from FlaskApp.app import views
 
 #with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:
 #    print('__init__.py')
-from Flask.app import dash_main
+from FlaskApp.app import dash_main
 
 
 for view_func in app.view_functions:
