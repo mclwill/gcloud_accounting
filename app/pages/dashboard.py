@@ -784,7 +784,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                         agg_dict[x] = 'sum'
                     else:
                         agg_dict[x] = 'first'
-            common.logger.info(str(group_list) + '\n' + str(present_list))
+            common.logger.info(str(group_list) + '\n' + str(present_columns))
             if group_list:
                 df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
             else:
