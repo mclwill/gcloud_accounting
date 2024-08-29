@@ -22,6 +22,7 @@ from functools import partial
 import uuid
 
 import FlaskApp.app.common as common
+from FlaskApp.app.data_store import get_data_from_data_store, get_data_from_globals
 
 #external_stylesheets = [dbc.themes.BOOTSTRAP,'https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -99,81 +100,15 @@ def get_returns(df,base_start_date):
     #global base_start_date
     return df.assign(result=np.where((df['date_received']>=base_start_date) & (df['po_number'].str.contains('CRN')),df['qty_received'],0)).groupby('ean').agg({'result':sum})
 
-def get_data_from_data_store():
-
-    global stock_info_df,orders_df,po_df
-    global latest_date,earliest_date,aest_now,default_end_season_date
-    global start_of_previous_week,end_of_previous_week
-    
-
-    try:
-        #collect data in serve_layout so that latest is retrieved from data_store
-
-        #tb = traceback.format_stack()
-        #common.logger.info('Traceback for get_data :' + '\n' + str(tb))
-
-        flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
-
-        aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
-
-        #get stock info from data store
-        byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
-        if byte_stream:
-            stock_info_df = pd.read_csv(byte_stream,sep='|',index_col=False)
-        else:
-            stock_info_df = pd.DataFrame() #start with empty dataframe
-
-        if stock_info_df.empty:
-            return html.Div(html.P('No Stock Data retrieved from Data Store'))  
-
-        
-        stock_info_df['date'] = pd.to_datetime(stock_info_df['date']) #convert date column to_datetime
-        latest_date = stock_info_df['date'].max().to_pydatetime().date() #get latest and earliest as pure dates (ie. drop time info)
-        earliest_date = stock_info_df['date'].min().to_pydatetime().date()
-        #base_start_date = earliest_date #establish base date for calculating percentages etc (ie. start of season) as earliest date ---> need to modify this when this can be set through the dashboard using 'Start Date'
-        default_end_season_date = last_day_of_month(aest_now.date()) #default data as end of this month
-        start_of_previous_week = get_start_of_previous_week(aest_now.date())  #this should be the Monday of the previous week
-        end_of_previous_week = start_of_previous_week + timedelta(days=6) #this should be the Sunday of the previous week
-
-        #get order info from data store
-        byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
-        if byte_stream:
-            orders_df = pd.read_csv(byte_stream,sep='|',index_col=False)
-        else:
-            orders_df = pd.DataFrame() #start with empty dataframe
-
-        if orders_df.empty:
-            return html.Div(html.P('No Orders Data retrieved from Data Store'))
-
-        #get po info from data store
-        byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
-        if byte_stream:
-            po_df = pd.read_csv(byte_stream,sep='|',index_col=False)
-        else:
-            po_df = pd.DataFrame() #start with empty dataframe
-
-        if po_df.empty:
-            return html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
-
-        #convert date column to_datetime in all dfs - ie drop time info
-        po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
-        orders_df['date_ordered'] = pd.to_datetime(orders_df['date_ordered']).dt.date
-        orders_df['date_shipped'] = pd.to_datetime(orders_df['date_shipped']).dt.date
-        stock_info_df['date'] = stock_info_df['date'].dt.date
-
-        stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id - uses simply apply to find minimum on a SKU basis
-
-    except Exception as ex:
-        tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))     
-
         
 def process_data(base_start_date): #process data based on base_start_date --> need to call it whenever base_start_date changes
     global stock_info_df,orders_df,po_df
-    global latest_date,earliest_date
+    global latest_date,earliest_date,default_end_season_date
     global start_of_previous_week,end_of_previous_week
     
     try:
+        stock_info_df,orders_df,po_df, latest_date,earliest_date, default_end_season_date, start_of_previous_week,end_of_previous_week = get_data_from_globals()
+
         #tb = traceback.format_stack()
         #common.logger.info('Traceback for process_data :' + '\n' + str(tb) + '\n' + 'Base Start Date ' + str(base_start_date) + '\n' + 'Base Start Date Type' + str(type(base_start_date)))
         #common.logger.info('Base Start Date Type' + str(type(base_start_date)))

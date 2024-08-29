@@ -23,15 +23,11 @@ for view_func in app.view_functions:
     if view_func.startswith(dash_app.config['routes_pathname_prefix']):
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
-from FlaskApp.app.pages import dashboard
-
-#dashboard.get_data_from_data_store()
+#from FlaskApp.app.pages import dashboard
 
 dash_app.layout = html.Div([
     dash.page_container
 ])
-
-#dashboard.get_data_from_data_store()
 
 if __name__ == "__main__":
     dash_app.run_server(debug=True)
