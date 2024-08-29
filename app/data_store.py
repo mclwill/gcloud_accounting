@@ -327,3 +327,5 @@ def get_data_from_globals():
     return stock_info_df,orders_df,po_df,\
            latest_date,earliest_date,default_end_season_date,\
            start_of_previous_week,end_of_previous_week
+
+get_data_from_data_store()
