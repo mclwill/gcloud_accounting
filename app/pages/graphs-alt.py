@@ -61,31 +61,24 @@ layout = html.Div([
         ],fluid=True),
     #dcc.Store(id = 'clientside-figure-store-px'),
     dcc.Location(id='url'),
-    html.Div(id='dummy-div')
+    dcc.Store(id='fig-store'),
+    dcc.Store(id='name-text')
 ])
 
 @callback(
-    Output('dummy-div', 'childre'),
+    [Output('fig-store', 'data'),
+     Output('name-text','data')]
     Input('url', 'search')
 )
-def get_url(url):
+def get_query(url):
     
     try:
         common.logger.info('URL call back reached' + str(url))
-                
-    except Exception as ex:
-        tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        if url:
+            if url[1:].startswith('data'):
+                data = url[1:].replace('data=','')
+                data = json.loads(data)
 
-'''def layout(data=None,**kwargs):
-    global df_graph, fig, name_text
-
-    try:
-        #data = kwargs.pop('data',None)
-
-        if data:
-            data = json.loads(data)
-            if data:
                 #common.logger.info(str(data))
                 data_df = pd.DataFrame.from_records(data)
                 data_cols = data_df.columns.tolist()
@@ -142,76 +135,25 @@ def get_url(url):
                 fig.update_layout(
                     height = 600
                 )
-                #common.logger.info(str(df_grouped[['date','available_to_sell']].head()))
-                return html.Div([
-                    dbc.Container(
-                        children= [
-                            dbc.Row([
-                                dbc.Col(
-                                    dbc.Card([
-                                        dbc.CardBody([
-                                            html.H1("Dashboard"),
-                                            html.P(""""
-                                                 #This is a dashboard for A.Emery
-                                                 """),
-                                        ]),   
-                                    ],className="border-0 bg-transparent"),
-                                    width={"size":3} 
-                                ),
-                                dbc.Col(
-                                    dbc.Card([
-                                        dbc.CardBody([
-                                            html.Div([
-                                                dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
-                                            ]),
-                                        ]),
-                                    ],className="border-0 bg-transparent"),
-                                    width={"size":1,'offset':8}
-                                )
-                            ]),
-                            dbc.Row([
-                                dbc.Col(
-                                    html.Div([
-                                        dcc.Graph(id='graph-px',figure = fig)
-                                    ])
-                                )
-                            ]),
-                            dbc.Row([
-                                dbc.Col(
-                                    dcc.RadioItems(
-                                        ['Absolute','Normalised'],
-                                         'Absolute',
-                                         id ='graph-type'
-                                    )
-                                )
-                            ])
-                        ],fluid=True),
-                    #dcc.Store(id = 'clientside-figure-store-px'),
-                ])
 
-
-        #return error if fall through to here
-
-        return html.Div([
-            html.Div('No data to display')
-        ])
+                return df_graph.to_json(date_format='iso', orient='split')
 
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Graphing Info' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
-        return html.Div(
-                html.P('Error processing graph')
-        )
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+
 
 @callback(
     Output('graph-px', 'figure'),
-    Input('graph-type', 'value')
+    [Input('fig-store','data'),
+     Input('graph-type', 'value'),
+     Input('name-text','data')]
 )
-def update_store_data(graph_type):
-    global df_graph,name_text
+def update_figure(df_graph,graph_type,name_text):
     
     try:
-        common.logger.info('call back reached' + str(graph_type))
+        common.logger.info('call back reached' + str(graph_type) + str(name_text))
+        df_graph = pd.read_json(jsonified_cleaned_data, orient='split')
         if graph_type == 'Absolute':
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
             dff = df_graph[plot_cols]
@@ -227,7 +169,7 @@ def update_store_data(graph_type):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
-clientside_callback(
+'''clientside_callback(
     """
     function(data) {
         return {
