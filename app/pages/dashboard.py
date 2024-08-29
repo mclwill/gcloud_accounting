@@ -109,7 +109,7 @@ def get_data_from_data_store():
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
 
-        tb = traceback.format_exc()
+        tb = traceback.print_stack()
         common.logger.info('Traceback for get_data :' + '\n' + str(tb))
 
         flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
@@ -900,7 +900,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
     Input('btn_graphs', 'n_clicks'),
     State('graph-rows', 'data'),
     prevent_initial_call=True #
-)'''
+)
 
 @callback (
     Output('graph-rows','data'),
@@ -908,7 +908,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
 )
 def updated_selected_rows(v_rows):
-    return v_rows
+    return v_rows'''
 
 get_data_from_data_store()
 
