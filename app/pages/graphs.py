@@ -38,7 +38,7 @@ def layout(**kwargs):
                     keys = False
 
                 stock_df = get_data_from_globals()[0].copy()
-                common.logger.info(str(stock_info_df))
+                common.logger.info(str(stock_df[['date','p_name','available_to_sell']].head()))
                 #stock_df['date'] = stock_df['date'].dt.date
 
                 if keys: # if multiple columns then use index matching approach
