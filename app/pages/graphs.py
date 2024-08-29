@@ -51,7 +51,7 @@ def layout(**kwargs):
 
                 
                 df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(keys + ['date']).agg({'available_to_sell':'sum'}).reset_index()
-                df_grouped['Name'] = df_grouped[keys].apply(lamda x: ' - '.join(x.astype(str)),axis=1)
+                df_grouped['Name'] = df_grouped[keys].apply(lambda x: ' - '.join(x.astype(str)),axis=1)
                 
                 df_graph = df_grouped.pivot(index='date',cols='Name',values='available_to_sell').reset_index()
 
