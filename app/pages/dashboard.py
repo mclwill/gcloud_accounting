@@ -815,7 +815,9 @@ clientside_callback(
     function(n_clicks,rows,data) {
         const rowsjsonString = JSON.stringify(rows);
         const datajsonString = JSON.stringify(data);
-        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${rowsjsonString}data=${datajsonString}`;
+        const send_data = indices.map(index => rows[index]);
+        const sendjsonString = JSON.stringify(send_data)
+        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
         window.open(url,'_blank');
     }
     """,
