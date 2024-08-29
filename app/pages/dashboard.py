@@ -905,7 +905,7 @@ clientside_callback(
 def updated_selected_rows(v_rows):
     return v_rows
 
-#get_data_from_data_store()
+get_data_from_data_store()
 
 #dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
        
