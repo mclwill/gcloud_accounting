@@ -16,51 +16,6 @@ from FlaskApp.app.data_store import get_data_from_globals
 
 dash.register_page(__name__)
 
-graphs_layout = html.Div([
-                    dbc.Container(
-                        children= [
-                            dbc.Row([
-                                dbc.Col(
-                                    dbc.Card([
-                                        dbc.CardBody([
-                                            html.H1("Dashboard"),
-                                            html.P('''
-                                                 This is a dashboard for A.Emery
-                                                 '''),
-                                        ]),   
-                                    ],className="border-0 bg-transparent"),
-                                    width={"size":3} 
-                                ),
-                                dbc.Col(
-                                    dbc.Card([
-                                        dbc.CardBody([
-                                            html.Div([
-                                                dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
-                                            ]),
-                                        ]),
-                                    ],className="border-0 bg-transparent"),
-                                    width={"size":1,'offset':8}
-                                )
-                            ]),
-                            dbc.Row([
-                                dbc.Col(
-                                    html.Div([
-                                        dcc.Graph(id='graph-px',figure = fig)
-                                    ])
-                                )
-                            ]),
-                            dbc.Row([
-                                dbc.Col(
-                                    dcc.RadioItems(
-                                        ['Absolute','Normalised'],
-                                         'Absolute',
-                                         id ='graph-type'
-                                    )
-                                )
-                            ])
-                        ],fluid=True),
-                    #dcc.Store(id = 'clientside-figure-store-px'),
-                ])
 
 def layout(**kwargs):
     global df_graph, fig
@@ -127,7 +82,51 @@ def layout(**kwargs):
                     height = 600
                 )
                 #common.logger.info(str(df_grouped[['date','available_to_sell']].head()))
-                return graphs_layout
+                return html.Div([
+                    dbc.Container(
+                        children= [
+                            dbc.Row([
+                                dbc.Col(
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.H1("Dashboard"),
+                                            html.P('''
+                                                 This is a dashboard for A.Emery
+                                                 '''),
+                                        ]),   
+                                    ],className="border-0 bg-transparent"),
+                                    width={"size":3} 
+                                ),
+                                dbc.Col(
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.Div([
+                                                dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
+                                            ]),
+                                        ]),
+                                    ],className="border-0 bg-transparent"),
+                                    width={"size":1,'offset':8}
+                                )
+                            ]),
+                            dbc.Row([
+                                dbc.Col(
+                                    html.Div([
+                                        dcc.Graph(id='graph-px',figure = fig)
+                                    ])
+                                )
+                            ]),
+                            dbc.Row([
+                                dbc.Col(
+                                    dcc.RadioItems(
+                                        ['Absolute','Normalised'],
+                                         'Absolute',
+                                         id ='graph-type'
+                                    )
+                                )
+                            ])
+                        ],fluid=True),
+                    #dcc.Store(id = 'clientside-figure-store-px'),
+                ])
 
 
         #return error if fall through to here
