@@ -49,7 +49,7 @@ def layout(**kwargs):
                     keys = ['p_name']
 
                 df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(keys).agg({'available_to_sell':'sum','date':'first'}).reset_index()
-                common.logger.info(str(df_grouped['date','available_to_sell'].head()))
+                common.logger.info(str(df_grouped[['date','available_to_sell']].head()))
                 return html.Div([
                     dcc.Graph(id='graph_fig',figure = px.line(df_grouped,x='date',y='available_to_sell'))
                 ])
