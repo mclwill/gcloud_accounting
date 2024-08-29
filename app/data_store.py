@@ -25,6 +25,8 @@ stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
 orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 po_file_path = os.path.join(data_store_folder,'data_po.csv')
 
+stock_info_df = pd.DataFrame()
+
 def in_between(now, start, end):
     if start <= end:
         return start <= now < end
