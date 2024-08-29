@@ -63,7 +63,8 @@ layout = html.Div([
                         ['Absolute','Normalised'],
                          'Absolute',
                          id ='graph-type-alt',
-                         inline=True
+                         inline=True,
+                         style = {'padding':'10px'}
                     )
                 ,width={'size':1})
             ],justify='center')
@@ -84,10 +85,10 @@ def get_query(url):
     try:
         
         if url:
-            if url[1:].startswith('data'):
+            if url[1:].startswith('data'):  #dcc.Location 'search' return query string including '?' - so skip over that
                 data = url[1:].replace('data=','')
                 #common.logger.info('URL call back reached' + str(data))
-                data = json.loads(urllib.parse.unquote(data))
+                data = json.loads(urllib.parse.unquote(data)) #need to decode url string before sending through json decoder
 
                 #common.logger.info(str(data))
                 data_df = pd.DataFrame.from_records(data)
