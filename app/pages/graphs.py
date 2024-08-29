@@ -59,10 +59,10 @@ def layout(**kwargs):
 
                 df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell')
 
-                maxCol = lambda x : max(x.min(x),x.max(x),key=abs)
-
                 for col in df_graph.columns.tolist():
-                    col_max = df_graph[col].apply(maxCol,axis=1)
+                    col_max = df_graph[col].max()
+                    col_min = df_graph[col].min()
+                    abs_max = max(col_max,-col_min)
                     df_graph[col + '_norm'] = df_group[col] / col_max * 100
 
                 df_graph = df_graph.reset_index()
