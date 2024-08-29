@@ -1,6 +1,7 @@
 import dash
 from dash import html
 import plotly.express as px
+import traceback
 
 from FlaskApp.app.data_store import get_data_from_globals
 
