@@ -45,7 +45,7 @@ layout = html.Div([
             dbc.Row([
                 dbc.Col(
                     html.Div([
-                        dcc.Graph(id='graph-px')
+                        dcc.Graph(id='graph-px-alt')
                     ])
                 )
             ]),
@@ -54,7 +54,7 @@ layout = html.Div([
                     dcc.RadioItems(
                         ['Absolute','Normalised'],
                          'Absolute',
-                         id ='graph-type'
+                         id ='graph-type-alt'
                     )
                 )
             ])
@@ -144,9 +144,9 @@ def get_query(url):
 
 
 @callback(
-    Output('graph-px', 'figure'),
+    Output('graph-px-alt', 'figure'),
     [Input('fig-store','data'),
-     Input('graph-type', 'value'),
+     Input('graph-type-alt', 'value'),
      Input('name-text','data')]
 )
 def update_figure(df_graph,graph_type,name_text):
