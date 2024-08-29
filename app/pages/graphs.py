@@ -151,7 +151,8 @@ def update_store_data(type):
     return px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                        labels={'variable':name_text,\
                                                'date':'Date',\
-                                               'value':'Stock Available to Sell'}
+                                               'value':'Stock Available to Sell'}\
+                    )
 
 clientside_callback(
     """
