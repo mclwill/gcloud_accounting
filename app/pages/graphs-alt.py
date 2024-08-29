@@ -62,9 +62,10 @@ layout = html.Div([
                     dcc.RadioItems(
                         ['Absolute','Normalised'],
                          'Absolute',
-                         id ='graph-type-alt'
+                         id ='graph-type-alt',
+                         inline=True
                     )
-                )
+                ,width={'size':1},justify='center')
             ])
         ],fluid=True),
     #dcc.Store(id = 'clientside-figure-store-px'),
