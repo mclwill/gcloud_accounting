@@ -175,7 +175,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
     
     try:
         tb = traceback.format_stack()
-        common.logger.info('Traceback for process_data :' + '\n' + str(tb)) + '\n' + 'Base Start Date ' + str(base_start_date) + '\n' + 'Base Start Date Type' + str(type(base_start_date))
+        common.logger.info('Traceback for process_data :' + '\n' + str(tb) + '\n' + 'Base Start Date ' + str(base_start_date) + '\n' + 'Base Start Date Type' + str(type(base_start_date)))
         #common.logger.info('Base Start Date Type' + str(type(base_start_date)))
         #begin data merge of order and po into stock df
         common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
