@@ -44,6 +44,13 @@ layout = html.Div([
                 )
             ]),
             dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        html.Div(id='dd-output-container-graph',children='Data Update Complete')
+                    ],style={'backgroundColor':'red','color':'white'})
+                ]),
+            ], align='center'),
+            dbc.Row([
                 dbc.Col(
                     html.Div([
                         dcc.Graph(id='graph-px-alt')
@@ -78,7 +85,7 @@ def get_query(url):
         if url:
             if url[1:].startswith('data'):
                 data = url[1:].replace('data=','')
-                common.logger.info('URL call back reached' + str(data))
+                #common.logger.info('URL call back reached' + str(data))
                 data = json.loads(urllib.parse.unquote(data))
 
                 #common.logger.info(str(data))
@@ -149,12 +156,14 @@ def get_query(url):
     Output('graph-px-alt', 'figure'),
     [Input('df-store','data'),
      Input('graph-type-alt', 'value'),
-     Input('name-text','data')]
+     Input('name-text','data')],
+     running=[(Output("dd-output-container-graph","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
+                 (Output("dd-output-container-graph","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_figure(df_graph,graph_type,name_text):
     
     try:
-        common.logger.info('call back reached' + str(graph_type) + str(name_text) + str(df_graph))
+        #common.logger.info('call back reached' + str(graph_type) + str(name_text) + str(df_graph))
         df_graph = pd.read_json(df_graph, orient='split')
         if graph_type == 'Absolute':
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
