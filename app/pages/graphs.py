@@ -16,7 +16,7 @@ from FlaskApp.app.data_store import get_data_from_globals
 
 dash.register_page(__name__)
 
-def serve_layout(**kwargs):
+def layout(**kwargs):
     
     try:
         data = kwargs.pop('data',None)
@@ -140,9 +140,7 @@ def serve_layout(**kwargs):
                 html.P('Error processing graph')
         )
 
-layout = serve_layout
-
-callback(
+@callback(
     Output('clientside-graph-px', 'figure'),
     Input('clientside-graph-type', 'value')
 )
