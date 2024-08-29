@@ -3,6 +3,7 @@ from dash import html
 import plotly.express as px
 import traceback
 
+import FlaskApp.app.common as common
 from FlaskApp.app.data_store import get_data_from_globals
 
 dash.register_page(__name__)
@@ -12,7 +13,7 @@ def layout(**kwargs):
     try:
         data = kwargs.pop('data',None)
     
-        if len(data) > 0:
+        if data:
             data_df = pd.DataFrame.from_dict(data)
             data_cols = data_df.columns.tolist()
             if 'color' in data_cols:
