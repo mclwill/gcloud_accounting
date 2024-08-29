@@ -142,7 +142,7 @@ def serve_layout(**kwargs):
 
 layout = serve_layout
 
-@callback(
+@dash.callback(
     Output('clientside-graph-px', 'figure'),
     Input('clientside-graph-type', 'value')
 )
