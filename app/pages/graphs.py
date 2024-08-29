@@ -70,6 +70,3 @@ def layout(**kwargs):
         return html.Div(
                 html.P('Error processing graph')
         )
-
-@callback(
-    Output(''))
