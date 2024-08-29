@@ -10,6 +10,7 @@ import plotly.express as px
 import traceback
 import pandas as pd
 import json
+import urllib.parse
 
 import FlaskApp.app.common as common
 #from FlaskApp.app.data_store import get_data_from_globals
@@ -78,7 +79,7 @@ def get_query(url):
             if url[1:].startswith('data'):
                 data = url[1:].replace('data=','')
                 common.logger.info('URL call back reached' + str(data))
-                data = json.loads(data)
+                data = json.loads(urllib.parse.unquote(data))
 
                 #common.logger.info(str(data))
                 data_df = pd.DataFrame.from_records(data)
