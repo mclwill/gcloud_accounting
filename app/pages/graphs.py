@@ -62,38 +62,39 @@ def layout(**kwargs):
                 #common.logger.info(str(df_grouped[['date','available_to_sell']].head()))
                 return html.Div([
                     dbc.Container(
-                        dbc.Row([
-                            dbc.Col(
-                                dbc.Card([
-                                    dbc.CardBody([
-                                        html.H1("Dashboard"),
-                                        html.P('''
-                                             This is a dashboard for A.Emery
-                                             '''),
-                                    ]),   
-                                ],className="border-0 bg-transparent"),
-                                width={"size":3} 
-                            ),
-                            dbc.Col(
-                                dbc.Card([
-                                    dbc.CardBody([
-                                        html.Div([
-                                            dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
+                        children= [
+                            dbc.Row([
+                                dbc.Col(
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.H1("Dashboard"),
+                                            html.P('''
+                                                 This is a dashboard for A.Emery
+                                                 '''),
+                                        ]),   
+                                    ],className="border-0 bg-transparent"),
+                                    width={"size":3} 
+                                ),
+                                dbc.Col(
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.Div([
+                                                dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
+                                            ]),
                                         ]),
-                                    ]),
-                                ],className="border-0 bg-transparent"),
-                                width={"size":1,'offset':7}
-                            )
-                        ]),
-                        dbc.Row([
-                            dbc.Col(
-                                html.Div([
-                                    dcc.Graph(id='graph_fig',figure = fig)
-                                ])
-                            )
-                        ])
-                    ,fluid=True)
-                ])
+                                    ],className="border-0 bg-transparent"),
+                                    width={"size":1,'offset':7}
+                                )
+                            ]),
+                            dbc.Row([
+                                dbc.Col(
+                                    html.Div([
+                                        dcc.Graph(id='graph_fig',figure = fig)
+                                    ])
+                                )
+                            ])
+                        ],fluid=True)
+                    ])
 
         return html.Div([
             html.Div('No data to display')
