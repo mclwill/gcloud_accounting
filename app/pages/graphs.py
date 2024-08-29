@@ -148,7 +148,7 @@ def layout(data=None,**kwargs):
     Input('graph-type', 'value')
 )
 def update_store_data(graph_type):
-    global df_graph
+    global df_graph,name_text
     
     try:
         common.logger.info('call back reached' + str(graph_type))
