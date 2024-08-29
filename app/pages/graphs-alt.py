@@ -45,7 +45,7 @@ layout = html.Div([
                             dbc.Row([
                                 dbc.Col(
                                     html.Div([
-                                        dcc.Graph(id='graph-px',figure = fig)
+                                        dcc.Graph(id='graph-px')
                                     ])
                                 )
                             ]),
@@ -60,7 +60,7 @@ layout = html.Div([
                             ])
                         ],fluid=True),
                     #dcc.Store(id = 'clientside-figure-store-px'),
-                    dcc.Location(id='url')
+                    dcc.Location(id='url'),
                     html.Div(id='dummy-div')
                 ])
 
@@ -72,7 +72,7 @@ def get_url(url):
     
     try:
         common.logger.info('URL call back reached' + str(url))
-                        )
+                
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
