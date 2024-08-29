@@ -745,15 +745,18 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 dff = dff[dff['sub_category'].isin(v_sub_cat)]
             if v_product : 
                 dff = dff[dff['p_name'].isin(v_product)]
-            if 'All' in v_color : 
-                v_color = dff['color'].unique().tolist()
+            
             if v_color :
                 dff = dff[dff['color'].isin(v_color)]
-            if 'All' in v_size:
-                v_size = dff['size'].unique().tolist()
+            if 'All' in v_color : 
+                v_color = dff['color'].unique().tolist()
+            
+
             if v_size :
                 #common.logger.info('size choice:' + str(v_size) + '\n' + str(dff['size'].unique().tolist()))
                 dff = dff[dff['size'].isin(v_size)]
+            if 'All' in v_size:
+                v_size = dff['size'].unique().tolist()
             
             group_list.append('season') #always group season
             group_list.append('p_name') #always group products
@@ -762,6 +765,8 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 present_columns.remove('color')
                 if 'sku_id' in present_columns:
                     present_columns.remove('sku_id')
+            else:
+                group_list.append('color')
             if not v_size:
                 if 'color' in present_columns:
                     group_list.append('color')
@@ -813,8 +818,6 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 clientside_callback(
     """
     function(n_clicks,rows,data) {
-        const rowsjsonString = JSON.stringify(rows);
-        const datajsonString = JSON.stringify(data);
         const send_data = rows.map(index => data[index]);
         const sendjsonString = JSON.stringify(send_data)
         const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
