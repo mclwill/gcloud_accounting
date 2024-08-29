@@ -15,6 +15,7 @@ def layout(**kwargs):
         data = kwargs.pop('data',None)
     
         if data:
+            common.logger.info(str(data))
             data_df = pd.DataFrame.from_dict(data)
             data_cols = data_df.columns.tolist()
             if 'color' in data_cols:
