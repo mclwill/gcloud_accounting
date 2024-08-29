@@ -812,17 +812,15 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
 clientside_callback(
     """
-    function(n_clicks,selected_rows,display_data) {
-        const rowsjsonString = JSON.stringify(selected_rows);
-        const datajsonString = JSON.stringify(display_data);
-        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${rowsjsonString}&data=${datajsonString}`;
+    function(n_clicks,data) {
+        const datajsonString = JSON.stringify(data);
+        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?data=${datajsonString}`;
         window.open(url,'_blank');
     }
     """,
     Output('dummy-div', 'children'),
     Input('btn_graphs', 'n_clicks'),
     State('graph-rows', 'data'),
-    State('download','data'),
     prevent_initial_call=True #
 )
 
@@ -845,7 +843,7 @@ clientside_callback(
 def updated_selected_rows(v_rows,display_data):
     try:
         common.logger.info('Select Rows: ' + str(v_rows) + '\n' + str(display_data))
-        df = pd.DataFrame.from_dict(display_data).iloc[v_rows]
+        if v_rows :df = pd.DataFrame.from_dict(display_data).iloc[v_rows]
         df_cols = df.columns.tolist()
         if 'color' in df_cols:
             if 'size' in df_cols:
