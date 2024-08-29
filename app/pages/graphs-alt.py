@@ -73,10 +73,11 @@ layout = html.Div([
 def get_query(url):
     
     try:
-        common.logger.info('URL call back reached' + str(url))
+        
         if url:
             if url[1:].startswith('data'):
                 data = url[1:].replace('data=','')
+                common.logger.info('URL call back reached' + str(data))
                 data = json.loads(data)
 
                 #common.logger.info(str(data))
@@ -153,7 +154,7 @@ def update_figure(df_graph,graph_type,name_text):
     
     try:
         common.logger.info('call back reached' + str(graph_type) + str(name_text))
-        df_graph = pd.read_json(jsonified_cleaned_data, orient='split')
+        df_graph = pd.read_json(df_graph, orient='split')
         if graph_type == 'Absolute':
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
             dff = df_graph[plot_cols]
