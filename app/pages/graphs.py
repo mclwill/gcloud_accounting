@@ -73,10 +73,11 @@ def layout(data=None,**kwargs):
 
                 #common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
 
-                fig = px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
+                fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History',\
                                        labels={'variable':name_text,\
                                                'date':'Date',\
-                                               'value':'Stock Available to Sell'}
+                                               'value':'Stock Available to Sell'},
+                                        mode = 'markers+lines'
                                     )
                 fig.update_layout(
                     height = 600
