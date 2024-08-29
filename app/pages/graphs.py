@@ -38,7 +38,7 @@ def layout(**kwargs):
                     keys = False
 
                 stock_df = get_data_from_globals()[0].copy()
-                stock_df['date'] = pd.to_datetime(stock_info_df['date']).date()
+                stock_df['date'] = pd.to_datetime(stock_df['date']).date()
 
                 if keys: # if multiple columns then use index matching approach
                     idx_stock = stock_df.set_index(keys).index
