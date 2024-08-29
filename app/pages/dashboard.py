@@ -31,11 +31,6 @@ customer = 'aemery'
 utc_zone = tz.tzutc()
 to_zone = tz.gettz('Australia/Melbourne')
 
-data_store_folder = common.data_store[customer]
-stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
-orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
-po_file_path = os.path.join(data_store_folder,'data_po.csv')
-
 CACHE_CONFIG = {
     "DEBUG": True,          # some Flask specific configs
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
@@ -56,20 +51,6 @@ dash.register_page(__name__,path='/')
 def flush_cache():
     with app.app_context():
         cache.clear()
-
-def last_day_of_month(any_day):
-    # The day 28 exists in every month. 4 days later, it's always next month
-    next_month = any_day.replace(day=28) + timedelta(days=4)
-    # subtracting the number of the current day brings us back one month
-    return next_month - timedelta(days=next_month.day)
-
-def get_start_of_previous_week(date_value):
-    weekday = date_value.weekday()
-    monday_delta = timedelta(days=weekday,weeks=1)
-    return date_value - monday_delta
-
-def get_earliest_date(row,df):
-    return df['date'][df['sku_id'] == row['sku_id']].min()
 
 def get_base_available_to_sell(df,base_start_date):
     #global base_start_date
@@ -862,7 +843,7 @@ def updated_selected_rows(v_rows):
     return v_rows
 
 flush_cache()
-get_data_from_data_store()
+
 
 #dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
        
