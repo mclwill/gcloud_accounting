@@ -64,7 +64,7 @@ layout = html.Div([
                          'Absolute',
                          id ='graph-type-alt',
                          inline=True,
-                         inputStyle={"margin-right": "20px"}
+                         inputStyle={"margin-right": "10px"}
                     )
                 ,width={'size':1})
             ],justify='center')
@@ -174,7 +174,7 @@ def update_figure(df_graph,graph_type,name_text):
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
             dff = df_graph[plot_cols]
 
-        fig = px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
+        fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History',hover_data={'date':"|%Y-%m-%d"}\
                                            labels={'variable':name_text,\
                                                    'date':'Date',\
                                                    'value':'Stock Available to Sell'}\
