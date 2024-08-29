@@ -13,7 +13,7 @@ import json
 import urllib.parse
 
 import FlaskApp.app.common as common
-#from FlaskApp.app.data_store import get_data_from_globals
+from FlaskApp.app.data_store import get_data_from_globals
 
 dash.register_page(__name__)
 
