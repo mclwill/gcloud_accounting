@@ -298,7 +298,7 @@ def layout(**kwargs):
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
-                            html.P("Start Date"),
+                            html.P("START DATE"),
                             html.Div([
                                 dcc.DatePickerSingle(
                                     id='start_date_picker',
