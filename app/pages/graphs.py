@@ -16,7 +16,7 @@ from FlaskApp.app.data_store import get_data_from_globals
 
 dash.register_page(__name__)
 
-def layout(**kwargs):
+def serve_layout(**kwargs):
     
     try:
         data = kwargs.pop('data',None)
@@ -69,7 +69,7 @@ def layout(**kwargs):
                 
                 df_graph = df_graph.reset_index()  #bring back 'date' into columns
 
-                common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
+                #common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
 
                 fig = px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                        labels={'variable':name_text,\
@@ -140,6 +140,8 @@ def layout(**kwargs):
                 html.P('Error processing graph')
         )
 
+layout = serve_layout
+
 @callback(
     Output('clientside-figure-store-px', 'data'),
     Input('clientside-graph-type', 'value')
@@ -159,7 +161,7 @@ def update_store_data(type):
 
 clientside_callback(
     """
-    function(data, scale) {
+    function(data) {
         return {
             'data': data,
              }
