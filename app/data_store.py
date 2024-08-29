@@ -262,7 +262,7 @@ def get_data_from_data_store():
         #tb = traceback.format_stack()
         #common.logger.info('Traceback for get_data :' + '\n' + str(tb))
 
-        flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
+        #flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
 
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
 
