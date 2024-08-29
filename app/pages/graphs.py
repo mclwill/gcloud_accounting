@@ -2,6 +2,7 @@ import dash
 from dash import html
 import plotly.express as px
 import traceback
+import pandas as pd
 
 import FlaskApp.app.common as common
 from FlaskApp.app.data_store import get_data_from_globals
