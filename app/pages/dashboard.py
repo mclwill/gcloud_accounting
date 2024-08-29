@@ -820,7 +820,7 @@ clientside_callback(
     """,
     Output('dummy-div', 'children'),
     Input('btn_graphs', 'n_clicks'),
-    State('graph-rows', 'data'),
+    State('data_table', 'selected_rows'),
     prevent_initial_call=True #
 )
 
@@ -842,7 +842,7 @@ clientside_callback(
 )
 def updated_selected_rows(v_rows,display_data):
     try:
-        common.logger.info('Select Rows: ' + str(v_rows) + '\n' + str(display_data))
+        #common.logger.info('Select Rows: ' + str(v_rows) + '\n' + str(display_data))
         if v_rows:
             df = pd.DataFrame.from_dict(display_data).iloc[v_rows]
             df_cols = df.columns.tolist()
