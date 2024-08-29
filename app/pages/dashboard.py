@@ -817,7 +817,7 @@ clientside_callback(
     function(n_clicks,rows,data) {
         const send_data = rows.map(index => data[index]);
         const sendjsonString = JSON.stringify(send_data)
-        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
+        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs-alt?data=${sendjsonString}`;
         window.open(url,'_blank');
     }
     """,
@@ -827,16 +827,6 @@ clientside_callback(
     State('download', 'data'),
     prevent_initial_call=True #
 )
-
-''' previous
-"""
-    function(n_clicks,selected_rows,display_data) {
-        const rowsjsonString = JSON.stringify(selected_rows);
-        const datajsonString = JSON.stringify(display_data);
-        const url = 'https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${rowsjsonString}&data=${datajsonString}';
-        window.open(url,'_blank');
-    }
-    """,'''
 
 @callback (
     Output('graph-rows','data'),
