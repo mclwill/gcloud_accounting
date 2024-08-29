@@ -113,7 +113,7 @@ def layout(**kwargs):
                                     ])
                                 )
                             ])
-                        ],fluid=True)
+                        ],fluid=True),
                     dcc.Store(id = 'clientside-figure-store-px'),
                     dcc.html('Graph Type'),
                     dcc.RadioItems(
