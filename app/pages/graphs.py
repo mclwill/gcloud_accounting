@@ -112,15 +112,18 @@ def layout(**kwargs):
                                         dcc.Graph(id='clientside-graph-px')
                                     ])
                                 )
+                            ]),
+                            dbc.Row([
+                                dbc.Col(
+                                    dcc.RadioItems(
+                                        ['Absolute','Normalised'],
+                                         'Absolute',
+                                         id ='clientside-graph-type'
+                                    )
+                                )
                             ])
                         ],fluid=True),
                     dcc.Store(id = 'clientside-figure-store-px'),
-                    dcc.html('Graph Type'),
-                    dcc.RadioItems(
-                        ['Absolute','Normalised'],
-                         'Absolute',
-                         id ='clientside-graph-type'
-                    )
                 ])
 
 
