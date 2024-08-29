@@ -47,7 +47,7 @@ def layout(**kwargs):
                     dff = stock_df[stock_df['p_name'].isin(data_df['p_name'].unique().tolist())]
 
                 return html.Div([
-                    dcc.Graph(id='graph_fig',fig = px.line(dff,x='date',y='available_to_sell'))
+                    dcc.Graph(id='graph_fig',figure = px.line(dff,x='date',y='available_to_sell'))
                 ])
         return html.Div([
             html.Div('No data to display')
