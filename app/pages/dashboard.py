@@ -109,8 +109,8 @@ def get_data_from_data_store():
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
 
-        tb = traceback.format_stack()
-        common.logger.info('Traceback for get_data :' + '\n' + str(tb))
+        #tb = traceback.format_stack()
+        #common.logger.info('Traceback for get_data :' + '\n' + str(tb))
 
         flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
 
@@ -174,8 +174,8 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
     global start_of_previous_week,end_of_previous_week
     
     try:
-        tb = traceback.format_stack()
-        common.logger.info('Traceback for process_data :' + '\n' + str(tb) + '\n' + 'Base Start Date ' + str(base_start_date) + '\n' + 'Base Start Date Type' + str(type(base_start_date)))
+        #tb = traceback.format_stack()
+        #common.logger.info('Traceback for process_data :' + '\n' + str(tb) + '\n' + 'Base Start Date ' + str(base_start_date) + '\n' + 'Base Start Date Type' + str(type(base_start_date)))
         #common.logger.info('Base Start Date Type' + str(type(base_start_date)))
         #begin data merge of order and po into stock df
         common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
@@ -604,9 +604,9 @@ def global_store(base_start_date):
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 
 @callback(Output('signal','data'),
-                  Input('start_date_picker', 'date'),
-                  running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
-                           (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})])
+          Input('start_date_picker', 'date'),
+          running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
+                   (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})])
 def update_output(date_value):
     #global base_start_date
     #common.logger.info('start Date Picker ' + str(type(date_value)) + '\n' + str(date_value))
@@ -892,20 +892,28 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
 clientside_callback(
     """
-    function(n_clicks,selected_rows,display_data) {
+    function(n_clicks,selected_rows) {
         const rowsjsonString = JSON.stringify(selected_rows);
-        const datajsonString = JSON.stringify(display_data);
-        const url = 'https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${rowsjsonString}&data=${datajsonString}';
+        const url = 'https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${rowsjsonString}';
         window.open(url,'_blank');
     }
     """,
     Output('dummy-div', 'children'),
     Input('btn_graphs', 'n_clicks'),
     State('graph-rows', 'data'),
-    State('download','data'),
+    #State('download','data'),
     prevent_initial_call=True #
 )
 
+''' previous
+"""
+    function(n_clicks,selected_rows,display_data) {
+        const rowsjsonString = JSON.stringify(selected_rows);
+        const datajsonString = JSON.stringify(display_data);
+        const url = 'https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${rowsjsonString}&data=${datajsonString}';
+        window.open(url,'_blank');
+    }
+    """,'''
 
 @callback (
     Output('graph-rows','data'),
