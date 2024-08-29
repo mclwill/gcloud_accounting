@@ -77,7 +77,7 @@ def layout(data=None,**kwargs):
                                        labels={'variable':name_text,\
                                                'date':'Date',\
                                                'value':'Stock Available to Sell'},
-                                        mode = 'markers+lines'
+                                        #mode = 'markers+lines'
                                     )
                 fig.update_layout(
                     height = 600
@@ -154,10 +154,10 @@ def update_store_data(graph_type):
         common.logger.info('call back reached' + str(graph_type))
         if graph_type == 'Absolute':
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
-            dff = df_graph[plot_columns]
+            dff = df_graph[plot_cols]
         else:
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
-            dff = df_graph[plot_columns]
+            dff = df_graph[plot_colns]
         return px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                            labels={'variable':name_text,\
                                                    'date':'Date',\
