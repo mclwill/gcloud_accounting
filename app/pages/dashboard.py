@@ -408,7 +408,7 @@ def layout(**kwargs):
                     dbc.Card([
                         dbc.CardBody([
                             html.Div([
-                                dbc.Button("Plot Graphs", id="btn_graphs",href = '/dashboard/graphs',color='light',size='lg')
+                                dbc.Button("Plot Graphs", id="btn_graphs",color='light',size='lg')#,href = '/dashboard/graphs)
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
