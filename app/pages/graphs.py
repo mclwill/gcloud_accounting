@@ -65,9 +65,12 @@ def layout(**kwargs):
                     abs_max = max(col_max,-col_min)
                     df_graph[col + '_norm'] = df_graph[col] / col_max * 100
 
-                df_graph = df_graph.reset_index()
+                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x] #get normalised columns before bringing back 'date'
 
-                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
+                df_graph = df_graph.reset_index()  #bring back 'date' into columns
+
+                common.logger.info(str(df_graph[plot_cols].head()) + '\n' + str(plot_cols))
+
                 fig = px.line(df_graph,x='date',y=df_graph[plot_cols],hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                        labels={'Name':name_text,\
                                                'date':'Date',\
