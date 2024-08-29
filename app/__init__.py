@@ -25,11 +25,13 @@ for view_func in app.view_functions:
 
 from FlaskApp.app.pages import dashboard
 
+dashboard.get_data_from_data_store()
+
 dash_app.layout = html.Div([
     dash.page_container
 ])
 
-dashboard.get_data_from_data_store()
+#dashboard.get_data_from_data_store()
 
 if __name__ == "__main__":
     dash_app.run_server(debug=True)
