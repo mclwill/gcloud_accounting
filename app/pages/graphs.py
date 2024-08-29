@@ -59,19 +59,19 @@ def layout(**kwargs):
 
                 df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell')
 
-                for col in df_graph.columns.tolist():
+                '''for col in df_graph.columns.tolist():
                     col_max = df_graph[col].max()
                     col_min = df_graph[col].min()
                     abs_max = max(col_max,-col_min)
                     df_graph[col + '_norm'] = df_graph[col] / col_max * 100
 
                 plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x] #get normalised columns before bringing back 'date'
-
+                '''
                 df_graph = df_graph.reset_index()  #bring back 'date' into columns
 
                 common.logger.info(str(df_graph[plot_cols].head()) + '\n' + str(plot_cols))
 
-                fig = px.line(df_graph,x='date',y=df_graph[plot_cols],hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
+                fig = px.line(df_graph,x='date',y=df_graph.columns,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                        labels={'Name':name_text,\
                                                'date':'Date',\
                                                'value':'Stock Available to Sell'}
