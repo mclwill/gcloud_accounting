@@ -681,7 +681,8 @@ def add_additional_calcs(df,base_start_date):
 @callback (
         [Output('data_table', 'data'),
          Output('data_table', 'hidden_columns'),
-         Output('download', 'data')],
+         Output('download', 'data'),
+         Output('graph-rows','data')],
         [Input('season_option','value'),
          Input('category_option','value'),
          Input('sub_cat_option','value'),
@@ -785,7 +786,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                         agg_dict[x] = 'sum'
                     else:
                         agg_dict[x] = 'first'
-            common.logger.info(str(group_list) + '\n' + str(present_columns))
+            #common.logger.info(str(group_list) + '\n' + str(present_columns))
             if group_list:
                 df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
             else:
@@ -804,7 +805,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
             #debug_csv_file_data = df_grouped.to_csv()
             #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug_group' + str(group_list) + '.csv'))
-            return df_display.to_dict("records"), hidden_columns, df_download.to_dict("records")
+            return df_display.to_dict("records"), hidden_columns, df_download.to_dict("records"), []
         else:
             return None
     except Exception as ex:
