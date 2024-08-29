@@ -767,7 +767,8 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             
             if not v_size:
                 if 'color' in present_columns:
-                    group_list.append('color')
+                    if 'color' not in group_list:
+                        group_list.append('color')
                 present_columns.remove('size')
                 if 'sku_id' in present_columns:
                     present_columns.remove('sku_id')
