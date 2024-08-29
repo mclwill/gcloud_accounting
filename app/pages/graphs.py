@@ -22,7 +22,7 @@ def layout(data=None,**kwargs):
 
     try:
         #data = kwargs.pop('data',None)
-        common.logger.info(str(data))
+        #common.logger.info(str(data))
         if data:
             data = json.loads(data)
             if data:
