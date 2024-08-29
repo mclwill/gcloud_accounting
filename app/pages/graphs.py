@@ -174,7 +174,7 @@ def update_figure(df_graph,graph_type,name_text):
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
             dff = df_graph[plot_cols]
 
-        fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History - ' + graph_type,hover_data={'date':"|%Y-%m-%d"},\
+        fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History - ' + graph_type,hover_data={'date':"|%Y-%m-%d"},markers=True,\
                                            labels={'variable':name_text,\
                                                    'date':'Date',\
                                                    'value':'Stock Available to Sell'}\
