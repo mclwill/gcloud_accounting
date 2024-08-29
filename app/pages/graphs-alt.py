@@ -67,7 +67,7 @@ layout = html.Div([
 
 @callback(
     [Output('fig-store', 'data'),
-     Output('name-text','data')]
+     Output('name-text','data')],
     Input('url', 'search')
 )
 def get_query(url):
