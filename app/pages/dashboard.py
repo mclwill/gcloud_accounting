@@ -838,13 +838,26 @@ clientside_callback(
 
 @callback (
     Output('graph-rows','data'),
-    Input('data_table','selected_rows')
+    Input('data_table','selected_rows'),
+    State('download','data')
 
 )
-def updated_selected_rows(v_rows):
-    return v_rows
+def updated_selected_rows(v_rows,display_data):
+    df = pd.DataFrame.from_dict(display_data).iloc[v_rows]
+    df_cols = df.columns.tolist()
+    if 'color' in df_cols:
+        if 'size' in df_cols:
+            dff = df[['p_name','color','size']]
+        else:
+            dff = df[['p_name','color']]
+    elif 'size' in df_cols:
+        dff = df[['p_name','size']]
+    else:
+        dff = df['p_name']
+    return dff.to_dict('records')
 
-flush_cache()
+if __name__ == "__main__":
+    flush_cache()
 
 
 #dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
