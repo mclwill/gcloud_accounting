@@ -30,12 +30,16 @@ def layout(**kwargs):
                 if 'color' in data_cols:
                     if 'size' in data_cols:
                         keys = ['p_name','color','size']
+                        name_text = 'Product - Colour - Size'
                     else:
                         keys = ['p_name','color']
+                        name_text = 'Product - Colour'
                 elif 'size' in data_cols:
                     keys = ['p_name','size']
+                    name_text = 'Product - Size'
                 else:
                     keys = False
+                    name_text = 'Product'
 
                 stock_df = get_data_from_globals()[0].copy()
                 #common.logger.info(str(stock_df[['date','p_name','available_to_sell']].head()))
@@ -52,10 +56,21 @@ def layout(**kwargs):
                 
                 df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(keys + ['date']).agg({'available_to_sell':'sum'}).reset_index()
                 df_grouped['Name'] = df_grouped[keys].apply(lambda x: ' - '.join(x.astype(str)),axis=1)
-                
-                df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell').reset_index()
 
-                fig = px.line(df_graph,x='date',y=df_graph.columns,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History')
+                df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell')
+
+                for col in df_graph.columns.tolist()
+                    col_max = df_graph[col].apply(lambda x : max(x.min(x),x.max(x),key=abs),axis=1)
+                    df_graph[col + '_norm'] = df_group[col] / col_max * 100
+
+                df_graph = df_graph.reset_index()
+
+                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
+                fig = px.line(df_graph,x='date',y=df_graph[plot_cols],hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
+                                       labels={'Name':name_text,\
+                                               'date':'Date',\
+                                               'value':'Stock Available to Sell'}
+                                    )
                 fig.update_layout(
                     height = 600
                 )
@@ -83,7 +98,7 @@ def layout(**kwargs):
                                             ]),
                                         ]),
                                     ],className="border-0 bg-transparent"),
-                                    width={"size":1,'offset':7}
+                                    width={"size":1,'offset':8}
                                 )
                             ]),
                             dbc.Row([
