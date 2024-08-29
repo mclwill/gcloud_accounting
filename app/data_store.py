@@ -18,6 +18,8 @@ Date,p_id,p_identifier,p_url,p_name,season_id,sku_id,sku_number,color,size,ean,i
 utc_zone = tz.tzutc()
 to_zone = tz.gettz('Australia/Melbourne')
 
+customer = 'aemery'
+
 def in_between(now, start, end):
     if start <= end:
         return start <= now < end
