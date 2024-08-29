@@ -892,16 +892,17 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
 clientside_callback(
     """
-    function(n_clicks,selected_rows) {
-        console.log(selected_rows);
-        const jsonString = JSON.stringify(selected_rows);
-        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${jsonString}`;
+    function(n_clicks,selected_rows,data) {
+        const rowsjsonString = JSON.stringify(selected_rows);
+        const datajsonString = JSON.string(data)
+        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${rowsjsonString}`&data=${datajsonString};
         window.open(url,'_blank');
     }
     """,
     Output('dummy-div', 'children'),
     Input('btn_graphs', 'n_clicks'),
     State('graph-rows', 'data'),
+    State('download','data'),
     prevent_initial_call=True #
 )
 

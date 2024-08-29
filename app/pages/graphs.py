@@ -2,21 +2,26 @@ import dash
 from dash import html
 import plotly.express as px
 
-#import FlaskApp.app.pages.dashboard
+from FlaskApp.app.pages.dashboard import stock_info_df
 
 dash.register_page(__name__)
 
 def layout(**kwargs):
-	'''plots = kwargs.pop('plots',None)
+	rows = kwargs.pop('plots',None)
+	data = kwargs.pop('data',None)
 	
-	df = dashboard.stock_info_df
+	'''df = stock_info_df
 
-	if plots:'''
+	if len(plots) > 0 :
+		return ([
+			html.Div([
+				dcc.Graph(
+					id='stock_info_df',fig=)])])'''
 
 	if kwargs.keys() : 
 		return html.Div([
 	        html.Div(
-	            'Key:' + str(k) + ' : ' + 'Value: ' + str(v)
+	            'Key :' + str(k) + ' : ' + 'Value : ' + str(v)
 	        ) for k,v in kwargs.items()
 	    ])
 	else:
