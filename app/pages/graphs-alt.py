@@ -17,52 +17,52 @@ import FlaskApp.app.common as common
 dash.register_page(__name__)
 
 layout = html.Div([
-                    dbc.Container(
-                        children= [
-                            dbc.Row([
-                                dbc.Col(
-                                    dbc.Card([
-                                        dbc.CardBody([
-                                            html.H1("Dashboard"),
-                                            html.P('''
-                                                 This is a dashboard for A.Emery
-                                                 '''),
-                                        ]),   
-                                    ],className="border-0 bg-transparent"),
-                                    width={"size":3} 
-                                ),
-                                dbc.Col(
-                                    dbc.Card([
-                                        dbc.CardBody([
-                                            html.Div([
-                                                dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
-                                            ]),
-                                        ]),
-                                    ],className="border-0 bg-transparent"),
-                                    width={"size":1,'offset':8}
-                                )
+    dbc.Container(
+        children= [
+            dbc.Row([
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.H1("Dashboard"),
+                            html.P('''
+                                 This is a dashboard for A.Emery
+                                 '''),
+                        ]),   
+                    ],className="border-0 bg-transparent"),
+                    width={"size":3} 
+                ),
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.Div([
+                                dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
                             ]),
-                            dbc.Row([
-                                dbc.Col(
-                                    html.Div([
-                                        dcc.Graph(id='graph-px')
-                                    ])
-                                )
-                            ]),
-                            dbc.Row([
-                                dbc.Col(
-                                    dcc.RadioItems(
-                                        ['Absolute','Normalised'],
-                                         'Absolute',
-                                         id ='graph-type'
-                                    )
-                                )
-                            ])
-                        ],fluid=True),
-                    #dcc.Store(id = 'clientside-figure-store-px'),
-                    dcc.Location(id='url'),
-                    html.Div(id='dummy-div')
-                ])
+                        ]),
+                    ],className="border-0 bg-transparent"),
+                    width={"size":1,'offset':8}
+                )
+            ]),
+            dbc.Row([
+                dbc.Col(
+                    html.Div([
+                        dcc.Graph(id='graph-px')
+                    ])
+                )
+            ]),
+            dbc.Row([
+                dbc.Col(
+                    dcc.RadioItems(
+                        ['Absolute','Normalised'],
+                         'Absolute',
+                         id ='graph-type'
+                    )
+                )
+            ])
+        ],fluid=True),
+    #dcc.Store(id = 'clientside-figure-store-px'),
+    dcc.Location(id='url'),
+    html.Div(id='dummy-div')
+])
 
 @callback(
     Output('dummy-div', 'childre'),
