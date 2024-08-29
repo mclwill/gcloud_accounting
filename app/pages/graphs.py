@@ -157,7 +157,7 @@ def update_store_data(graph_type):
             dff = df_graph[plot_cols]
         else:
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
-            dff = df_graph[plot_colns]
+            dff = df_graph[plot_cols]
         return px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                            labels={'variable':name_text,\
                                                    'date':'Date',\
