@@ -65,8 +65,8 @@ layout = html.Div([
                          id ='graph-type-alt',
                          inline=True
                     )
-                ,width={'size':1},justify='center')
-            ])
+                ,width={'size':1})
+            ],justify='center')
         ],fluid=True),
     #dcc.Store(id = 'clientside-figure-store-px'),
     dcc.Location(id='url'),
