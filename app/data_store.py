@@ -20,6 +20,11 @@ to_zone = tz.gettz('Australia/Melbourne')
 
 customer = 'aemery'
 
+data_store_folder = common.data_store[customer]
+stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
+orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
+po_file_path = os.path.join(data_store_folder,'data_po.csv')
+
 def in_between(now, start, end):
     if start <= end:
         return start <= now < end
