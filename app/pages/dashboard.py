@@ -682,7 +682,7 @@ def add_additional_calcs(df,base_start_date):
         [Output('data_table', 'data'),
          Output('data_table', 'hidden_columns'),
          Output('download', 'data'),
-         Output('graph-rows','data')],
+         Output('data_table','selected_rows')],
         [Input('season_option','value'),
          Input('category_option','value'),
          Input('sub_cat_option','value'),
