@@ -63,7 +63,7 @@ graphs_layout = html.Div([
                 ])
 
 def layout(**kwargs):
-    global df_graph
+    global df_graph, fig
 
     try:
         data = kwargs.pop('data',None)
