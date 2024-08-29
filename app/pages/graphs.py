@@ -1,9 +1,18 @@
 import dash
 from dash import html
+import plotly.express as px
+
+import FlaskApp.app.pages.dashboard
 
 dash.register_page(__name__)
 
 def layout(**kwargs):
+	'''plots = kwargs.pop('plots',None)
+	
+	df = dashboard.stock_info_df
+
+	if plots:'''
+
 	if kwargs.keys() : 
 		return html.Div([
 	        html.Div(
