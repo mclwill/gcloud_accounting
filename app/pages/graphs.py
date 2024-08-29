@@ -64,7 +64,7 @@ layout = html.Div([
                          'Absolute',
                          id ='graph-type-alt',
                          inline=True,
-                         style = {'padding':'10px'}
+                         inputStyle={"margin-right": "20px"}
                     )
                 ,width={'size':1})
             ],justify='center')
@@ -137,7 +137,7 @@ def get_query(url):
 
                 #common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
 
-                fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History',\
+                '''fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History',\
                                        labels={'variable':name_text,\
                                                'date':'Date',\
                                                'value':'Stock Available to Sell'},
@@ -146,12 +146,12 @@ def get_query(url):
                 fig.update_layout(
                     height = 600
                 )
-
+                '''
                 return df_graph.to_json(date_format='iso', orient='split'), name_text
 
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
 
 @callback(
@@ -173,14 +173,20 @@ def update_figure(df_graph,graph_type,name_text):
         else:
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
             dff = df_graph[plot_cols]
-        return px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
+
+        fig = px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                            labels={'variable':name_text,\
                                                    'date':'Date',\
                                                    'value':'Stock Available to Sell'}\
                         )
+        fig.update_layout(
+                    height = 600
+                )
+        return fig 
+
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
 '''clientside_callback(
     """
