@@ -537,7 +537,7 @@ def update_output(date_value):
             return date_value
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
 #@callback(
 #    Input('end_date_picker', 'date'))
@@ -576,7 +576,7 @@ def set_dropdown_options(season,category,v_base_start_date):
             return None
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
 
 @callback(
@@ -627,7 +627,7 @@ def set_dropdown_options(product,v_base_start_date):
             return None
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
 @callback(
     Output('size_option', 'options'),
@@ -649,7 +649,7 @@ def set_dropdown_options(product,color,v_base_start_date):
             return None
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
 @callback(
     Output("download-dataframe-csv", "data"),
@@ -764,6 +764,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                     present_columns.remove('sku_id')
             else:
                 group_list.append('color')
+            
             if not v_size:
                 if 'color' in present_columns:
                     group_list.append('color')
@@ -783,7 +784,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                         agg_dict[x] = 'sum'
                     else:
                         agg_dict[x] = 'first'
-
+            common.logger.info(str(group_list) + '\n' + str(present_list))
             if group_list:
                 df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
             else:
@@ -807,7 +808,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             return None
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
         return html.Div(
                 html.P('Error processing layout')
         ) 
@@ -817,7 +818,7 @@ clientside_callback(
     function(n_clicks,rows,data) {
         const send_data = rows.map(index => data[index]);
         const sendjsonString = JSON.stringify(send_data)
-        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs-alt?data=${sendjsonString}`;
+        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
         window.open(url,'_blank');
     }
     """,
