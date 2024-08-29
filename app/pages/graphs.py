@@ -180,8 +180,9 @@ def update_figure(df_graph,graph_type,name_text):
                                                    'value':'Stock Available to Sell'}\
                         )
         fig.update_layout(
-                    height = 600
+                    height = 800,
                 )
+        fig.update_yaxes(rangemode='tozero')
         return fig 
 
     except Exception as ex:
