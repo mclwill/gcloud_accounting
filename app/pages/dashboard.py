@@ -5,6 +5,7 @@ import dash
 #import dash_html_components as html
 #import dash_core_components as dcc
 from dash import html, dcc, callback, dash_table, clientside_callback
+import dash_bootstrap_components as dbc
 #import dash_table
 from dash.dependencies import Input, Output, State
 from dash_table import DataTable, FormatTemplate
