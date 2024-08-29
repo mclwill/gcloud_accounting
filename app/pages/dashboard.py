@@ -178,6 +178,8 @@ def layout(**kwargs):
     global stock_info_df,orders_df,po_df
     global latest_date,earliest_date,default_end_season_date
     global start_of_previous_week,end_of_previous_week
+
+    global display_columns
     #global base_stock_info_df,display_stock_info_df
     #global product_option_list,color_option_list,size_option_list,season_option_list    
     
