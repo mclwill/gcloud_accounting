@@ -63,6 +63,7 @@ graphs_layout = html.Div([
                 ])
 
 def layout(**kwargs):
+    global df_graph
     
     try:
         data = kwargs.pop('data',None)
@@ -147,6 +148,7 @@ def layout(**kwargs):
     Input('graph-type', 'value')
 )
 def update_store_data(type):
+    globals df_graph
     if type == 'Absolute':
         plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
         dff = df_graph[plot_columns]

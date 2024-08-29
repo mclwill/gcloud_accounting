@@ -296,7 +296,7 @@ def layout(**kwargs):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width = {"size":2}
+                    width = {"size":2,"offset":7}
                 ),
                 dbc.Col(
                     dbc.Card([
@@ -699,7 +699,7 @@ def add_additional_calcs(df,base_start_date):
 def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortcut,v_base_start_date):
     #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
     #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
-    global display_columns, download_csv_df
+    global display_columns
 
     try:
         #common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
