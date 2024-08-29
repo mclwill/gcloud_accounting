@@ -65,14 +65,14 @@ def layout(**kwargs):
                     abs_max = max(col_max,-col_min)
                     df_graph[col + '_norm'] = df_graph[col] / col_max * 100
 
-                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x] #get normalised columns before bringing back 'date'
+                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x] #get normalised columns before bringing back 'date'
                 
                 df_graph = df_graph.reset_index()  #bring back 'date' into columns
 
                 common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
 
                 fig = px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
-                                       labels={'Name':name_text,\
+                                       labels={'variable':name_text,\
                                                'date':'Date',\
                                                'value':'Stock Available to Sell'}
                                     )
@@ -109,12 +109,22 @@ def layout(**kwargs):
                             dbc.Row([
                                 dbc.Col(
                                     html.Div([
-                                        dcc.Graph(id='graph_fig',figure = fig)
+                                        dcc.Graph(id='clientside-graph-px')
                                     ])
                                 )
                             ])
                         ],fluid=True)
-                    ])
+                    dcc.Store(id = 'clientside-figure-store-px'),
+                    dcc.html('Graph Type'),
+                    dcc.RadioItems(
+                        ['Absolute','Normalised'],
+                         'Absolute',
+                         id ='clientside-graph-type'
+                    )
+                ])
+
+
+        #return error if fall through to here
 
         return html.Div([
             html.Div('No data to display')
@@ -126,3 +136,32 @@ def layout(**kwargs):
         return html.Div(
                 html.P('Error processing graph')
         )
+
+@callback(
+    Output('clientside-figure-store-px', 'data'),
+    Input('clientside-graph-type', 'value')
+)
+def update_store_data(type):
+    if type == 'Absolute':
+        plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
+        dff = df_graph[plot_columns]
+    else:
+        plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
+        dff = df_graph[plot_columns]
+    return px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
+                                       labels={'variable':name_text,\
+                                               'date':'Date',\
+                                               'value':'Stock Available to Sell'}
+
+clientside_callback(
+    """
+    function(data, scale) {
+        return {
+            'data': data,
+             }
+        }
+    }
+    """,
+    Output('clientside-graph-px', 'figure'),
+    Input('clientside-figure-store-px', 'data')
+)
