@@ -10,7 +10,6 @@ app = Flask(__name__)
 
 from FlaskApp.app import auth
 from FlaskApp.app import views
-from FlaskApp.app import data_store
 
 
 with open('/var/log/cd-uphance/app.log', 'a') as sys.stdout:

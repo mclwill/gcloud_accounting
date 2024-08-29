@@ -856,8 +856,7 @@ def updated_selected_rows(v_rows,display_data):
         dff = df['p_name']
     return dff.to_dict('records')
 
-if __name__ == "__main__":
-    flush_cache()
+flush_cache()
 
 
 #dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
