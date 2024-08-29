@@ -109,6 +109,9 @@ def get_data_from_data_store():
     try:
         #collect data in serve_layout so that latest is retrieved from data_store
 
+        tb = traceback.format_exc()
+        common.logger.info('Traceback for get_data :' + '\n' + str(tb))
+
         flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
 
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
@@ -260,6 +263,8 @@ def layout(**kwargs):
     
     try:
         #common.logger.info('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()))
+
+
         base_stock_info_df = global_store(earliest_date)
         #from here all about presenting the data table
 
@@ -883,7 +888,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 html.P('Error processing layout')
         ) 
 
-clientside_callback(
+'''clientside_callback(
     """
     function(n_clicks,selected_rows) {
         const jsonString = JSON.stringify(selected_ros);
@@ -895,7 +900,7 @@ clientside_callback(
     Input('btn_graphs', 'n_clicks'),
     State('graph-rows', 'data'),
     prevent_initial_call=True #
-)
+)'''
 
 @callback (
     Output('graph-rows','data'),
