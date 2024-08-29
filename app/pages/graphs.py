@@ -69,7 +69,7 @@ def layout(**kwargs):
                 '''
                 df_graph = df_graph.reset_index()  #bring back 'date' into columns
 
-                common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
+                common.logger.info(str(df_graph.head()))# + '\n' + str(plot_cols))
 
                 fig = px.line(df_graph,x='date',y=df_graph.columns,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
                                        labels={'Name':name_text,\
