@@ -844,6 +844,7 @@ clientside_callback(
 )
 def updated_selected_rows(v_rows,display_data):
     try:
+        common.logger.info('Select Rows: ' + str(v_rows) + '\n' + str(display_data))
         df = pd.DataFrame.from_dict(display_data).iloc[v_rows]
         df_cols = df.columns.tolist()
         if 'color' in df_cols:
