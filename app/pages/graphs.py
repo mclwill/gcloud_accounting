@@ -16,7 +16,7 @@ def layout(**kwargs):
     
         if data:
             common.logger.info(str(data))
-            data_df = pd.DataFrame.from_dict(data)
+            data_df = pd.DataFrame.from_records(data)
             data_cols = data_df.columns.tolist()
             if 'color' in data_cols:
                 if 'size' in data_cols:
