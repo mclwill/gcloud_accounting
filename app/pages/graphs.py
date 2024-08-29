@@ -56,13 +56,43 @@ def layout(**kwargs):
                 df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell').reset_index()
 
                 fig = px.line(df_graph,x='date',y=df_graph.columns,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History')
-                fig.update_layout(
-                    height = 200
-                )
+                #fig.update_layout(
+                #    height = '200px'
+                #)
                 #common.logger.info(str(df_grouped[['date','available_to_sell']].head()))
                 return html.Div([
-                    dcc.Graph(id='graph_fig',figure = fig)
+                    dbc.Row([
+                        dbc.Col(
+                            dbc.Card([
+                                dbc.CardBody([
+                                    html.H1("Dashboard"),
+                                    html.P('''
+                                         This is a dashboard for A.Emery
+                                         '''),
+                                ]),   
+                            ],className="border-0 bg-transparent"),
+                            width={"size":3,'offset':7} 
+                        ),
+                        dbc.Col(
+                            dbc.Card([
+                                dbc.CardBody([
+                                    html.Div([
+                                        dbc.Button("LOGOUT",href='/logout',color='light',size='lg',external_link=True,)
+                                    ]),
+                                ]),
+                            ],className="border-0 bg-transparent"),
+                            width={"size":1}
+                        )
+                    ]),
+                    dbc.Row([
+                        dbc.Col(
+                            html.Div([
+                                dcc.Graph(id='graph_fig',figure = fig)
+                            ])
+                        )
+                    ])
                 ])
+
         return html.Div([
             html.Div('No data to display')
         ])
