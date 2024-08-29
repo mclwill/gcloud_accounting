@@ -109,7 +109,7 @@ def serve_layout(**kwargs):
                             dbc.Row([
                                 dbc.Col(
                                     html.Div([
-                                        dcc.Graph(id='clientside-graph-px')
+                                        dcc.Graph(id='clientside-graph-px',figure = fig)
                                     ])
                                 )
                             ]),
@@ -142,7 +142,7 @@ def serve_layout(**kwargs):
 
 layout = serve_layout
 
-@dash.callback(
+callback(
     Output('clientside-graph-px', 'figure'),
     Input('clientside-graph-type', 'value')
 )
