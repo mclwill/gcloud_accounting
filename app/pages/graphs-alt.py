@@ -151,9 +151,9 @@ def get_url(url):
                                     dbc.Card([
                                         dbc.CardBody([
                                             html.H1("Dashboard"),
-                                            html.P('''
+                                            html.P(""""
                                                  #This is a dashboard for A.Emery
-                                                 '''),
+                                                 """),
                                         ]),   
                                     ],className="border-0 bg-transparent"),
                                     width={"size":3} 
