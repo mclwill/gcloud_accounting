@@ -63,7 +63,7 @@ def layout(**kwargs):
                     col_max = df_graph[col].max()
                     col_min = df_graph[col].min()
                     abs_max = max(col_max,-col_min)
-                    df_graph[col + '_norm'] = df_group[col] / col_max * 100
+                    df_graph[col + '_norm'] = df_graph[col] / col_max * 100
 
                 df_graph = df_graph.reset_index()
 
