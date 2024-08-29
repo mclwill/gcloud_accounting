@@ -146,9 +146,11 @@ def layout(**kwargs):
     Output('graph-px', 'figure'),
     Input('graph-type', 'value')
 )
-def update_store_data(type):
+def update_store_data(graph_type):
     global df_graph
-    if type == 'Absolute':
+    
+    common.logger.info('call back reached' + str(graph_type))
+    if graph_type == 'Absolute':
         plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
         dff = df_graph[plot_columns]
     else:
