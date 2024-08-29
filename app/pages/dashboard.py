@@ -855,7 +855,8 @@ def updated_selected_rows(v_rows,display_data):
                 dff = df[['p_name','size']]
             else:
                 dff = df['p_name']
-            common.logger.info('Select Rows 2: ' + str(v_rows) + '\n' + str(dff.head()))
+                return dff.to_list()
+            #common.logger.info('Select Rows 2: ' + str(v_rows) + '\n' + str(dff.head()))
             return dff.to_dict('records')
         else:
             return None

@@ -7,8 +7,8 @@ from FlaskApp.app.data_store import stock_info_df
 dash.register_page(__name__)
 
 def layout(**kwargs):
-	rows = kwargs.pop('plots',None)
-	data = kwargs.pop('data',None)
+	#rows = kwargs.pop('plots',None)
+	#data = kwargs.pop('data',None)
 	
 	'''df = stock_info_df
 
