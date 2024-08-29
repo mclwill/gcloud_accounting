@@ -904,13 +904,14 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
     prevent_initial_call=True #
 )
 
+'''
 @callback (
     Output('graph-rows','data'),
     Input('data_table','selected_rows')
 
 )
 def updated_selected_rows(v_rows):
-    return v_rows'''
+    return v_rows
 
 get_data_from_data_store()
 
