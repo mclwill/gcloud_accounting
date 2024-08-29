@@ -843,18 +843,25 @@ clientside_callback(
 
 )
 def updated_selected_rows(v_rows,display_data):
-    df = pd.DataFrame.from_dict(display_data).iloc[v_rows]
-    df_cols = df.columns.tolist()
-    if 'color' in df_cols:
-        if 'size' in df_cols:
-            dff = df[['p_name','color','size']]
+    try:
+        df = pd.DataFrame.from_dict(display_data).iloc[v_rows]
+        df_cols = df.columns.tolist()
+        if 'color' in df_cols:
+            if 'size' in df_cols:
+                dff = df[['p_name','color','size']]
+            else:
+                dff = df[['p_name','color']]
+        elif 'size' in df_cols:
+            dff = df[['p_name','size']]
         else:
-            dff = df[['p_name','color']]
-    elif 'size' in df_cols:
-        dff = df[['p_name','size']]
-    else:
-        dff = df['p_name']
-    return dff.to_dict('records')
+            dff = df['p_name']
+        return dff.to_dict('records')
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        return html.Div(
+                html.P('Error processing layout')
+        ) 
 
 flush_cache()
 
