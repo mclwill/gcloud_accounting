@@ -8,3 +8,6 @@ dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_sty
 dash_app.layout = html.Div([
     dash.page_container
 ])
+
+dash_app.validation_layout = html.Div([
+	graphs.graphs_layout])
