@@ -4,7 +4,7 @@ from FlaskApp.app import app
 import dash
 #import dash_html_components as html
 #import dash_core_components as dcc
-from dash import html, dcc, callback, dash_table
+from dash import html, dcc, callback, dash_table, clientside_callback
 import dash_bootstrap_components as dbc
 #import dash_table
 from dash.dependencies import Input, Output, State
@@ -575,7 +575,8 @@ def layout(**kwargs):
             ]),
             dcc.Store(id='signal'),
             dcc.Store(id='download'),
-            dcc.Store(id='graph-rows')
+            dcc.Store(id='graph-rows'),
+            html.Div(id='dummy-div')
         ])
     except Exception as ex:
         tb = traceback.format_exc()
@@ -882,19 +883,27 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 html.P('Error processing layout')
         ) 
 
+clientside_callback(
+    """
+    function(n_clicks,selected_rows) {
+        const jsonString = JSON.stringify(selected_ros);
+        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${jsonString}`;
+        window.open(url,'_blank');
+    }
+    """,
+    Output('dummy-div', 'children'),
+    Input('btn_graphs', 'n_clicks'),
+    State('graph-rows', 'data')
+    prevent_initial_call=True #
+)
+
 @callback (
-    Output('btn_graphs','href'),
-    Input('data_table','selected_rows'),
+    Output('graph-rows','data'),
+    Input('data_table','selected_rows')
+
 )
 def updated_selected_rows(v_rows):
-    if v_rows:
-        plots_str = ','.join(map(str,v_rows))
-        common.logger.info(str(plots_str))
-        return '/dashboard/graphs?plots=' + plots_str
-
-'''@callback (
-    Input('btn_graphs','n_clicks'),
-    Output('')'''
+    return v_rows
 
 get_data_from_data_store()
 
