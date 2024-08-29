@@ -893,7 +893,7 @@ clientside_callback(
     """,
     Output('dummy-div', 'children'),
     Input('btn_graphs', 'n_clicks'),
-    State('graph-rows', 'data')
+    State('graph-rows', 'data'),
     prevent_initial_call=True #
 )
 
