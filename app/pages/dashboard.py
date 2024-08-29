@@ -893,7 +893,8 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 clientside_callback(
     """
     function(n_clicks,selected_rows) {
-        const jsonString = JSON.stringify(selected_ros);
+        console.log(selected_rows);
+        const jsonString = JSON.stringify(selected_rows);
         const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?rows=${jsonString}`;
         window.open(url,'_blank');
     }
