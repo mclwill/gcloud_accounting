@@ -3,6 +3,7 @@ from dash import html
 import plotly.express as px
 import traceback
 import pandas as pd
+import json
 
 import FlaskApp.app.common as common
 from FlaskApp.app.data_store import get_data_from_globals
@@ -13,7 +14,7 @@ def layout(**kwargs):
     
     try:
         data = kwargs.pop('data',None)
-    
+        data = json.loads(data)
         if data:
             common.logger.info(str(data))
             data_df = pd.DataFrame.from_records(data)
