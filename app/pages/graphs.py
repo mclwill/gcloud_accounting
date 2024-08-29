@@ -2,7 +2,7 @@ import dash
 from dash import html
 import plotly.express as px
 
-import FlaskApp.app.pages.dashboard
+#import FlaskApp.app.pages.dashboard
 
 dash.register_page(__name__)
 
