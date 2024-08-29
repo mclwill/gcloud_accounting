@@ -62,12 +62,12 @@ layout = html.Div([
         ],fluid=True),
     #dcc.Store(id = 'clientside-figure-store-px'),
     dcc.Location(id='url'),
-    dcc.Store(id='fig-store'),
+    dcc.Store(id='df-store'),
     dcc.Store(id='name-text')
 ])
 
 @callback(
-    [Output('fig-store', 'data'),
+    [Output('df-store', 'data'),
      Output('name-text','data')],
     Input('url', 'search')
 )
@@ -138,7 +138,7 @@ def get_query(url):
                     height = 600
                 )
 
-                return df_graph.to_json(date_format='iso', orient='split')
+                return df_graph.to_json(date_format='iso', orient='split'), name_text
 
     except Exception as ex:
         tb = traceback.format_exc()
@@ -147,14 +147,14 @@ def get_query(url):
 
 @callback(
     Output('graph-px-alt', 'figure'),
-    [Input('fig-store','data'),
+    [Input('df-store','data'),
      Input('graph-type-alt', 'value'),
      Input('name-text','data')]
 )
 def update_figure(df_graph,graph_type,name_text):
     
     try:
-        common.logger.info('call back reached' + str(graph_type) + str(name_text))
+        common.logger.info('call back reached' + str(graph_type) + str(name_text) + str(df_graph))
         df_graph = pd.read_json(df_graph, orient='split')
         if graph_type == 'Absolute':
             plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
