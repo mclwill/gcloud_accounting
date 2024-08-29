@@ -17,7 +17,7 @@ from FlaskApp.app.data_store import get_data_from_globals
 dash.register_page(__name__)
 
 
-def layout(**kwargs):
+def layout(**kwargs=None):
     global df_graph, fig
 
     try:
@@ -149,18 +149,22 @@ def layout(**kwargs):
 def update_store_data(graph_type):
     global df_graph
     
-    common.logger.info('call back reached' + str(graph_type))
-    if graph_type == 'Absolute':
-        plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
-        dff = df_graph[plot_columns]
-    else:
-        plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
-        dff = df_graph[plot_columns]
-    return px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
-                                       labels={'variable':name_text,\
-                                               'date':'Date',\
-                                               'value':'Stock Available to Sell'}\
-                    )
+    try:
+        common.logger.info('call back reached' + str(graph_type))
+        if graph_type == 'Absolute':
+            plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
+            dff = df_graph[plot_columns]
+        else:
+            plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
+            dff = df_graph[plot_columns]
+        return px.line(df_graph,x='date',y=plot_cols,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History',\
+                                           labels={'variable':name_text,\
+                                                   'date':'Date',\
+                                                   'value':'Stock Available to Sell'}\
+                        )
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
 '''
 clientside_callback(
     """
