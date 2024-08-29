@@ -902,7 +902,7 @@ clientside_callback(
     Output('dummy-div', 'children'),
     Input('btn_graphs', 'n_clicks'),
     State('graph-rows', 'data'),
-    State('download','data',allow_duplicate = True),
+    State('download','data'),
     prevent_initial_call=True #
 )
 
