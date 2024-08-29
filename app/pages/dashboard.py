@@ -194,13 +194,15 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
 
 #def serve_layout(base_stock_info_df,end_season_date):
 def layout(**kwargs):
-    global earliest_date, latest_date, display_columns
+    global stock_info_df,orders_df,po_df
+    global latest_date,earliest_date,default_end_season_date
+    global start_of_previous_week,end_of_previous_week
     #global base_stock_info_df,display_stock_info_df
     #global product_option_list,color_option_list,size_option_list,season_option_list    
     
     try:
         #common.logger.info('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()))
-
+        stock_info_df,orders_df,po_df, latest_date,earliest_date, default_end_season_date, start_of_previous_week,end_of_previous_week = get_data_from_globals()
 
         base_stock_info_df = global_store(earliest_date)
         #from here all about presenting the data table
@@ -859,6 +861,7 @@ clientside_callback(
 def updated_selected_rows(v_rows):
     return v_rows
 
+flush_cache()
 get_data_from_data_store()
 
 #dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
