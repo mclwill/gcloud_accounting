@@ -46,10 +46,12 @@ def layout(**kwargs):
                     dff = stock_df[idx_stock.isin(idx_data)]
                 else: #if just p_name then filter on p_name
                     dff = stock_df[stock_df['p_name'].isin(data_df['p_name'].unique().tolist())]
-                    common.logger.info(str(dff[['date','available_to_sell']]))
+                    keys = ['p_name']
+
                 df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(keys).agg({'available_to_sell':'sum','date':'first'}).reset_index()
+                common.logger.info(str(df_grouped['date','available_to_sell'].head()))
                 return html.Div([
-                    dcc.Graph(id='graph_fig',figure = px.line(dff,x='date',y='available_to_sell'))
+                    dcc.Graph(id='graph_fig',figure = px.line(df_grouped,x='date',y='available_to_sell'))
                 ])
         return html.Div([
             html.Div('No data to display')
