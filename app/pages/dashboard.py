@@ -890,7 +890,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 html.P('Error processing layout')
         ) 
 
-'''clientside_callback(
+clientside_callback(
     """
     function(n_clicks,selected_rows) {
         const jsonString = JSON.stringify(selected_ros);
@@ -904,7 +904,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
     prevent_initial_call=True #
 )
 
-'''
+
 @callback (
     Output('graph-rows','data'),
     Input('data_table','selected_rows')
