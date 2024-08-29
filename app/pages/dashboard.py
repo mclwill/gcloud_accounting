@@ -2,11 +2,8 @@ import os
 import pandas as pd
 from FlaskApp.app import app
 import dash
-#import dash_html_components as html
-#import dash_core_components as dcc
 from dash import html, dcc, callback, dash_table, clientside_callback
 import dash_bootstrap_components as dbc
-#import dash_table
 from dash.dependencies import Input, Output, State
 from dash_table import DataTable, FormatTemplate
 from dash.exceptions import PreventUpdate
@@ -296,7 +293,7 @@ def layout(**kwargs):
                             ]),
                         ]),
                     ],className="border-0 bg-transparent"),
-                    width = {"size":2,"offset":7}
+                    width = {"size":2}
                 ),
                 dbc.Col(
                     dbc.Card([
