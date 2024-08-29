@@ -18,7 +18,7 @@ dash.register_page(__name__)
 
 
 def layout(data=None,**kwargs):
-    global df_graph, fig
+    global df_graph, fig, name_text
 
     try:
         #data = kwargs.pop('data',None)
