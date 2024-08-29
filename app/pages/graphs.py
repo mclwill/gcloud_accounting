@@ -123,7 +123,7 @@ def serve_layout(**kwargs):
                                 )
                             ])
                         ],fluid=True),
-                    dcc.Store(id = 'clientside-figure-store-px'),
+                    #dcc.Store(id = 'clientside-figure-store-px'),
                 ])
 
 
@@ -143,7 +143,7 @@ def serve_layout(**kwargs):
 layout = serve_layout
 
 @callback(
-    Output('clientside-figure-store-px', 'data'),
+    Output('clientside-graph-px', 'figure'),
     Input('clientside-graph-type', 'value')
 )
 def update_store_data(type):
@@ -158,7 +158,7 @@ def update_store_data(type):
                                                'date':'Date',\
                                                'value':'Stock Available to Sell'}\
                     )
-
+'''
 clientside_callback(
     """
     function(data) {
@@ -170,4 +170,4 @@ clientside_callback(
     """,
     Output('clientside-graph-px', 'figure'),
     Input('clientside-figure-store-px', 'data')
-)
+)'''
