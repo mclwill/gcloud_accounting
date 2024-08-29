@@ -55,7 +55,10 @@ def layout(**kwargs):
                 
                 df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell').reset_index()
 
-                fig = px.line(df_graph,x='date',y=df_graph.columns,hover_data={'date':'%Y-%m-%d'})
+                fig = px.line(df_graph,x='date',y=df_graph.columns,hover_data={'date':'%Y-%m-%d'},title='Available To Sell History')
+                fig.update_layout(
+                    height = 200
+                )
                 #common.logger.info(str(df_grouped[['date','available_to_sell']].head()))
                 return html.Div([
                     dcc.Graph(id='graph_fig',figure = fig)
