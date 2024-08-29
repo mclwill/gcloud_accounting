@@ -324,6 +324,20 @@ def get_data_from_data_store():
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))     
 
+def last_day_of_month(any_day):
+    # The day 28 exists in every month. 4 days later, it's always next month
+    next_month = any_day.replace(day=28) + timedelta(days=4)
+    # subtracting the number of the current day brings us back one month
+    return next_month - timedelta(days=next_month.day)
+
+def get_start_of_previous_week(date_value):
+    weekday = date_value.weekday()
+    monday_delta = timedelta(days=weekday,weeks=1)
+    return date_value - monday_delta
+
+def get_earliest_date(row,df):
+    return df['date'][df['sku_id'] == row['sku_id']].min()
+
 def get_data_from_globals():
     global stock_info_df,orders_df,po_df
     global latest_date,earliest_date,default_end_season_date
