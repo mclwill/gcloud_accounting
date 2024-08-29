@@ -2,29 +2,48 @@ import dash
 from dash import html
 import plotly.express as px
 
-from FlaskApp.app.data_store import stock_info_df
+from FlaskApp.app.data_store import get_data_from_globals
 
 dash.register_page(__name__)
 
 def layout(**kwargs):
-	#rows = kwargs.pop('plots',None)
-	#data = kwargs.pop('data',None)
 	
-	'''df = stock_info_df
+	try:
+		data = kwargs.pop('data',None)
+	
+		if len(data) > 0:
+	        data_df = pd.DataFrame.from_dict(data)
+	        data_cols = data_df.columns.tolist()
+	        if 'color' in data_cols:
+	            if 'size' in data_cols:
+	                keys = ['p_name','color','size']
+	            else:
+	                keys = ['p_name','color']
+	        elif 'size' in data_cols:
+	            keys = ['p_name','size']
+	        else:
+	            keys = False
 
-	if len(plots) > 0 :
-		return ([
-			html.Div([
-				dcc.Graph(
-					id='stock_info_df',fig=)])])'''
+		    stock_df = get_data_from_globals()[0].copy()
 
-	if kwargs.keys() : 
-		return html.Div([
-	        html.Div(
-	            'Key :' + str(k) + ' : ' + 'Value : ' + str(v)
-	        ) for k,v in kwargs.items()
-	    ])
-	else:
-		return html.Div([
-	        html.Div('No parameters in URL')
-	    ])
+			if keys: # if multiple columns then use index matching approach
+				idx_stock = stock_df.set_index(keys).index
+				idx_data = data_df.set_index(keys).index
+				dff = stock_df[idx_stock.isin(idx_data)]
+			else: #if just p_name then filter on p_name
+				dff = stock_df[stock_df['p_name'].isin(data_df['p_name'].unique().to_list())]
+
+			return html.Div([
+		        dcc.Graph(id='graph_fig',fig = px.line(dff,x='date',y='available_to_sell'))
+		    ])
+		else:
+			return html.Div([
+		        html.Div('No data to display')
+		    ])
+
+	except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Graphing Info' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+        return html.Div(
+                html.P('Error processing graph')
+        ) 
