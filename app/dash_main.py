@@ -7,5 +7,5 @@ dash.get_app().layout = html.Div([
     dash.page_container
 ])
 
-dash_app.get_app.validation_layout = html.Div([
+dashget_app.validation_layout = html.Div([
 	graphs.layout])
