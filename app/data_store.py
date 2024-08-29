@@ -347,4 +347,5 @@ def get_data_from_globals():
            latest_date,earliest_date,default_end_season_date,\
            start_of_previous_week,end_of_previous_week
 
-get_data_from_data_store()
+if __name__ == "__main__":
+    get_data_from_data_store()  #only update datastore from here -> not via imports in other modules
