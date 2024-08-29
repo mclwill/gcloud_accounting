@@ -38,6 +38,7 @@ def layout(**kwargs):
                     keys = False
 
                 stock_df = get_data_from_globals()[0].copy()
+                common.logger.info(str(stock_info_df))
                 #stock_df['date'] = stock_df['date'].dt.date
 
                 if keys: # if multiple columns then use index matching approach
@@ -48,7 +49,7 @@ def layout(**kwargs):
                     dff = stock_df[stock_df['p_name'].isin(data_df['p_name'].unique().tolist())]
                     keys = ['p_name']
 
-                df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(keys).agg({'available_to_sell':'sum','date':'first'}).reset_index()
+                df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(['date'] + keys).agg({'available_to_sell':'sum'}).reset_index()
                 common.logger.info(str(df_grouped[['date','available_to_sell']].head()))
                 return html.Div([
                     dcc.Graph(id='graph_fig',figure = px.line(df_grouped,x='date',y='available_to_sell'))
