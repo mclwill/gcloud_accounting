@@ -901,8 +901,8 @@ clientside_callback(
     """,
     Output('dummy-div', 'children'),
     Input('btn_graphs', 'n_clicks'),
-    State('graph-rows', 'data'),
-    State('download','data'),
+    State('graph-rows', 'data1'),
+    State('download','data2'),
     prevent_initial_call=True #
 )
 
