@@ -17,11 +17,11 @@ from FlaskApp.app.data_store import get_data_from_globals
 dash.register_page(__name__)
 
 
-def layout(**kwargs=None):
+def layout(data=None,**kwargs):
     global df_graph, fig
 
     try:
-        data = kwargs.pop('data',None)
+        #data = kwargs.pop('data',None)
 
         if data:
             data = json.loads(data)
