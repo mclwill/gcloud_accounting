@@ -52,7 +52,7 @@ def login():
             flask.session['ur'] = None
             return flask.redirect(flask.url_for(url))
         else:
-            return flask.redirect(flask.url_for('/'))
+            return flask.redirect(flask.url_for('/dashboard/'))
 
     return 'Bad login'
 

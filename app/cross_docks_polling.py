@@ -294,6 +294,8 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
                                                              'The shipment has not been updated in Uphance - this will need to be done manually taking account of the stock that has not been shipped\n\n' + \
                                                              'Cross Docks file: ' + f + '\n\n' + \
                                                              'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
+                                                             'Carrier: ' + str(carrier) + '\n' + \
+                                                             'Tracking Number: ' + str(tracking) + '\n' + \
                                                              'Ship to Name: ' + str(ship_to_name) + '\n' + \
                                                              'Ship to Address 1: ' + str(ship_to_address_1) + '\n' + \
                                                              'Ship to Address 2: ' + str(ship_to_address_2) + '\n' + \
