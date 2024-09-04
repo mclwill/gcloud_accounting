@@ -166,24 +166,25 @@ def update_figure(df_graph,graph_type,name_text):
     
     try:
         #common.logger.info('call back reached' + str(graph_type) + str(name_text) + str(df_graph))
-        df_graph = pd.read_json(df_graph, orient='split')
-        if graph_type == 'Absolute':
-            plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
-            dff = df_graph[plot_cols]
-        else:
-            plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
-            dff = df_graph[plot_cols]
+        if df_graph:
+            df_graph = pd.read_json(df_graph, orient='split')
+            if graph_type == 'Absolute':
+                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x]
+                dff = df_graph[plot_cols]
+            else:
+                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' in x]
+                dff = df_graph[plot_cols]
 
-        fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History - ' + graph_type,hover_data={'date':"|%Y-%m-%d"},markers=True,\
-                                           labels={'variable':name_text,\
-                                                   'date':'Date',\
-                                                   'value':'Stock Available to Sell'}\
-                        )
-        fig.update_layout(
-                    height = 600,
-                )
-        fig.update_yaxes(rangemode='tozero')
-        return fig 
+            fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History - ' + graph_type,hover_data={'date':"|%Y-%m-%d"},markers=True,\
+                                               labels={'variable':name_text,\
+                                                       'date':'Date',\
+                                                       'value':'Stock Available to Sell'}\
+                            )
+            fig.update_layout(
+                        height = 600,
+                    )
+            fig.update_yaxes(rangemode='tozero')
+            return fig 
 
     except Exception as ex:
         tb = traceback.format_exc()
