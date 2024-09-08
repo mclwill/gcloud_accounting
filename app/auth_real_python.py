@@ -164,7 +164,7 @@ def callback():
     login_user(user,remember=True,duration=timedelta(days=30))
 
     if 'url' in session:
-        url = flask.session['url']
+        url = session['url']
         session['url'] = None
         return redirect(url_for(url))
     else:
