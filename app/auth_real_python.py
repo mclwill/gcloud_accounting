@@ -163,6 +163,7 @@ def callback():
     # Begin user session by logging the user in
     login_user(user,remember=True,duration=timedelta(days=30))
 
+    common.logger.debug(str(session))
     if 'url' in session:
         url = session['url']
         session['url'] = None
