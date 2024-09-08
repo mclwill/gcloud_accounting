@@ -54,7 +54,7 @@ login_manager.init_app(app)
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return "You must be logged in to access this content.", 403
+    return redirect(flask.url_for('login'))
 
 '''
 # Naive database setup
