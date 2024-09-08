@@ -166,7 +166,7 @@ def callback():
         User.create(unique_id, users_name, users_email, picture)
 
     # Begin user session by logging the user in
-    login_user(user,remember=True,duration=timedelta(days=30))
+    login_user(user,remember=True,duration=timedelta(days=1))
 
     common.logger.debug(str(session))
     if 'next_url' in session:
