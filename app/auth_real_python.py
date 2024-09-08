@@ -50,6 +50,7 @@ app.secret_key = os.urandom(24)
 # https://flask-login.readthedocs.io/en/latest
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.session_protection = 'strong'
 
 
 @login_manager.unauthorized_handler
@@ -190,7 +191,7 @@ def logout():
 @app.route('/user')
 @login_required
 def home():
-    return 'You are logged in as {0} with email{1}.'.format(current_user.name,current_user.email)
+    return 'You are logged in as {0}'.format(current_user.email)
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
