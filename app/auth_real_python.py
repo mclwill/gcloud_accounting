@@ -186,8 +186,6 @@ def callback():
 @login_required
 def logout():
     logout_user()
-    session.clear()
-    session['_remember'] = 'clear'
     common.logger.debug('User logged out')
     return 'Logged out'
 
