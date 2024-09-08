@@ -21,7 +21,7 @@ from dateutil import tz
 import numpy as np
 from flask_caching import Cache
 #import redis
-#from functools import partial
+from functools import partial
 
 import FlaskApp.app.common as common
 
@@ -870,7 +870,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 html.P('Error processing layout')
         ) 
 
-get_data_from_data_store()
+#get_data_from_data_store()
 
-dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
+#dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
        

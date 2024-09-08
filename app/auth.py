@@ -49,7 +49,7 @@ def login():
         flask_login.login_user(user)
         if 'url' in flask.session:
             url = flask.session['url']
-            flask.session['ur'] = None
+            flask.session['url'] = None
             return flask.redirect(flask.url_for(url))
         else:
             return flask.redirect(flask.url_for('/dashboard/'))

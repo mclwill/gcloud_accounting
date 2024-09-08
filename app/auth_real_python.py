@@ -13,7 +13,7 @@ import requests
 #from app.db import init_db_command
 
 # Third party libraries
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request, url_for, session
 from flask_login import (
     LoginManager,
     current_user,
@@ -31,7 +31,7 @@ conn  =  sqlite3.connect('/home/gary/users_db/users.sqlite3', check_same_thread=
 cursor = conn.cursor()
 sql_query = """SELECT name FROM sqlite_master  WHERE type='table';"""
 cursor.execute(sql_query)
-common.logger.debug(str(cursor.fetchall()))
+#common.logger.debug(str(cursor.fetchall()))
 
 #app = app.create_app()
 
@@ -163,8 +163,13 @@ def callback():
     # Begin user session by logging the user in
     login_user(user,remember=True,duration=timedelta(days=30))
 
-    # Send user back to homepage
-    return redirect(url_for("index"))
+    if 'url' in session:
+        url = flask.session['url']
+        session['url'] = None
+        return redirect(url_for(url))
+    else:
+        return redirect(url_for('/dashboard/'))
+
 
 
 @app.route("/logout")
