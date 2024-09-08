@@ -1,7 +1,7 @@
-import app.auth_real_python as arp
+import FlaskApp.app.auth_real_python as arp
 #from . import db
 from flask_login import UserMixin
-import app.common as common
+import FlaskApp.app.common as common
 
 
 class User(UserMixin):

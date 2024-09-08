@@ -22,10 +22,10 @@ from flask_login import (
     logout_user,
 )
 from oauthlib.oauth2 import WebApplicationClient
-from app.user import User
+from Flaskapp.app.user import User
 
-import app.common as common
-from app import app 
+import FlaskApp.app.common as common
+from FlaskApp.app import app 
 
 conn  =  sqlite3.connect('users.sqlite3', check_same_thread=False)
 cursor = conn.cursor()
