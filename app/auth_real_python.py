@@ -97,7 +97,7 @@ def login():
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
 
     #session['next_url'] = request.args.get('next')
-    common.logger.debug('login: ' + str(request.args))
+    common.logger.debug('login: ' + str(request.args) + str(request.path))
     common.logger.debug('login 2: ' + str(request.__dict__))
     #common.logger.debug(request.base_url + "/callback")
     # Use library to construct the request for login and provide
