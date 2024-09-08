@@ -27,7 +27,7 @@ from FlaskApp.app.user import User
 import FlaskApp.app.common as common
 from FlaskApp.app import app 
 
-conn  =  sqlite3.connect('users.sqlite3', check_same_thread=False)
+conn  =  sqlite3.connect('/var/www/FlaskApp/FlaskApp/users.sqlite3', check_same_thread=False)
 cursor = conn.cursor()
 sql_query = """SELECT name FROM sqlite_master  WHERE type='table';"""
 cursor.execute(sql_query)
