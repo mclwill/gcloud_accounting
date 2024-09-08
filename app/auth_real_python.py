@@ -188,7 +188,7 @@ def logout():
 @app.route('/user')
 @login_required
 def home():
-    return 'You are logged in as {0}.'.format(app.current_user.id)
+    return 'You are logged in as {0}.'.format(current_user.id)
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
