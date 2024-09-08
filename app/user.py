@@ -20,7 +20,7 @@ class User(UserMixin):
         #common.logger.debug(str(arp.cursor.fetchall()))
         sql = "SELECT * FROM user WHERE id = ?"
         lock.acquire(True)
-        lockarp.cursor.execute(sql,(user_id,))
+        arp.cursor.execute(sql,(user_id,))
         user = arp.cursor.fetchone()
         lock.release()
 
