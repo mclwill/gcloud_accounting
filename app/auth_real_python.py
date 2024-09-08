@@ -95,10 +95,11 @@ def login():
     # Find out what URL to hit for Google login
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
-    session['next_url'] = request.get('path','/')
     common.logger.debug('login: ' + str(request.args) + str(request.path))
     common.logger.debug('login 2: ' + str(request.__dict__))
+    
+    session['next_url'] = request.path
+
     #common.logger.debug(request.base_url + "/callback")
     # Use library to construct the request for login and provide
     # scopes that let you retrieve user's profile from Google
