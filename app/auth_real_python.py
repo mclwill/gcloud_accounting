@@ -175,7 +175,8 @@ def callback():
         if session['next_url']:
             url = session['next_url']
             session['next_url'] = None
-            return redirect(url_for(url))
+            if url != '/login':
+                return redirect(url_for(url+'/'))
 
     return redirect(url_for('/dashboard/'))
 
