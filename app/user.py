@@ -20,9 +20,11 @@ class User(UserMixin):
         #common.logger.debug(str(arp.cursor.fetchall()))
         sql = "SELECT * FROM user WHERE id = ?"
         lock.acquire(True)
+        common.logger.debug('get lock acquired')
         arp.cursor.execute(sql,(user_id,))
         user = arp.cursor.fetchone()
         lock.release()
+        common.logger.debug('get lock released')
 
         #db = get_db()
         #user = db.execute(
@@ -39,10 +41,12 @@ class User(UserMixin):
     @staticmethod
     def create(id_, name, email, profile_pic):
         sql = "INSERT INTO user (id, name, email, profile_pic) VALUES(?,?,?,?)"
+        common.logger.debug('create lock acquired')
         lock.acquire(True)
         arp.cursor.execute(sql,(id_, name, email, profile_pic))
         arp.conn.commit()
         lock.release()
+        common.logger.debug('create lock released')
         #db.execute(
         #    "INSERT INTO user (id, name, email, profile_pic)"
         #    " VALUES (?, ?, ?, ?)",
