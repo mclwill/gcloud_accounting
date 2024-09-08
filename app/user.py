@@ -3,6 +3,7 @@ import FlaskApp.app.auth_real_python as arp
 #from . import db
 from flask_login import UserMixin
 import FlaskApp.app.common as common
+import traceback
 
 lock = threading.Lock()
 
@@ -19,6 +20,7 @@ class User(UserMixin):
         #arp.cursor.execute(sql_query)
         #common.logger.debug(str(arp.cursor.fetchall()))
         sql = "SELECT * FROM user WHERE id = ?"
+        common.logger.debug('get lock waiting' + traceback.extract_stack())
         lock.acquire(True)
         common.logger.debug('get lock acquired')
         arp.cursor.execute(sql,(user_id,))
@@ -41,8 +43,9 @@ class User(UserMixin):
     @staticmethod
     def create(id_, name, email, profile_pic):
         sql = "INSERT INTO user (id, name, email, profile_pic) VALUES(?,?,?,?)"
-        common.logger.debug('create lock acquired')
+        common.logger.debug('create lock waiting' + traceback.extract_stack())
         lock.acquire(True)
+        common.logger.debug('create lock acquired')
         arp.cursor.execute(sql,(id_, name, email, profile_pic))
         arp.conn.commit()
         lock.release()
