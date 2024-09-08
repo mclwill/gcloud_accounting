@@ -22,7 +22,7 @@ from flask_login import (
     logout_user,
 )
 from oauthlib.oauth2 import WebApplicationClient
-from Flaskapp.app.user import User
+from FlaskApp.app.user import User
 
 import FlaskApp.app.common as common
 from FlaskApp.app import app 
