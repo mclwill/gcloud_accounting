@@ -165,7 +165,7 @@ def callback():
     login_user(user,remember=True,duration=timedelta(days=30))
 
     common.logger.debug(str(session))
-    if if 'next_url' in session:
+    if 'next_url' in session:
         url = session['next_url']
         session['next_url'] = None
         return redirect(url_for(url))
