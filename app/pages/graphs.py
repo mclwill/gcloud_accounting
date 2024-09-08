@@ -149,10 +149,12 @@ def get_query(url):
                 '''
                 return df_graph.to_json(date_format='iso', orient='split'), name_text
 
+        return None,None
+
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
-
+        return None,None
 
 @callback(
     Output('graph-px-alt', 'figure'),
@@ -186,19 +188,11 @@ def update_figure(df_graph,graph_type,name_text):
             fig.update_yaxes(rangemode='tozero')
             return fig 
 
+        return None
+
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
+        return None
 
-'''clientside_callback(
-    """
-    function(data) {
-        return {
-            'data': data,
-             }
-        }
-    }
-    """,
-    Output('clientside-graph-px', 'figure'),
-    Input('clientside-figure-store-px', 'data')
-)'''
+
