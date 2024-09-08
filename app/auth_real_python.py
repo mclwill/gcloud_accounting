@@ -98,7 +98,7 @@ def login():
     common.logger.debug('login: ' + str(request.args) + str(request.path))
     common.logger.debug('login 2: ' + str(request.__dict__))
     
-    session['next_url'] = request.path
+    #session['next_url'] = request.path
 
     #common.logger.debug(request.base_url + "/callback")
     # Use library to construct the request for login and provide
@@ -194,6 +194,10 @@ def logout():
 @app.route('/user')
 @login_required
 def home():
+    common.logger.debug('user: ' + str(request.args) + str(request.path))
+    common.logger.debug('user 2: ' + str(request.__dict__))
+    
+    session['next_url'] = request.path
     return 'You are logged in as {0}'.format(current_user.email)
 
 def get_google_provider_cfg():
