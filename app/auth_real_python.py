@@ -98,6 +98,7 @@ def login():
 
     #session['next_url'] = request.args.get('next')
     common.logger.debug('login: ' + str(request.args))
+    common.logger.debug('login 2: ' + str(request))
     #common.logger.debug(request.base_url + "/callback")
     # Use library to construct the request for login and provide
     # scopes that let you retrieve user's profile from Google
@@ -112,7 +113,7 @@ def login():
 @app.route("/login/callback")
 def callback():
     # Get authorization code Google sent back to you
-    common.logger.debug('callback' + str(request.args))
+    common.logger.debug('callback: ' + str(request.args))
     code = request.args.get("code")
 
     # Find out what URL to hit to get tokens that allow you to ask for
