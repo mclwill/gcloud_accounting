@@ -13,9 +13,9 @@ class User(UserMixin):
 
     @staticmethod
     def get(user_id):
-        sql_query = """SELECT name FROM sqlite_master  WHERE type='table';"""
-        arp.cursor.execute(sql_query)
-        common.logger.debug(str(arp.cursor.fetchall()))
+        #sql_query = """SELECT name FROM sqlite_master  WHERE type='table';"""
+        #arp.cursor.execute(sql_query)
+        #common.logger.debug(str(arp.cursor.fetchall()))
         sql = "SELECT * FROM user WHERE id = ?"
         arp.cursor.execute(sql,(user_id,))
         user = arp.cursor.fetchone()
