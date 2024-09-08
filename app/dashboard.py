@@ -259,7 +259,7 @@ def serve_layout(base_stock_info_df,end_season_date):
     #global product_option_list,color_option_list,size_option_list,season_option_list    
     
     try:
-
+        common.logger.debug('begin serve_layout')
         #from here all about presenting the data table
 
         display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell','online_orders_prev_week', \
@@ -336,6 +336,7 @@ def serve_layout(base_stock_info_df,end_season_date):
             'Top 10 Sellers',
             'Bottom 10 Sellers',
         ]
+        common.logger.debug('finishing serve layout')
 
         #debug_csv_file_data = display_stock_info_df.to_csv()
         #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug.csv'))
