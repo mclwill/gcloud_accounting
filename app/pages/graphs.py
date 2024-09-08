@@ -188,11 +188,11 @@ def update_figure(df_graph,graph_type,name_text):
             fig.update_yaxes(rangemode='tozero')
             return fig 
 
-        return None
+        return {}
 
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
-        return None
+        return {}
 
 
