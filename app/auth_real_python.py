@@ -74,7 +74,7 @@ def load_user(user_id):
     return User.get(user_id)
 
 
-@app.route("/")
+'''@app.route("/")
 def index():
     if current_user.is_authenticated:
         return (
@@ -87,7 +87,7 @@ def index():
         )
     else:
         return '<a class="button" href="/login">Google Login</a>'
-
+'''
 
 @app.route("/login")
 def login():
