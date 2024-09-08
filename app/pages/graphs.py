@@ -84,70 +84,70 @@ def get_query(url):
     
     try:
         common.logger.debug('get query call back reached' + str(url))
-            if url[1:].startswith('data'):  #dcc.Location 'search' return query string including '?' - so skip over that
-                data = url[1:].replace('data=','')
-                #common.logger.info('URL call back reached' + str(data))
-                data = json.loads(urllib.parse.unquote(data)) #need to decode url string before sending through json decoder
+        if url[1:].startswith('data'):  #dcc.Location 'search' return query string including '?' - so skip over that
+            data = url[1:].replace('data=','')
+            #common.logger.info('URL call back reached' + str(data))
+            data = json.loads(urllib.parse.unquote(data)) #need to decode url string before sending through json decoder
 
-                #common.logger.info(str(data))
-                if data:
-                    data_df = pd.DataFrame.from_records(data)
-                    data_cols = data_df.columns.tolist()
-                    if 'color' in data_cols:
-                        if 'size' in data_cols:
-                            keys = ['p_name','color','size']
-                            name_text = 'Product - Colour - Size'
-                        else:
-                            keys = ['p_name','color']
-                            name_text = 'Product - Colour'
-                    elif 'size' in data_cols:
-                        keys = ['p_name','size']
-                        name_text = 'Product - Size'
+            #common.logger.info(str(data))
+            if data:
+                data_df = pd.DataFrame.from_records(data)
+                data_cols = data_df.columns.tolist()
+                if 'color' in data_cols:
+                    if 'size' in data_cols:
+                        keys = ['p_name','color','size']
+                        name_text = 'Product - Colour - Size'
                     else:
-                        keys = False
-                        name_text = 'Product'
+                        keys = ['p_name','color']
+                        name_text = 'Product - Colour'
+                elif 'size' in data_cols:
+                    keys = ['p_name','size']
+                    name_text = 'Product - Size'
+                else:
+                    keys = False
+                    name_text = 'Product'
 
-                    stock_df = get_data_from_globals()[0].copy()
-                    #common.logger.info(str(stock_df[['date','p_name','available_to_sell']].head()))
-                    #stock_df['date'] = stock_df['date'].dt.date
+                stock_df = get_data_from_globals()[0].copy()
+                #common.logger.info(str(stock_df[['date','p_name','available_to_sell']].head()))
+                #stock_df['date'] = stock_df['date'].dt.date
 
-                    if keys: # if multiple columns then use index matching approach
-                        idx_stock = stock_df.set_index(keys).index
-                        idx_data = data_df.set_index(keys).index
-                        dff = stock_df[idx_stock.isin(idx_data)]
-                    else: #if just p_name then filter on p_name
-                        dff = stock_df[stock_df['p_name'].isin(data_df['p_name'].unique().tolist())]
-                        keys = ['p_name']
+                if keys: # if multiple columns then use index matching approach
+                    idx_stock = stock_df.set_index(keys).index
+                    idx_data = data_df.set_index(keys).index
+                    dff = stock_df[idx_stock.isin(idx_data)]
+                else: #if just p_name then filter on p_name
+                    dff = stock_df[stock_df['p_name'].isin(data_df['p_name'].unique().tolist())]
+                    keys = ['p_name']
 
+            
+                df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(keys + ['date']).agg({'available_to_sell':'sum'}).reset_index()
+                df_grouped['Name'] = df_grouped[keys].apply(lambda x: ' - '.join(x.astype(str)),axis=1)
+
+                df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell')
+
+                for col in df_graph.columns.tolist():
+                    col_max = df_graph[col].max()
+                    col_min = df_graph[col].min()
+                    abs_max = max(col_max,-col_min)
+                    df_graph[col + '_norm'] = df_graph[col] / col_max * 100
+
+                plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x] #get normalised columns before bringing back 'date'
                 
-                    df_grouped = dff[['date'] + keys + ['available_to_sell']].groupby(keys + ['date']).agg({'available_to_sell':'sum'}).reset_index()
-                    df_grouped['Name'] = df_grouped[keys].apply(lambda x: ' - '.join(x.astype(str)),axis=1)
+                df_graph = df_graph.reset_index()  #bring back 'date' into columns
 
-                    df_graph = df_grouped.pivot(index='date',columns='Name',values='available_to_sell')
+                #common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
 
-                    for col in df_graph.columns.tolist():
-                        col_max = df_graph[col].max()
-                        col_min = df_graph[col].min()
-                        abs_max = max(col_max,-col_min)
-                        df_graph[col + '_norm'] = df_graph[col] / col_max * 100
-
-                    plot_cols = [x for x in df_graph.columns.tolist() if '_norm' not in x] #get normalised columns before bringing back 'date'
-                    
-                    df_graph = df_graph.reset_index()  #bring back 'date' into columns
-
-                    #common.logger.info(str(df_graph.head()) + '\n' + str(plot_cols))
-
-                    '''fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History',\
-                                           labels={'variable':name_text,\
-                                                   'date':'Date',\
-                                                   'value':'Stock Available to Sell'},
-                                            #mode = 'markers+lines'
-                                        )
-                    fig.update_layout(
-                        height = 600
-                    )
-                    '''
-                    return df_graph.to_json(date_format='iso', orient='split'), name_text
+                '''fig = px.line(df_graph,x='date',y=plot_cols,title='Available To Sell History',\
+                                       labels={'variable':name_text,\
+                                               'date':'Date',\
+                                               'value':'Stock Available to Sell'},
+                                        #mode = 'markers+lines'
+                                    )
+                fig.update_layout(
+                    height = 600
+                )
+                '''
+                return df_graph.to_json(date_format='iso', orient='split'), name_text
 
         return None,None
 
