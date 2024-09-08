@@ -182,8 +182,13 @@ def callback():
 @login_required
 def logout():
     logout_user()
+    common.logger.debug('User logged out')
     return 'Logged out'
 
+@app.route('/user')
+@login_required
+def home():
+    return 'You are logged in as {0}.'.format(app.current_user.id)
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
