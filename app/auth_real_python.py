@@ -96,7 +96,7 @@ def login():
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
 
     #session['next_url'] = request.args.get('next')
-    common.logger.debug('login' + str(request.args))
+    common.logger.debug('login: ' + str(request.args))
     #common.logger.debug(request.base_url + "/callback")
     # Use library to construct the request for login and provide
     # scopes that let you retrieve user's profile from Google
@@ -169,11 +169,12 @@ def callback():
 
     common.logger.debug(str(session))
     if 'next_url' in session:
-        url = session['next_url']
-        session['next_url'] = None
-        return redirect(url_for(url))
-    else:
-        return redirect(url_for('/dashboard/'))
+        if session['next_url']:
+            url = session['next_url']
+            session['next_url'] = None
+            return redirect(url_for(url))
+
+    return redirect(url_for('/dashboard/'))
 
 
 
