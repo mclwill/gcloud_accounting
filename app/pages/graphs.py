@@ -83,8 +83,7 @@ layout = html.Div([
 def get_query(url):
     
     try:
-        
-        if url:
+        common.logger.debug('get query call back reached' + str(url))
             if url[1:].startswith('data'):  #dcc.Location 'search' return query string including '?' - so skip over that
                 data = url[1:].replace('data=','')
                 #common.logger.info('URL call back reached' + str(data))
@@ -168,7 +167,7 @@ def get_query(url):
 def update_figure(df_graph,graph_type,name_text):
     
     try:
-        #common.logger.info('call back reached' + str(graph_type) + str(name_text) + str(df_graph))
+        common.logger.debug('update figure call back reached' + str(graph_type) + str(name_text) + str(df_graph))
         if df_graph:
             df_graph = pd.read_json(df_graph, orient='split')
             if graph_type == 'Absolute':
