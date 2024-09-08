@@ -176,7 +176,7 @@ def callback():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("/"))
+    return 'Logged out'
 
 
 def get_google_provider_cfg():
