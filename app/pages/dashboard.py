@@ -181,7 +181,7 @@ def layout(**kwargs):
     #global product_option_list,color_option_list,size_option_list,season_option_list    
     
     try:
-        #common.logger.info('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()))
+        common.logger.debug('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()))
         stock_info_df,orders_df,po_df, latest_date,earliest_date, default_end_season_date, start_of_previous_week,end_of_previous_week = get_data_from_globals()
 
         base_stock_info_df = global_store(earliest_date)
@@ -261,7 +261,7 @@ def layout(**kwargs):
             'Top 10 Sellers',
             'Bottom 10 Sellers',
         ]
-
+        common.logger.debug('Finished dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()))
         #debug_csv_file_data = display_stock_info_df.to_csv()
         #common.store_dropbox_unicode(customer,debug_csv_file_data,os.path.join(data_store_folder,'debug.csv'))
         

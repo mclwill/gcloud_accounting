@@ -94,7 +94,8 @@ def login():
     # Find out what URL to hit for Google login
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-    common.logger.debug(request.base_url + "/callback")
+    session['next_url'] = request.args.get('next')
+    #common.logger.debug(request.base_url + "/callback")
     # Use library to construct the request for login and provide
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
@@ -164,9 +165,9 @@ def callback():
     login_user(user,remember=True,duration=timedelta(days=30))
 
     common.logger.debug(str(session))
-    if 'url' in session:
-        url = session['url']
-        session['url'] = None
+    if if 'next_url' in session:
+        url = session['next_url']
+        session['next_url'] = None
         return redirect(url_for(url))
     else:
         return redirect(url_for('/dashboard/'))
