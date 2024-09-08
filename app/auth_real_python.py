@@ -54,7 +54,7 @@ login_manager.init_app(app)
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return redirect(flask.url_for('login'))
+    return redirect(url_for('login'))
 
 '''
 # Naive database setup
