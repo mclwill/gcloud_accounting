@@ -54,6 +54,7 @@ def get_data_store_info(customer):
     global season_df
 
     try:
+        common.logger.debug('getting data store info')
         data_store_folder = common.data_store[customer]
         stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
         orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
@@ -251,6 +252,9 @@ def get_data_store_info(customer):
         else:
             common.logger.info('Uphance purchase orders DataStore not updated as dataframe was emtpy')
 
+        
+        common.logger.debug('finished getting data store info')
+        common.logger.debug('finished updating data from data store')
         get_data_from_data_store()
     
     except Exception as ex:
