@@ -1,8 +1,10 @@
+import threading
 import FlaskApp.app.auth_real_python as arp
 #from . import db
 from flask_login import UserMixin
 import FlaskApp.app.common as common
 
+lock = threading.Lock()
 
 class User(UserMixin):
     def __init__(self, id_, name, email, profile_pic):
@@ -17,8 +19,10 @@ class User(UserMixin):
         #arp.cursor.execute(sql_query)
         #common.logger.debug(str(arp.cursor.fetchall()))
         sql = "SELECT * FROM user WHERE id = ?"
-        arp.cursor.execute(sql,(user_id,))
+        lock.acquire(True)
+        lockarp.cursor.execute(sql,(user_id,))
         user = arp.cursor.fetchone()
+        lock.release()
 
         #db = get_db()
         #user = db.execute(
@@ -35,8 +39,10 @@ class User(UserMixin):
     @staticmethod
     def create(id_, name, email, profile_pic):
         sql = "INSERT INTO user (id, name, email, profile_pic) VALUES(?,?,?,?)"
+        lock.acquire(True)
         arp.cursor.execute(sql,(id_, name, email, profile_pic))
         arp.conn.commit()
+        lock.release()
         #db.execute(
         #    "INSERT INTO user (id, name, email, profile_pic)"
         #    " VALUES (?, ?, ?, ?)",
