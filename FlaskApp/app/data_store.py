@@ -63,7 +63,7 @@ def get_data_store_info(customer):
         
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(23),time(6)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(23),time(9)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
