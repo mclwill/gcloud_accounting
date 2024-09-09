@@ -62,8 +62,8 @@ login_manager.session_protection = 'strong'
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    common.logger.debug('handler: ' + str(request.args) + str(request.path))
-    common.logger.debug('handler: ' + str(request.__dict__))
+    #common.logger.debug('handler: ' + str(request.args) + str(request.path))
+    #common.logger.debug('handler: ' + str(request.__dict__))
     session['next_url'] = request.path
     return redirect(url_for('login',next=request.endpoint))
 
@@ -105,8 +105,8 @@ def login():
     # Find out what URL to hit for Google login
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-    common.logger.debug('login: ' + str(request.args) + str(request.path))
-    common.logger.debug('login 2: ' + str(request.__dict__))
+    #common.logger.debug('login: ' + str(request.args) + str(request.path))
+    #common.logger.debug('login 2: ' + str(request.__dict__))
     
     #session['next_url'] = request.path
 
@@ -124,7 +124,7 @@ def login():
 @app.route("/login/callback")
 def callback():
     # Get authorization code Google sent back to you
-    common.logger.debug('callback: ' + str(request.args))
+    #common.logger.debug('callback: ' + str(request.args))
     code = request.args.get("code")
 
     # Find out what URL to hit to get tokens that allow you to ask for
@@ -164,7 +164,7 @@ def callback():
         users_email = userinfo_response.json()["email"]
         picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
-        common.logger.debug(users_email + '\n' + str(list(valid_users.values())))
+        #common.logger.debug(users_email + '\n' + str(list(valid_users.values())))
         if not users_email in list(valid_users.values()):
             return "User not authorised", 401
     else:
@@ -183,7 +183,7 @@ def callback():
     # Begin user session by logging the user in
     login_user(user,remember=True,duration=timedelta(days=1))
 
-    common.logger.debug(str(session))
+    #common.logger.debug(str(session))
     if 'next_url' in session:
         if session['next_url']:
             url = session['next_url']
@@ -211,7 +211,7 @@ def redirect_dest(fallback):
 def logout():
     logout_user()
     #session['next_url'] = request.path
-    common.logger.debug('User logged out')
+    #common.logger.debug('User logged out')
     return 'Logged out'
 
 @app.route('/user')
@@ -223,6 +223,3 @@ def user():
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
-
-#if __name__ == "__main__":
-#    app.run(ssl_context="adhoc")

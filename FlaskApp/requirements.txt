@@ -9,4 +9,3 @@ dropbox
 ftputil
 tabulate
 pyopenssl
-pretty-traceback
