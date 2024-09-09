@@ -28,7 +28,7 @@ from FlaskApp.app.user import User
 import FlaskApp.app.common as common
 from FlaskApp.app import app 
 
-if app.config['LOCAL']:
+if ('LOCAL' in app.config) and app.config['LOCAL']:
     file_prefix = './FlaskApp/'
 else:
     file_prefix ='/home/gary/users_db/'

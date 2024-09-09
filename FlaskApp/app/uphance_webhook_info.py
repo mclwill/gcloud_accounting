@@ -23,7 +23,7 @@ to_zone = tz.tzlocal()
 
 process_webhook_depth = 0
 
-if app.config['LOCAL']:
+if ('LOCAL' in app.config) and app.config['LOCAL']:
     file_prefix = './FlaskApp/app/'
 else:
     file_prefix = '/var/www/FlaskApp/FlaskApp/app/'
