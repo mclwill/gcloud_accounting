@@ -25,7 +25,7 @@ def access_secret_version(secret_id: str, customer: str, parameter: str):
     return secret
 
 def json_dump(file,variable):
-    if app.config['LOCAL']:
+    if ('LOCAL' in app.config) and app.config['LOCAL']:
         file_prefix = './FlaskApp/app/'
     else:
         file_prefix = '/var/www/FlaskApp/FlaskApp/app/'
@@ -494,7 +494,7 @@ def get_dropbox_file_info(customer,file_path,**kwargs):
 #initialise parameters
 
 #get information on google cloud environment
-if not app.config['LOCAL']:
+if not (('LOCAL' in app.config) and app.config['LOCAL']):
     metadata_server = "http://metadata/computeMetadata/v1/instance/"
     metadata_flavor = {'Metadata-Flavor' : 'Google'}
     gce_id = requests.get(metadata_server + 'id', headers = metadata_flavor).text
