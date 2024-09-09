@@ -1,0 +1,12 @@
+Flask
+flask-login
+pandas
+dash
+dash-bootstrap-components
+Flask-Caching
+oauthlib
+dropbox
+ftputil
+tabulate
+pyopenssl
+pretty-traceback
