@@ -212,7 +212,7 @@ def logout():
     logout_user()
     #session['next_url'] = request.path
     #common.logger.debug('User logged out')
-    return 'Logged out'
+    return 'Logged out<br><br><a class="button" href="/login">Please feel free to Login again</a>'
 
 @app.route('/user')
 @login_required
