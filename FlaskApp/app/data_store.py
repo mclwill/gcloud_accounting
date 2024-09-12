@@ -44,7 +44,7 @@ def decode_season_id(s_id):
     global season_df
 
     seasons = []
-    s_list = s_id.split(',')
+    s_list = str(s_id).split(',')  #to avoid errors where int makes its way to here - see error 12 Sep 2024 at 11.31pm
     for s in s_list:
         season = season_df.loc[s,'name'] 
         seasons.append(season)
@@ -63,7 +63,7 @@ def get_data_store_info(customer):
         
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(23),time(6)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(23),time(7)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
