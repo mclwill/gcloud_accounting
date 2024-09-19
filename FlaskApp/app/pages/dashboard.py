@@ -541,18 +541,6 @@ def update_output(date_value):
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '\nTraceback Info: ' + str(tb))
 
-#@callback(
-#    Input('end_date_picker', 'date'))
-#def update_output(date_value):
-#    try:
-#        #global end_season_date
-#        if date_value is not None:
-#            end_season_date = date.fromisoformat(date_value)
-#        return None
-#    except Exception as ex:
-#        tb = traceback.format_exc()
-#        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
-
 @callback(
     Output('sub_cat_option', 'options'),
     [Input('season_option', 'value'),
@@ -697,25 +685,15 @@ def add_additional_calcs(df,base_start_date):
                  (Output("dd-output-container","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
 )
 def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortcut,v_base_start_date):
-    #global stock_info_df,display_stock_info_df,display_columns,curr_display_columns,latest_date,earliest_date
-    #global display_columns,season_option_list, product_option_list, color_option_list, size_option_list
     global display_columns
 
     try:
-        #common.logger.info('Base Start Date Type in update_table' + str(type(v_base_start_date)) + '\n' + str(v_base_start_date))
-        #if type(v_base_start_date) == str:
-        #    v_base_start_date = datetime.strptime(v_base_start_date,'%Y-%m-%d')
         if v_base_start_date:
             dff = global_store(v_base_start_date)[display_columns].copy()
-            #common.logger.info(str(dff.head()))
-            #for some reason can't seem to get these from global variables
-            #display_columns = dff.columns.tolist()
             product_option_list = sorted(dff['p_name'].unique().tolist())
             color_option_list = sorted(dff['color'].unique().tolist())
             size_option_list = sorted(dff['size'].unique().tolist())
             season_option_list = []
-
-            #common.logger.info('product list 1 :' + str(product_option_list))
             
             for ss in dff['season'].to_list():
                 for s in ss.split(','):
