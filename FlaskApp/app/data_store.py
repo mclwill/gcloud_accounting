@@ -171,17 +171,18 @@ def get_data_store_info(customer):
                         if type(qty_ordered) == str:
                             qty_ordered = [qty_ordered]
                         
-                        for i in range(len(eans)):
-                            row_dict = {}
-                            row_dict['date_ordered'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
-                            row_dict['order_id'] = [order_id]
-                            row_dict['channel'] = [channel]
-                            row_dict['ean'] = [eans[i]]
-                            row_dict['qty_ordered'] = [qty_ordered[i]]
-                            row_dict['OR'] = [True]
+                        if ean: #some OR files processed without items for some reason
+                            for i in range(len(eans)):
+                                row_dict = {}
+                                row_dict['date_ordered'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
+                                row_dict['order_id'] = [order_id]
+                                row_dict['channel'] = [channel]
+                                row_dict['ean'] = [eans[i]]
+                                row_dict['qty_ordered'] = [qty_ordered[i]]
+                                row_dict['OR'] = [True]
 
-                            or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
-                            or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered'],inplace=True,ignore_index=True) 
+                                or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
+                                or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered'],inplace=True,ignore_index=True) 
                             
                 elif stream_id == 'PC':
                     order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
