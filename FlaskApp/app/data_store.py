@@ -171,7 +171,7 @@ def get_data_store_info(customer):
                         if type(qty_ordered) == str:
                             qty_ordered = [qty_ordered]
                         
-                        if ean: #some OR files processed without items for some reason
+                        if eans: #some OR files processed without items for some reason
                             for i in range(len(eans)):
                                 row_dict = {}
                                 row_dict['date_ordered'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
