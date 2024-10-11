@@ -114,7 +114,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         #get additional purchase information with 'ean' as index of type string
         additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
-        additional_purchases_df.to_csv('/Users/Mac/Downloads/additional_purchases.csv')
+        #additional_purchases_df.to_csv('/Users/Mac/Downloads/additional_purchases.csv')
 
         #get returns information with 'ean' as index of type string
         returns_df = get_returns(po_df,base_start_date).rename(columns={'result':'returns'})
