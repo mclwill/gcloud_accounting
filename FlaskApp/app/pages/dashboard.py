@@ -105,9 +105,12 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df.reset_index(inplace=True) #reset index 
         
         common.logger.debug('Base data merge complete - starting collection of po and orders DFs')
+
         base_stock_info_df = base_stock_info_df[(base_stock_info_df['date'] == latest_date)].copy()#get rid of all stock rows that are before latest date - don't need them anymore
         base_stock_info_df['url_markdown'] = base_stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
-
+        common.logger.debug(str(base_stock_info_df[['ean','category','sub_category','in_stock','available_to_sell','base_available_to_sell']]))
+        #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info.csv')
+        #base_available_to_sell_df.to_csv('/Users/Mac/Downloads/base_available_to_sell.csv')
         #get additional purchase information with 'ean' as index of type string
         additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
@@ -121,7 +124,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
         wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']!='eCommerce'],base_start_date).rename(columns={'result':'wholesale_orders_prev_week'})#.rename('wholesale_orders_prev_week')
         wholesale_orders_prev_week_df.index = wholesale_orders_prev_week_df.index.astype(str)
-
+        common.logger.debug(str(online_orders_prev_week_df))
         #get online and wholesale since start orders with 'ean' as index of type string
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce']),base_start_date).rename(columns={'result':'online_orders_since_start'})#.rename('online_orders_since_start')
         online_orders_since_start_df.index = online_orders_since_start_df.index.astype(str)
@@ -129,6 +132,8 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         wholesale_orders_since_start_df.index = wholesale_orders_since_start_df.index.astype(str)
 
         common.logger.debug('Finished collection of po and order info - starting merge of PO and order info into Stock DF')
+        common.logger.debug(str(base_stock_info_df.columns))
+        common.logger.debug(str(base_stock_info_df[['category','sub_category','in_stock','available_to_sell','base_available_to_sell']]))
         base_stock_info_df.set_index('ean',inplace=True)#preparation for merge on 'ean' as index of type string
         base_stock_info_df.index = base_stock_info_df.index.astype(str)
         
@@ -150,6 +155,8 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df.reset_index(inplace=True)
         
         common.logger.debug('start vectored operations for calculating extra columns')
+        common.logger.debug(str(base_stock_info_df))
+        #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info_after.csv')
         base_stock_info_df['base_stock'] = base_stock_info_df['base_available_to_sell'] + base_stock_info_df['additional_purchases'] + base_stock_info_df['returns']
         base_stock_info_df['online_revenue_since_start'] = base_stock_info_df['online_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
         base_stock_info_df['wholesale_revenue_since_start'] = base_stock_info_df['wholesale_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
@@ -165,6 +172,8 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
         
         common.logger.debug('finished vectored operations - data manipulation and merge complete')
+        common.logger.debug(str(base_stock_info_df))
+        #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info_end.csv')
 
         return base_stock_info_df
 
@@ -665,7 +674,7 @@ def add_additional_calcs(df,base_start_date):
     
     dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
         dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
-
+    #dff.to_csv('/Users/Mac/Downloads/display.csv') 
     return dff
         
 @callback (
@@ -777,9 +786,9 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             df_display = add_additional_calcs(df_grouped[present_columns],v_base_start_date)
 
             if v_shortcut == 'Top 10 Sellers':
-                df_display = df_display.sort_values('seasonal_sell_through_pc',ascending=False,ignore_index=True).head(10)
+                df_display = df_display[df_display['seasonal_sell_through_pc']!=np.nan].sort_values('seasonal_sell_through_pc',ascending=False,ignore_index=True).head(10)
             elif v_shortcut == 'Bottom 10 Sellers':
-                df_display = df_display.sort_values('seasonal_sell_through_pc',ascending=True,ignore_index=True).head(10)
+                df_display = df_display[df_display['seasonal_sell_through_pc']!=np.nan].sort_values('seasonal_sell_through_pc',ascending=True,ignore_index=True).head(10)
 
             df_download = df_display.drop('url_markdown',axis=1).copy()
 

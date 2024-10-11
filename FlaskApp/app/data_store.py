@@ -48,7 +48,7 @@ def decode_season_id(s_id):
     for s in s_list:
         season = season_df.loc[s,'name'] 
         seasons.append(season)
-    return ','.join(seasons)
+    return ', '.join(seasons)
 
 def get_data_store_info(customer):
     global season_df
@@ -82,7 +82,7 @@ def get_data_store_info(customer):
 
             byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
             if byte_stream:
-                df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'in_stock':'Int64','available_to_sell':'Int64','available_to_sell_from_stock':'Int64'})
+                df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'in_stock':'Int64','available_to_sell':'Int64','available_to_sell_from_stock':'Int64','season_id':str,'size':str,'ean':str})
             else:
                 df = pd.DataFrame() #start with empty dataframe
 
@@ -137,13 +137,13 @@ def get_data_store_info(customer):
         po_columns = ['po_number','date_received','ean','qty_received']
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
-            orders_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':'Int64','qty_shipped':'Int64','qty_variance':'Int64','OR':"boolean",'PC':"boolean"})
+            orders_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':'Int64','qty_shipped':'Int64','qty_variance':'Int64','OR':"boolean",'PC':"boolean",'ean':str})
         else:
             orders_df = pd.DataFrame(columns = stock_columns) #start with empty dataframe
 
         byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
         if byte_stream:
-            po_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':'Int64'})
+            po_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':'Int64','ean':str})
         else:
             po_df = pd.DataFrame(columns=po_columns) #start with empty dataframe
 
@@ -283,7 +283,7 @@ def get_data_from_data_store():
         #get stock info from data store
         byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
         if byte_stream:
-            stock_info_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'season_id':str,'size':str})
+            stock_info_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'in_stock':'Int64','available_to_sell':'Int64','available_to_sell_from_stock':'Int64','season_id':str,'size':str,'ean':str})
         else:
             stock_info_df = pd.DataFrame() #start with empty dataframe
 
@@ -302,7 +302,7 @@ def get_data_from_data_store():
         #get order info from data store
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
-            orders_df = pd.read_csv(byte_stream,sep='|',index_col=False)
+            orders_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':'Int64','qty_shipped':'Int64','qty_variance':'Int64','OR':"boolean",'PC':"boolean",'ean':str})
         else:
             orders_df = pd.DataFrame() #start with empty dataframe
 
@@ -312,7 +312,7 @@ def get_data_from_data_store():
         #get po info from data store
         byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
         if byte_stream:
-            po_df = pd.read_csv(byte_stream,sep='|',index_col=False)
+            po_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_received':'Int64','ean':str})
         else:
             po_df = pd.DataFrame() #start with empty dataframe
 
@@ -344,7 +344,8 @@ def get_start_of_previous_week(date_value):
     return date_value - monday_delta
 
 def get_earliest_date(row,df):
-    return df['date'][df['sku_id'] == row['sku_id']].min()
+    #this should be the earliest non-zero inventory date
+    return df['date'][(df['sku_id'] == row['sku_id'])&(df['available_to_sell']>0)].min()
 
 def get_data_from_globals():
     global stock_info_df,orders_df,po_df
