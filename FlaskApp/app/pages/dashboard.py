@@ -114,6 +114,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         #get additional purchase information with 'ean' as index of type string
         additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
         additional_purchases_df.index = additional_purchases_df.index.astype(str)
+        additional_purchases_df.to_csv('/Users/Mac/Downloads/additional_purchases.csv')
 
         #get returns information with 'ean' as index of type string
         returns_df = get_returns(po_df,base_start_date).rename(columns={'result':'returns'})
@@ -220,7 +221,7 @@ def layout(**kwargs):
 
         col_title_mapping = {
             'url_markdown':{'id':'url_markdown','name':'Image','presentation':'markdown'},
-            'e_date':{'id':'e_date','name':'Earliest Data'},
+            #'e_date':{'id':'e_date','name':'Earliest Data'},
             'season':{'id':'season','name':'Season(s)'},
             'p_name':{'id':'p_name','name':'Product'},
             'color':{'id':'color','name':'Colour'},
@@ -733,17 +734,17 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             if v_product : 
                 dff = dff[dff['p_name'].isin(v_product)]
             
-            if v_color :
-                dff = dff[dff['color'].isin(v_color)]
             if 'All' in v_color : 
                 v_color = dff['color'].unique().tolist()
+            if 'All' in v_size:
+                v_size = dff['size'].unique().tolist()            
             
-
+            if v_color :
+                dff = dff[dff['color'].isin(v_color)]
             if v_size :
                 #common.logger.info('size choice:' + str(v_size) + '\n' + str(dff['size'].unique().tolist()))
                 dff = dff[dff['size'].isin(v_size)]
-            if 'All' in v_size:
-                v_size = dff['size'].unique().tolist()
+            
             
             group_list.append('season') #always group season
             group_list.append('p_name') #always group products
@@ -786,9 +787,9 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             df_display = add_additional_calcs(df_grouped[present_columns],v_base_start_date)
 
             if v_shortcut == 'Top 10 Sellers':
-                df_display = df_display[df_display['seasonal_sell_through_pc']!=np.nan].sort_values('seasonal_sell_through_pc',ascending=False,ignore_index=True).head(10)
+                df_display = df_display[df_display['seasonal_sell_through_pc']>0].sort_values('seasonal_sell_through_pc',ascending=False,ignore_index=True).head(10)
             elif v_shortcut == 'Bottom 10 Sellers':
-                df_display = df_display[df_display['seasonal_sell_through_pc']!=np.nan].sort_values('seasonal_sell_through_pc',ascending=True,ignore_index=True).head(10)
+                df_display = df_display[df_display['seasonal_sell_through_pc']>0].sort_values('seasonal_sell_through_pc',ascending=True,ignore_index=True).head(10)
 
             df_download = df_display.drop('url_markdown',axis=1).copy()
 

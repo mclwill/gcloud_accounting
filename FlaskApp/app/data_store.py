@@ -63,7 +63,7 @@ def get_data_store_info(customer):
         
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(23),time(6)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(22,30),time(6)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
@@ -326,7 +326,7 @@ def get_data_from_data_store():
         stock_info_df['date'] = stock_info_df['date'].dt.date
         stock_info_df['size'] = stock_info_df['size'].astype(str) #make sure these are all strings for sorting purposes
 
-        stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id - uses simply apply to find minimum on a SKU basis
+        #stock_info_df['e_date'] = stock_info_df.apply(lambda row: get_earliest_date(row,df=stock_info_df),axis=1) #get earliest inventory date for each sku_id - uses simply apply to find minimum on a SKU basis
 
     except Exception as ex:
         tb = traceback.format_exc()
@@ -345,6 +345,8 @@ def get_start_of_previous_week(date_value):
 
 def get_earliest_date(row,df):
     #this should be the earliest non-zero inventory date
+    #need to find way to speed this process up as it is taking over 20 min - 11 Oct 2024
+    #maybe need calculate once for each 'sku_id' and then copy from the last record
     return df['date'][(df['sku_id'] == row['sku_id'])&(df['available_to_sell']>0)].min()
 
 def get_data_from_globals():
