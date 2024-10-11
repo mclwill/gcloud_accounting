@@ -293,7 +293,7 @@ def layout(**kwargs):
                 dbc.Col(
                     dbc.Card([
                         dbc.CardBody([
-                            html.H5("Filters"),
+                            html.H5("Quick Filters"),
                             html.Div([
                                 dcc.Dropdown(
                                     id='presentation_shortcut',
