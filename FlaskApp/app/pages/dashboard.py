@@ -265,6 +265,7 @@ def layout(**kwargs):
         
         for ss in display_stock_info_df['season'].to_list():
             for s in ss.split(','):
+                s = s.strip()
                 if s not in season_option_list:
                     season_option_list.append(s)
         season_option_list.sort()
@@ -705,17 +706,23 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             size_option_list = sorted(dff['size'].unique().tolist())
             season_option_list = []
             
-            for ss in dff['season'].to_list():
+            common.logger.debug(str(dff['season'].unique().tolist()))
+
+            for ss in dff['season'].unique().tolist():
                 for s in ss.split(','):
+                    s = s.strip()
                     if s not in season_option_list:
                         season_option_list.append(s)
             season_option_list.sort()
+
+            common.logger.debug(str(season_option_list))
 
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell','additional_purchases','returns','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
             present_columns = display_columns.copy()
             
+            '''
             if not v_season or v_season == 'All':
                 v_seasons = season_option_list
             else:
@@ -724,7 +731,12 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                     for s in ss.split(','):
                         if s not in v_seasons:
                             v_seasons.append(s)
-            dff = dff[(dff['season'].str.contains('|'.join(v_seasons)))]
+            '''
+
+            if not v_season or v_season == 'All':
+                v_season = season_option_list
+
+            dff = dff[(dff['season'].str.contains('|'.join(v_season)))]
 
             
             if v_category : 
