@@ -407,7 +407,7 @@ def read_dropbox_bytestream(customer,file_path):
         return False
 
 
-def store_dropbox_unicode(customer,file_data,file_path,retry=False):
+def store_dropbox(customer,file_data,file_path,retry=False):
     global dbx
     #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
     if Dropbox_active:
