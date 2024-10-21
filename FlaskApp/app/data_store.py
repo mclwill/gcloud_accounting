@@ -63,7 +63,7 @@ def get_data_store_info(customer):
         
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(22,30),time(8)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(22,30),time(10)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
@@ -242,7 +242,7 @@ def get_data_store_info(customer):
         if not orders_df.empty:
             orders_csv_file_data = orders_df.to_csv(sep='|',index=False)
             common.store_dropbox(customer,orders_csv_file_data,orders_file_path,override=True)
-            common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path,override=True)
+            common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
         else:
             common.logger.info('Uphance orders DataStore not updated as dataframe was emtpy')
 
