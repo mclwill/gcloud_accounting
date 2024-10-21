@@ -90,7 +90,7 @@ def get_data_store_info(customer):
             page = 1 #get ready for Uphance pagination
             while page :
                 common.logger.debug('Request product dump from Uphance - Page : ' + str(page))
-                response = common.uphance_api_call(customer,'get',url=url_product+'/?page='+str(page))
+                response = common.uphance_api_call(customer,'get',url=url_product+'/?page='+str(page),override=True)
                 common.logger.debug('Uphance Product API Call Status Code: ' + str(response[0]))
                 if response[0]:
                     common.logger.warning('Uphance Error on Product API call for :' + customer)
