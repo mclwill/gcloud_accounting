@@ -18,7 +18,7 @@ from FlaskApp.app import app
 #used for setting testing on and off - False for testing purposes True for production
 FTP_active = False 
 Dropbox_active = False
-Uphance_active = False
+Uphance_active = True
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
@@ -383,7 +383,7 @@ def uphance_api_call(customer,api_type,**kwargs):
 
     else:
         #this coding used for testing only so that Uphance is not updated
-        common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + '\n' + str(url) + '\n' + str(json))
+        logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + '\n' + str(url) + '\n' + str(json))
         return 500, 'Testing Call to uphance_api_call'
         #end of testing code
 
