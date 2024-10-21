@@ -441,7 +441,7 @@ def store_dropbox(customer,file_data,file_path,retry=False):
                     storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
             return False
     else:
-        common.logger.info('File not sent to Dropbox as inactive for testing\nFile Path: ' + file_path + '\nFile Data:\n' + file_data )
+        logger.info('File not sent to Dropbox as inactive for testing\nFile Path: ' + file_path + '\nFile Data:\n' + file_data )
         return True 
 
 def get_users():
