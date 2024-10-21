@@ -75,7 +75,7 @@ def upload_file_to_dropbox(customer,file_data,folder,file_name):
     
     dbx_file = os.path.join(common.access_secret_version('customer_parameters',customer,'dbx_folder'),folder,file_name)
     
-    if not common.store_dropbox_unicode(customer,file_data,dbx_file):
+    if not common.store_dropbox(customer,file_data,dbx_file):
         common.logger.warning('Cross Docks file not stored in Dropbox - processing has continued\nFile Name: ' + file_name + '\nFile Contents : \n' + file_data)
     else:
         common.logger.debug('Dropbox upload successful for ' + customer + ' : ' + file_name)
