@@ -18,7 +18,7 @@ from FlaskApp.app import app
 #used for setting testing on and off - False for testing purposes True for production
 FTP_active = False 
 Dropbox_active = False
-Uphance_active = True
+Uphance_active = False
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
@@ -202,7 +202,7 @@ def getLocalFiles(folder,**kwargs):
         return True, localfiles
     
     except Exception as ex:
-        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
+        logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
         return False, None
 
 
@@ -216,7 +216,7 @@ def storeLocalFile(folder,file_name,file_data,**kwargs) :
             text_file.write(file_data)
         return True 
     except Exception as ex:
-        common.logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Save Error \nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
+        logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Save Error \nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
         return False
 
 def dropbox_initiate():
@@ -353,8 +353,9 @@ def check_uphance_initiate():
 def uphance_api_call(customer,api_type,**kwargs):
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
+    _override = kwargs.pop('override',None)
     
-    if Uphance_active:
+    if Uphance_active or _override:
 
 
         return_error = False
@@ -407,10 +408,13 @@ def read_dropbox_bytestream(customer,file_path):
         return False
 
 
-def store_dropbox(customer,file_data,file_path,retry=False):
+def store_dropbox(customer,file_data,file_path,retry=False,**kwargs):
+    
     global dbx
+
+    _override = kwargs.pop('override',None)
     #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
-    if Dropbox_active:
+    if Dropbox_active or _override:
         try:
             #if not retry:
             #    raise Exception('Simulate Dropbox error')
@@ -428,7 +432,7 @@ def store_dropbox(customer,file_data,file_path,retry=False):
                             for file_item in queuedFiles[1]:
                                 if store_dropbox_unicode(customer,file_item['file_data'],os.path.join(dbx_folder,os.path.basename(os.path.normpath(d)),file_item['file_name']),True): #flag this is a retry to avoid another saving on error
                                     os.remove(os.path.join(d,file_item['file_name'])) #remove file if dropbox store is successful successful
-                                    common.logger.info('Logger Info for ' + customer + '\nLocal file successully transferred to dropbox and removed locally\nFile: ' + file_item['file_name'])
+                                    logger.info('Logger Info for ' + customer + '\nLocal file successully transferred to dropbox and removed locally\nFile: ' + file_item['file_name'])
             return True 
 
         except Exception as ex:

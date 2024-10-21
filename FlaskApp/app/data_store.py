@@ -63,11 +63,11 @@ def get_data_store_info(customer):
         
         aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(22,30),time(6)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(22,30),time(8)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
-            response = common.uphance_api_call(customer,'get',url=url_seasons)
+            response = common.uphance_api_call(customer,'get',url=url_seasons,override=True)
             
             if response[0]:
                 common.logger.warning('Uphance Error on Season API call for :' + customer)
@@ -128,7 +128,7 @@ def get_data_store_info(customer):
             if season_df is not None:
                 df['season'] = df.apply(lambda row: decode_season_id(row['season_id']),axis=1)
             csv_file_data = df.to_csv(sep='|',index=False)
-            common.store_dropbox_unicode(customer,csv_file_data,stock_file_path)
+            common.store_dropbox(customer,csv_file_data,stock_file_path,override=True)
             common.logger.info('Uphance stock DataStore updated for ' + customer + '\nFile Path: ' + stock_file_path)
 
         #common.logger.info('debug data_orders')
@@ -241,14 +241,14 @@ def get_data_store_info(customer):
         #common.logger.info('debug data_orders 3')
         if not orders_df.empty:
             orders_csv_file_data = orders_df.to_csv(sep='|',index=False)
-            common.store_dropbox_unicode(customer,orders_csv_file_data,orders_file_path)
-            common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
+            common.store_dropbox(customer,orders_csv_file_data,orders_file_path,override=True)
+            common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path,override=True)
         else:
             common.logger.info('Uphance orders DataStore not updated as dataframe was emtpy')
 
         if not po_df.empty:
             po_csv_file_data = po_df.to_csv(sep='|',index=False)
-            common.store_dropbox_unicode(customer,po_csv_file_data,po_file_path)
+            common.store_dropbox(customer,po_csv_file_data,po_file_path,override=True)
             common.logger.info('Uphance purchase orders DataStore updated for ' + customer + '\nFile Path: ' + po_file_path)
         else:
             common.logger.info('Uphance purchase orders DataStore not updated as dataframe was emtpy')
