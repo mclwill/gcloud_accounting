@@ -15,6 +15,11 @@ from contextlib import closing
 import FlaskApp.app.secrets as secrets
 from FlaskApp.app import app
 
+#used for setting testing on and off - False for testing purposes True for production
+FTP_active = False 
+Dropbox_active = False
+Uphance_active = False
+
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
     #logger.debug('Secrets.py data: ' + str(attribute))
@@ -349,38 +354,39 @@ def uphance_api_call(customer,api_type,**kwargs):
     url = kwargs.pop('url',None)
     json = kwargs.pop('json',None)
     
-    #this coding used for testing only so that Uphance is not updated
-    #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + str(url) + str(json))
-    #return 500, 'Testing Call to uphance_api_call'
-    #end of testing code
+    if Uphance_active:
 
-    return_error = False
-    
-    if api_type == 'post':
-        response = requests.post(url,json = json,headers = uphance_headers[customer])
-        logger.debug('Post ' + url)
-    elif api_type == 'put':
-        response = requests.put(url,headers = uphance_headers[customer])
-        logger.debug('Put ' + url)
-    elif api_type == 'get' :
-        response = requests.get(url,headers = uphance_headers[customer])
-        logger.debug('Get ' + url)
+
+        return_error = False
+        
+        if api_type == 'post':
+            response = requests.post(url,json = json,headers = uphance_headers[customer])
+            logger.debug('Post ' + url)
+        elif api_type == 'put':
+            response = requests.put(url,headers = uphance_headers[customer])
+            logger.debug('Put ' + url)
+        elif api_type == 'get' :
+            response = requests.get(url,headers = uphance_headers[customer])
+            logger.debug('Get ' + url)
+        else:
+            logger.warning('Error in api_type: ' + api_type)
+            return_error = 'Error in api_type'
+            return return_error, 'NULL'
+
+        if response.status_code == 200:
+            logger.debug('Uphance ' + api_type + ' successful for ' + customer)
+            logger.debug(response.json())
+            return return_error, response.json()  #this should be a False
+        else:
+            logger.warning('Uphance ' + api_type + ' error for ' + customer + '\nURL: ' + url + '\nResponse Status Code: ' + str(response.status_code))
+            return str(response.status_code), 'NULL'
+
     else:
-        logger.warning('Error in api_type: ' + api_type)
-        return_error = 'Error in api_type'
-        return return_error, 'NULL'
+        #this coding used for testing only so that Uphance is not updated
+        common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + '\n' + str(url) + '\n' + str(json))
+        return 500, 'Testing Call to uphance_api_call'
+        #end of testing code
 
-    if response.status_code == 200:
-        logger.debug('Uphance ' + api_type + ' successful for ' + customer)
-        logger.debug(response.json())
-        return return_error, response.json()  #this should be a False
-    else:
-        logger.warning('Uphance ' + api_type + ' error for ' + customer + '\nURL: ' + url + '\nResponse Status Code: ' + str(response.status_code))
-        return str(response.status_code), 'NULL'
-    
-
-    #common.logger.info('Dummy API uphance call for ' + customer + '\n' + api_type + '\n' + str(url) + '\n' + str(json))
-    #return True
 
 def read_dropbox_bytestream(customer,file_path):
     global dbx
@@ -404,35 +410,39 @@ def read_dropbox_bytestream(customer,file_path):
 def store_dropbox_unicode(customer,file_data,file_path,retry=False):
     global dbx
     #below exception handling implemented 2024-08-09 to cope with intermittent dropbox errors
-    try:
-        #if not retry:
-        #    raise Exception('Simulate Dropbox error')
-        with io.BytesIO(file_data.encode()) as stream:
-            stream.seek(0)
-            dbx.files_upload(stream.read(), file_path, mode=dropbox.files.WriteMode.overwrite)
-        logger.debug('Dropbox Transferred Successfully : ' + file_path)
-        #check for any failed dropbox transfers
-        if not retry:
-            dbx_folder = access_secret_version('customer_parameters',customer,'dbx_folder')
-            for (root,dirs,files) in os.walk(os.path.join('/home/gary/dropbox',customer),topdown=True):
-                for d in dirs:
-                    queuedFiles = getLocalFiles(d,customer=customer)
-                    if queuedFiles[0] : #only process files if no errors on getting Local files
-                        for file_item in queuedFiles[1]:
-                            if store_dropbox_unicode(customer,file_item['file_data'],os.path.join(dbx_folder,os.path.basename(os.path.normpath(d)),file_item['file_name']),True): #flag this is a retry to avoid another saving on error
-                                os.remove(os.path.join(d,file_item['file_name'])) #remove file if dropbox store is successful successful
-                                common.logger.info('Logger Info for ' + customer + '\nLocal file successully transferred to dropbox and removed locally\nFile: ' + file_item['file_name'])
-        return True 
+    if Dropbox_active:
+        try:
+            #if not retry:
+            #    raise Exception('Simulate Dropbox error')
+            with io.BytesIO(file_data.encode()) as stream:
+                stream.seek(0)
+                dbx.files_upload(stream.read(), file_path, mode=dropbox.files.WriteMode.overwrite)
+            logger.debug('Dropbox Transferred Successfully : ' + file_path)
+            #check for any failed dropbox transfers
+            if not retry:
+                dbx_folder = access_secret_version('customer_parameters',customer,'dbx_folder')
+                for (root,dirs,files) in os.walk(os.path.join('/home/gary/dropbox',customer),topdown=True):
+                    for d in dirs:
+                        queuedFiles = getLocalFiles(d,customer=customer)
+                        if queuedFiles[0] : #only process files if no errors on getting Local files
+                            for file_item in queuedFiles[1]:
+                                if store_dropbox_unicode(customer,file_item['file_data'],os.path.join(dbx_folder,os.path.basename(os.path.normpath(d)),file_item['file_name']),True): #flag this is a retry to avoid another saving on error
+                                    os.remove(os.path.join(d,file_item['file_name'])) #remove file if dropbox store is successful successful
+                                    common.logger.info('Logger Info for ' + customer + '\nLocal file successully transferred to dropbox and removed locally\nFile: ' + file_item['file_name'])
+            return True 
 
-    except Exception as ex:
-        tb = traceback.format_exc()
-        logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) +  '\nTraceback:\n' + str(tb))
-        logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
-        if not retry:
-            file_loc = os.path.basename(os.path.normpath(file_path))
-            if file_loc in ['sent','rejected']: #filter out only regular CD file saving errors
-                storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
-        return False
+        except Exception as ex:
+            tb = traceback.format_exc()
+            logger.warning('Logging Warning Error for :' + customer + ' Exception in store_dropbox\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) +  '\nTraceback:\n' + str(tb))
+            logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
+            if not retry:
+                file_loc = os.path.basename(os.path.normpath(file_path))
+                if file_loc in ['sent','rejected']: #filter out only regular CD file saving errors
+                    storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
+            return False
+    else:
+        common.logger.info('File not sent to Dropbox as inactive for testing\nFile Path: ' + file_path + '\nFile Data:\n' + file_data )
+        return True 
 
 def get_users():
     global customers
@@ -523,12 +533,12 @@ customers = access_secret_version('global_parameters',None,'customers')
 uphance_headers = {}
 uphance_running = {}
 uphance_access_token = False
-data_store = {}
+#data_store = {}
 
 for c in customers:
     uphance_headers[c] = False
     uphance_running[c] = False
-    data_store[c] = access_secret_version('customer_parameters',c,'data_store_folder')
+    #data_store[c] = access_secret_version('customer_parameters',c,'data_store_folder')
 
 uphance_register_url = access_secret_version('global_parameters',None,'uphance_register_url')
 uphance_org_id = access_secret_version('global_parameters',None,'uphance_org_id')

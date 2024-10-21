@@ -49,21 +49,26 @@ def get_data_FTP(customer,directory,f):
     return data
 
 def move_CD_file_FTP(customer,source,dest,f):
-    cross_docks_info = common.get_CD_FTP_credentials(customer)
-    try: 
-        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
-            with ftp_host.open(source + '/' + f,'rb') as source_obj:
-                with ftp_host.open(dest + '/' + f,'wb') as dest_obj:
-                    ftp_host.copyfileobj(source_obj,dest_obj)
-                    ftp_host.remove(source + '/' + f)
-                    
-    except Exception as ex:
-        common.logger.warning('Error in move_CD_file_FTP for ' + customer + ':' + str(ex))
-        return False
-        
-    return True
+    if FTP_active:
+        cross_docks_info = common.get_CD_FTP_credentials(customer)
     
-    common.logger.debug('CD file move for ' + customer + ' : ' + file)
+        try: 
+            with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
+                with ftp_host.open(source + '/' + f,'rb') as source_obj:
+                    with ftp_host.open(dest + '/' + f,'wb') as dest_obj:
+                        ftp_host.copyfileobj(source_obj,dest_obj)
+                        ftp_host.remove(source + '/' + f)
+                        
+        except Exception as ex:
+            common.logger.warning('Error in move_CD_file_FTP for ' + customer + ':' + str(ex))
+            return False
+            
+        return True
+        
+        common.logger.debug('CD file move for ' + customer + ' : ' + file)
+    else:
+        common.logger.info('File not moved on Cross Docks FTP server as FTP is inactive\n' + 'File Name:' + f)
+        return True #dummy result for FTP not active mode
 
 
 def upload_file_to_dropbox(customer,file_data,folder,file_name):
@@ -311,8 +316,8 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
                                                                                'Input File: ' + f + '\n' + \
                                                                                'Uphance Order No: ' + str(uphance_ord_no) + '\n\n' + \
                                                                                data,['global'],customer=customer)
-            if common.data_store[customer]:
-                common.storeLocalFile(os.path.join('home/gary/data_store',customer),f,data,customer=customer,error=error)
+            #if common.data_store[customer]:
+            #    common.storeLocalFile(os.path.join('home/gary/data_store',customer),f,data,customer=customer,error=error)
     else:
         error['PC'] = True
         error['File Status'] = 1

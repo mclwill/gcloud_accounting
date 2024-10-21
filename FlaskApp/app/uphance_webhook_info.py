@@ -27,8 +27,8 @@ if ('LOCAL' in app.config) and app.config['LOCAL']:
     file_prefix = './FlaskApp/app/'
 else:
     file_prefix = '/var/www/FlaskApp/FlaskApp/app/'
-cc_codes_pd = pd.read_csv(file_prefix + 'CountryCodes.csv',index_col='Country')
 
+cc_codes_pd = pd.read_csv(file_prefix + 'CountryCodes.csv',index_col='Country')
 
 def processQueuedFiles(customer,folder):
     global error,request_dict
@@ -43,31 +43,35 @@ def processQueuedFiles(customer,folder):
 def transfer_FTP(customer,file_name,file_data,retry=False):
     global error, request_dict
 
-    cross_docks_info = common.get_CD_FTP_credentials(customer)
-    try: 
-        #code for testing only
-        #raise Exception("Testing error in FTP transfer")
-        #end of test code
+    if common.FTP_active:
+        cross_docks_info = common.get_CD_FTP_credentials(customer)
+        try: 
+            #code for testing only
+            #raise Exception("Testing error in FTP transfer")
+            #end of test code
 
-        with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
-            common.logger.debug('CD credentials : '+ cross_docks_info['username'] + ':' + cross_docks_info['password'])
-            common.logger.debug('CD getcwd : ' + ftp_host.getcwd())
-            ftp_host.chdir('in/pending')
-            with ftp_host.open(file_name, "w", encoding="utf8") as fobj:
-                fobj.write(file_data)
-    
-    except Exception as ex:
+            with ftputil.FTPHost("ftp.crossdocks.com.au", cross_docks_info['username'], cross_docks_info['password']) as ftp_host:
+                common.logger.debug('CD credentials : '+ cross_docks_info['username'] + ':' + cross_docks_info['password'])
+                common.logger.debug('CD getcwd : ' + ftp_host.getcwd())
+                ftp_host.chdir('in/pending')
+                with ftp_host.open(file_name, "w", encoding="utf8") as fobj:
+                    fobj.write(file_data)
         
-        common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Cross Docks FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
-        error['send_to_CD'] = False;
-        if not retry:
-            common.storeLocalFile(os.path.join('home/gary/cd_send_files',customer),file_name,file_data,customer=customer,error=error,request_dict=request_dict)  #store file locally
-            common.logger.info('Logging Info for ' + customer + "\nFile " + file_name + ' stored locally')
-        return False
-        
-    common.logger.debug('Logging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
+        except Exception as ex:
+            
+            common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Cross Docks FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n' + str(request_dict),['global'])
+            error['send_to_CD'] = False;
+            if not retry:
+                common.storeLocalFile(os.path.join('home/gary/cd_send_files',customer),file_name,file_data,customer=customer,error=error,request_dict=request_dict)  #store file locally
+                common.logger.info('Logging Info for ' + customer + "\nFile " + file_name + ' stored locally')
+            return False
+            
+        common.logger.debug('Logging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
 
-    return True
+        return True
+    else:
+        common.logger.info('File not transferred to Cross Docks as FTP is inactive\n' + 'File Name:' + file_name + '\nFileData:\n' + file_data)
+        return True #dummy result for FTP not active mode
     
 
 def get_custom_file_format(customer,stream_id,ri):
