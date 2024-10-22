@@ -385,7 +385,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     else:
         #this coding used for testing only so that Uphance is not updated
         logger.info('Dummy API uphance call for ' + customer + '\n' + api_type  + '\n' + str(url) + '\n' + str(json))
-        return 500, 'Testing Call to uphance_api_call'
+        return False, 'Testing Call to uphance_api_call'
         #end of testing code
 
 
