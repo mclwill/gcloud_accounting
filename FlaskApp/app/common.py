@@ -355,7 +355,7 @@ def uphance_api_call(customer,api_type,**kwargs):
     json = kwargs.pop('json',None)
     _override = kwargs.pop('override',None)
     
-    if Uphance_active or _override:
+    if Uphance_active or _override or api_type == 'get':
 
 
         return_error = False
