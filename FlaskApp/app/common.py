@@ -20,6 +20,11 @@ FTP_active = False
 Dropbox_active = False
 Uphance_active = False
 
+if ('LOCAL' in app.config) and app.config['LOCAL']:
+    running_local = True
+else:
+    running_local = False
+
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
     #logger.debug('Secrets.py data: ' + str(attribute))

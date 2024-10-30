@@ -149,8 +149,8 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         #make sure any non joined info NaNs are replaced by zeroes for calcs to work
         base_stock_info_df['additional_purchases'] = base_stock_info_df['additional_purchases'].fillna(0)
         base_stock_info_df['returns'] = base_stock_info_df['returns'].fillna(0)
-        base_stock_info_df['online_orders_prev_week'] = base_stock_info_df['online_orders_prev_week'].fillna(0)
-        base_stock_info_df['wholesale_orders_prev_week'] = base_stock_info_df['wholesale_orders_prev_week'].fillna(0)
+        base_stock_info_df['online_orders_last_7_days'] = base_stock_info_df['online_orders_prev_week'].fillna(0)
+        base_stock_info_df['wholesale_orders_last_7_days'] = base_stock_info_df['wholesale_orders_prev_week'].fillna(0)
         base_stock_info_df['online_orders_since_start'] = base_stock_info_df['online_orders_since_start'].fillna(0)
         base_stock_info_df['wholesale_orders_since_start'] = base_stock_info_df['wholesale_orders_since_start'].fillna(0)
         base_stock_info_df.reset_index(inplace=True)
@@ -199,8 +199,8 @@ def layout(**kwargs):
         base_stock_info_df = global_store(earliest_date)
         #from here all about presenting the data table
 
-        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell','online_orders_prev_week', \
-                           'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_prev_week','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
+        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell','online_orders_last_7_days', \
+                           'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_last_7_days','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                            'seasonal_sell_through_pc','daily_sell_rate','return_rate','estimated_sell_out_weeks']
 
         display_stock_info_df = base_stock_info_df[display_columns].copy() #seem to need to take copy
@@ -236,8 +236,8 @@ def layout(**kwargs):
             'returns':{'id':'returns','name':' Returns Since Start'},
             'additional_purchases':{'id':'additional_purchases','name':'Purchases Since Start'},
             #'base_stock':{'id':'base_stock','name':'Base Stock'},
-            'online_orders_prev_week':{'id':'online_orders_prev_week','name':'Online Sales Last Week'},
-            'wholesale_orders_prev_week':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last Week'},
+            'online_orders_last_7_days':{'id':'online_orders_prev_week','name':'Online Sales Last 7 Days'},
+            'wholesale_orders_last_7_days':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last 7 Days'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Sales Since Start'},
             'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Sales Since Start'},
             'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':money},

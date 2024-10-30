@@ -69,7 +69,7 @@ def process_two_ts_cross_docks_polling():
     return 'Processed', status_code
 
 
-@app.route('/aemery_get_product_data',methods=['POST'])
+@app.route('/aemery_get_product_data',methods=['GET','POST'])
 def process_aemery_get_data_store_info():
     #use threading so that no timeout occurs on POST
     x = threading.Thread(target = data_store.get_data_store_info, args=('aemery',))

@@ -61,7 +61,10 @@ def get_data_store_info(customer):
         po_file_path = os.path.join(data_store_folder,'data_po.csv')
         orders_retrieve_path = common.access_secret_version('customer_parameters',customer,'dbx_folder')
         
-        aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
+        if common.running_local:
+            aest_now = datetime.now()
+        else:
+            aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
         if in_between(aest_now.time(),time(22,30),time(10)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
@@ -133,7 +136,7 @@ def get_data_store_info(customer):
 
         #common.logger.info('debug data_orders')
         #get order info from locally stored files
-        stock_columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR','date_shipped','qty_shipped','qty_variance','PC']
+        stock_columns = ['order_id','order_num','ean','date_ordered','channel','qty_ordered','OR','date_shipped','qty_shipped','qty_variance','PC']
         po_columns = ['po_number','date_received','ean','qty_received']
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
@@ -147,12 +150,12 @@ def get_data_store_info(customer):
         else:
             po_df = pd.DataFrame(columns=po_columns) #start with empty dataframe
 
-        queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=10),file_spec=['OR']) #use utc time as that is how dropbox stores file dates
+        queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=100),file_spec=['OR']) #use utc time as that is how dropbox stores file dates
         queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10),file_spec=['PC','TP'])
         #common.logger.info('debug data_orders 2')
         if queuedFiles:
             
-            or_df = pd.DataFrame(columns = ['order_id','ean','date_ordered','channel','qty_ordered','OR'])
+            or_df = pd.DataFrame(columns = ['order_id','order_num','ean','date_ordered','channel','qty_ordered','OR'])
             pc_df = pd.DataFrame(columns = ['order_id','ean','date_shipped','qty_shipped','qty_variance','PC'])
 
             for file_item in queuedFiles:
@@ -164,6 +167,7 @@ def get_data_store_info(customer):
                     if action_id == 'A':
                         channel = cd_polling.get_CD_parameter(data_lines,'OR1',14)
                         order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
+                        order_num = cd_polling.get_CD_parameter(data_lines,'OR1',6)
                         eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
                         if type(eans) == str:
                             eans = [eans]
@@ -176,6 +180,7 @@ def get_data_store_info(customer):
                                 row_dict = {}
                                 row_dict['date_ordered'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
                                 row_dict['order_id'] = [order_id]
+                                row_dict['order_num'] = [order_num]
                                 row_dict['channel'] = [channel]
                                 row_dict['ean'] = [eans[i]]
                                 row_dict['qty_ordered'] = [qty_ordered[i]]
@@ -278,7 +283,10 @@ def get_data_from_data_store():
 
         #flush_cache() #ensure cache is flush before getting data from data store to make sure it doesn't get too big.
 
-        aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
+        if common.running_local:
+            aest_now = datetime.now()
+        else:
+            aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
 
         #get stock info from data store
         byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
@@ -306,8 +314,8 @@ def get_data_from_data_store():
         else:
             orders_df = pd.DataFrame() #start with empty dataframe
 
-        if orders_df.empty:
-            return html.Div(html.P('No Orders Data retrieved from Data Store'))
+        #if orders_df.empty:
+        #    return #html.Div(html.P('No Orders Data retrieved from Data Store'))
 
         #get po info from data store
         byte_stream = common.read_dropbox_bytestream(customer,po_file_path)
@@ -316,8 +324,8 @@ def get_data_from_data_store():
         else:
             po_df = pd.DataFrame() #start with empty dataframe
 
-        if po_df.empty:
-            return html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
+        if po_df.empty or orders_df.empty:
+            return #html.Div(html.P('No Purchase Orders Data retrieved from Data Store'))
 
         #convert date column to_datetime in all dfs - ie drop time info
         po_df['date_received'] = pd.to_datetime(po_df['date_received']).dt.date
@@ -339,9 +347,10 @@ def last_day_of_month(any_day):
     return next_month - timedelta(days=next_month.day)
 
 def get_start_of_previous_week(date_value):
-    weekday = date_value.weekday()
-    monday_delta = timedelta(days=weekday,weeks=1)
-    return date_value - monday_delta
+    #weekday = date_value.weekday()
+    #monday_delta = timedelta(days=weekday,weeks=1)
+    seven_days = timedelta(days=7)
+    return date_value - seven_days
 
 def get_earliest_date(row,df):
     #this should be the earliest non-zero inventory date
