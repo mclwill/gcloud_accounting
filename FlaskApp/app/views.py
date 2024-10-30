@@ -18,6 +18,7 @@ def homepage():
 def test():
     #args = None
     content = request.get_json(silent=True)
+    common.logger.info(str(content))
     if content:
         common.send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
     else:
