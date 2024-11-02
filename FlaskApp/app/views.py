@@ -18,7 +18,7 @@ def homepage():
 def test():
     #args = None
     content = request.get_json(silent=True)
-    common.logger.info(str(request.url))
+    #common.logger.info(str(request.url))
     if content:
         common.send_email(0,'Test Message',str(content),'gary@mclarenwilliams.com.au')
     else:
@@ -40,7 +40,7 @@ def uphance():
 @app.route('/aemery',methods=['POST'])
 def process_aemery_webhook():
     content = request.get_json(silent=True)
-    common.logger.info(str(request.url))
+    #common.logger.info(str(request.url))
     if content:
         status_code = uphance_webhook.uphance_prod_webhook('aemery',content)
         return 'Processed', status_code
