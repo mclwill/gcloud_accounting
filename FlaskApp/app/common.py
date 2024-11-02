@@ -16,9 +16,9 @@ import FlaskApp.app.secrets as secrets
 from FlaskApp.app import app
 
 #used for setting testing on and off - False for testing purposes True for production
-FTP_active = False 
-Dropbox_active = False
-Uphance_active = False
+FTP_active = True
+Dropbox_active = True
+Uphance_active = True
 
 if ('LOCAL' in app.config) and app.config['LOCAL']:
     running_local = True
