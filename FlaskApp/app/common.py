@@ -520,10 +520,10 @@ if not (('LOCAL' in app.config) and app.config['LOCAL']):
     gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor).text
     gce_machine_type = requests.get(metadata_server + 'machine-type', headers = metadata_flavor).text
 
-    if 'test' in gce_name:
-        server = "Test"
-    else:
-        server = "Production"
+    #if 'test' in gce_name:
+    #    server = "Test"
+    #else:
+    server = "Production"
 else:
     server = 'Test'
 
