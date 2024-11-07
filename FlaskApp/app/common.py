@@ -16,14 +16,18 @@ import FlaskApp.app.secrets as secrets
 from FlaskApp.app import app
 
 #used for setting testing on and off - False for testing purposes True for production
-FTP_active = True
-Dropbox_active = True
-Uphance_active = True
 
 if ('LOCAL' in app.config) and app.config['LOCAL']:
     running_local = True
+    FTP_active = False
+    Dropbox_active = False
+    Uphance_active = False
 else:
     running_local = False
+    FTP_active = True
+    Dropbox_active = True
+    Uphance_active = True
+
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
     attribute = getattr(secrets,secret_id)
@@ -190,8 +194,8 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
 
 def getLocalFiles(folder,**kwargs):
     customer = kwargs.pop('customer','No customer')
-    error = kwargs.pop('error',None)
-    request_dict = kwargs.pop('request_dict',None)
+    #error = kwargs.pop('error',None)
+    #request_dict = kwargs.pop('request_dict',None)
     
     
     localfiles = []
@@ -207,7 +211,7 @@ def getLocalFiles(folder,**kwargs):
         return True, localfiles
     
     except Exception as ex:
-        logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Reading Error \nFile Names: ' + str(local_files) + '\nError Info: ' + str(error) + '\nError:' + str(ex) + '\nOutput file:\n' + file_data + '\nInput Request:\n' + str(request_dict))
+        logger.warning('Logging Warning Error for : ' + customer + '\nUphance_webhook_error : Local File Reading Error \nFile Names: ' + str(local_files) + '\nError:' + str(ex))
         return False, None
 
 

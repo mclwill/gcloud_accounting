@@ -66,7 +66,7 @@ def get_data_store_info(customer):
         else:
             aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(22,30),time(10)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(22,30),time(6)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
@@ -140,7 +140,7 @@ def get_data_store_info(customer):
         po_columns = ['po_number','date_received','ean','qty_received']
         byte_stream = common.read_dropbox_bytestream(customer,orders_file_path)
         if byte_stream:
-            orders_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':'Int64','qty_shipped':'Int64','qty_variance':'Int64','OR':"boolean",'PC':"boolean",'ean':str})
+            orders_df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'qty_ordered':'Int64','qty_shipped':'Int64','qty_variance':'Int64','OR':"boolean",'PC':"boolean",'ean':str,'order_num':str})
         else:
             orders_df = pd.DataFrame(columns = stock_columns) #start with empty dataframe
 
@@ -151,7 +151,7 @@ def get_data_store_info(customer):
             po_df = pd.DataFrame(columns=po_columns) #start with empty dataframe
 
         queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=100),file_spec=['OR']) #use utc time as that is how dropbox stores file dates
-        queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=10),file_spec=['PC','TP'])
+        queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=100),file_spec=['PC','TP'])
         #common.logger.info('debug data_orders 2')
         if queuedFiles:
             
@@ -239,9 +239,11 @@ def get_data_store_info(customer):
 
             if len(merged_df.index) > 0:
                 orders_df = pd.concat([orders_df,merged_df])
+                orders_df['order_num'] = orders_df['order_num'].str.replace('.0','',regex=False) #noticed some integer values had been converted to strings
                 orders_df.drop_duplicates(subset = ['order_id','channel','ean','date_ordered','date_shipped'],inplace=True,ignore_index=True)
                 dedup_col_list = orders_df.columns.tolist() #list of columns to drop after merge
                 orders_df.drop([c for c in dedup_col_list if (('_x' in c) or ('_y' in c))],inplace=True,errors='ignore')
+                orders_df = orders_df.groupby(['order_id','ean'],as_index=False).first() #make sure we have grouped all orders - may miss some if OR and PC across different downloads
 
         #common.logger.info('debug data_orders 3')
         if not orders_df.empty:
