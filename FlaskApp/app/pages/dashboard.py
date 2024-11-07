@@ -53,9 +53,9 @@ def flush_cache():
 
 def get_base_available_to_sell(df,base_start_date):
     #global base_start_date
-    #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell'].values))
-    return_df = df[['ean','available_to_sell']][(df['date']==base_start_date)]
-    return_df.rename({'available_to_sell':'base_available_to_sell'},inplace=True,axis=1)
+    #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell_from_stock'].values))
+    return_df = df[['ean','available_to_sell_from_stock']][(df['date']==base_start_date)]
+    return_df.rename({'available_to_sell_from_stock':'base_available_to_sell'},inplace=True,axis=1)
     return_df.set_index('ean',inplace=True)
     return return_df['base_available_to_sell']
 
@@ -98,7 +98,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         #common.logger.info('New process data :' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()) +'\n' + str(type(base_start_date)) + '\n' +  str(base_start_date))
         base_stock_info_df = stock_info_df.copy()
         
-        base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell']],base_start_date).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
+        base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell_from_stock']],base_start_date).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
 
         base_stock_info_df.set_index('ean',inplace=True) #set stock DF with 'ean' as index in preparation for join
         base_stock_info_df = base_stock_info_df.join(base_available_to_sell_df) #do join on 'ean'
@@ -108,7 +108,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
 
         base_stock_info_df = base_stock_info_df[(base_stock_info_df['date'] == latest_date)].copy()#get rid of all stock rows that are before latest date - don't need them anymore
         base_stock_info_df['url_markdown'] = base_stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
-        common.logger.debug(str(base_stock_info_df[['ean','category','sub_category','in_stock','available_to_sell','base_available_to_sell']]))
+        common.logger.debug(str(base_stock_info_df[['ean','category','sub_category','in_stock','available_to_sell_from_stock','base_available_to_sell']]))
         #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info.csv')
         #base_available_to_sell_df.to_csv('/Users/Mac/Downloads/base_available_to_sell.csv')
         #get additional purchase information with 'ean' as index of type string
@@ -134,7 +134,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
 
         common.logger.debug('Finished collection of po and order info - starting merge of PO and order info into Stock DF')
         common.logger.debug(str(base_stock_info_df.columns))
-        common.logger.debug(str(base_stock_info_df[['category','sub_category','in_stock','available_to_sell','base_available_to_sell']]))
+        common.logger.debug(str(base_stock_info_df[['category','sub_category','in_stock','available_to_sell_from_stock','base_available_to_sell']]))
         base_stock_info_df.set_index('ean',inplace=True)#preparation for merge on 'ean' as index of type string
         base_stock_info_df.index = base_stock_info_df.index.astype(str)
         
@@ -167,7 +167,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df['seasonal_sell_through_pc'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / base_stock_info_df['base_stock']
         base_stock_info_df['daily_sell_rate'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
         base_stock_info_df['return_rate'] = base_stock_info_df['returns'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
-        base_stock_info_df['estimated_sell_out_weeks'] = base_stock_info_df['available_to_sell'] / base_stock_info_df['daily_sell_rate'] / 7
+        base_stock_info_df['estimated_sell_out_weeks'] = base_stock_info_df['available_to_sell_from_stock'] / base_stock_info_df['daily_sell_rate'] / 7
         
         #fix up any divide by zeroes
         base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
@@ -199,7 +199,7 @@ def layout(**kwargs):
         base_stock_info_df = global_store(earliest_date)
         #from here all about presenting the data table
 
-        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell','online_orders_last_7_days', \
+        display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell_from_stock','online_orders_last_7_days', \
                            'online_orders_since_start','online_pc_since_start','online_revenue_since_start','wholesale_orders_last_7_days','wholesale_orders_since_start','wholesale_pc_since_start','wholesale_revenue_since_start',\
                            'seasonal_sell_through_pc','daily_sell_rate','return_rate','estimated_sell_out_weeks']
 
@@ -207,7 +207,7 @@ def layout(**kwargs):
 
         '''
         col_title_mapping = {'url_markdown':'Image','e_date':'Earliest Data','season':'Season(s)','p_name':'Product','color':'Colour','size':'Size','category':'Category','sub_category':'Sub Category','sku_id':'SKU', \
-                             'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
+                             'in_stock':'In Stock','base_available_to_sell':'Seasonal Units Ordered','available_to_sell_from_stock':'Available To Sell','available_to_sell_from_stock':'Available To Sell From Stock', \
                              'additional_purchases': 'Additional Purchases','base_stock' : 'Base Stock','online_orders_prev_week': 'Online Units Last Week','wholesale_orders_prev_week' : 'Wholesale Units Last Week', \
                              'online_orders_since_start' : 'Online Units Since Start','wholesale_orders_since_start':'Wholesale Units Since Start','online_revenue_since_start':'Online $$$ Since Start', \
                              'wholesale_revenue_since_start':'Wholesale $$$ Since Start','online_pc_since_start':'Online %','wholesale_pc_since_start':'Wholesale %','seasonal_sell_through_pc':'Seasonal Sell Through %',\
@@ -231,7 +231,7 @@ def layout(**kwargs):
             'sku_id':{'id':'sku_id','name':'SKU'},
             'in_stock':{'id':'in_stock','name':'In Stock'},
             'base_available_to_sell':{'id':'base_available_to_sell','name':'Starting Available To Sell'},
-            'available_to_sell':{'id':'available_to_sell','name':'Available To Sell'},
+            'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell'},
             'available_to_sell_from_stock':{'id':'available_to_sell_from_stock','name':'Available To Sell From Stock'},
             'returns':{'id':'returns','name':' Returns Since Start'},
             'additional_purchases':{'id':'additional_purchases','name':'Purchases Since Start'},
@@ -672,7 +672,7 @@ def add_additional_calcs(df,base_start_date):
     dff['seasonal_sell_through_pc'] = (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) / dff['base_stock']
     dff['daily_sell_rate'] = (dff['online_orders_since_start'] + dff['wholesale_orders_since_start']) / (latest_date - base_start_date).days
     dff['return_rate'] = dff['returns'] / (dff['online_orders_since_start'] + dff['wholesale_orders_since_start'])
-    dff['estimated_sell_out_weeks'] = dff['available_to_sell'] / dff['daily_sell_rate'] / 7
+    dff['estimated_sell_out_weeks'] = dff['available_to_sell_from_stock'] / dff['daily_sell_rate'] / 7
     
     dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = \
         dff[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
@@ -718,7 +718,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             common.logger.debug(str(season_option_list))
 
             group_list = []
-            sum_list = ['base_available_to_sell','available_to_sell','additional_purchases','returns','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
+            sum_list = ['base_available_to_sell','available_to_sell_from_stock','additional_purchases','returns','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
             present_columns = display_columns.copy()
             
@@ -822,7 +822,7 @@ clientside_callback(
     function(n_clicks,rows,data) {
         const send_data = rows.map(index => data[index]);
         const sendjsonString = JSON.stringify(send_data)
-        const url = `https://api-test.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
+        const url = `https://api.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
         window.open(url,'_blank');
     }
     """,
