@@ -49,7 +49,9 @@ def get_data_FTP(customer,directory,f):
     return data
 
 def move_CD_file_FTP(customer,source,dest,f):
-    if FTP_active:
+    common.logger.info('Move FTP for : ' + f)
+    if common.FTP_active:
+        common.logger.info('2 Move FTP for : ' + f)
         cross_docks_info = common.get_CD_FTP_credentials(customer)
     
         try: 
