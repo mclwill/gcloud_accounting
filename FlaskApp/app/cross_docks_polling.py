@@ -49,9 +49,9 @@ def get_data_FTP(customer,directory,f):
     return data
 
 def move_CD_file_FTP(customer,source,dest,f):
-    common.logger.info('Move FTP for : ' + f)
+    #common.logger.info('Move FTP for : ' + f)
     if common.FTP_active:
-        common.logger.info('2 Move FTP for : ' + f)
+        #common.logger.info('2 Move FTP for : ' + f)
         cross_docks_info = common.get_CD_FTP_credentials(customer)
     
         try: 
@@ -79,8 +79,10 @@ def upload_file_to_dropbox(customer,file_data,folder,file_name):
     
     if not common.store_dropbox(customer,file_data,dbx_file):
         common.logger.warning('Cross Docks file not stored in Dropbox - processing has continued\nFile Name: ' + file_name + '\nFile Contents : \n' + file_data)
+        return False
     else:
         common.logger.debug('Dropbox upload successful for ' + customer + ' : ' + file_name)
+        return True
     
 def get_CD_parameter(data,ri,col_id):
     #return all records with ri indicator as a list
