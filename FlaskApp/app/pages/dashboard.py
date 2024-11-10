@@ -61,16 +61,19 @@ def get_base_available_to_sell(df,base_start_date):
 
 def get_last_week_orders(df,base_start_date):
     global start_of_previous_week,end_of_previous_week#base_start_date
+
+    df = df[(df['OR'])&(df['PC'])] #make sure only count orders where we have OR file and PC file
     if start_of_previous_week < base_start_date :
         start_date = base_start_date
     else:
         start_date = start_of_previous_week
 
-    return df.assign(result=np.where((df['date_shipped']>=start_date)&(df['date_shipped']<=end_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':'sum'})
+    return df.assign(result=np.where((df['date_ordered']>=start_date)&(df['date_ordered']<=end_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':'sum'})
 
 def get_orders_since_start(df,base_start_date):
     #global base_start_date
-    return df.assign(result=np.where(df['date_shipped']>=base_start_date,df['qty_shipped'],0)).groupby('ean').agg({'result':'sum'})
+    df = df[(df['OR'])&(df['PC'])] #make sure only count orders where we have OR file and PC file
+    return df.assign(result=np.where(df['date_ordered']>=base_start_date,df['qty_ordered'],0)).groupby('ean').agg({'result':'sum'})
 
 def get_additonal_purchases(df,base_start_date):
     #global base_start_date
