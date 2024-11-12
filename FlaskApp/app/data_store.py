@@ -66,7 +66,7 @@ def get_data_store_info(customer):
         else:
             aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(22,30),time(8)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(22,30),time(9)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
@@ -83,6 +83,7 @@ def get_data_store_info(customer):
 
             #get stock level info from Uphance
 
+            
             byte_stream = common.read_dropbox_bytestream(customer,stock_file_path)
             if byte_stream:
                 df = pd.read_csv(byte_stream,sep='|',index_col=False,dtype={'in_stock':'Int64','available_to_sell':'Int64','available_to_sell_from_stock':'Int64','season_id':str,'size':str,'ean':str})
