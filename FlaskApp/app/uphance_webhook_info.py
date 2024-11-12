@@ -299,6 +299,8 @@ def process_pick_ticket(customer,event_data):
         result_dict['stream_id'] = stream_id
         return file_data, result_dict
     else:
+        result_dict = {}
+        result_dict['error'] = []
         result_dict['stream_id'] = stream_id
         return "Not Sent to Cross Docks - Already in Packing State", result_dict
 
