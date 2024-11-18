@@ -67,6 +67,7 @@ def get_last_week_orders(df,base_start_date):
         start_date = base_start_date
     else:
         start_date = start_of_previous_week
+    common.logger.debug(str(start_date) + '_______' + str(end_of_previous_week))
 
     return df.assign(result=np.where((df['date_ordered']>=start_date)&(df['date_ordered']<=end_of_previous_week),df['qty_ordered'],0)).groupby('ean').agg({'result':'sum'})
 
@@ -124,11 +125,12 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         returns_df.index = returns_df.index.astype(str)
 
         #get online and wholesale last week orders with 'ean' as index of type string
-        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce - online'],base_start_date).rename(columns={'result':'online_orders_prev_week'})#.rename('online_orders_prev_week')
+        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce - online'],base_start_date).rename(columns={'result':'online_orders_last_7_days'})#.rename('online_orders_prev_week')
         online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
-        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce - reorder'],base_start_date).rename(columns={'result':'wholesale_orders_prev_week'})#.rename('wholesale_orders_prev_week')
+        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce - reorder'],base_start_date).rename(columns={'result':'wholesale_orders_last_7_days'})#.rename('wholesale_orders_prev_week')
         wholesale_orders_prev_week_df.index = wholesale_orders_prev_week_df.index.astype(str)
-        common.logger.debug(str(online_orders_prev_week_df))
+        #common.logger.debug(str(online_orders_prev_week_df))
+        #online_orders_prev_week_df.to_csv('online.csv')
         #get online and wholesale since start orders with 'ean' as index of type string
         online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce - online']),base_start_date).rename(columns={'result':'online_orders_since_start'})#.rename('online_orders_since_start')
         online_orders_since_start_df.index = online_orders_since_start_df.index.astype(str)
@@ -149,14 +151,19 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         base_stock_info_df = base_stock_info_df.join(online_orders_since_start_df)
         base_stock_info_df = base_stock_info_df.join(wholesale_orders_since_start_df)
 
+        
+
         #make sure any non joined info NaNs are replaced by zeroes for calcs to work
         base_stock_info_df['additional_purchases'] = base_stock_info_df['additional_purchases'].fillna(0)
         base_stock_info_df['returns'] = base_stock_info_df['returns'].fillna(0)
-        base_stock_info_df['online_orders_last_7_days'] = base_stock_info_df['online_orders_prev_week'].fillna(0)
-        base_stock_info_df['wholesale_orders_last_7_days'] = base_stock_info_df['wholesale_orders_prev_week'].fillna(0)
+        base_stock_info_df['online_orders_last_7_days'] = base_stock_info_df['online_orders_last_7_days'].fillna(0)
+        base_stock_info_df['wholesale_orders_last_7_days'] = base_stock_info_df['wholesale_orders_last_7_days'].fillna(0)
         base_stock_info_df['online_orders_since_start'] = base_stock_info_df['online_orders_since_start'].fillna(0)
         base_stock_info_df['wholesale_orders_since_start'] = base_stock_info_df['wholesale_orders_since_start'].fillna(0)
         base_stock_info_df.reset_index(inplace=True)
+
+        
+
         
         common.logger.debug('start vectored operations for calculating extra columns')
         common.logger.debug(str(base_stock_info_df))
@@ -179,6 +186,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
         common.logger.debug(str(base_stock_info_df))
         #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info_end.csv')
 
+        #base_stock_info_df[['online_orders_last_7_days','online_orders_since_start']][base_stock_info_df['online_orders_last_7_days']>0].to_csv('online.csv')
         return base_stock_info_df
 
     except Exception as ex:
@@ -239,8 +247,8 @@ def layout(**kwargs):
             'returns':{'id':'returns','name':' Returns Since Start'},
             'additional_purchases':{'id':'additional_purchases','name':'Purchases Since Start'},
             #'base_stock':{'id':'base_stock','name':'Base Stock'},
-            'online_orders_last_7_days':{'id':'online_orders_prev_week','name':'Online Sales Last 7 Days'},
-            'wholesale_orders_last_7_days':{'id':'wholesale_orders_prev_week','name':'Wholesale Sales Last 7 Days'},
+            'online_orders_last_7_days':{'id':'online_orders_last_7_days','name':'Online Sales Last 7 Days'},
+            'wholesale_orders_last_7_days':{'id':'wholesale_orders_last_7_days','name':'Wholesale Sales Last 7 Days'},
             'online_orders_since_start':{'id':'online_orders_since_start','name':'Online Sales Since Start'},
             'wholesale_orders_since_start':{'id':'wholesale_orders_since_start','name':'Wholesale Sales Since Start'},
             'online_revenue_since_start':{'id':'online_revenue_since_start','name':'Online $$$ Since Start','type':'numeric','format':money},
@@ -721,7 +729,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             common.logger.debug(str(season_option_list))
 
             group_list = []
-            sum_list = ['base_available_to_sell','available_to_sell_from_stock','additional_purchases','returns','base_stock','online_orders_prev_week','wholesale_orders_prev_week','online_orders_since_start',\
+            sum_list = ['base_available_to_sell','available_to_sell_from_stock','additional_purchases','returns','base_stock','online_orders_last_7_days','wholesale_orders_last_7_days','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
             present_columns = display_columns.copy()
             
