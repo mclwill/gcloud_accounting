@@ -6,6 +6,10 @@ import traceback
 
 import FlaskApp.app.common as common
 import FlaskApp.app.cross_docks_polling as cd_polling
+from memory_profiler import profile
+import sys
+from io import StringIO
+
 #from FlaskApp.app.pages.dashboard import get_data_from_data_store
 
 '''
@@ -19,6 +23,8 @@ utc_zone = tz.tzutc()
 to_zone = tz.gettz('Australia/Melbourne')
 
 customer = 'aemery'
+
+mem_analysis = StringIO()
 
 data_store_folder = common.data_store[customer]
 stock_file_path = os.path.join(data_store_folder,'data_stock.csv')
@@ -50,8 +56,19 @@ def decode_season_id(s_id):
         seasons.append(season)
     return ', '.join(seasons)
 
+@profile(stream=mem_analysis)
+def pd_concat_with_mem(dfs, time,text,iteration):
+    old_stdout = sys.stdout 
+    sys.stdout = mem_analysis
+    print('Memory data at ' + str(time) + ' for ' + text + ' iteration no. ' + str(iteration) + ' ' + str(time))
+    return_df = pd.concat(dfs)
+    print('End of Data')
+    sys.stdout = old_stdout
+    return return_df
+
+
 def get_data_store_info(customer):
-    global season_df
+    global season_df, mem_analysis
 
     try:
         common.logger.debug('getting data store info')
@@ -66,7 +83,7 @@ def get_data_store_info(customer):
         else:
             aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
         
-        if in_between(aest_now.time(),time(22,30),time(9)) : #only do update between these times which is likely cronjob triggered rather than manual testing
+        if in_between(aest_now.time(),time(20,30),time(6)) : #only do update between these times which is likely cronjob triggered rather than manual testing
 
             #get season data from uphance
             url_seasons = 'https://api.uphance.com/seasons'
@@ -127,8 +144,12 @@ def get_data_store_info(customer):
                                         row_dict['price_' + pr['name'] + '_wsp' ] = dict_append(row_dict,'price_' + pr['name'] + '_wsp',pr['wsp_money'])
                                         row_dict['price_' + pr['name'] + '_mrsp' ] = dict_append(row_dict,'price_' + pr['name'] + '_mrsp' ,pr['msrp_money'])
                 
-                    df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
+                    df = pd_concat_with_mem([df,pd.DataFrame.from_dict(row_dict)],aest_now,'Stock Data concat',page)
+                    #df = pd.concat([df,pd.DataFrame.from_dict(row_dict)])
                     page = data['meta']['next_page']
+            
+            common.send_email(0,'Memory Analysis in Data Store',mem_analysis.getvalue(),'gary@mclarenwilliams.com.au')
+
             if season_df is not None:
                 df['season'] = df.apply(lambda row: decode_season_id(row['season_id']),axis=1)
             csv_file_data = df.to_csv(sep='|',index=False)
@@ -151,8 +172,8 @@ def get_data_store_info(customer):
         else:
             po_df = pd.DataFrame(columns=po_columns) #start with empty dataframe
 
-        queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=3),file_spec=['OR']) #use utc time as that is how dropbox stores file dates
-        queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=3),file_spec=['PC','TP'])
+        queuedFiles = common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'sent'),from_date=datetime.now()-timedelta(days=7),file_spec=['OR']) #use utc time as that is how dropbox stores file dates
+        queuedFiles = queuedFiles + common.get_dropbox_file_info(customer,os.path.join(orders_retrieve_path,'received'),from_date=datetime.now()-timedelta(days=7),file_spec=['PC','TP'])
         #common.logger.info('debug data_orders 2')
         if queuedFiles:
             

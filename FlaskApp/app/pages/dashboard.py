@@ -68,7 +68,7 @@ def get_last_week_orders(df,base_start_date):
     else:
         start_date = start_of_previous_week
 
-    return df.assign(result=np.where((df['date_ordered']>=start_date)&(df['date_ordered']<=end_of_previous_week),df['qty_shipped'],0)).groupby('ean').agg({'result':'sum'})
+    return df.assign(result=np.where((df['date_ordered']>=start_date)&(df['date_ordered']<=end_of_previous_week),df['qty_ordered'],0)).groupby('ean').agg({'result':'sum'})
 
 def get_orders_since_start(df,base_start_date):
     #global base_start_date
