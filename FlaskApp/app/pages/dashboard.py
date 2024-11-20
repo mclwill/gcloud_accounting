@@ -732,7 +732,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell_from_stock','additional_purchases','returns','base_stock','online_orders_last_7_days','wholesale_orders_last_7_days','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
-            all_columns = dff.columns.to_list()
+            #all_columns = dff.columns.to_list()
             present_columns = display_columns.copy()
 
             
@@ -818,7 +818,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             common.logger.debug(str(present_columns))
             common.logger.debug(str(group_list))
             agg_dict = {}
-            for x in all_columns:
+            for x in present_columns:
                 if x not in group_list:
                     if x in sum_list:
                         agg_dict[x] = 'sum'
@@ -830,7 +830,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             else:
                 df_grouped = dff
 
-            df_grouped.to_csv('grouped_dff.csv')
+            #df_grouped.to_csv('grouped_dff.csv')
 
             hidden_columns = list(set(display_columns) - set(present_columns))
 
