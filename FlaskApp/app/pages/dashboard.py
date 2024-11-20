@@ -732,7 +732,9 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell_from_stock','additional_purchases','returns','base_stock','online_orders_last_7_days','wholesale_orders_last_7_days','online_orders_since_start',\
                         'wholesale_orders_since_start','online_revenue_since_start','wholesale_revenue_since_start']
+            all_columns = dff.columns.to_list()
             present_columns = display_columns.copy()
+
             
             '''
             if not v_season or v_season == 'All':
@@ -750,7 +752,8 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
             dff = dff[(dff['season'].str.contains('|'.join(v_season)))]
 
-            
+            common.logger.debug(str(v_season))
+
             if v_category : 
                 dff = dff[dff['category'].isin(v_category)]
             if v_sub_cat : 
@@ -777,42 +780,45 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             
             
             group_list.append('season') #always group season
+            group_list.append('category')
+            group_list.append('sub_category')
             #group_list.append('p_name') #always group products
             
             if not v_product:
                 present_columns.remove('p_name')
-                if 'sku_id' in present_columns:
-                    present_columns.remove('sku_id')
+                #if 'sku_id' in present_columns:
+                #    present_columns.remove('sku_id')
             else:
                 group_list.append('p_name')
 
             if not v_color:
                 present_columns.remove('color')
-                if 'p_name' not in present_columns:
-                    if 'p_name' not in group_list:
-                        group_list.append('p_name')
-                if 'sku_id' in present_columns:
-                    present_columns.remove('sku_id')
+                #if 'p_name' in present_columns:
+                #    if 'p_name' not in group_list:
+                #        group_list.append('p_name')
+                #if 'sku_id' in present_columns:
+                #    present_columns.remove('sku_id')
             else:
                 group_list.append('color')
             
             if not v_size:
-                if ('color' in present_columns) or ('p_name' in present_columns):
-                    if 'p_name' not in group_list:
-                        group_list.append('p_name')
-                    if 'color' not in group_list:
-                        group_list.append('color')
+                #if ('color' in present_columns) or ('p_name' in present_columns):
+                #    if 'p_name' not in group_list:
+                #        group_list.append('p_name')
+                #    if 'color' not in group_list:
+                #        group_list.append('color')
                 present_columns.remove('size')
-                if 'sku_id' in present_columns:
-                    present_columns.remove('sku_id')
+                #if 'sku_id' in present_columns:
+                #    present_columns.remove('sku_id')
             else:
                 group_list.append('size') #need this to make sure all sizes selected are displayed
             
             #common.logger.info('v_season' + str(v_season) + '\nv_product: ' + str(v_product) + '\nv_color: ' + str(v_color) + '\n' + \
             #                   'v_size: ' + str(v_size) + '\nGroup List: ' + str(group_list) + '\nPresent List: ' + str(present_columns))
-
+            common.logger.debug(str(present_columns))
+            common.logger.debug(str(group_list))
             agg_dict = {}
-            for x in present_columns:
+            for x in all_columns:
                 if x not in group_list:
                     if x in sum_list:
                         agg_dict[x] = 'sum'
@@ -823,6 +829,8 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 df_grouped = dff.groupby(group_list).agg(agg_dict).reset_index()
             else:
                 df_grouped = dff
+
+            df_grouped.to_csv('grouped_dff.csv')
 
             hidden_columns = list(set(display_columns) - set(present_columns))
 
