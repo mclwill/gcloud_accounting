@@ -425,9 +425,9 @@ def layout(**kwargs):
                             html.Div([
                                 dcc.Dropdown(
                                     id='product_option',
-                                    options=product_option_list,
+                                    options=['All'] + product_option_list,
                                     value=[],
-                                    placeholder = 'All',
+                                    #placeholder = 'All',
                                     multi = True,
                                     clearable = True
                                 ),
@@ -614,7 +614,7 @@ def set_dropdown_options(season,category,sub_cat,v_base_start_date):
                 dff = dff[dff['category'].isin(category)]
             if sub_cat:
                 dff = dff[dff['sub_category'].isin(sub_cat)]
-            return [{'label':x,'value':x} for x in sorted(dff['p_name'].unique().tolist())]
+            return [{'label':x,'value':x} for x in sorted(['All'] + dff['p_name'].unique().tolist())]
         else:
             return None
     except Exception as ex:
@@ -630,9 +630,10 @@ def set_dropdown_options(season,category,sub_cat,v_base_start_date):
 def set_dropdown_options(product,v_base_start_date):
     try:
         #global display_stock_info_df
+        #common.logger.debug(str(product))
         if v_base_start_date:
             dff = global_store(v_base_start_date).copy()
-            if  product:
+            if  product and ('All' not in product):
                 dff = dff[dff['p_name'].isin(product)]
             return [{'label':x,'value':x} for x in (['All'] + sorted(dff['color'].unique().tolist()))]
         else: 
@@ -652,7 +653,7 @@ def set_dropdown_options(product,color,v_base_start_date):
     try:
         if v_base_start_date:
             dff = global_store(v_base_start_date).copy()
-            if product:
+            if product and ('All' not in product):
                 dff = dff[dff['p_name'].isin(product)]
             if color and ('All' not in color):
                 dff = dff[dff['color'].isin(color)]
@@ -712,12 +713,12 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
     try:
         if v_base_start_date:
             dff = global_store(v_base_start_date)[display_columns].copy()
-            product_option_list = sorted(dff['p_name'].unique().tolist())
-            color_option_list = sorted(dff['color'].unique().tolist())
-            size_option_list = sorted(dff['size'].unique().tolist())
+            #product_option_list = sorted(dff['p_name'].unique().tolist())
+            #color_option_list = sorted(dff['color'].unique().tolist())
+            #size_option_list = sorted(dff['size'].unique().tolist())
             season_option_list = []
             
-            common.logger.debug(str(dff['season'].unique().tolist()))
+            #common.logger.debug(str(dff['season'].unique().tolist()))
 
             for ss in dff['season'].unique().tolist():
                 for s in ss.split(','):
@@ -726,7 +727,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                         season_option_list.append(s)
             season_option_list.sort()
 
-            common.logger.debug(str(season_option_list))
+            #common.logger.debug(str(season_option_list))
 
             group_list = []
             sum_list = ['base_available_to_sell','available_to_sell_from_stock','additional_purchases','returns','base_stock','online_orders_last_7_days','wholesale_orders_last_7_days','online_orders_since_start',\
@@ -754,14 +755,20 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
                 dff = dff[dff['category'].isin(v_category)]
             if v_sub_cat : 
                 dff = dff[dff['sub_category'].isin(v_sub_cat)]
-            if v_product : 
-                dff = dff[dff['p_name'].isin(v_product)]
             
+            common.logger.debug(str(v_product))
+            
+            if 'All' in v_product : 
+                v_product = dff['p_name'].unique().tolist()
             if 'All' in v_color : 
                 v_color = dff['color'].unique().tolist()
             if 'All' in v_size:
-                v_size = dff['size'].unique().tolist()            
+                v_size = dff['size'].unique().tolist()       
+
+            common.logger.debug(str(v_product))     
             
+            if v_product : 
+                dff = dff[dff['p_name'].isin(v_product)]
             if v_color :
                 dff = dff[dff['color'].isin(v_color)]
             if v_size :
@@ -770,17 +777,29 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
             
             
             group_list.append('season') #always group season
-            group_list.append('p_name') #always group products
+            #group_list.append('p_name') #always group products
             
+            if not v_product:
+                present_columns.remove('p_name')
+                if 'sku_id' in present_columns:
+                    present_columns.remove('sku_id')
+            else:
+                group_list.append('p_name')
+
             if not v_color:
                 present_columns.remove('color')
+                if 'p_name' not in present_columns:
+                    if 'p_name' not in group_list:
+                        group_list.append('p_name')
                 if 'sku_id' in present_columns:
                     present_columns.remove('sku_id')
             else:
                 group_list.append('color')
             
             if not v_size:
-                if 'color' in present_columns:
+                if ('color' in present_columns) or ('p_name' in present_columns):
+                    if 'p_name' not in group_list:
+                        group_list.append('p_name')
                     if 'color' not in group_list:
                         group_list.append('color')
                 present_columns.remove('size')
