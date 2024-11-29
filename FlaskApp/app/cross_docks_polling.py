@@ -162,6 +162,10 @@ def process_MO_file(customer,stream_id,f,data,data_lines) :
                                                                                    'URL: ' + url,['global'],customer=customer)
                                                                                    
             common.logger.debug('MO email sent')
+        elif result[0] == '404':
+            error['MO'] = result[0]
+            error['Error Email Text'] = 'File Not Found (404) Error on processing information from Cross Docks - pick ticket may have been deleted after order processing has started\n\nFile moved to "received" folder'
+            error['File Status'] = 2
         else:
             error['MO'] = result[0]
             error['File Status'] = 3
