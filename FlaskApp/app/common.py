@@ -11,6 +11,15 @@ import json
 import requests
 from datetime import datetime
 from contextlib import closing
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+import base64
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from requests import HTTPError
+
 
 import FlaskApp.app.secrets as secrets
 from FlaskApp.app import app
@@ -22,11 +31,17 @@ if ('LOCAL' in app.config) and app.config['LOCAL']:
     FTP_active = False
     Dropbox_active = False
     Uphance_active = False
+    working_dir = ''
 else:
     running_local = False
     FTP_active = True
     Dropbox_active = True
     Uphance_active = True
+    working_dir = '/var/www/FlaskApp'
+
+SERVICE_ACCOUNT_FILE = os.path.join(working_dir,'FlaskApp/app','service_key.json')
+DELEGATED_USER = 'zd_zapier@mclarenwilliams.com.au'
+SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
 
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
@@ -64,6 +79,44 @@ def json_load(file):
         logger.warning(str(fnf_error))
         return False
 
+class GmailLoggingHandler(logging.Handler): #from ChatGPT 30/11/24
+    def __init__(self, service_account_file, delegated_user, sender, recipient):
+        super().__init__()
+        self.service_account_file = service_account_file
+        self.delegated_user = delegated_user
+        self.sender = sender
+        self.recipient = recipient
+        self.service = self.authenticate_gmail_api()
+
+    def authenticate_gmail_api(self):
+        SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+        credentials = service_account.Credentials.from_service_account_file(
+            self.service_account_file, scopes=SCOPES)
+        delegated_credentials = credentials.with_subject(self.delegated_user)
+        service = build('gmail', 'v1', credentials=delegated_credentials)
+        return service
+
+    def create_message(self, subject, message_text):
+        message = MIMEText(message_text)
+        message['to'] = self.recipient
+        message['from'] = self.sender
+        message['subject'] = subject
+        raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
+        return {'raw': raw}
+
+    def send_message(self, message):
+        try:
+            sent_message = (self.service.users().messages().send(userId='me', body=message).execute())
+            print('Message Id: %s' % sent_message['id'])
+        except Exception as error:
+            print(f'An error occurred: {error}')
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        subject = f"UPHANCE-CROSSDOCKS-LOGGING: {record.levelname}"
+        message = self.create_message(subject, log_entry)
+        self.send_message(message)
+
 def logging_initiate ():
     global logger,server
 
@@ -94,14 +147,107 @@ def logging_initiate ():
                                                 subject=u"Cross Docks Uphance Google VM Logging: " + server,
                                                 credentials=(access_secret_version('global_parameters',None,'from_email'), sender_pw),
                                                 secure=())
+    gmail_handler = GmailLoggingHandler(SERVICE_ACCOUNT_FILE, DELEGATED_USER, access_secret_version('global_parameters',None,'from_email'), ','.join(access_secret_version('global_parameters',None,'emails')))
+
     smtp_handler.setLevel(logging.INFO)
+    gmail_handler.setLevel(logging.INFO)
     smtp_handler.setFormatter(format)
-    logger.addHandler(smtp_handler)
+    gmail_handler.setFormatter(format)
+    logger.addHandler(gmail_handler)
+    #logger.addHandler(smtp_handler)
 
     logger.debug('Cross Docks - Uphance API: Logging started for File, Stream and SMTP logging')
 
-
 def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
+    global SERVICE_ACCOUNT_FILE, DELEGATED_USER
+    #not using email_count - kept to keep backward compatibility with old send_mail procedure
+    attachments = kwargs.pop('attachments',None)
+    reply_to = kwargs.pop('reply_to',None)
+    cc = kwargs.pop('cc',None)
+    bcc = kwargs.pop('bcc',None)
+
+    #CLIENT_ID = access_secret_version('global_parameters',None,'google_client_id')
+    #CLIENT_SECRET = access_secret_version('global_parameters',None,'google_client_secret')
+    #SERVICE_ACCOUNT_FILE = os.path.join(working_dir,'FlaskApp/app','service_key.json')
+    #DELEGATED_USER = 'support@zoedaniel.com.au'
+    SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+
+    creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    delegated_creds = creds.with_subject(DELEGATED_USER)
+
+    ##flow = InstalledAppFlow.from_client_secrets_file(
+    #    CLIENT_SECRET_FILE, scopes=SCOPES)
+
+    #creds = flow.run_local_server(port=0)
+    service = build('gmail', 'v1', credentials=delegated_creds)
+
+    sender_email = access_secret_version('global_parameters',None,'from_email')
+
+    if type(dest_email) == str:
+                receiver_email_address = [dest_email]
+    elif type(dest_email) == list:
+        receiver_email_address = []
+        for text in dest_email:
+            if text == 'global':
+                for e in access_secret_version('global_parameters',None,'emails'):
+                    receiver_email_address.append(e)
+            #elif text == 'customer':
+            #    for e in access_secret_version('customer_parameters',customer,'emails'):
+            #        receiver_email_address.append(e)
+            else:
+                receiver_email_address.append(text)
+    else:
+        raise Exception('Error sending email: send email destination address in the wrong fomat. dest_email: ' + str(dest_email))
+        smtp.quit()
+        return False
+
+    if type(cc) == str:
+        cc = [cc] #convert to array
+    if type(bcc) == str:
+        bcc = [bcc]
+
+    #new email code for attachments from: https://stackoverflow.com/questions/3362600/how-to-send-email-attachments
+
+    logger.debug('Destination email address(es):' + str(receiver_email_address))
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = COMMASPACE.join(receiver_email_address)
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = message_subject
+    if reply_to:
+        msg.add_header('reply-to',reply_to)
+    if cc:
+        msg['Cc'] = COMMASPACE.join(cc)
+        logger.debug(str(msg['Cc']))
+    
+    #Don't put bcc in msg as then it won't be blind
+    #if bcc:
+    #    msg['Bcc'] = bcc
+    
+    msg.attach(MIMEText(message_text))
+
+    for f in attachments or [] :
+        with open(f, "rb") as fil:
+            part = MIMEApplication(
+                fil.read(),
+                Name=basename(f)
+            )
+        # After the file is closed
+        part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
+        msg.attach(part)
+
+    create_message = {'raw': base64.urlsafe_b64encode(msg.as_bytes()).decode()}
+    try:
+        message = (service.users().messages().send(userId="me", body=create_message).execute())
+        logger.debug(F'sent message to {message} Message Id: {message["id"]}')
+        return True
+    except HTTPError as error:
+        logger.error(F'Send email API error occurred: {error}')
+        message = None
+        return False
+
+def send_email_old(email_counter,message_subject,message_text,dest_email,**kwargs):
     customer = kwargs.pop('customer',None)
 
     email_counter += 1
@@ -513,6 +659,7 @@ def get_dropbox_file_info(customer,file_path,**kwargs):
         logger.warning('Logging Warning Error for :' + customer + ' Exception in get_dropbox_file_info\nFile Path: ' + file_path + '\nDropbox Error:' + str(ex) + '\nTraceback:\n' + str(tb))
         logger.debug('Dropbox Read Error')
         return False
+
 
 #initialise parameters
 

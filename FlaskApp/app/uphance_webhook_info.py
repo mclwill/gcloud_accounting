@@ -347,7 +347,7 @@ def process_production_order(customer,event_data):
     #result_dict['error'] = {}
     stream_id = 'PT'
     if event_data['status'] != 'checked in':
-        result_dict['stream_id'] = 'PT'
+        #result_dict['stream_id'] = 'PT'
         event_id = str(event_data['production_order_number'])
         event_date = str(datetime.strptime(event_data['updated_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=from_zone).astimezone(to_zone).strftime("%Y%m%dT%H%M%S"))
         event_name = event_data['vendor'] + '_' + event_data['delivery_name']
@@ -448,7 +448,8 @@ def uphance_process_webhook(customer,request):
         request_dict = remove_special_unicode_chars(request_dict)
         data_str, result_dict = process_uphance_event(customer,request_dict)
         if not result_dict['error'] : 
-            common.send_email(0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'],customer=customer)
+            if "Not Sent to Cross Docks" not in data_str:
+                common.send_email(0,'Uphance_webhook_info','Uphance processing complete:\nOutput file:\n' + data_str + '\nInput Request:\n' + str(request_dict),['global'],customer=customer)
             return True #successful
         else:
             sendees = ['global'] #default to only global email recipients

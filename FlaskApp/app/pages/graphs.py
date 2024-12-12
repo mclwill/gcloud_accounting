@@ -14,7 +14,7 @@ import json
 import urllib.parse
 
 import FlaskApp.app.common as common
-from FlaskApp.app.data_store import get_data_from_globals
+import FlaskApp.app.data_store as data_store
 
 dash.register_page(__name__)
 
@@ -77,20 +77,29 @@ layout = html.Div([
 ])
 
 @callback(
-    [Output('df-store', 'data'),
-     Output('name-text','data')],
-    Input('url', 'search')
+    Output('df-store', 'data'),
+    Output('name-text','data'),
+    Input('url', 'search'),
+    prevent_initial_call = True
 )
 def get_query(url):
     
     try:
         common.logger.debug('get query call back reached' + str(url))
-        if url[1:].startswith('data'):  #dcc.Location 'search' return query string including '?' - so skip over that
-            data = url[1:].replace('data=','')
+        if url[1:].startswith('date'):  #dcc.Location 'search' return query string including '?' - so skip over that
+            parsed_url = urllib.parse.urlparse(url)
+
+            try:
+                date = urllib.parse.parse_qs(parsed_url.query)['date'][0]
+                data = urllib.parse.parse_qs(parsed_url.query)['data'][0]
+            except Exception as ex: #(ValueError, KeyError):
+                common.logger.info('graph query with invalid parameters - url: ' + str(url) + '\n' + str(ex))
+                return None,None
+            #data = url[1:].replace('data=','')
             #common.logger.info('URL call back reached' + str(data))
             data = json.loads(urllib.parse.unquote(data)) #need to decode url string before sending through json decoder
 
-            #common.logger.info(str(data))
+            common.logger.debug(str(data))
             if data:
                 data_df = pd.DataFrame.from_records(data)
                 data_cols = data_df.columns.tolist()
@@ -104,12 +113,15 @@ def get_query(url):
                 elif 'size' in data_cols:
                     keys = ['p_name','size']
                     name_text = 'Product - Size'
-                else:
-                    keys = False
+                elif 'p_name' in data_cols:
+                    keys = ['p_name']
                     name_text = 'Product'
+                else:
+                    keys = ['sub_category']
+                    name_text = 'Sub-Category'
 
-                stock_df = get_data_from_globals()[0].copy()
-                #common.logger.info(str(stock_df[['date','p_name','available_to_sell']].head()))
+                stock_df = data_store.global_store(date).copy()
+                common.logger.debug(str(stock_df[['date','p_name','available_to_sell']].head()))
                 #stock_df['date'] = stock_df['date'].dt.date
 
                 if keys: # if multiple columns then use index matching approach
@@ -163,7 +175,8 @@ def get_query(url):
      Input('graph-type-alt', 'value'),
      Input('name-text','data')],
      running=[(Output("dd-output-container-graph","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
-                 (Output("dd-output-container-graph","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})]
+                 (Output("dd-output-container-graph","style"),{'backgroundColor':'red','color':'white'},{'backgroundColor':'white','color':'black'})],
+     prevent_initial_call = True
 )
 def update_figure(df_graph,graph_type,name_text):
     

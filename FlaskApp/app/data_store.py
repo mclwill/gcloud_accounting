@@ -3,12 +3,17 @@ import pandas as pd
 from datetime import datetime, date, time, timedelta
 from dateutil import tz
 import traceback
-
-import FlaskApp.app.common as common
-import FlaskApp.app.cross_docks_polling as cd_polling
+from flask_caching import Cache
 from memory_profiler import profile
 import sys
 from io import StringIO
+import numpy as np
+from dash import html, dcc, callback, dash_table, clientside_callback
+
+import FlaskApp.app.common as common
+import FlaskApp.app.cross_docks_polling as cd_polling
+from FlaskApp.app import app
+
 
 #from FlaskApp.app.pages.dashboard import get_data_from_data_store
 
@@ -32,6 +37,14 @@ orders_file_path = os.path.join(data_store_folder,'data_orders.csv')
 po_file_path = os.path.join(data_store_folder,'data_po.csv')
 
 stock_info_df = pd.DataFrame()
+
+CACHE_CONFIG = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 86400  #extend cache across time period of one day.
+}
+cache = Cache()
+cache.init_app(app, config=CACHE_CONFIG)
 
 def in_between(now, start, end):
     if start <= end:
@@ -390,5 +403,162 @@ def get_data_from_globals():
     return stock_info_df,orders_df,po_df,\
            latest_date,earliest_date,default_end_season_date,\
            start_of_previous_week,end_of_previous_week
+
+def get_base_available_to_sell(df,base_start_date):
+    #global base_start_date
+    #common.logger.info(str(df[(df['sku_id'] == row['sku_id'])&(df['date']==base_start_date)].loc[:,'available_to_sell_from_stock'].values))
+    return_df = df[['ean','available_to_sell_from_stock']][(df['date']==base_start_date)]
+    return_df.rename({'available_to_sell_from_stock':'base_available_to_sell'},inplace=True,axis=1)
+    return_df.set_index('ean',inplace=True)
+    return return_df['base_available_to_sell']
+
+def get_last_week_orders(df,base_start_date):
+    global start_of_previous_week,end_of_previous_week#base_start_date
+
+    df = df[(df['OR'])&(df['PC'])] #make sure only count orders where we have OR file and PC file
+    if start_of_previous_week < base_start_date :
+        start_date = base_start_date
+    else:
+        start_date = start_of_previous_week
+    common.logger.debug(str(start_date) + '_______' + str(end_of_previous_week))
+
+    return df.assign(result=np.where((df['date_ordered']>=start_date)&(df['date_ordered']<=end_of_previous_week),df['qty_ordered'],0)).groupby('ean').agg({'result':'sum'})
+
+def get_orders_since_start(df,base_start_date):
+    #global base_start_date
+    df = df[(df['OR'])&(df['PC'])] #make sure only count orders where we have OR file and PC file
+    return df.assign(result=np.where(df['date_ordered']>=base_start_date,df['qty_ordered'],0)).groupby('ean').agg({'result':'sum'})
+
+def get_additonal_purchases(df,base_start_date):
+    #global base_start_date
+    return df.assign(result=np.where((df['date_received']>=base_start_date) & (~df['po_number'].str.contains('CRN')),df['qty_received'],0)).groupby('ean').agg({'result':'sum'})
+
+def get_returns(df,base_start_date):
+    #global base_start_date
+    return df.assign(result=np.where((df['date_received']>=base_start_date) & (df['po_number'].str.contains('CRN')),df['qty_received'],0)).groupby('ean').agg({'result':'sum'})
+
+        
+def process_data(base_start_date): #process data based on base_start_date --> need to call it whenever base_start_date changes
+    global stock_info_df,orders_df,po_df
+    global latest_date,earliest_date,default_end_season_date
+    global start_of_previous_week,end_of_previous_week
+    
+    try:
+        stock_info_df,orders_df,po_df, latest_date,earliest_date, default_end_season_date, start_of_previous_week,end_of_previous_week = get_data_from_globals()
+
+        #tb = traceback.format_stack()
+        #common.logger.info('Traceback for process_data :' + '\n' + str(tb) + '\n' + 'Base Start Date ' + str(base_start_date) + '\n' + 'Base Start Date Type' + str(type(base_start_date)))
+        #common.logger.info('Base Start Date Type' + str(type(base_start_date)))
+        #begin data merge of order and po into stock df
+        common.logger.debug('Begin Manipulation and Merging of Order and PO info into Stock DF')
+                
+        #common.logger.info('New process data :' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()) +'\n' + str(type(base_start_date)) + '\n' +  str(base_start_date))
+        base_stock_info_df = stock_info_df.copy()
+        
+        base_available_to_sell_df = get_base_available_to_sell(stock_info_df[['ean','date','available_to_sell_from_stock']],base_start_date).rename('base_available_to_sell') #get base_data for start of season calcs - returns DF with 'ean' as index and 'base_available_to_sell' column 
+
+        base_stock_info_df.set_index('ean',inplace=True) #set stock DF with 'ean' as index in preparation for join
+        base_stock_info_df = base_stock_info_df.join(base_available_to_sell_df) #do join on 'ean'
+        base_stock_info_df.reset_index(inplace=True) #reset index 
+        
+        common.logger.debug('Base data merge complete - starting collection of po and orders DFs')
+
+        base_stock_info_df = base_stock_info_df[(base_stock_info_df['date'] == latest_date)].copy()#get rid of all stock rows that are before latest date - don't need them anymore
+        base_stock_info_df['url_markdown'] = base_stock_info_df['url'].map(lambda a : "[![Image Not Available](" + str(a) + ")](https://aemery.com)")  #get correctly formatted markdown to display images in data_table
+        common.logger.debug(str(base_stock_info_df[['ean','category','sub_category','in_stock','available_to_sell_from_stock','base_available_to_sell']]))
+        #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info.csv')
+        #base_available_to_sell_df.to_csv('/Users/Mac/Downloads/base_available_to_sell.csv')
+        #get additional purchase information with 'ean' as index of type string
+        additional_purchases_df = get_additonal_purchases(po_df,base_start_date).rename(columns={'result':'additional_purchases'})
+        additional_purchases_df.index = additional_purchases_df.index.astype(str)
+        #additional_purchases_df.to_csv('/Users/Mac/Downloads/additional_purchases.csv')
+
+        #get returns information with 'ean' as index of type string
+        returns_df = get_returns(po_df,base_start_date).rename(columns={'result':'returns'})
+        returns_df.index = returns_df.index.astype(str)
+
+        #get online and wholesale last week orders with 'ean' as index of type string
+        online_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce - online'],base_start_date).rename(columns={'result':'online_orders_last_7_days'})#.rename('online_orders_prev_week')
+        online_orders_prev_week_df.index = online_orders_prev_week_df.index.astype(str)
+        wholesale_orders_prev_week_df = get_last_week_orders(orders_df[orders_df['channel']=='eCommerce - reorder'],base_start_date).rename(columns={'result':'wholesale_orders_last_7_days'})#.rename('wholesale_orders_prev_week')
+        wholesale_orders_prev_week_df.index = wholesale_orders_prev_week_df.index.astype(str)
+        #common.logger.debug(str(online_orders_prev_week_df))
+        #online_orders_prev_week_df.to_csv('online.csv')
+        #get online and wholesale since start orders with 'ean' as index of type string
+        online_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce - online']),base_start_date).rename(columns={'result':'online_orders_since_start'})#.rename('online_orders_since_start')
+        online_orders_since_start_df.index = online_orders_since_start_df.index.astype(str)
+        wholesale_orders_since_start_df = get_orders_since_start((orders_df[orders_df['channel']=='eCommerce - reorder']),base_start_date).rename(columns={'result':'wholesale_orders_since_start'})#.rename('wholesale_orders_since_start')  
+        wholesale_orders_since_start_df.index = wholesale_orders_since_start_df.index.astype(str)
+
+        common.logger.debug('Finished collection of po and order info - starting merge of PO and order info into Stock DF')
+        common.logger.debug(str(base_stock_info_df.columns))
+        common.logger.debug(str(base_stock_info_df[['category','sub_category','in_stock','available_to_sell_from_stock','base_available_to_sell']]))
+        base_stock_info_df.set_index('ean',inplace=True)#preparation for merge on 'ean' as index of type string
+        base_stock_info_df.index = base_stock_info_df.index.astype(str)
+        
+        #do the joins (ie. merges) of po and orders info into Stock DF
+        base_stock_info_df = base_stock_info_df.join(additional_purchases_df)
+        base_stock_info_df = base_stock_info_df.join(returns_df)
+        base_stock_info_df = base_stock_info_df.join(online_orders_prev_week_df)
+        base_stock_info_df = base_stock_info_df.join(wholesale_orders_prev_week_df)
+        base_stock_info_df = base_stock_info_df.join(online_orders_since_start_df)
+        base_stock_info_df = base_stock_info_df.join(wholesale_orders_since_start_df)
+
+        
+
+        #make sure any non joined info NaNs are replaced by zeroes for calcs to work
+        base_stock_info_df['additional_purchases'] = base_stock_info_df['additional_purchases'].fillna(0)
+        base_stock_info_df['returns'] = base_stock_info_df['returns'].fillna(0)
+        base_stock_info_df['online_orders_last_7_days'] = base_stock_info_df['online_orders_last_7_days'].fillna(0)
+        base_stock_info_df['wholesale_orders_last_7_days'] = base_stock_info_df['wholesale_orders_last_7_days'].fillna(0)
+        base_stock_info_df['online_orders_since_start'] = base_stock_info_df['online_orders_since_start'].fillna(0)
+        base_stock_info_df['wholesale_orders_since_start'] = base_stock_info_df['wholesale_orders_since_start'].fillna(0)
+        base_stock_info_df.reset_index(inplace=True)
+
+        
+
+        
+        common.logger.debug('start vectored operations for calculating extra columns')
+        common.logger.debug(str(base_stock_info_df))
+        #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info_after.csv')
+        base_stock_info_df['base_stock'] = base_stock_info_df['base_available_to_sell'] + base_stock_info_df['additional_purchases'] + base_stock_info_df['returns']
+        base_stock_info_df['online_revenue_since_start'] = base_stock_info_df['online_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
+        base_stock_info_df['wholesale_revenue_since_start'] = base_stock_info_df['wholesale_orders_since_start'] * base_stock_info_df['price_eCommerce_mrsp']
+
+        base_stock_info_df['online_pc_since_start'] = base_stock_info_df['online_orders_since_start'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
+        base_stock_info_df['wholesale_pc_since_start'] = base_stock_info_df['wholesale_orders_since_start'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
+        base_stock_info_df['seasonal_sell_through_pc'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / base_stock_info_df['base_stock']
+        base_stock_info_df['daily_sell_rate'] = (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start']) / (latest_date - base_start_date).days
+        base_stock_info_df['return_rate'] = base_stock_info_df['returns'] / (base_stock_info_df['online_orders_since_start'] + base_stock_info_df['wholesale_orders_since_start'])
+        base_stock_info_df['estimated_sell_out_weeks'] = base_stock_info_df['available_to_sell_from_stock'] / base_stock_info_df['daily_sell_rate'] / 7
+        
+        #fix up any divide by zeroes
+        base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']] = base_stock_info_df[['online_pc_since_start','wholesale_pc_since_start','seasonal_sell_through_pc','daily_sell_rate','estimated_sell_out_weeks']].replace([np.inf,-np.inf],np.nan)
+        
+        common.logger.debug('finished vectored operations - data manipulation and merge complete')
+        common.logger.debug(str(base_stock_info_df))
+        #base_stock_info_df.to_csv('/Users/Mac/Downloads/stock_info_end.csv')
+
+        #base_stock_info_df[['online_orders_last_7_days','online_orders_since_start']][base_stock_info_df['online_orders_last_7_days']>0].to_csv('online.csv')
+        return base_stock_info_df
+
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
+
+@cache.memoize()
+def global_store(base_start_date):
+    try:
+        #common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
+        if type(base_start_date) == str:
+                base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
+        return process_data(base_start_date)
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Exception in Cache Global Store: ' + str(ex)  + '/nTraceback Info: ' + str(tb))
+
+def flush_cache():
+    with app.app_context():
+        cache.clear()
 
 get_data_from_data_store()  #only update datastore from here -> not via imports in other modules

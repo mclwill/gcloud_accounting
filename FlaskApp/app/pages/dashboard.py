@@ -13,7 +13,7 @@ import traceback
 from datetime import datetime, date, time, timedelta
 from dateutil import tz
 import numpy as np
-from flask_caching import Cache
+#from flask_caching import Cache
 #import redis
 from functools import partial
 import uuid
@@ -21,7 +21,7 @@ import uuid
 
 from FlaskApp.app import app
 import FlaskApp.app.common as common
-from FlaskApp.app.data_store import get_data_from_data_store, get_data_from_globals
+import FlaskApp.app.data_store as data_store
 
 #external_stylesheets = [dbc.themes.BOOTSTRAP,'https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -30,13 +30,14 @@ customer = 'aemery'
 utc_zone = tz.tzutc()
 to_zone = tz.gettz('Australia/Melbourne')
 
-CACHE_CONFIG = {
+'''CACHE_CONFIG = {
     "DEBUG": True,          # some Flask specific configs
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
     "CACHE_DEFAULT_TIMEOUT": 86400  #extend cache across time period of one day.
 }
 cache = Cache()
 cache.init_app(app, config=CACHE_CONFIG)
+'''
 
 dash.register_page(__name__,path='/')
 #dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
@@ -47,7 +48,7 @@ dash.register_page(__name__,path='/')
 #    if view_func.startswith(dash_app.config['routes_pathname_prefix']):
 #        app.view_functions[view_func] = login_required(app.view_functions[view_func])
 
-def flush_cache():
+'''def flush_cache():
     with app.app_context():
         cache.clear()
 
@@ -192,7 +193,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
-
+'''
 #def serve_layout(base_stock_info_df,end_season_date):
 def layout(**kwargs):
     global stock_info_df,orders_df,po_df
@@ -205,9 +206,9 @@ def layout(**kwargs):
     
     try:
         common.logger.debug('New dashboard layout ' + str(uuid.uuid4()) + ' ------- ' + str(datetime.now()))
-        stock_info_df,orders_df,po_df, latest_date,earliest_date, default_end_season_date, start_of_previous_week,end_of_previous_week = get_data_from_globals()
+        stock_info_df,orders_df,po_df, latest_date,earliest_date, default_end_season_date, start_of_previous_week,end_of_previous_week = data_store.get_data_from_globals()
 
-        base_stock_info_df = global_store(earliest_date)
+        base_stock_info_df = data_store.global_store(earliest_date)
         #from here all about presenting the data table
 
         display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell_from_stock','online_orders_last_7_days', \
@@ -533,7 +534,7 @@ def layout(**kwargs):
                 html.P('Error processing layout')
         ) 
 
-@cache.memoize()
+'''@cache.memoize()
 def global_store(base_start_date):
     try:
         #common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
@@ -543,7 +544,7 @@ def global_store(base_start_date):
     except Exception as ex:
         tb = traceback.format_exc()
         common.logger.warning('Error Process Dashboard Layout' + '\nException Info: ' + str(ex) + '/nTraceback Info: ' + str(tb))
-
+'''
 @callback(Output('signal','data'),
           Input('start_date_picker', 'date'),
           running=[(Output("dd-output-container","children"),'Data Being Updated.....Please Wait', 'Data Update Complete'),
@@ -556,7 +557,7 @@ def update_output(date_value):
             #base_start_date = date.fromisoformat(date_value)
             #common.logger.info('Base Start Date in update_output' + str(type(base_start_date)) + '\n' + str(base_start_date))
             #store base_start_date as string
-            global_store(date_value)#process_data(base_start_date) #need to reprocess data since 
+            data_store.global_store(date_value)#process_data(base_start_date) #need to reprocess data since 
             #common.logger.info('start Date Picker 2' + str(type(date_value)) + '\n' + str(date_value))
             return date_value
     except Exception as ex:
@@ -573,7 +574,7 @@ def set_dropdown_options(season,category,v_base_start_date):
     try:
         #global display_stock_info_df
         if v_base_start_date:
-            dff = global_store(v_base_start_date).copy()
+            dff = data_store.global_store(v_base_start_date).copy()
             if season:
                 seasons = []
                 for ss in season:
@@ -602,7 +603,7 @@ def set_dropdown_options(season,category,sub_cat,v_base_start_date):
     try:
         #global display_stock_info_df
         if v_base_start_date:
-            dff = global_store(v_base_start_date).copy()
+            dff = data_store.global_store(v_base_start_date).copy()
             if season:
                 seasons = []
                 for ss in season:
@@ -632,7 +633,7 @@ def set_dropdown_options(product,v_base_start_date):
         #global display_stock_info_df
         #common.logger.debug(str(product))
         if v_base_start_date:
-            dff = global_store(v_base_start_date).copy()
+            dff = data_store.global_store(v_base_start_date).copy()
             if  product and ('All' not in product):
                 dff = dff[dff['p_name'].isin(product)]
             return [{'label':x,'value':x} for x in (['All'] + sorted(dff['color'].unique().tolist()))]
@@ -652,7 +653,7 @@ def set_dropdown_options(product,color,v_base_start_date):
     #global display_stock_info_df
     try:
         if v_base_start_date:
-            dff = global_store(v_base_start_date).copy()
+            dff = data_store.global_store(v_base_start_date).copy()
             if product and ('All' not in product):
                 dff = dff[dff['p_name'].isin(product)]
             if color and ('All' not in color):
@@ -712,7 +713,7 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
     try:
         if v_base_start_date:
-            dff = global_store(v_base_start_date)[display_columns].copy()
+            dff = data_store.global_store(v_base_start_date)[display_columns].copy()
             #product_option_list = sorted(dff['p_name'].unique().tolist())
             #color_option_list = sorted(dff['color'].unique().tolist())
             #size_option_list = sorted(dff['size'].unique().tolist())
@@ -857,10 +858,10 @@ def update_table(v_season,v_category,v_sub_cat,v_product,v_color,v_size,v_shortc
 
 clientside_callback(
     """
-    function(n_clicks,rows,data) {
+    function(n_clicks,rows,data,date) {
         const send_data = rows.map(index => data[index]);
         const sendjsonString = JSON.stringify(send_data)
-        const url = `https://api.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
+        const url = `https://127.0.0.1:5000/dashboard/graphs?date=${date}&data=${sendjsonString}`;
         window.open(url,'_blank');
     }
     """,
@@ -868,8 +869,10 @@ clientside_callback(
     Input('btn_graphs', 'n_clicks'),
     State('data_table', 'selected_rows'),
     State('download', 'data'),
+    State('start_date_picker','date'),
     prevent_initial_call=True #
 )
+#const url = `https://api.mclarenwilliams.com.au/dashboard/graphs?data=${sendjsonString}`;
 
 @callback (
     Output('graph-rows','data'),
@@ -890,8 +893,11 @@ def updated_selected_rows(v_rows,display_data):
                     dff = df[['p_name','color']]
             elif 'size' in df_cols:
                 dff = df[['p_name','size']]
-            else:
+            elif 'p_name' in df_cols:
                 dff = df['p_name']
+                return dff.to_list()
+            else:
+                dff = df['sub_category']
                 return dff.to_list()
             #common.logger.info('Select Rows 2: ' + str(v_rows) + '\n' + str(dff.head()))
             return dff.to_dict('records')
@@ -904,7 +910,7 @@ def updated_selected_rows(v_rows,display_data):
                 html.P('Error processing layout')
         ) 
 
-flush_cache()
+data_store.flush_cache()
 
 
 #dash_app.layout = partial(serve_layout, process_data(earliest_date),default_end_season_date)
