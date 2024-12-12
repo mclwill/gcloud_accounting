@@ -575,6 +575,7 @@ def set_dropdown_options(season,category,v_base_start_date):
         #global display_stock_info_df
         if v_base_start_date:
             dff = data_store.global_store(v_base_start_date).copy()
+            #common.logger.debug(str(dff))
             if season:
                 seasons = []
                 for ss in season:
@@ -604,6 +605,7 @@ def set_dropdown_options(season,category,sub_cat,v_base_start_date):
         #global display_stock_info_df
         if v_base_start_date:
             dff = data_store.global_store(v_base_start_date).copy()
+            #common.logger.debug(str(dff))
             if season:
                 seasons = []
                 for ss in season:
@@ -634,6 +636,7 @@ def set_dropdown_options(product,v_base_start_date):
         #common.logger.debug(str(product))
         if v_base_start_date:
             dff = data_store.global_store(v_base_start_date).copy()
+            #common.logger.debug(str(dff))
             if  product and ('All' not in product):
                 dff = dff[dff['p_name'].isin(product)]
             return [{'label':x,'value':x} for x in (['All'] + sorted(dff['color'].unique().tolist()))]
@@ -654,6 +657,7 @@ def set_dropdown_options(product,color,v_base_start_date):
     try:
         if v_base_start_date:
             dff = data_store.global_store(v_base_start_date).copy()
+            #common.logger.debug(str(dff))
             if product and ('All' not in product):
                 dff = dff[dff['p_name'].isin(product)]
             if color and ('All' not in color):
@@ -888,18 +892,26 @@ def updated_selected_rows(v_rows,display_data):
             df_cols = df.columns.tolist()
             if 'color' in df_cols:
                 if 'size' in df_cols:
-                    dff = df[['p_name','color','size']]
+                    keys = ['color','size']
+                    #dff = df[['color','size']]
                 else:
-                    dff = df[['p_name','color']]
+                    keys = ['color']
+                    #dff = df[['p_name','color']]
             elif 'size' in df_cols:
-                dff = df[['p_name','size']]
-            elif 'p_name' in df_cols:
-                dff = df['p_name']
-                return dff.to_list()
+                keys = ['size']
+                #dff = df[['p_name','size']]
             else:
-                dff = df['sub_category']
-                return dff.to_list()
+                keys = []
+            if 'p_name' in df_cols:
+                keys.append('p_name')
+                #dff = df['p_name']
+                #return dff.to_list()
+            if 'sub_category' in df_cols:
+                keys.append('sub_category')
+                #dff = df['sub_category']
+                #return dff.to_list()
             #common.logger.info('Select Rows 2: ' + str(v_rows) + '\n' + str(dff.head()))
+            dff = df[keys]
             return dff.to_dict('records')
         else:
             return None

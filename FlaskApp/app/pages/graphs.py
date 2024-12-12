@@ -1,3 +1,4 @@
+from datetime import datetime, date, time, timedelta
 import dash
 from dash import html
 from dash import html, dcc, callback, dash_table, clientside_callback
@@ -105,23 +106,34 @@ def get_query(url):
                 data_cols = data_df.columns.tolist()
                 if 'color' in data_cols:
                     if 'size' in data_cols:
-                        keys = ['p_name','color','size']
-                        name_text = 'Product - Colour - Size'
+                        keys = ['color','size']
+                        name_text = 'Colour - Size'
                     else:
-                        keys = ['p_name','color']
-                        name_text = 'Product - Colour'
+                        keys = ['color']
+                        name_text = 'Colour'
                 elif 'size' in data_cols:
-                    keys = ['p_name','size']
-                    name_text = 'Product - Size'
-                elif 'p_name' in data_cols:
-                    keys = ['p_name']
-                    name_text = 'Product'
+                    keys = ['size']
+                    name_text = 'Size'
                 else:
-                    keys = ['sub_category']
-                    name_text = 'Sub-Category'
+                    keys = []
+                    name_text = ''
+                if 'p_name' in data_cols:
+                    keys.insert(0,'p_name')
+                    if name_text : 
+                        name_text = 'Product - ' + name_text 
+                    else:
+                        name_text = 'Product'
+                if 'sub_category' in data_cols:
+                    keys.insert(0,'sub_category')
+                    if name_text:
+                        name_text = 'Sub-Category - ' + name_text
+                    else:
+                        name_text = 'Sub-Catgegory'
 
-                stock_df = data_store.global_store(date).copy()
-                common.logger.debug(str(stock_df[['date','p_name','available_to_sell']].head()))
+                common.logger.debug(str(type(date)) + '\n' + str(date))
+                stock_df = data_store.get_data_from_globals()[0].copy()  
+                stock_df = stock_df[stock_df['date'] >= datetime.strptime(date,'%Y-%m-%d').date()]
+                common.logger.debug(str(stock_df))
                 #stock_df['date'] = stock_df['date'].dt.date
 
                 if keys: # if multiple columns then use index matching approach

@@ -549,7 +549,7 @@ def process_data(base_start_date): #process data based on base_start_date --> ne
 @cache.memoize()
 def global_store(base_start_date):
     try:
-        #common.logger.info('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
+        common.logger.debug('Base Start Date in global_store' + str(type(base_start_date)) + '\n' + str(base_start_date))
         if type(base_start_date) == str:
                 base_start_date = datetime.strptime(base_start_date,'%Y-%m-%d').date()
         return process_data(base_start_date)
