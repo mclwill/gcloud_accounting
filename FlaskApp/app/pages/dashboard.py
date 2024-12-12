@@ -861,7 +861,7 @@ clientside_callback(
     function(n_clicks,rows,data,date) {
         const send_data = rows.map(index => data[index]);
         const sendjsonString = JSON.stringify(send_data)
-        const url = `https://127.0.0.1:5000/dashboard/graphs?date=${date}&data=${sendjsonString}`;
+        const url = `https://api.mclarenwilliams.com.au/dashboard/graphs?date=${date}&data=${sendjsonString}`;
         window.open(url,'_blank');
     }
     """,
