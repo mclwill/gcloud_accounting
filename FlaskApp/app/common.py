@@ -165,6 +165,7 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
     reply_to = kwargs.pop('reply_to',None)
     cc = kwargs.pop('cc',None)
     bcc = kwargs.pop('bcc',None)
+    customer = kwargs.pop('customer',None)
 
     #CLIENT_ID = access_secret_version('global_parameters',None,'google_client_id')
     #CLIENT_SECRET = access_secret_version('global_parameters',None,'google_client_secret')
@@ -191,9 +192,9 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
             if text == 'global':
                 for e in access_secret_version('global_parameters',None,'emails'):
                     receiver_email_address.append(e)
-            #elif text == 'customer':
-            #    for e in access_secret_version('customer_parameters',customer,'emails'):
-            #        receiver_email_address.append(e)
+            elif text == 'customer':
+                for e in access_secret_version('customer_parameters',customer,'emails'):
+                    receiver_email_address.append(e)
             else:
                 receiver_email_address.append(text)
     else:
