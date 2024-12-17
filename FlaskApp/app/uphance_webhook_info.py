@@ -357,6 +357,7 @@ def process_production_order(customer,event_data):
         result_dict['stream_id'] = stream_id
         return file_data, result_dict
     else:
+        result_dict = {}
         result_dict['stream_id'] = stream_id
         return "Not Sent to Cross Docks - Already Checked In", result_dict
 
