@@ -146,7 +146,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):#,result_
                 error['mapping_code_' + str(error_keys)] = mapping_code
                 error_keys = len(error.keys())
         #result_dict['error'] = error
-        result_dict['mapping_code'] = mapping_code
+        #result_dict['mapping_code'] = mapping_code
         if error_keys > 0 :
             error['keys'] = error_keys
         return create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data), error
@@ -205,7 +205,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):#,result_
                 error['mapping_code_' + str(error_keys)] = mapping_code
                 error_keys = len(error.keys())
         #result_dict['error'] = error
-        result_dict['mapping_code'] = mapping_code
+        #result_dict['mapping_code'] = mapping_code
         if error_keys > 0 :
             error['keys'] = error_keys
         return multi_line, error
@@ -475,7 +475,7 @@ def uphance_process_webhook(customer,request):
         return True #successful
         
     except Exception as e:
-        common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(result_dict['stream_id']) + '\nMapping Code :\n' + str(result_dict['mapping_code']) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
+        common.logger.exception('Exception message for : ' + customer + '\nError in Uphance Process Webhook:\nStream ID : ' + str(result_dict['stream_id']) + '\nRequest:\n' + str(request_dict) + '\nException Info: ' + str(e))
         #common.logger.debug('Uphance Sub Process return False')
         
         ''' Code for multiple attempts if exception occurs - but not used at the moment - 2024-08-09 
