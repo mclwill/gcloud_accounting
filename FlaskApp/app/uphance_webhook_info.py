@@ -455,7 +455,7 @@ def uphance_process_webhook(customer,request):
         else:
             sendees = ['global'] #default to only global email recipients
             for filter_text in common.access_secret_version('customer_parameters',customer,'errors_to_be_reported'):
-                if any(filter_text in string.keys() for string in result_dict['error']):
+                if [key for key, val in result_dict['error'] if filter_text in key]: #search for partial match of filter text in keys of error dict
                     sendees.append('customer')
             common.logger.debug('Sending error report to : ' + str(sendees)) 
             error_send_to_CD = None
