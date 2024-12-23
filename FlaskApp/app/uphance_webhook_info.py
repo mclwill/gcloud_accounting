@@ -254,7 +254,7 @@ def process_file(customer,file_data,file_name,result_dict):
             processQueuedFiles(customer,os.path.join('home/gary/cd_send_files',customer))
             
         else:
-            result_dict['error']['FTP transfer error'] = 'Error in  transfer of file: ' + file_name
+            result_dict['error'].append({'FTP transfer error':'Error in  transfer of file: ' + file_name})
             common.logger.warning('transfer_FTP error for file: ' + file_name +'\nFile should have been stored on server for sending to Cross Docks when FTP up again')
     else:
         common.logger.debug('In Process file error handling: result_dict is ' + str(result_dict))
@@ -428,8 +428,8 @@ def uphance_process_webhook(customer,request):
     result_dict = {}
     result_dict['stream_id'] = 'NA'
     result_dict['mapping_code'] = 'NA'
-    result_dict['error'] = {}
-    result_dict['error']['text'] = 'NA'
+    result_dict['error'] = []
+    result_dict['error'].append({'text':'NA'})
     #process_webhook_depth += 1
     
     ''' Code for multiple attempts if exception occurs - but not used at the moment - 2024-08-09 
@@ -455,8 +455,10 @@ def uphance_process_webhook(customer,request):
         else:
             sendees = ['global'] #default to only global email recipients
             for filter_text in common.access_secret_version('customer_parameters',customer,'errors_to_be_reported'):
-                if [key for key, val in result_dict['error'].items() if filter_text in key]: #search for partial match of filter text in keys of error dict
-                    sendees.append('customer')
+                for error in result_dict['error']:
+                    if [key for key, val in error.items() if filter_text in key]: #search for partial match of filter text in keys of error dict
+                        if 'customer' not in sendees:
+                            sendees.append('customer')
             common.logger.debug('Sending error report to : ' + str(sendees)) 
             error_send_to_CD = None
             for error in result_dict['error']:
