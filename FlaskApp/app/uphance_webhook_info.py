@@ -146,7 +146,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):#,result_
                 error['mapping_code_' + str(error_keys)] = mapping_code
                 error_keys = len(error.keys())
         #result_dict['error'] = error
-        #result_dict['mapping_code'] = mapping_code
+        result_dict['mapping_code'] = mapping_code
         if error_keys > 0 :
             error['keys'] = error_keys
         return create_field_line(file_format_GMcL.CD_file_format[stream_id][ri]['template'],file_format_GMcL.CD_file_format[stream_id][ri]['Col List'],data), error
@@ -205,7 +205,7 @@ def process_record_indicator(customer,event_data,stream_id,ri,mapping):#,result_
                 error['mapping_code_' + str(error_keys)] = mapping_code
                 error_keys = len(error.keys())
         #result_dict['error'] = error
-        #result_dict['mapping_code'] = mapping_code
+        result_dict['mapping_code'] = mapping_code
         if error_keys > 0 :
             error['keys'] = error_keys
         return multi_line, error
@@ -455,7 +455,7 @@ def uphance_process_webhook(customer,request):
         else:
             sendees = ['global'] #default to only global email recipients
             for filter_text in common.access_secret_version('customer_parameters',customer,'errors_to_be_reported'):
-                if [key for key, val in result_dict['error'] if filter_text in key]: #search for partial match of filter text in keys of error dict
+                if [key for key, val in result_dict['error'].items() if filter_text in key]: #search for partial match of filter text in keys of error dict
                     sendees.append('customer')
             common.logger.debug('Sending error report to : ' + str(sendees)) 
             error_send_to_CD = None
