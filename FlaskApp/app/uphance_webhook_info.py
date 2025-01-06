@@ -416,6 +416,7 @@ def remove_special_unicode_chars(obj):
     if isinstance(obj, dict):
         return {remove_special_unicode_chars(key): remove_special_unicode_chars(value) for key, value in obj.items()}
     elif isinstance(obj, str):
+        obj = obj.replace('|','_')  #replace '|' with '_'
         return obj.encode('ascii', 'ignore').decode('utf-8')
     elif obj is None:  #if receive a None then convert to empty string
         return ''
@@ -447,7 +448,7 @@ def uphance_process_webhook(customer,request):
         else:
             request_dict = request  #used for test purposes when request is a dict
         ##remove any special characters from the webhook from Uphhance
-        request_dict = remove_special_unicode_chars(request_dict)
+        request_dict = remove_special_unicode_chars(request_dict) ##also replace '|' with '_'
         data_str, result_dict = process_uphance_event(customer,request_dict)
         if not result_dict['error'] : 
             if "Not Sent to Cross Docks" not in data_str:

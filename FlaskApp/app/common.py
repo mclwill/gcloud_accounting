@@ -226,7 +226,7 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
     #if bcc:
     #    msg['Bcc'] = bcc
     
-    msg.attach(MIMEText(message_text))
+    msg.attach(MIMEText(message_text,'html'))
 
     for f in attachments or [] :
         with open(f, "rb") as fil:
