@@ -226,9 +226,10 @@ def process_all_record_indicators(customer,event_data,stream_id):
         if mapping_error:
             result_dict['error'].append(mapping_error)
         mapping = get_custom_file_format(customer,stream_id,ri) #get any custom mapping and override default if that is the case
-        common.logger.debug('Logger Info for : ' + customer + '\nCustom Mapping Code for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping))
+        
         if len(mapping.keys()) > 0:
             if mapping['RECORD_INDICATOR']['Processing'][0] : 
+                common.logger.debug('Logger Info for : ' + customer + '\nCustom Mapping Code for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping))
                 new_file_data,mapping_error = process_record_indicator(customer,event_data,stream_id,ri,mapping)#,result_dict)
                 common.logger.debug('Logger Info for : ' + customer + '\nCustom File Data for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping) + '\nNew File Data : ' + new_file_data)
                 if mapping_error:
@@ -313,7 +314,7 @@ def process_pick_ticket_delete(customer,event_data):
     event_id = event_data['id']
     
     stream_id = 'OR'
-    event_id = event_data['id']
+    #event_id = event_data['id']
 
     CD_code = common.access_secret_version('customer_parameters',customer,'CD_customer_code')
 
@@ -323,7 +324,10 @@ def process_pick_ticket_delete(customer,event_data):
     result_dict['stream_id'] = stream_id
     return file_data, result_dict
 
-def process_product_update(customer,event_data):
+def process_product_update(customer,event_data,**kwargs):
+    master = kwargs.pop('master',None)
+    
+    common.logger.debug(str(event_data))
     #global error, stream_id
     #result_dict = {}
     #result_dict['error'] = {}
@@ -332,9 +336,15 @@ def process_product_update(customer,event_data):
     event_date = str(datetime.now().strftime("%Y%m%dT%H%M%S"))
     event_name = event_data['name']
     file_data, result_dict = process_all_record_indicators(customer,event_data,stream_id)#,result_dict)
-    file_name = stream_id + event_date + '_' + str(event_id) + '_' + event_name.replace('/','_').replace(' ','_') + '.csv'
+    
+    
     if len(file_data.split('\n')) > 2 : #then not an empty CD file
-        result_dict = process_file(customer,file_data,file_name,result_dict)
+        if master:  #skip sending to Cross Docks as done in master IT processing
+            result_dict['stream_id'] = stream_id
+            return file_data, result_dict
+        else:
+            file_name = stream_id + event_date + '_' + str(event_id) + '_' + event_name.replace('/','_').replace(' ','_') + '.csv'
+            result_dict = process_file(customer,file_data,file_name,result_dict)
     else:
         result_dict['error'].append({'send_to_CD':False}) #override any error['send_to_CD'] to correct error messages at end of processing
         common.logger.debug('\nLogger Info for ' + customer + '\nFile not sent to CD as no IT records\n' + file_data + '\n' + str(event_data)) #downgraded to debugging on 25 July 2024 to reduce email load 

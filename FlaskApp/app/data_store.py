@@ -12,6 +12,7 @@ from dash import html, dcc, callback, dash_table, clientside_callback
 
 import FlaskApp.app.common as common
 import FlaskApp.app.cross_docks_polling as cd_polling
+import FlaskApp.app.uphance_webhook_info as uphance_webhook
 from FlaskApp.app import app
 
 
@@ -124,7 +125,7 @@ def get_data_store_info(customer):
             page = 1 #get ready for Uphance pagination
             while page :
                 common.logger.debug('Request product dump from Uphance - Page : ' + str(page))
-                response = common.uphance_api_call(customer,'get',url=url_product+'/?page='+str(page),override=True)
+                response = common.uphance_api_call(customer,'get',url=url_product+'/?page='+str(page),override=False)
                 common.logger.debug('Uphance Product API Call Status Code: ' + str(response[0]))
                 if response[0]:
                     common.logger.warning('Uphance Error on Product API call for :' + customer)
@@ -166,7 +167,7 @@ def get_data_store_info(customer):
             if season_df is not None:
                 df['season'] = df.apply(lambda row: decode_season_id(row['season_id']),axis=1)
             csv_file_data = df.to_csv(sep='|',index=False)
-            common.store_dropbox(customer,csv_file_data,stock_file_path,override=True)
+            common.store_dropbox(customer,csv_file_data,stock_file_path,override=False)
             common.logger.info('Uphance stock DataStore updated for ' + customer + '\nFile Path: ' + stock_file_path)
 
         #common.logger.info('debug data_orders')
@@ -283,14 +284,14 @@ def get_data_store_info(customer):
         #common.logger.info('debug data_orders 3')
         if not orders_df.empty:
             orders_csv_file_data = orders_df.to_csv(sep='|',index=False)
-            common.store_dropbox(customer,orders_csv_file_data,orders_file_path,override=True)
+            common.store_dropbox(customer,orders_csv_file_data,orders_file_path,override=False)
             common.logger.info('Uphance orders DataStore updated for ' + customer + '\nFile Path: ' + orders_file_path)
         else:
             common.logger.info('Uphance orders DataStore not updated as dataframe was emtpy')
 
         if not po_df.empty:
             po_csv_file_data = po_df.to_csv(sep='|',index=False)
-            common.store_dropbox(customer,po_csv_file_data,po_file_path,override=True)
+            common.store_dropbox(customer,po_csv_file_data,po_file_path,override=False)
             common.logger.info('Uphance purchase orders DataStore updated for ' + customer + '\nFile Path: ' + po_file_path)
         else:
             common.logger.info('Uphance purchase orders DataStore not updated as dataframe was emtpy')
@@ -560,5 +561,61 @@ def global_store(base_start_date):
 def flush_cache():
     with app.app_context():
         cache.clear()
+
+def get_master_IT_file(customer):
+    try:
+        #get all products using pagination
+        url_product = 'https://api.uphance.com/products'
+        product_pages = []
+        file_data = ''
+        result_dict = {}
+        result_dict['error'] = []
+
+        page = 1 #get ready for Uphance pagination
+        while page :
+            common.logger.debug('Request product dump from Uphance for master IT dump - Page : ' + str(page))
+            response = common.uphance_api_call(customer,'get',url=url_product+'/?page='+str(page),override=False)
+            common.logger.debug('Uphance Product API Call Status Code: ' + str(response[0]))
+            if response[0]:
+                common.logger.warning('Uphance Error on Product API call for :' + customer)
+                break
+            else:
+                data = response[1]
+                product_pages.append(data)
+                page = data['meta']['next_page']
+        i = 0
+        for page in product_pages:
+            for p in page['products']:
+                i += 1
+                result = uphance_webhook.process_product_update(customer,p,master=True,override=False)
+                for k,v in result[1].items():
+                    if k == 'error':
+                        common.logger.debug(str(k))
+                        common.logger.debug(str(v))
+                        for e in v:
+                            common.logger.debug(str(e))
+                            result_dict['error'].append(e)
+                    else:
+                        result_dict[k] = v
+                if i == 1:
+                    file_data = file_data + result[0]
+                else:
+                    file_data = file_data + result[0].replace('HD|EM|IT\n','')
+
+
+
+        if common.running_local:
+            aest_now = datetime.now()
+        else:
+            aest_now = datetime.now().replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)
+
+        file_name = 'IT_FULL_' + aest_now.strftime('%Y%m%d') + '.csv'
+        common.logger.debug(file_name)
+        result_dict = uphance_webhook.process_file(customer,file_data,file_name,result_dict)
+        common.logger.debug('result_dict: ' + str(result_dict))
+    except Exception as ex:
+        tb = traceback.format_exc()
+        common.logger.warning('Exception in retrieving and process Master IT file: ' + str(ex)  + '/nTraceback Info: ' + str(tb))
+
 
 get_data_from_data_store()  #only update datastore from here -> not via imports in other modules
