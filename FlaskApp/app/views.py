@@ -85,3 +85,10 @@ def process_aemery_get_master_IT_file():
     x = threading.Thread(target = data_store.get_master_IT_file, args=('aemery',))
     x.start()
     return 'Processed using thread'
+
+@app.route('/two-ts_get_master_IT_file',methods=['GET','POST'])
+def process_aemery_get_master_IT_file():
+    #use threading so that no timeout occurs on POST
+    x = threading.Thread(target = data_store.get_master_IT_file, args=('two-ts',))
+    x.start()
+    return 'Processed using thread'

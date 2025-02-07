@@ -613,9 +613,23 @@ def get_master_IT_file(customer):
         common.logger.debug(file_name)
         result_dict = uphance_webhook.process_file(customer,file_data,file_name,result_dict)
         common.logger.debug('result_dict: ' + str(result_dict))
+        
+        error_send_to_CD = None
+        for error in result_dict['error']:
+            if 'send_to_CD' in error:
+                    error_send_to_CD = error
+                    break
+        if error_send_to_CD:
+            if error_send_to_CD['send_to_CD']:
+                error_message = 'Master IT file sent to CD' 
+            else:
+               error_message = 'Master IT file NOT sent to CD' 
+            common.send_email(0,'Master IT file Processing',error_message + '\n\nError Info: ' + str(result_dict['error']) + '\n' + 'Output file:\n' + data_st,['global'],customer=customer)
+ 
+
     except Exception as ex:
         tb = traceback.format_exc()
-        common.logger.warning('Exception in retrieving and process Master IT file: ' + str(ex)  + '/nTraceback Info: ' + str(tb))
+        common.logger.warning('Exception in retrieving and processing Master IT file: ' + str(ex)  + '/nTraceback Info: ' + str(tb))
 
 
 get_data_from_data_store()  #only update datastore from here -> not via imports in other modules
