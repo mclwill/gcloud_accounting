@@ -624,7 +624,7 @@ def get_master_IT_file(customer):
                 error_message = 'Master IT file sent to CD' 
             else:
                error_message = 'Master IT file NOT sent to CD' 
-            common.send_email(0,'Master IT file Processing',error_message + '\n\nError Info: ' + str(result_dict['error']) + '\n' + 'Output file:\n' + data_st,['global'],customer=customer)
+            common.send_email(0,'Master IT file Processing',error_message + '\n\nError Info: ' + str(result_dict['error']) + '\n' + 'Output file:\n' + file_name,['global'],customer=customer)
  
 
     except Exception as ex:

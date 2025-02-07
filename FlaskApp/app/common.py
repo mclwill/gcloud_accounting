@@ -215,7 +215,10 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
     msg['From'] = sender_email
     msg['To'] = COMMASPACE.join(receiver_email_address)
     msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = message_subject
+    if customer :
+        msg['Subject'] = customer + ' : ' + message_subject
+    else:
+        msg['Subject'] = message_subject
     if reply_to:
         msg.add_header('reply-to',reply_to)
     if cc:
