@@ -9,6 +9,7 @@ import sys
 from io import StringIO
 import numpy as np
 from dash import html, dcc, callback, dash_table, clientside_callback
+import re
 
 import FlaskApp.app.common as common
 import FlaskApp.app.cross_docks_polling as cd_polling
@@ -600,9 +601,9 @@ def get_master_IT_file(customer):
                 if i == 1:
                     file_data = file_data + result[0]
                 else:
-                    file_data = file_data + result[0].replace('HD|EM|IT\n','')
-
-
+                    file_data = file_data + re.sub("HD\|([A-Z]){2}\|IT\n",'',result[0])
+                    #file_data + result[0].replace('HD|EM|IT\n','')
+                    #file_data = file_data + result[0].replace('HD|TT|IT\n','')
 
         if common.running_local:
             aest_now = datetime.now()
