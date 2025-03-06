@@ -167,7 +167,16 @@ def get_data_store_info(customer):
 
             if season_df is not None:
                 df['season'] = df.apply(lambda row: decode_season_id(row['season_id']),axis=1)
-            csv_file_data = df.to_csv(sep='|',index=False)
+            
+            #filter out records to be just Sunday's of every week for dates before 90 days
+            df['datetime'] = pd.to_datetime(df['date'])
+            df['day_of_week'] = df['datetime'].dt.dayofweek
+            df['timedelta'] = (aest_now - df['datetime']).dt.days
+            df_filtered = df[((df['day_of_week']==6)&(df['timedelta']>90))|(df['timedelta']<=90)] #only include Sunday if older than 90 days
+            
+            #df_filtered.to_csv('test_stock.csv',sep='|',index=False)
+            df_filtered.drop(columns=['datetime','day_of_week','timedelta'],inplace=True)
+            csv_file_data = df_filtered.to_csv(sep='|',index=False)
             common.store_dropbox(customer,csv_file_data,stock_file_path,override=False)
             common.logger.info('Uphance stock DataStore updated for ' + customer + '\nFile Path: ' + stock_file_path)
 
