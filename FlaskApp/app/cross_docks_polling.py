@@ -440,7 +440,7 @@ def cross_docks_poll_request(customer):
                     proc_files.append(f)
                 elif result[0] == 'Rejected':
                     common.logger.debug('Processing rejected file for ' + customer + ' : ' + f)
-                    if not download_file_DBX(customer,result[1],'rejected',f):
+                    if not upload_file_to_dropbox(customer,result[1],'rejected',f):
                         break #if get an error from Dropbox then break processing
                     if not move_CD_file_FTP(customer,'out/pending','out/rejected',f):
                         break #if get an error from CD FTP then break processing
