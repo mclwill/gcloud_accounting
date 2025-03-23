@@ -56,17 +56,19 @@ def transfer_FTP(customer,file_name,file_data,error,retry=False):
                 ftp_host.chdir('in/pending')
                 with ftp_host.open(file_name, "w", encoding="utf8") as fobj:
                     fobj.write(file_data)
+
+            common.logger.debug('Logging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
         
         except Exception as ex:
             
-            common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Cross Docks FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data + '\nInput Request:\n',['global'])
+            common.logger.warning('Logging Warning Error for :' + customer + '\nUphance_webhook_error','Cross Docks FTP Error - need to check if file sent to Cross Docks\nFile Name: ' + file_name + '\nError Info: ' + str(error) + '\nFTP Error:' + str(ex) + 'Output file:\n' + file_data)
             error['send_to_CD'] = False;
             if not retry:
                 common.storeLocalFile(os.path.join('home/gary/cd_send_files',customer),file_name,file_data,customer=customer,error=error)  #store file locally
                 common.logger.info('Logging Info for ' + customer + "\nFile " + file_name + ' stored locally')
             return False, error
             
-        common.logger.debug('Logging Info for ' + customer + "\nFile " + file_name + ' sent to FTP server')
+        
 
         return True, error
     else:
