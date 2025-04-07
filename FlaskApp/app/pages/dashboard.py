@@ -209,6 +209,8 @@ def layout(**kwargs):
         stock_info_df,orders_df,po_df, latest_date,earliest_date, default_end_season_date, start_of_previous_week,end_of_previous_week = data_store.get_data_from_globals()
 
         base_stock_info_df = data_store.global_store(earliest_date)
+
+        common.logger.debug('Length of base_stock_info_df: ' + str(len(base_stock_info_df.index)))  #07 April 2025 - suspect not loaded properly from cache - use this for debugging purposes
         #from here all about presenting the data table
 
         display_columns = ['url_markdown','season','category','sub_category','p_name','color','size','base_available_to_sell','returns','additional_purchases','base_stock','available_to_sell_from_stock','online_orders_last_7_days', \
@@ -274,8 +276,10 @@ def layout(**kwargs):
         season_option_list = []
 
         #common.logger.info('product list 1 :' + str(product_option_list))
-        
+       
+        common.logger.debug(str(display_stock_info_df['season'].unique().tolist()))
         for ss in display_stock_info_df['season'].to_list():
+            
             for s in ss.split(','):
                 s = s.strip()
                 if s not in season_option_list:

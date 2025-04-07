@@ -411,17 +411,15 @@ def uphance_check_token_status(customer):
         uphance_access_token = json_load('uphance_access_tokens.json') #try to load from json file
         if not uphance_access_token: #if unsuccessful then create refresh token
             uphance_token_refresh = True
-        else:
-            if uphance_access_token[customer]: #if uphance token exists for customer check if near expiry
-                uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
-                td = uphance_expires - datetime.now()
-                if td.days < 20 :
-                    logger.info('Uphance access token expiry','Uphance token will expire in ' + str(td.days) + ' days' + ' for ' + customer + '\nGetting new access token')
-                    uphance_token_refresh = True
-            else:
+    
+    if not uphance_token_refresh:
+        if customer in uphance_access_token: #if uphance token exists for customer check if near expiry
+            uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
+            td = uphance_expires - datetime.now()
+            if td.days < 30 :
+                logger.info('Uphance access token expiry - Uphance token will expire in ' + str(td.days) + ' days' + ' for ' + customer + '\nGetting new access token')
                 uphance_token_refresh = True
-    else:
-        if not customer in uphance_access_token :
+        else:
             uphance_token_refresh = True
 
     if uphance_token_refresh:
