@@ -416,7 +416,7 @@ def uphance_check_token_status(customer):
         if customer in uphance_access_token: #if uphance token exists for customer check if near expiry
             uphance_expires = datetime.utcfromtimestamp(uphance_access_token[customer]['created_at'] + uphance_access_token[customer]['expires_in'])
             td = uphance_expires - datetime.now()
-            if td.days < 30 :
+            if td.days < 20 :
                 logger.info('Uphance access token expiry - Uphance token will expire in ' + str(td.days) + ' days' + ' for ' + customer + '\nGetting new access token')
                 uphance_token_refresh = True
         else:
