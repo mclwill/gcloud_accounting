@@ -56,20 +56,25 @@ def process_aemery_cross_docks_polling():
 
 @app.route('/two-ts',methods=['POST'])
 def process_two_ts_webhook():
-    content = request.get_json(silent=True)
+    #in sleep mode
+    '''content = request.get_json(silent=True)
     if content:
         status_code = uphance_webhook.uphance_prod_webhook('two-ts',content)
         return 'Processed', status_code
     else :
         return 'two-ts No content'
+    '''
+    return 'in sleep mode'
 
 @app.route('/two-ts_cross-docks-polling',methods=['POST'])
 def process_two_ts_cross_docks_polling():
-
+    #in sleep mode
+    '''
     status_code = cross_docks_polling.cross_docks_poll_request('two-ts')
     
     return 'Processed', status_code
-
+    '''
+    return 'in sleep mode'
 
 @app.route('/aemery_get_product_data',methods=['GET','POST'])
 def process_aemery_get_data_store_info():
@@ -89,6 +94,10 @@ def process_aemery_get_master_IT_file():
 @app.route('/two-ts_get_master_IT_file',methods=['GET','POST'])
 def process_two_ts_get_master_IT_file():
     #use threading so that no timeout occurs on POST
+    #in sleep mode
+    '''
     x = threading.Thread(target = data_store.get_master_IT_file, args=('two-ts',))
     x.start()
     return 'Processed using thread'
+    '''
+    return 'in sleep mode'
