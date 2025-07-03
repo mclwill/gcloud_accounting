@@ -54,7 +54,7 @@ def process_aemery_cross_docks_polling():
     
     return 'Processed', status_code
 
-@app.route('/two-ts',methods=['POST'])
+@app.route('/two-ts',methods=['POST','GET'])
 def process_two_ts_webhook():
     #in sleep mode
     '''content = request.get_json(silent=True)
@@ -66,7 +66,7 @@ def process_two_ts_webhook():
     '''
     return 'in sleep mode'
 
-@app.route('/two-ts_cross-docks-polling',methods=['POST'])
+@app.route('/two-ts_cross-docks-polling',methods=['POST','GET'])
 def process_two_ts_cross_docks_polling():
     #in sleep mode
     '''
