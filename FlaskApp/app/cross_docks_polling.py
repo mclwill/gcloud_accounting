@@ -316,7 +316,7 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
                                                              'Ship to State: ' + str(ship_to_state) + '\n' + \
                                                              'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
                                                              'The following items contain a shipping variance\n\n' + \
-                                                             variance_msg + '\n\n',['customer','global'],customer=customer)
+                                                             variance_msg + '\n\n',['global',common.access_secret_version('customer_parameters',customer,'short_ship_emails')],customer=customer)
                                                              #'Data in CD file: \n' + data + '\n''',['global'])
                                                               
                 

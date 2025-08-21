@@ -195,10 +195,9 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
             elif text == 'customer':
                 for e in access_secret_version('customer_parameters',customer,'emails'):
                     receiver_email_address.append(e)
-            elif type(text) == dict:
-                if customer in text.keys():
-                    for e in text[customer]:
-                        receiver_email_address.append(e)
+            elif type(text) == list:
+                for e in text:
+                    receiver_email_address.append(e)
             else:
                 receiver_email_address.append(text)
     else:
@@ -602,7 +601,7 @@ def store_dropbox(customer,file_data,file_path,retry=False,**kwargs):
             logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
             if not retry:
                 file_loc = os.path.basename(os.path.normpath(file_path))
-                if file_loc in ['sent','received','DataStore']: #file retries only for CD sent, received or database storage issues
+                if file_loc in ['sent','received']: #file retries only for CD sent, received or database storage issues
                     storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
             return False
     else:
