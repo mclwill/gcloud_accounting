@@ -602,7 +602,7 @@ def store_dropbox(customer,file_data,file_path,retry=False,**kwargs):
             logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
             if not retry:
                 file_loc = os.path.basename(os.path.normpath(file_path))
-                if file_loc == 'sent' or file_loc == 'received': #filter out only regular CD file saving errors
+                if file_loc in ['sent','received','DataStore']: #file retries only for CD sent, received or database storage issues
                     storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
             return False
     else:
