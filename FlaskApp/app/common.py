@@ -195,6 +195,10 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
             elif text == 'customer':
                 for e in access_secret_version('customer_parameters',customer,'emails'):
                     receiver_email_address.append(e)
+            elif type(text) == dict:
+                if customer in text.keys():
+                    for e in text[customer]:
+                        receiver_email_address.append(e)
             else:
                 receiver_email_address.append(text)
     else:

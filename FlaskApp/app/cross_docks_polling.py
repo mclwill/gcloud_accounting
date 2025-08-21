@@ -351,7 +351,7 @@ def process_TP_file(customer,stream_id,f,data,data_lines):
         common.send_email(0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
                                                                           'Purchase Order Number: ' + str(po_number) + '\n\n' +
                                                                            'Input File: ' + f + '\n' +
-                                                                           data,['customer','global'],
+                                                                           data,['global'],
                                                                            customer=customer)
         common.logger.debug('TP email sent')
     else:
