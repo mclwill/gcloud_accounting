@@ -316,7 +316,7 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
                                                              'Ship to State: ' + str(ship_to_state) + '\n' + \
                                                              'Ship to Postocde: ' + str(ship_to_postcode) + '\n\n' + \
                                                              'The following items contain a shipping variance\n\n' + \
-                                                             variance_msg + '\n\n',['customer','global'],customer=customer)
+                                                             variance_msg + '\n\n',['global',common.access_secret_version('customer_parameters',customer,'short_ship_emails')],customer=customer)
                                                              #'Data in CD file: \n' + data + '\n''',['global'])
                                                               
                 
@@ -351,7 +351,7 @@ def process_TP_file(customer,stream_id,f,data,data_lines):
         common.send_email(0,'Cross Docks Message: Purchase Order Return File Received','CD processing manual:\nStream ID: ' + stream_id + '\n' +
                                                                           'Purchase Order Number: ' + str(po_number) + '\n\n' +
                                                                            'Input File: ' + f + '\n' +
-                                                                           data,['customer','global'],
+                                                                           data,['global'],
                                                                            customer=customer)
         common.logger.debug('TP email sent')
     else:

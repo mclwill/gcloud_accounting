@@ -195,6 +195,9 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
             elif text == 'customer':
                 for e in access_secret_version('customer_parameters',customer,'emails'):
                     receiver_email_address.append(e)
+            elif type(text) == list:
+                for e in text:
+                    receiver_email_address.append(e)
             else:
                 receiver_email_address.append(text)
     else:
@@ -587,7 +590,7 @@ def store_dropbox(customer,file_data,file_path,retry=False,**kwargs):
                         queuedFiles = getLocalFiles(d,customer=customer)
                         if queuedFiles[0] : #only process files if no errors on getting Local files
                             for file_item in queuedFiles[1]:
-                                if store_dropbox_unicode(customer,file_item['file_data'],os.path.join(dbx_folder,os.path.basename(os.path.normpath(d)),file_item['file_name']),True): #flag this is a retry to avoid another saving on error
+                                if store_dropbox(customer,file_item['file_data'],os.path.join(dbx_folder,os.path.basename(os.path.normpath(d)),file_item['file_name']),True): #flag this is a retry to avoid another saving on error
                                     os.remove(os.path.join(d,file_item['file_name'])) #remove file if dropbox store is successful successful
                                     logger.info('Logger Info for ' + customer + '\nLocal file successully transferred to dropbox and removed locally\nFile: ' + file_item['file_name'])
             return True 
@@ -598,7 +601,7 @@ def store_dropbox(customer,file_data,file_path,retry=False,**kwargs):
             logger.debug('Dropbox Transfer Error - will store locally and retry : ' + file_path)
             if not retry:
                 file_loc = os.path.basename(os.path.normpath(file_path))
-                if file_loc in ['sent','rejected']: #filter out only regular CD file saving errors
+                if file_loc in ['sent','received']: #file retries only for CD sent, received or database storage issues
                     storeLocalFile(os.path.join('home/gary/dropbox',customer,file_loc),file_name,file_data,customer=customer)  #store file locally
             return False
     else:
