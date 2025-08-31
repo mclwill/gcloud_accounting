@@ -77,7 +77,7 @@ def transfer_FTP(customer,file_name,file_data,error,retry=False):
     
 
 def get_custom_file_format(customer,stream_id,ri):
-    common.logger.debug(custom_file_format_modules[customer].CD_file_format[stream_id][ri])
+    #common.logger.debug(custom_file_format_modules[customer].CD_file_format[stream_id][ri])
 
     return  custom_file_format_modules[customer].CD_file_format.get(stream_id,{}).get(ri,{}).get('mapping',{})  # see https://stackoverflow.com/questions/26979046/python-check-multi-level-dict-key-existence
 
@@ -224,11 +224,12 @@ def process_all_record_indicators(customer,event_data,stream_id):
     for ri in record_indicators :
         #data = {}
         mapping = file_format_GMcL.CD_file_format[stream_id][ri]['mapping']
+        common.logger.debug('Generic mapping for ' + str(ri) + ': '+ str(mapping))
         new_file_data,mapping_error = process_record_indicator(customer,event_data,stream_id,ri,mapping)#,result_dict)
         if mapping_error:
             result_dict['error'].append(mapping_error)
         mapping = get_custom_file_format(customer,stream_id,ri) #get any custom mapping and override default if that is the case
-        
+        common.logger.debug('Customised mapping '+ str(ri) + ': ' + str(mapping))
         if len(mapping.keys()) > 0:
             if mapping['RECORD_INDICATOR']['Processing'][0] : 
                 common.logger.debug('Logger Info for : ' + customer + '\nCustom Mapping Code for Stream ID : ' + str(stream_id) + '\nRecord Indicator :' + str(ri) + '\nMapping : ' + str(mapping))

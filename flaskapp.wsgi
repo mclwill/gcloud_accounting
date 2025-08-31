@@ -1,3 +1,6 @@
+#this flaskapp.wsgi was created in Aug 2025 after major hiccup with github to recover Uphance <-> Cross Docks middleware
+#it now launches the app from dash_main -> see ZoeDaniel CiviCRM for an alternative start up process
+
 import sys
 import logging
 
