@@ -104,10 +104,11 @@ def process_two_ts_get_master_IT_file():
 
 @app.route('/vpn-log',methods=['GET','POST'])
 def process_vpn_info():
-    content = request.get_json(silent=True)
-    #common.logger.info(str(request.url))
+    common.logger.debug(str(request))
+    content = request.query_string.decode('utf-8',errors='replace')
+    common.logger.debug(str(content))
     if content:
-        common.send_email(0,'VPN Info','VPN Info :\n' + str(content),['gary@mclarenwilliams.com.au'])
-        return 'VPN Info Processed - Email sent', status_code
+        common.send_email(0,'VPN Info','VPN Info :\n' + str(content),'gary@mclarenwilliams.com.au')
+        return 'VPN Info Processed - Email sent'
     else :
         return 'VPN Info - No content'
