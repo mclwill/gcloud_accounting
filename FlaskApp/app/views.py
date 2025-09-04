@@ -106,9 +106,11 @@ def process_two_ts_get_master_IT_file():
 def process_vpn_info():
     common.logger.debug(str(request))
     content = request.query_string.decode('utf-8',errors='replace')
-    common.logger.debug(str(content))
+    content_json = request.get_json(silent=True)
+    common.logger.debug('JSON: ' + str(content_json))
+    common.logger.debug('Query String: ' + str(content))
     if content:
-        common.send_email(0,'VPN Info','VPN Info :\n' + str(content),'gary@mclarenwilliams.com.au')
+        common.send_email(0,'VPN Info','VPN Query String :\n' + str(content) + '\nVPN JSON: \n' + content_json,'gary@mclarenwilliams.com.au')
         return 'VPN Info Processed - Email sent'
     else :
         return 'VPN Info - No content'
