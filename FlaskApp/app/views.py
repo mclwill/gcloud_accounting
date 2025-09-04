@@ -7,6 +7,7 @@ import FlaskApp.app.common as common
 import FlaskApp.app.uphance_webhook_info as uphance_webhook
 import FlaskApp.app.cross_docks_polling as cross_docks_polling
 import FlaskApp.app.data_store as data_store
+import urllib.parse
 
 
 @app.route("/")
@@ -109,12 +110,16 @@ def process_vpn_info():
     content_json = request.get_json(silent=True)
     raw_body = request.data.decode("utf-8")
     all_headers = dict(request.headers)
+    encoded_data = request.args.get('data')
+    if encoded_data:
+        encoded_data = urllib.parse.unquote(encoded_data)
     common.logger.debug('Raw Body: ' + raw_body)
     common.logger.debug('All Headers: ' + str(all_headers))
     common.logger.debug('JSON: ' + str(content_json))
     common.logger.debug('Query String: ' + str(content))
+    common.logger.debug('Decoded Data: ' + str(encoded_data))
     if content:
-        common.send_email(0,'VPN Info','VPN Query String :\n' + str(content) + '\nVPN JSON: \n' + str(content_json),'gary@mclarenwilliams.com.au')
+        common.send_email(0,'VPN Info','VPN Query String :\n' + str(content) + '\nVPN JSON: \n' + str(content_json) + '\nHeaders:\n' + str(all_headers) + '\nDecoded Data:\n' + str(encoded_data),'gary@mclarenwilliams.com.au')
         return 'VPN Info Processed - Email sent'
     else :
         return 'VPN Info - No content'
