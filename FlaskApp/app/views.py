@@ -102,7 +102,7 @@ def process_two_ts_get_master_IT_file():
     #end active code
     #return 'in sleep mode'
 
-@app.route('vpn-log',methods=['GET','POST'])
+@app.route('/vpn-log',methods=['GET','POST'])
 def process_vpn_info():
     content = request.get_json(silent=True)
     #common.logger.info(str(request.url))
