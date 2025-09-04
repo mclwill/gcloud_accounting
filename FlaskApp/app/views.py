@@ -119,7 +119,7 @@ def process_vpn_info():
     common.logger.debug('Query String: ' + str(content))
     common.logger.debug('Decoded Data: ' + str(encoded_data))
     if content:
-        common.send_email(0,'VPN Info','VPN Query String :\n' + str(content) + '\nVPN JSON: \n' + str(content_json) + '\nHeaders:\n' + str(all_headers) + '\nDecoded Data:\n' + str(encoded_data),'gary@mclarenwilliams.com.au')
+        common.send_email(0,'VPN Info','VPN Query String :\n' + str(content) + '\n\nVPN JSON: \n' + str(content_json) + '\n\nHeaders:\n' + str(all_headers) + '\n\nDecoded Data:\n' + str(encoded_data),'gary@mclarenwilliams.com.au')
         return 'VPN Info Processed - Email sent'
     else :
         return 'VPN Info - No content'
