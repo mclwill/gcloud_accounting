@@ -107,6 +107,10 @@ def process_vpn_info():
     common.logger.debug(str(request))
     content = request.query_string.decode('utf-8',errors='replace')
     content_json = request.get_json(silent=True)
+    raw_body = request.data.decode("utf-8")
+    all_headers = dict(request.headers)
+    common.logger.debug('Raw Body: ' + raw_body)
+    common.logger.debug('All Headers: ' + all_headers)
     common.logger.debug('JSON: ' + str(content_json))
     common.logger.debug('Query String: ' + str(content))
     if content:
