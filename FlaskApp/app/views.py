@@ -107,7 +107,7 @@ def process_vpn_info():
     content = request.get_json(silent=True)
     #common.logger.info(str(request.url))
     if content:
-        common.send_email(0,'VPN Info','VPN Info :'\n + str(content),['gary@mclarenwilliams.com.au'])
+        common.send_email(0,'VPN Info','VPN Info :\n' + str(content),['gary@mclarenwilliams.com.au'])
         return 'VPN Info Processed - Email sent', status_code
     else :
         return 'VPN Info - No content'
