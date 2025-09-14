@@ -150,9 +150,17 @@ def process_MO_file(customer,stream_id,f,data,data_lines) :
     '''
 
     order_id = get_CD_parameter(data_lines,'MO',2)
+    ack_flag = get_CD_parameter(data_lines,'MO',3)
     common.logger.debug('order_id: ' + order_id)
     if order_id.isnumeric():
-        url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=Packing'
+        if ack_flag == 'A':
+            service_tag = 'Cross Docks info update - Order file acknowledgement'
+        elif ack_flag == 'I':
+            service_tag = 'Cross Docks info update - Order activation'
+        else:
+            service_tag = 'Cross Docks info update - unknown'
+        common.logger.debug('servic_tag: ' + service_tag)
+        url = 'https://api.uphance.com/pick_tickets/' + order_id + '?service=' + service_tag
         #print(url)
         result = common.uphance_api_call(customer,'put',url=url)
         if not result[0] :
