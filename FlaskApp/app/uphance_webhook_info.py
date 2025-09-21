@@ -249,19 +249,19 @@ def process_file(customer,file_data,file_name,result_dict):
     dbx_file = common.access_secret_version('customer_parameters',customer,'dbx_folder') + '/sent/' + file_name
 
     if not common.store_dropbox(customer,file_data,dbx_file):
-        common.logger.warning('Cross Docks file not stored in Dropbox - processing has continued\nFile Name: ' + file_name + '\nFile Contents : \n' + file_data)
+        common.logger.warning('Cross Docks file not stored in Dropbox for ' + customer + ' : processing has continued\nFile Name: ' + file_name + '\nFile Contents : \n' + file_data)
 
     if not result_dict['error'] : #result_dict['error'].keys()) == 0 : #no errors reported so send to Cross Docks
         if transfer_FTP(customer,file_name,file_data,result_dict['error']):
-            common.logger.debug('transfer_FTP ok after no error')
+            common.logger.debug('transfer_FTP ok after no error for ' + customer)
             #process any stored files since last FTP was successful so can resend queued files to Cross Docks
             processQueuedFiles(customer,os.path.join('home/gary/cd_send_files',customer))
             
         else:
             result_dict['error'].append({'FTP transfer error':'Error in  transfer of file: ' + file_name})
-            common.logger.warning('transfer_FTP error for file: ' + file_name +'\nFile should have been stored on server for sending to Cross Docks when FTP up again')
+            common.logger.warning('transfer_FTP error for file for ' + customer  +' : ' + file_name +'\nFile should have been stored on server for sending to Cross Docks when FTP up again')
     else:
-        common.logger.debug('In Process file error handling: result_dict is ' + str(result_dict))
+        common.logger.debug('In Process file error handling for ' + customer + ' : result_dict is ' + str(result_dict))
         error_send_to_CD = None
         for error in result_dict['error']:
             if 'send_to_CD' in error:
@@ -271,17 +271,16 @@ def process_file(customer,file_data,file_name,result_dict):
         if error_send_to_CD:
             if error_send_to_CD['send_to_CD'] :
                 if transfer_FTP(customer,file_name,file_data,result_dict['error']):
-                    common.logger.debug('transfer_FTP ok after error: ' + str(result_dict['error']))
+                    common.logger.debug('transfer_FTP ok after error for ' + customer +': ' + str(result_dict['error']))
                     #process any stored files since last FTP was successful so can resend queued files to Cross Docks
                     processQueuedFiles(customer,os.path.join('home/gary/cd_send_files',customer))
                 else:
                     result_dict['error'].append({'FTP transfer error':'Error in  transfer of file: ' + file_name})
-                    common.logger.warning('transfer_FTP error for file: ' + file_name +'\nFile should have been stored on server for sending to Cross Docks when FTP up again')
+                    common.logger.warning('transfer_FTP error for file: ' + file_name +' for ' + customer + '\nFile should have been stored on server for sending to Cross Docks when FTP up again')
             else:
-                common.logger.info('Error in webhook processing - file not sent to Cross Docks\nError Data:\n' + str(result_dict) + '\nFile Data:\n' + str(file_data))
+                common.logger.info('Error in webhook processing - file not sent to Cross Docks' + customer +'\nError Data:\n' + str(result_dict) + '\nFile Data:\n' + str(file_data))
         else:
-            common.logger.warning('No send_to_CD flag in errors reported so file sent to CDs - need to check code' + '\n' +
-                                  file_data + '\n' + file_name + '\n' + 'result_dict: ' + str(result_dict)  )
+            common.logger.warning('No send_to_CD flag in errors reported so file sent to CDs - need to check code' + '\n' + 'Customer: ' + customer + '\n' + file_data + '\n' + file_name + '\n' + 'result_dict: ' + str(result_dict)  )
     return result_dict
     
 def process_pick_ticket(customer,event_data):

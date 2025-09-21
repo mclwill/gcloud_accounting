@@ -206,80 +206,83 @@ def get_data_store_info(customer):
 
             for file_item in queuedFiles:
                 byte_stream = common.read_dropbox_bytestream('aemery',file_item['path_display'])
-                data_lines = byte_stream.read().decode('utf=8').split('\n')
-                stream_id = cd_polling.get_CD_parameter(data_lines,'HD',3)
-                if stream_id == 'OR':
-                    action_id = cd_polling.get_CD_parameter(data_lines,'OR1',2)
-                    if action_id == 'A':
-                        channel = cd_polling.get_CD_parameter(data_lines,'OR1',14)
-                        order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
-                        order_num = cd_polling.get_CD_parameter(data_lines,'OR1',6)
-                        eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
+                if byte_stream:
+                    data_lines = byte_stream.read().decode('utf=8').split('\n')
+                    stream_id = cd_polling.get_CD_parameter(data_lines,'HD',3)
+                    if stream_id == 'OR':
+                        action_id = cd_polling.get_CD_parameter(data_lines,'OR1',2)
+                        if action_id == 'A':
+                            channel = cd_polling.get_CD_parameter(data_lines,'OR1',14)
+                            order_id = cd_polling.get_CD_parameter(data_lines,'OR1',3)
+                            order_num = cd_polling.get_CD_parameter(data_lines,'OR1',6)
+                            eans = cd_polling.get_CD_parameter(data_lines,'OR2',4)
+                            if type(eans) == str:
+                                eans = [eans]
+                            qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',5)
+                            if type(qty_ordered) == str:
+                                qty_ordered = [qty_ordered]
+                            
+                            if eans: #some OR files processed without items for some reason
+                                for i in range(len(eans)):
+                                    row_dict = {}
+                                    row_dict['date_ordered'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
+                                    row_dict['order_id'] = [order_id]
+                                    row_dict['order_num'] = [order_num]
+                                    row_dict['channel'] = [channel]
+                                    row_dict['ean'] = [eans[i]]
+                                    row_dict['qty_ordered'] = [qty_ordered[i]]
+                                    row_dict['OR'] = [True]
+
+                                    or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
+                                    or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered'],inplace=True,ignore_index=True) 
+                                
+                    elif stream_id == 'PC':
+                        order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
+                        eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
                         if type(eans) == str:
                             eans = [eans]
-                        qty_ordered = cd_polling.get_CD_parameter(data_lines,'OR2',5)
-                        if type(qty_ordered) == str:
-                            qty_ordered = [qty_ordered]
+                        qty_shipped = cd_polling.get_CD_parameter(data_lines,'OS2',4)
+                        if type(qty_shipped) == str:
+                            qty_shipped = [qty_shipped]
+                        qty_variance =cd_polling.get_CD_parameter(data_lines,'OS2',5)
+                        if type(qty_variance) == str:
+                            qty_variance = [qty_variance]
                         
-                        if eans: #some OR files processed without items for some reason
-                            for i in range(len(eans)):
-                                row_dict = {}
-                                row_dict['date_ordered'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
-                                row_dict['order_id'] = [order_id]
-                                row_dict['order_num'] = [order_num]
-                                row_dict['channel'] = [channel]
-                                row_dict['ean'] = [eans[i]]
-                                row_dict['qty_ordered'] = [qty_ordered[i]]
-                                row_dict['OR'] = [True]
+                        for i in range(len(eans)):
+                            row_dict = {}
+                            row_dict['order_id'] = [order_id]
+                            row_dict['date_shipped'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
+                            row_dict['ean'] = [eans[i]]
+                            row_dict['qty_shipped'] = [qty_shipped[i]]
+                            row_dict['qty_variance'] = [qty_variance[i]]
+                            row_dict['PC'] = [True]
 
-                                or_df = pd.concat([or_df,pd.DataFrame.from_dict(row_dict)])
-                                or_df.drop_duplicates(subset=['order_id','channel','ean','date_ordered'],inplace=True,ignore_index=True) 
-                            
-                elif stream_id == 'PC':
-                    order_id = cd_polling.get_CD_parameter(data_lines,'OS1',2)
-                    eans = cd_polling.get_CD_parameter(data_lines,'OS2',2)
-                    if type(eans) == str:
-                        eans = [eans]
-                    qty_shipped = cd_polling.get_CD_parameter(data_lines,'OS2',4)
-                    if type(qty_shipped) == str:
-                        qty_shipped = [qty_shipped]
-                    qty_variance =cd_polling.get_CD_parameter(data_lines,'OS2',5)
-                    if type(qty_variance) == str:
-                        qty_variance = [qty_variance]
-                    
-                    for i in range(len(eans)):
-                        row_dict = {}
-                        row_dict['order_id'] = [order_id]
-                        row_dict['date_shipped'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
-                        row_dict['ean'] = [eans[i]]
-                        row_dict['qty_shipped'] = [qty_shipped[i]]
-                        row_dict['qty_variance'] = [qty_variance[i]]
-                        row_dict['PC'] = [True]
+                            pc_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
+                            pc_df.drop_duplicates(subset = ['order_id','ean','date_shipped'],inplace=True,ignore_index=True) 
 
-                        pc_df = pd.concat([pc_df,pd.DataFrame.from_dict(row_dict)])
-                        pc_df.drop_duplicates(subset = ['order_id','ean','date_shipped'],inplace=True,ignore_index=True) 
+                    elif stream_id == 'TP':
+                        po_id = cd_polling.get_CD_parameter(data_lines,'TP',2)
+                        if type(po_id) == str:
+                            po_id = [po_id]
+                        eans = cd_polling.get_CD_parameter(data_lines,'TP',5)
+                        if type(eans) == str:
+                            eans = [eans]
+                        qty_received = cd_polling.get_CD_parameter(data_lines,'TP',6)
+                        if type(qty_received) == str:
+                            qty_received = [qty_received]
+                        
+                        for i in range(len(eans)):
+                            row_dict = {}
+                            row_dict['po_number'] = [po_id[i]]
+                            row_dict['date_received'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
+                            row_dict['ean'] = [eans[i]]
+                            row_dict['qty_received'] = [qty_received[i]]
 
-                elif stream_id == 'TP':
-                    po_id = cd_polling.get_CD_parameter(data_lines,'TP',2)
-                    if type(po_id) == str:
-                        po_id = [po_id]
-                    eans = cd_polling.get_CD_parameter(data_lines,'TP',5)
-                    if type(eans) == str:
-                        eans = [eans]
-                    qty_received = cd_polling.get_CD_parameter(data_lines,'TP',6)
-                    if type(qty_received) == str:
-                        qty_received = [qty_received]
-                    
-                    for i in range(len(eans)):
-                        row_dict = {}
-                        row_dict['po_number'] = [po_id[i]]
-                        row_dict['date_received'] = [file_item['client_modified'].replace(tzinfo=utc_zone).astimezone(to_zone).replace(tzinfo=None)]
-                        row_dict['ean'] = [eans[i]]
-                        row_dict['qty_received'] = [qty_received[i]]
-
-                        po_df = pd.concat([po_df,pd.DataFrame.from_dict(row_dict)])
-                        po_df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True) 
-
+                            po_df = pd.concat([po_df,pd.DataFrame.from_dict(row_dict)])
+                            po_df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True) 
+                else:
+                    common.logger.warning('Unable to get file from dropbox: ' + str(file_item) + '\nProcessing of queued files will be abored')
+                    break
 
             merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
 
