@@ -288,7 +288,7 @@ def process_pick_ticket(customer,event_data):
     #result_dict = {}
     #result_dict['error'] = {}
     stream_id = 'OR'
-    if event_data['service'] != 'Packing':
+    if 'Cross Docks' not in event_data['service'] :
         
         event_id = event_data['id']
         event_shipment_number = event_data['shipment_number']
@@ -305,7 +305,7 @@ def process_pick_ticket(customer,event_data):
         result_dict = {}
         result_dict['error'] = []
         result_dict['stream_id'] = stream_id
-        return "Not Sent to Cross Docks - Already in Packing State", result_dict
+        return "Not Sent to Cross Docks - Already being processed", result_dict
 
 def process_pick_ticket_delete(customer,event_data):
     #global error, stream_id
