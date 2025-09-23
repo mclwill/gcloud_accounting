@@ -288,7 +288,7 @@ def process_pick_ticket(customer,event_data):
     #result_dict = {}
     #result_dict['error'] = {}
     stream_id = 'OR'
-    if 'Cross Docks' not in event_data['service'] :
+    if 'Cross Docks' not in event_data['service'] : #updated to match new workflow added on 15th September 2025 with additional info on Cross Docks order activation info
         
         event_id = event_data['id']
         event_shipment_number = event_data['shipment_number']
@@ -417,7 +417,7 @@ def process_uphance_event(customer,event_dict) :
         return process_production_order(customer,event_dict['receiving_ticket']) 
 
     elif event_dict['event'] == 'receiving_ticket_delete':
-        return process_production_order_delete(customer,event_dict['receiving_ticket'])    
+        return process_production_order_delete(customer,event_dict['delivery'])    
     
     result_dict['mapping_code'] = 'NA'
     result_dict['stream_id'] = 'NA'

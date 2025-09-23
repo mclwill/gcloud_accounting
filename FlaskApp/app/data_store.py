@@ -281,7 +281,7 @@ def get_data_store_info(customer):
                             po_df = pd.concat([po_df,pd.DataFrame.from_dict(row_dict)])
                             po_df.drop_duplicates(subset=['po_number','ean','date_received'],inplace=True,ignore_index=True) 
                 else:
-                    common.logger.warning('Unable to get file from dropbox: ' + str(file_item) + '\nProcessing of queued files will be abored')
+                    common.logger.warning('Unable to get file from dropbox: ' + str(file_item) + '\nProcessing of queued files will be aborted')
                     break
 
             merged_df = or_df.merge(pc_df,on=['order_id','ean'],how = 'outer')
