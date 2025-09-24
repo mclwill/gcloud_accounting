@@ -278,7 +278,7 @@ def process_file(customer,file_data,file_name,result_dict):
                     result_dict['error'].append({'FTP transfer error':'Error in  transfer of file: ' + file_name})
                     common.logger.warning('transfer_FTP error for file: ' + file_name +' for ' + customer + '\nFile should have been stored on server for sending to Cross Docks when FTP up again')
             else:
-                common.logger.info('Error in webhook processing - file not sent to Cross Docks' + customer +'\nError Data:\n' + str(result_dict) + '\nFile Data:\n' + str(file_data))
+                common.logger.info('Error in webhook processing - file not sent to Cross Docks ' + customer +'\nError Data:\n' + str(result_dict) + '\nFile Data:\n' + str(file_data))
         else:
             common.logger.warning('No send_to_CD flag in errors reported so file sent to CDs - need to check code' + '\n' + 'Customer: ' + customer + '\n' + file_data + '\n' + file_name + '\n' + 'result_dict: ' + str(result_dict)  )
     return result_dict
