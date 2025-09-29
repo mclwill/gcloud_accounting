@@ -57,6 +57,7 @@ def process_aemery_cross_docks_polling():
 
 @app.route('/two-ts',methods=['POST','GET'])
 def process_two_ts_webhook():
+    '''
     #active code
     content = request.get_json(silent=True)
     if content:
@@ -65,17 +66,19 @@ def process_two_ts_webhook():
     else :
         return 'two-ts No content'
     #end active code
-    #return 'in sleep mode'
+    '''
+    return 'in sleep mode'
 
 @app.route('/two-ts_cross-docks-polling',methods=['POST','GET'])
 def process_two_ts_cross_docks_polling():
-    #active code
+    '''#active code
     
     status_code = cross_docks_polling.cross_docks_poll_request('two-ts')
     
     return 'Processed', status_code
     #end active code
-    #return 'in sleep mode'
+    '''
+    return 'in sleep mode'
 
 @app.route('/aemery_get_product_data',methods=['GET','POST'])
 def process_aemery_get_data_store_info():
