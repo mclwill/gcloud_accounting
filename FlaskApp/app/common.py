@@ -245,6 +245,8 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
         msg.attach(part)
 
     create_message = {'raw': base64.urlsafe_b64encode(msg.as_bytes()).decode()}
+    logger.debug('Msg is : %s', str(msg))
+    logger.debug('Create message is : %s',str(create_message))
     try:
         message = (service.users().messages().send(userId="me", body=create_message).execute())
         logger.debug(F'sent message to {message} Message Id: {message["id"]}')
