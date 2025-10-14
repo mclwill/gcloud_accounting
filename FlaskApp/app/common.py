@@ -18,7 +18,7 @@ from email.utils import COMMASPACE, formatdate
 import base64
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from requests import HTTPError
+from googleapiclient.errors import HTTPError
 
 
 import FlaskApp.app.secrets as secrets
@@ -254,6 +254,9 @@ def send_email(email_counter,message_subject,message_text,dest_email,**kwargs):
     except HTTPError as error:
         logger.error(F'Send email API error occurred: {error}')
         message = None
+        return False
+    except Exception as e:
+        logger.exception("Unexpected error while sending email: %s",e)
         return False
 
 def send_email_old(email_counter,message_subject,message_text,dest_email,**kwargs):
