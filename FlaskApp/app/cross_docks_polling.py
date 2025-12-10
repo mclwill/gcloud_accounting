@@ -239,7 +239,10 @@ def process_PC_file(customer,stream_id,f,data,data_lines):
                 carrier = 'australia_post' #mapping to Uphance configured code for Australia Post
             url_tc = url_tc + 'carrier=' + carrier + '&'
         if shipping_cost :
-            url_tc = url_tc + 'shipping_cost=' + shipping_cost + '&'
+            if customer != 'aemery': #No shipping cost for AEmery - see email from Richard on 10/12/25
+                url_tc = url_tc + 'shipping_cost=' + shipping_cost + '&'
+            else:
+                shipping_cost = '' #Remove shipping cost to subsequent '&' removal works as needed
         if tracking or carrier or shipping_cost :
             url_tc = url_tc[0:-1] #remove last &
             result = common.uphance_api_call(customer,'put',url=url_tc)
