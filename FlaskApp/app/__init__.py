@@ -17,7 +17,7 @@ from FlaskApp.app import views
 
 external_stylesheets = [dbc.themes.BOOTSTRAP,'https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_stylesheets,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
+dash_app = dash.Dash(server=app,use_pages=True,external_stylesheets=external_stylesheets) #,routes_pathname_prefix="/dashboard/") #previousy 'routes_pathname_prefix'
 
 from FlaskApp.app import dash_main
 
