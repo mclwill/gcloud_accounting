@@ -36,5 +36,8 @@ db = SQLAlchemy(app)
 # Flask-Migrate setup
 migrate = Migrate(app, db)
 
+# Import models so Alembic sees them
+from FlaskApp.app import accounting_db
+
 if __name__ == "__main__":
     dash_main.dash_app.run_server(debug=True)
