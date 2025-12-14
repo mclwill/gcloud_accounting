@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_login import login_required
+from flask_sqlalchmey import SQLAlchemy
 import sys
 import dash
 import dash_bootstrap_components as dbc
@@ -24,6 +25,12 @@ from FlaskApp.app import dash_main
 for view_func in app.view_functions:
     if view_func.startswith(dash_app.config['routes_pathname_prefix']):
         app.view_functions[view_func] = login_required(app.view_functions[view_func])
+
+# Add SQLAlchemy config for accounting DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///accounting.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
 
 if __name__ == "__main__":
     dash_main.dash_app.run_server(debug=True)
