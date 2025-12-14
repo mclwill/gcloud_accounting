@@ -29,6 +29,8 @@ class Transaction(db.Model):
     debit_account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), nullable=False)
     credit_account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
+    # NEW FIELD
+    transaction_type = db.Column(db.String(50))  # e.g. 'Journal', 'Payment', 'Receipt'
 
     debit_account = db.relationship('Account', foreign_keys=[debit_account_id])
     credit_account = db.relationship('Account', foreign_keys=[credit_account_id])
