@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_login import login_required
-from flask_sqlalchmey import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 import sys
 import dash
 import dash_bootstrap_components as dbc
