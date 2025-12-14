@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_login import login_required
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import sys
 import dash
 import dash_bootstrap_components as dbc
@@ -31,6 +32,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///accounting.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+# Flask-Migrate setup
+migrate = Migrate(app, db)
 
 if __name__ == "__main__":
     dash_main.dash_app.run_server(debug=True)
