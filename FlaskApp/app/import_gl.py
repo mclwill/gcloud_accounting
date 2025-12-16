@@ -1,10 +1,13 @@
 import pandas as pd
 from FlaskApp.app import app, db
 from FlaskApp.app.accounting_db import Entity, Account, Transaction
+import common
+import os
 
 def import_gl():
     # Load Excel file
-    df = pd.read_csv("instance/General_ledger.csv")  # adjust path if needed
+    common.logger.debug(f"PWD = {os.pwd()}")
+    df = pd.read_csv("assets/General_ledger.csv")  # adjust path if needed
 
     # Create the entity
     entity = Entity(name="JAJG Pty Ltd", type="company")
