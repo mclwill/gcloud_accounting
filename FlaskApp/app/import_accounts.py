@@ -19,12 +19,12 @@ def import_accounts():
     # Cache accounts
     account_cache = {}
 
-    def get_or_create_account(name, type_="Expenses"):
+    def get_or_create_account(name, type_="Expenses", description = None):
         if name in account_cache:
             return 'Cache'
         account = Account.query.filter_by(entity_id=entity.id, name=name).first()
         if not account:
-            account = Account(entity_id=entity.id, name=name, type=type_)
+            account = Account(entity_id=entity.id, name=name, type=type_, description = description)
             db.session.add(account)
             db.session.commit()
         account_cache[name] = account
@@ -37,7 +37,7 @@ def import_accounts():
         description = row['Description']
 
         if account_name:
-            acc = get_or_create_account(account_name,type_)
+            acc = get_or_create_account(account_name,type_,description)
         else:
             continue
         
