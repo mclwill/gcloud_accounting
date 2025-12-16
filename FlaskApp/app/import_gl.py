@@ -30,15 +30,24 @@ def import_gl():
 
     # Iterate rows
     for _, row in df.iterrows():
-        account_name = row["Account"]
+        account_name = row.get("Account")
+
+        # Robust NaN/empty checks
+        is_account_missing = (
+            pd.isna(account_name) or
+            (isinstance(account_name, str) and account_name.strip() == "")
+        )
+        if is_account_missing:
+            # skip rows without a valid account name
+            continue
+        
         debit = row.get("Debit", 0) or 0
         credit = row.get("Credit", 0) or 0
         amount = debit if debit else credit
         common.logger.debug(f"account_name is : {account_name} and type is {type(account_name)}")
-        if account_name and (~pd.isna(account_name)):
-            acc = get_or_create_account(account_name)
-        else:
-            continue
+
+        acc = get_or_create_account(account_name)
+
         if debit:
             txn = Transaction(
                 entity_id=entity.id,
