@@ -4,7 +4,7 @@ from FlaskApp.app.accounting_db import Entity, Account, Transaction
 
 def import_gl():
     # Load Excel file
-    df = pd.read_excel("instance/General_ledger.xlsx")  # adjust path if needed
+    df = pd.read_csv("instance/General_ledger.csv")  # adjust path if needed
 
     # Create the entity
     entity = Entity(name="JAJG Pty Ltd", type="company")
