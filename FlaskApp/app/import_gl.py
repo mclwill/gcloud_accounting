@@ -34,7 +34,7 @@ def import_gl():
         debit = row.get("Debit", 0) or 0
         credit = row.get("Credit", 0) or 0
         amount = debit if debit else credit
-
+        common.logger.debug(f"account_name is : {account_name} and type is {type(account_name)}")
         if account_name and (~pd.isna(account_name)):
             acc = get_or_create_account(account_name)
         else:
