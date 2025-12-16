@@ -1,7 +1,7 @@
 import pandas as pd
 from FlaskApp.app import app, db
 from FlaskApp.app.accounting_db import Entity, Account, Transaction
-import common
+import FlaskApp.app.common as common
 import os
 
 def import_gl():
