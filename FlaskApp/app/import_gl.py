@@ -7,7 +7,7 @@ import os
 def import_gl():
     # Load Excel file
     common.logger.debug(f"PWD = {os.getcwd()}")
-    df = pd.read_csv("FlaskApp/app/assets/General_ledger.csv")  # adjust path if needed
+    df = pd.read_csv("FlaskApp/app/assets/General_ledger.csv",na_values=["","NA","null"])  # adjust path if needed
 
     # Look for existing entity
     entity = Entity.query.filter_by(name="JAJG Pty Ltd", type="company").first()
@@ -35,7 +35,7 @@ def import_gl():
         credit = row.get("Credit", 0) or 0
         amount = debit if debit else credit
 
-        if account_name:
+        if account_name and (~pd.isna(account_name)):
             acc = get_or_create_account(account_name)
         else:
             continue
