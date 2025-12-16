@@ -1,6 +1,6 @@
 import pandas as pd
 from FlaskApp.app import app, db
-from FlaskApp.app.accounting_db import Entity, Account, Transaction
+#from FlaskApp.app.accounting_db import Entity, Account, Transaction
 
 def import_gl():
     # Load Excel file
