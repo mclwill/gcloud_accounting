@@ -6,7 +6,7 @@ import os
 
 def import_gl():
     # Load Excel file
-    common.logger.debug(f"PWD = {os.pwd()}")
+    common.logger.debug(f"PWD = {os.getcwd()}")
     df = pd.read_csv("assets/General_ledger.csv")  # adjust path if needed
 
     # Create the entity
