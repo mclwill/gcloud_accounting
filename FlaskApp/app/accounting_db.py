@@ -6,6 +6,10 @@ class Entity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     type = db.Column(db.String(50))  # company, trust, etc.
+    # Enforce uniqueness across name + type
+    __table_args__ = (
+        db.UniqueConstraint("name", "type", name="_name_type_uc"),
+    )
     description = db.Column(db.String(250))
 
     accounts = db.relationship('Account', backref='entity', lazy=True)
