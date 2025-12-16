@@ -1,0 +1,104 @@
+Full name,Type,Detail type,Description,Total balance
+ANZ Cash Management,Bank,Cash on hand,,89.55
+ANZ  Online Saver,Bank,Transaction,,"3,068.70"
+Commonwealth Direct Investment,Bank,Transaction,,0
+ING Business Optimiser,Bank,Transaction,,0
+ING Term Deposits,Bank,Transaction,,0
+Loan to Josephine McLaren,Bank,Cash and cash equivalents,Unsecured Loan for House Purchase,0
+Cost of sales,Cost of Goods Sold,Supplies and materials - COS,,
+Opening Bal Equity,Equity,Opening Balance Equity,,
+Retained Earnings,Equity,Retained Earnings,,
+Share Allocation,Equity,Owner's Equity,,-10
+Bank (Online),Expenses,Auto,,
+Bank Service Charges,Expenses,Bank charges,Bank Service Charges,
+Books and Publications,Expenses,Other Miscellaneous Service Cost,Books and Publications,
+Cash Discounts,Expenses,Other Miscellaneous Service Cost,Cash Discounts,
+Depreciation Expense,Expenses,Other Miscellaneous Service Cost,Depreciation Expense,
+Dues and Subscriptions,Expenses,Dues and Subscriptions,Dues and Subscriptions,
+Equipment Rental,Expenses,Equipment rental,Equipment Rental,
+Expensed Equipment,Expenses,Other Miscellaneous Service Cost,Expensed Equipment,
+Gifts and Donations,Expenses,Other Miscellaneous Service Cost,Gifts and Donations,
+Insurance,Expenses,Insurance,Insurance,
+Insurance:Sickness and accident Insurance,Expenses,Insurance,Sickness and accident Insurance,
+Interest Expense,Expenses,Interest paid,Interest Expense,
+Interest Expense:Finance Charge,Expenses,Bank charges,Finance Charge,
+Interest Expense:Loan Interest,Expenses,Interest paid,Loan Interest Expense,
+Interest Expense:Mortgage,Expenses,Other Miscellaneous Service Cost,Mortgage Interest,
+Licenses and Permits,Expenses,Other Miscellaneous Service Cost,Licenses,
+Licenses and Permits:ASIC,Expenses,Other Miscellaneous Service Cost,,
+Miscellaneous,Expenses,Other Miscellaneous Service Cost,Miscellaneous,
+Miscellaneous:Rounding,Expenses,Other Miscellaneous Service Cost,,
+Motor Expense,Expenses,Other Miscellaneous Service Cost,Motor Expense,
+Payroll Expenses,Expenses,Payroll Expenses,,
+Postage and Delivery,Expenses,"Shipping, Freight, and Delivery",Postage and Delivery,
+Printing and Reproduction,Expenses,Other Miscellaneous Service Cost,Printing and Reproduction,
+Professional Fees,Expenses,Legal and professional fees,Professional Fees,
+Professional Fees:Accounting,Expenses,External services,,
+Professional Fees:Legal Fees,Expenses,Legal and professional fees,Legal Fees,
+Professional Fees:Quickbooks,Expenses,Office/General Administrative Expenses,,
+Rent,Expenses,Rent or Lease of Buildings,Rent,
+Repairs,Expenses,Repair and maintenance,Repairs and Maintenance,
+Repairs:Building Repairs,Expenses,Repair and maintenance,Building Repairs,
+Repairs:Computer Repairs,Expenses,Repair and maintenance,Computer Repairs,
+Repairs:Equipment Repairs,Expenses,Repair and maintenance,Equipment Repairs,
+Software Expense,Expenses,Other Miscellaneous Service Cost,Expensed Software,
+Subscriptions,Expenses,Dues and Subscriptions,Professional Subscriptions,
+Taxes,Expenses,Taxes Paid,,
+Taxes:Franking Credits,Expenses,Other Miscellaneous Service Cost,,
+Taxes:Income Tax,Expenses,Taxes Paid,,
+Telephone,Expenses,Other Miscellaneous Service Cost,Telephone,
+Telephone:Fax,Expenses,Other Miscellaneous Service Cost,Facsimile,
+Telephone:Mobile,Expenses,Other Miscellaneous Service Cost,Mobile Telephone,
+Travel & Ent,Expenses,Travel,Travel and Entertainment,
+Travel & Ent:Entertainment,Expenses,Entertainment,Entertainment,
+Travel & Ent:Meals,Expenses,Promotional Meals,Meals,
+Travel & Ent:Travel,Expenses,Travel,Travel,
+Unapplied Cash Bill Payment Expense,Expenses,Unapplied Cash Bill Payment Expense,,
+Uncategorised Expense,Expenses,Other Miscellaneous Service Cost,,
+Utilities,Expenses,Utilities,Utilities,
+Utilities:Gas and Electric,Expenses,Other Miscellaneous Service Cost,Gas and Electric,
+Utilities:Water,Expenses,Other Miscellaneous Service Cost,Water,
+Billable Expense Income,Income,Service/Fee Income,,
+Capital Gain,Income,Sales of Product Income,,
+Capital Gain:Hybrids,Income,Sales of Product Income,,
+Discounts given,Income,Discounts/Refunds Given,,
+Dividend,Income,Sales of Product Income,,
+Dividend:Franked,Income,Sales of Product Income,,
+Dividend:Unfranked,Income,Discounts/Refunds Given,,
+s160AQT Income (Franking Cr),Income,Sales of Product Income,,
+Sales of Product Income,Income,Sales of Product Income,,
+Services,Income,Service/Fee Income,,
+Shipping Income,Income,Service/Fee Income,,
+Trust Distributions,Income,Sales of Product Income,,
+Trust Distributions:McLaren Williams Consulting,Income,Sales of Product Income,,
+Trust Distributions:McLaren Williams Family,Income,Sales of Product Income,,
+Unapplied Cash Payment Income,Income,Unapplied Cash Payment Income,,
+Uncategorised Income,Income,Service/Fee Income,,
+Company Formation,Other Assets,Other non-current assets,,800
+Franking Credits,Other Assets,Other non-current assets,,"170,381.74"
+Franking Credits - Awaiting Pay,Other Assets,Other non-current assets,,0
+Loan to A.Emery,Other Assets,Other non-current assets,,0
+Commsec Aust Shares,Other Current Assets,Other current assets,,0
+Distribution Account,Other Current Assets,Other current assets,,0
+Distribution Account:McLaren Williams Consulting,Other Current Assets,Other current assets,,0
+Foreign Income Tax Offset,Other Current Assets,Other current assets,,0
+Interactive Brokers,Other Current Assets,Investments - Other,,"5,175.46"
+Inventory Asset,Other Current Assets,Inventory,,
+Listed Aust Shares,Other Current Assets,Other current assets,,"396,421.37"
+Listed Aust Shares:Bond ETFs,Other Current Assets,Investments - Other,,"58,342.12"
+Listed Aust Shares:Hybrids,Other Current Assets,Investments - Other,,"330,837.09"
+Listed Aust Shares:Shares,Other Current Assets,Investments - Other,,"7,242.16"
+Loan to GA & JF McLaren,Other Current Assets,Loans to Others,,0
+Loan to McLaren Williams Family,Other Current Assets,Loans to Others,,"-16,832.00"
+Misc,Other Current Assets,Other current assets,,0
+TFN Withholding Tax,Other Current Assets,Other current assets,,0
+Uncategorised Asset,Other Current Assets,Other current assets,,0
+Undeposited Funds,Other Current Assets,Undeposited Funds,,0
+Payroll Liabilities,Other Current Liabilities,Current Liabilities,,
+Tax Payable,Other Current Liabilities,BAS Payable,,0
+Tax Payable:Income Tax,Other Current Liabilities,Current Liabilities,,0
+Other Expenses,Other Expense,Other Miscellaneous Expense,Other Expenses,
+Reconciliation Discrepancies,Other Expense,Other Miscellaneous Expense,,
+Interest Income,Other Income,Interest earned,Interest Income,
+Interest Income:Security,Other Income,Dividend income,,
+Other Income,Other Income,Other Miscellaneous Income,Other Income,
