@@ -9,10 +9,12 @@ def import_gl():
     common.logger.debug(f"PWD = {os.getcwd()}")
     df = pd.read_csv("FlaskApp/app/assets/General_ledger.csv")  # adjust path if needed
 
-    # Create the entity
-    entity = Entity(name="JAJG Pty Ltd", type="company")
-    db.session.add(entity)
-    db.session.commit()
+    # Look for existing entity
+    entity = Entity.query.filter_by(name="JAJG Pty Ltd", type="company").first()
+    if not entity:
+        entity = Entity(name="JAJG Pty Ltd", type="company")
+        db.session.add(entity)
+        db.session.commit()
 
     # Cache accounts
     account_cache = {}
@@ -22,9 +24,7 @@ def import_gl():
             return account_cache[name]
         account = Account.query.filter_by(entity_id=entity.id, name=name).first()
         if not account:
-            account = Account(entity_id=entity.id, name=name, type=type_)
-            db.session.add(account)
-            db.session.commit()
+            raise ValueError(f"Account not found: {name}")  
         account_cache[name] = account
         return account
 
