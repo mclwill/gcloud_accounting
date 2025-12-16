@@ -35,8 +35,10 @@ def import_gl():
         credit = row.get("Credit", 0) or 0
         amount = debit if debit else credit
 
-        acc = get_or_create_account(account_name)
-
+        if account_name:
+            acc = get_or_create_account(account_name)
+        else:
+            continue
         if debit:
             txn = Transaction(
                 entity_id=entity.id,
