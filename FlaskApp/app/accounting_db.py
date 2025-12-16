@@ -1,68 +1,36 @@
-import pandas as pd
-from FlaskApp.app import app, db
-#from FlaskApp.app.accounting_db import Entity, Account, Transaction
+from datetime import date
+from . import db  # import the db object from __init__.py
 
-def import_gl():
-    # Load Excel file
-    df = pd.read_excel("instance/General_ledger.xlsx")  # adjust path if needed
+class Entity(db.Model):
+    __tablename__ = 'entities'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    type = db.Column(db.String(50))  # company, trust, etc.
+    description = db.Column(db.String(250))
 
-    # Create the entity
-    entity = Entity(name="JAJG Pty Ltd", type="company")
-    db.session.add(entity)
-    db.session.commit()
+    accounts = db.relationship('Account', backref='entity', lazy=True)
+    transactions = db.relationship('Transaction', backref='entity', lazy=True)
 
-    # Cache accounts
-    account_cache = {}
 
-    def get_or_create_account(name, type_="expense"):
-        if name in account_cache:
-            return account_cache[name]
-        account = Account.query.filter_by(entity_id=entity.id, name=name).first()
-        if not account:
-            account = Account(entity_id=entity.id, name=name, type=type_)
-            db.session.add(account)
-            db.session.commit()
-        account_cache[name] = account
-        return account
+class Account(db.Model):
+    __tablename__ = 'accounts'
+    id = db.Column(db.Integer, primary_key=True)
+    entity_id = db.Column(db.Integer, db.ForeignKey('entities.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    type = db.Column(db.String(50), nullable=False)  # asset, liability, income, expense
 
-    # Iterate rows
-    for _, row in df.iterrows():
-        account_name = row["Account"]
-        debit = row.get("Debit", 0) or 0
-        credit = row.get("Credit", 0) or 0
-        amount = debit if debit else credit
 
-        acc = get_or_create_account(account_name)
+class Transaction(db.Model):
+    __tablename__ = 'transactions'
+    id = db.Column(db.Integer, primary_key=True)
+    entity_id = db.Column(db.Integer, db.ForeignKey('entities.id'), nullable=False)
+    date = db.Column(db.Date, default=date.today, nullable=False)
+    description = db.Column(db.String(200))
+    debit_account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), nullable=False)
+    credit_account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    # NEW FIELD
+    transaction_type = db.Column(db.String(50))  # e.g. 'Journal', 'Payment', 'Receipt'
 
-        if debit:
-            txn = Transaction(
-                entity_id=entity.id,
-                date=row.get("Date"),
-                description=row.get("Description", ""),
-                debit_account_id=acc.id,
-                credit_account_id=None,   # optional: suspense/offset
-                amount=debit,
-                transaction_type=row.get("Transaction Type", "Journal")
-            )
-        elif credit:
-            txn = Transaction(
-                entity_id=entity.id,
-                date=row.get("Date"),
-                description=row.get("Description", ""),
-                debit_account_id=None,
-                credit_account_id=acc.id,
-                amount=credit,
-                transaction_type=row.get("Transaction Type", "Journal")
-            )
-        else:
-            continue
-
-        db.session.add(txn)
-
-    db.session.commit()
-    print("Imported GL for JAJG Pty Ltd")
-
-if __name__ == "__main__":
-    # Run inside Flask app context
-    with app.app_context():
-        import_gl()
+    debit_account = db.relationship('Account', foreign_keys=[debit_account_id])
+    credit_account = db.relationship('Account', foreign_keys=[credit_account_id])
