@@ -22,7 +22,7 @@ class Account(db.Model):
     entity_id = db.Column(db.Integer, db.ForeignKey('entities.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(50), nullable=False)  # asset, liability, income, expense
-    description = db.Column(db.String(100),nullable=False)
+    description = db.Column(db.String(100),nullable=True)
 
     __table_args__ = (
         db.UniqueConstraint("name", "type", name="_name_type_uc"),
