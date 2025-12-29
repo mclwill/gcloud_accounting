@@ -245,12 +245,12 @@ def layout(account_id=None,account_name=None,txn_id=None, **_):
         #Debug displays
         #html.Div(id="popover-open-debug"),
 
-        html.Details(
-            [
-                html.Summary("Debug transaction-lines"),
-                html.Pre(id="txn-lines-debug", style={"whiteSpace": "pre-wrap"}),
-            ],
-         ),
+        #html.Details(
+        #    [
+        #        html.Summary("Debug transaction-lines"),
+        #        html.Pre(id="txn-lines-debug", style={"whiteSpace": "pre-wrap"}),
+        #    ],
+        # ),
 
 
         html.Hr(),
