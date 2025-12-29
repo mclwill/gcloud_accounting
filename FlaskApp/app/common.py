@@ -20,6 +20,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from flask import request
+import sys
 
 
 from . import secrets
@@ -45,6 +46,7 @@ else:
 SERVICE_ACCOUNT_FILE = os.path.join(working_dir,'FlaskApp/app','service_key.json')
 DELEGATED_USER = 'zd_zapier@mclarenwilliams.com.au'
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+
 
 
 def access_secret_version(secret_id: str, customer: str, parameter: str):
@@ -703,6 +705,8 @@ check_logging_initiate()
 #initiate dropbox
 dbx = False
 dropbox_initiate()
+
+logger.debug(f"WSGI PYTHON: {sys.version}")
 
 '''Remove below as only for Uphance 
 
