@@ -291,7 +291,7 @@ def load_pnl_preview(start_date, end_date):
         "p2_end": end.isoformat(),
     }
 
-    url = common.absolute_url(f'api/reports/pnl?' + urlencode(params))
+    url = common.absolute_url(f'/api/reports/pnl?' + urlencode(params))
 
     try:
         resp = requests.get(
