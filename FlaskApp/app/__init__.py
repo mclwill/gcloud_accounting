@@ -27,7 +27,9 @@ def inject_entity():
     }
 
 # Mac version
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////Users/gary/.local/accounting/accounting.db"
+#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////Users/gary/.local/accounting/accounting.db"
+#Google Cloud version
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////var/www/FlaskApp/instance/accounting.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["API_DEBUG"] = True
