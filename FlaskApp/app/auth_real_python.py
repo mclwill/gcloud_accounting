@@ -123,6 +123,7 @@ def login():
         redirect_uri=request.base_url + "/callback",
         scope=["openid", "email", "profile"],
     )
+    common.logger.debug(f'Request URI: {request_uri}')
     return redirect(request_uri)
 
 
