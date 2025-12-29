@@ -221,8 +221,9 @@ def _build_query(asof: date, compare_prevfy: bool) -> tuple[str, str]:
     c1 = previous FY end (Jun 30 of FY start year)
     c2 = as-of date, labelled as FY label (Jul YYYY - Jun YYYY)
     """
-    base_json = "https://127.0.0.1:5000/api/reports/balance_sheet"
-    base_xlsx = "https://127.0.0.1:5000/api/reports/balance_sheet.xlsx"
+
+    base_json = common.absolute_url(f"/api/reports/balance_sheet")
+    base_xlsx = common.absolute_url(f"/api/reports/balance_sheet.xlsx")
 
     if compare_prevfy:
         prev_end = _previous_fy_end(asof)
@@ -263,7 +264,7 @@ def load_bs_preview(asof_date, compare_vals):
         resp = requests.get(
             json_url,
             headers={"X-Internal-Token": API_TOKEN()},
-            verify=False,
+            verify=common.api_verify,
             timeout=30,
         )
     except Exception as e:

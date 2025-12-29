@@ -136,10 +136,12 @@ def layout(account_id=None,account_name=None,txn_id=None, **_):
     
     entity_name = session.get("current_entity")
 
+    url = common.absolute_url(f"/api/accounts/{account_id}/ledger")
+
     ledger_resp = requests.get(
-        f"https://127.0.0.1:5000/api/accounts/{account_id}/ledger",
+        url,
         headers={"X-Internal-Token": API_TOKEN()},
-        verify=False,
+        verify=common.api_verify,
     )
 
     if ledger_resp.status_code != 200:
@@ -439,10 +441,12 @@ def load_transaction(selected_rows, _init, rows):
         "description": rows[selected_rows[0]]["description"]
     }
 
+    url = common.absolute_url(f"/api/transactions/{txn_id}")
+
     resp = requests.get(
-        f"https://127.0.0.1:5000/api/transactions/{txn_id}",
+        url,
         headers={"X-Internal-Token": API_TOKEN()},
-        verify=False,
+        verify=common.api_verify,
     )
     common.logger.debug(f"Transaction data - {resp}")
 
@@ -587,19 +591,23 @@ def transaction_edit_controller(
         known_txn_id = None
 
         if mode == "new":
+            url = common.absolute_url(f"/api/transactions")
+
             resp = requests.post(
-                "https://127.0.0.1:5000/api/transactions",
+                url,
                 json={"lines": lines, "txn_date": txn_date, "description": txn_description},
                 headers={"X-Internal-Token": API_TOKEN()},
-                verify=False,
+                verify=common.api_verify,
             )
         else:
             known_txn_id = ledger_rows[selected_rows[0]]["transaction_id"]
+            
+            url = common.absolute_url(f"/api/transactions/{known_txn_id}")
             resp = requests.put(
-                f"https://127.0.0.1:5000/api/transactions/{known_txn_id}",
+                url,
                 json={"lines": lines, "txn_date": txn_date, "description": txn_description},
                 headers={"X-Internal-Token": API_TOKEN()},
-                verify=False,
+                verify=common.api_verify,
             )
 
         if resp.status_code not in (200, 201):
@@ -756,10 +764,11 @@ def delete_transaction(submit_n, selected_rows, rows, refresh_token):
     if not txn_id:
         return "Couldn't determine transaction id", no_update, [], None, None
 
+    url = common.absolute_url(f"/api/transactions/{txn_id}")
     resp = requests.delete(
-        f"https://127.0.0.1:5000/api/transactions/{txn_id}",
+        url,
         headers={"X-Internal-Token": API_TOKEN()},
-        verify=False,
+        verify=common.api_verify,
     )
 
     if resp.status_code != 200:
@@ -905,10 +914,12 @@ def refresh_ledger_table(_refresh_token, account_id, last_saved_txn_id,selected_
     if not account_id:
         return dash.no_update, dash.no_update, no_update#, None#, []
 
+    url = common.absolute_url(f"/api/accounts/{account_id}/ledger")
+
     ledger_resp = requests.get(
-        f"https://127.0.0.1:5000/api/accounts/{account_id}/ledger",
+        url,
         headers={"X-Internal-Token": API_TOKEN()},
-        verify=False,
+        verify=common.api_verify,
     )
     if ledger_resp.status_code != 200:
         return dash.no_update, dash.no_update,no_update#, None#, []

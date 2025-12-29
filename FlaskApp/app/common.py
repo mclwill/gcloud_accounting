@@ -19,6 +19,7 @@ import base64
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from flask import request
 
 
 from . import secrets
@@ -32,12 +33,14 @@ if ('LOCAL' in app.config) and app.config['LOCAL']:
     Dropbox_active = False
     Uphance_active = False
     working_dir = ''
+    api_verify = False
 else:
     running_local = False
     FTP_active = True
     Dropbox_active = True
     Uphance_active = True
     working_dir = '/var/www/FlaskApp'
+    api_verify = True
 
 SERVICE_ACCOUNT_FILE = os.path.join(working_dir,'FlaskApp/app','service_key.json')
 DELEGATED_USER = 'zd_zapier@mclarenwilliams.com.au'
@@ -52,6 +55,10 @@ def access_secret_version(secret_id: str, customer: str, parameter: str):
     else:
         secret = attribute[parameter]
     return secret
+
+def absolute_url(path: str) -> str:
+    # path should start with "/"
+    return request.host_url.rstrip("/") + path
 
 def json_dump(file,variable):
     if ('LOCAL' in app.config) and app.config['LOCAL']:
