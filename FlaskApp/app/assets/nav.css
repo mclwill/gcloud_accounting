@@ -1,0 +1,61 @@
+/* Header nav container */
+.app-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Generic inline form (P&L / BS pickers) */
+.report-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+/* Link styling */
+.report-form a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Label layout */
+.report-form label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Date input */
+.report-form input[type="date"] {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* Run button */
+.report-form button {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.report-form button:hover {
+  background: #f2f2f2;
+}
+
+/* Optional: make multiple forms line up nicely */
+.report-form + .report-form {
+  margin-left: 6px;
+}

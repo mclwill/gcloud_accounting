@@ -1,0 +1,1459 @@
+Date,Transaction Type,No.,Name,Debit,Credit,transaction_id
+2005-03-22,Journal Entry,1,None,800.00,800.00,1
+2005-06-30,Journal Entry,2,None,184126.39,184126.39,2
+2005-06-30,Journal Entry,4,None,55238.10,55238.10,3
+2006-02-15,Journal Entry,3,None,45238.10,45238.10,4
+2006-02-15,Journal Entry,43,None,45238.10,45238.10,5
+2006-02-28,Journal Entry,44,None,10000.00,10000.00,6
+2006-02-28,Journal Entry,5,None,10000.00,10000.00,7
+2006-04-02,Journal Entry,6,None,212.00,212.00,8
+2006-06-30,Journal Entry,7,None,183000.00,183000.00,9
+2006-06-30,Journal Entry,8,None,54900.00,54900.00,10
+2006-07-28,Journal Entry,45,None,54900.00,54900.00,11
+2006-07-28,Journal Entry,7,None,54900.00,54900.00,12
+2006-11-28,Journal Entry,9,None,5000.00,5000.00,13
+2006-12-18,Journal Entry,8,None,63.60,63.60,14
+2007-01-02,Journal Entry,9,None,14.84,14.84,15
+2007-04-02,Journal Entry,10,None,53.84,53.84,16
+2007-04-26,Journal Entry,10,None,250.00,250.00,17
+2007-04-30,Cheque Expense,0,Australian Taxation Office,20.00,20.00,18
+2007-05-24,Cheque Expense,0,ASIC,212.00,212.00,19
+2007-06-24,Cheque Expense,0,ASIC,212.00,212.00,20
+2007-06-30,Journal Entry,11,None,178000.00,178000.00,21
+2007-06-30,Journal Entry,13,None,53346.00,53346.00,22
+2007-07-02,Journal Entry,11,None,32.18,32.18,23
+2007-07-30,Journal Entry,11,None,53346.00,53346.00,24
+2007-07-30,Journal Entry,46,None,53346.00,53346.00,25
+2007-10-29,Cheque Expense,0,Australian Taxation Office,9.00,9.00,26
+2007-10-29,Journal Entry,12,None,300.00,300.00,27
+2007-12-31,Journal Entry,12,None,9.20,9.20,28
+2008-01-02,Journal Entry,13,None,42.79,42.79,29
+2008-03-25,Journal Entry,14,None,212.00,212.00,30
+2008-04-01,Journal Entry,14,None,62.96,62.96,31
+2008-06-30,Journal Entry,19,None,15200.00,15200.00,32
+2008-06-30,Journal Entry,20,None,16202.00,16202.00,33
+2008-07-01,Journal Entry,15,None,68.36,68.36,34
+2008-07-28,Journal Entry,18,None,1539.00,1539.00,35
+2008-10-01,Journal Entry,16,None,69.12,69.12,36
+2008-11-11,Cheque Expense,0,Australian Taxation Office,20.00,20.00,37
+2009-01-02,Journal Entry,17,None,46.64,46.64,38
+2009-01-12,Journal Entry,22,None,1552.63,1552.63,39
+2009-01-31,Journal Entry,23,None,2000.00,2000.00,40
+2009-03-03,Cheque Expense,0,Australian Taxation Office,20.00,20.00,41
+2009-04-01,Journal Entry,24,None,21.20,21.20,42
+2009-05-23,Journal Entry,23,None,212.00,212.00,43
+2009-06-30,Journal Entry,24,None,346284.32,346284.32,44
+2009-07-01,Journal Entry,25,None,11.07,11.07,45
+2009-10-01,Journal Entry,25,None,10.94,10.94,46
+2010-01-04,Journal Entry,26,None,17.10,17.10,47
+2010-02-26,Journal Entry,33,None,30349.79,30349.79,48
+2010-04-01,Journal Entry,27,None,20.52,20.52,49
+2010-05-23,Journal Entry,30,None,212.00,212.00,50
+2010-06-23,Journal Entry,31,None,58569.66,58569.66,51
+2010-06-23,Journal Entry,32,None,318053.94,318053.94,52
+2010-06-29,Cheque Expense,0,Transfer Money,5000.00,5000.00,53
+2010-06-30,Journal Entry,27,None,13267.49,13267.49,54
+2010-06-30,Journal Entry,33,None,26773.26,26773.26,55
+2010-06-30,Journal Entry,35,None,1.34,1.34,56
+2010-06-30,Journal Entry,36,None,0.34,0.34,57
+2010-07-01,Cheque Expense,0,Commbank,1.00,1.00,58
+2010-07-01,Journal Entry,34,None,277.97,277.97,59
+2010-07-04,Journal Entry,33,None,300000.00,300000.00,60
+2010-07-08,Journal Entry,37,None,1000.00,1000.00,61
+2010-07-12,Journal Entry,38,None,76000.00,76000.00,62
+2010-07-21,Cheque Expense,0,Transfer Money,16000.00,16000.00,63
+2010-07-28,Cheque Expense,0,Australian Taxation Office,15959.00,15959.00,64
+2010-07-31,Journal Entry,39,None,216.35,216.35,65
+2010-07-31,Journal Entry,40,None,54.76,54.76,66
+2010-08-02,Cheque Expense,0,Commbank,1.00,1.00,67
+2010-08-06,Cheque Expense,0,ANZ Bank,2.50,2.50,68
+2010-08-06,Journal Entry,41,None,5010.00,5010.00,69
+2010-08-16,Journal Entry,42,None,16000.00,16000.00,70
+2010-08-17,Cheque Expense,0,Transfer Money,94.56,94.56,71
+2010-08-18,Cheque Expense,0,Cash Withdrawal,215.78,215.78,72
+2010-08-18,Journal Entry,43,None,215.78,215.78,73
+2010-08-31,Journal Entry,47,None,275.80,275.80,74
+2010-08-31,Journal Entry,48,None,70.36,70.36,75
+2010-09-08,Journal Entry,44,None,7.48,7.48,76
+2010-09-20,Journal Entry,52,None,25000.00,25000.00,77
+2010-09-27,Journal Entry,34,None,16750.05,16750.05,78
+2010-09-27,Journal Entry,49,None,55000.00,55000.00,79
+2010-09-30,Journal Entry,50,None,312.60,312.60,80
+2010-09-30,Journal Entry,51,None,79.75,79.75,81
+2010-10-08,Journal Entry,53,None,14.52,14.52,82
+2010-10-18,Journal Entry,55,None,18000.00,18000.00,83
+2010-10-28,Cheque Expense,0,Australian Taxation Office,200.00,200.00,84
+2010-10-31,Journal Entry,67,None,507.77,507.77,85
+2010-10-31,Journal Entry,68,None,129.53,129.53,86
+2010-11-03,Journal Entry,35,None,21000.00,21000.00,87
+2010-11-03,Journal Entry,37,None,5773.26,5773.26,88
+2010-11-08,Journal Entry,54,None,8.99,8.99,89
+2010-11-14,Journal Entry,36,None,5000.00,5000.00,90
+2010-11-15,Cheque Expense,0,Transfer Money,25000.00,25000.00,91
+2010-11-23,Journal Entry,58,None,3992.30,3992.30,92
+2010-11-30,Journal Entry,61,None,555.86,555.86,93
+2010-11-30,Journal Entry,63,None,140.56,140.56,94
+2010-12-08,Journal Entry,56,None,5.14,5.14,95
+2010-12-31,Journal Entry,62,None,629.96,629.96,96
+2010-12-31,Journal Entry,64,None,152.41,152.41,97
+2011-01-07,Journal Entry,57,None,3.98,3.98,98
+2011-01-31,Journal Entry,65,None,633.28,633.28,99
+2011-02-08,Journal Entry,59,None,4.24,4.24,100
+2011-02-28,Journal Entry,66,None,574.42,574.42,101
+2011-03-08,Journal Entry,60,None,3.72,3.72,102
+2011-03-20,Cheque Expense,0,Australian Taxation Office,639.00,639.00,103
+2011-03-31,Journal Entry,69,None,638.41,638.41,104
+2011-04-08,Journal Entry,70,None,3.95,3.95,105
+2011-04-30,Cheque Expense,0,Australian Taxation Office,554.00,554.00,106
+2011-04-30,Journal Entry,72,None,620.44,620.44,107
+2011-05-06,Journal Entry,71,None,3.20,3.20,108
+2011-05-14,Journal Entry,38,None,20000.00,20000.00,109
+2011-05-24,Cheque Expense,0,ASIC,218.00,218.00,110
+2011-05-30,Cheque Expense,0,Transfer Money,60000.00,60000.00,111
+2011-05-30,Journal Entry,40,None,40000.00,40000.00,112
+2011-05-31,Journal Entry,42,None,668.41,668.41,113
+2011-06-08,Journal Entry,43,None,6.70,6.70,114
+2011-06-28,Journal Entry,42,None,180000.00,180000.00,115
+2011-06-30,Journal Entry,41,None,15036.20,15036.20,116
+2011-06-30,Journal Entry,44,None,872.31,872.31,117
+2011-07-01,Cheque Expense,0,Transfer Money,75000.00,75000.00,118
+2011-07-03,Cheque Expense,0,Transfer Money,257254.31,257254.31,119
+2011-07-08,Journal Entry,45,None,38.99,38.99,120
+2011-07-14,Journal Entry,46,None,10195.75,10195.75,121
+2011-07-29,Cheque Expense,0,Payment on behalf of GA/JF McLaren,2892.65,2892.65,122
+2011-07-31,Journal Entry,48,None,586.60,586.60,123
+2011-08-08,Journal Entry,47,None,32007.97,32007.97,124
+2011-08-08,Journal Entry,48,None,2.83,2.83,125
+2011-08-09,Cheque Expense,0,Transfer Money,35000.00,35000.00,126
+2011-08-10,Cheque Expense,0,Transfer Money,10000.00,10000.00,127
+2011-08-16,Journal Entry,50,None,17800.00,17800.00,128
+2011-08-31,Journal Entry,49,None,699.36,699.36,129
+2011-09-08,Cheque Expense,0,ANZ Bank,2.50,2.50,130
+2011-09-08,Journal Entry,49,None,0.39,0.39,131
+2011-09-09,Journal Entry,52,None,114.55,114.55,132
+2011-09-25,Cheque Expense,0,Australian Taxation Office,4769.00,4769.00,133
+2011-09-25,Journal Entry,51,None,5000.00,5000.00,134
+2011-09-30,Journal Entry,50,None,716.80,716.80,135
+2011-10-03,Journal Entry,54,None,30000.00,30000.00,136
+2011-10-07,Cheque Expense,0,ANZ Bank,2.50,2.50,137
+2011-10-07,Journal Entry,53,None,113.68,113.68,138
+2011-10-07,Journal Entry,56,None,0.84,0.84,139
+2011-10-18,Cheque Expense,0,Payment on behalf of GA/JF McLaren,15824.80,15824.80,140
+2011-10-20,Journal Entry,55,None,50000.00,50000.00,141
+2011-10-23,Journal Entry,47,None,60000.00,60000.00,142
+2011-10-28,Cheque Expense,0,Australian Taxation Office,643.00,643.00,143
+2011-10-30,Journal Entry,47,None,220.20,220.20,144
+2011-10-31,Journal Entry,53,None,538.25,538.25,145
+2011-11-01,Cheque Expense,0,Transfer Money,15000.00,15000.00,146
+2011-11-08,Cheque Expense,0,ANZ Bank,2.50,2.50,147
+2011-11-08,Journal Entry,46,None,8.02,8.02,148
+2011-11-09,Journal Entry,45,None,98.94,98.94,149
+2011-11-14,Journal Entry,56,None,13000.00,13000.00,150
+2011-11-17,Journal Entry,57,None,20000.00,20000.00,151
+2011-11-28,Cheque Expense,0,Transfer Money,10000.00,10000.00,152
+2011-11-30,Journal Entry,54,None,380.08,380.08,153
+2011-12-05,Cheque Expense,0,Transfer Money,21000.00,21000.00,154
+2011-12-06,Cheque Expense,0,ANZ Bank,2.50,2.50,155
+2011-12-06,Journal Entry,52,None,0.32,0.32,156
+2011-12-12,Cheque Expense,0,Transfer Money,40000.00,40000.00,157
+2011-12-31,Journal Entry,55,None,279.95,279.95,158
+2012-01-06,Cheque Expense,0,ANZ Bank,2.50,2.50,159
+2012-01-06,Journal Entry,51,None,0.31,0.31,160
+2012-01-09,Journal Entry,58,None,102.43,102.43,161
+2012-01-09,Journal Entry,59,None,36.90,36.90,162
+2012-01-31,Journal Entry,64,None,215.31,215.31,163
+2012-02-08,Cheque Expense,0,ANZ Bank,2.50,2.50,164
+2012-02-08,Journal Entry,60,None,0.36,0.36,165
+2012-02-09,Journal Entry,61,None,34.78,34.78,166
+2012-02-16,Journal Entry,67,None,14000.00,14000.00,167
+2012-02-28,Cheque Expense,0,Australian Taxation Office,419.00,419.00,168
+2012-02-29,Journal Entry,65,None,202.19,202.19,169
+2012-03-08,Cheque Expense,0,ANZ Bank,2.50,2.50,170
+2012-03-08,Journal Entry,62,None,0.30,0.30,171
+2012-03-12,Journal Entry,63,None,568.44,568.44,172
+2012-03-31,Journal Entry,66,None,216.91,216.91,173
+2012-04-01,Journal Entry,68,None,66.31,66.31,174
+2012-04-05,Cheque Expense,0,ANZ Bank,2.50,2.50,175
+2012-04-05,Journal Entry,69,None,71.91,71.91,176
+2012-04-05,Journal Entry,71,None,0.27,0.27,177
+2012-04-16,Journal Entry,70,None,9000.00,9000.00,178
+2012-04-30,Cheque Expense,1,Australian Taxation Office,408.00,408.00,179
+2012-04-30,Journal Entry,56,None,210.71,210.71,180
+2012-05-02,Cheque Expense,0,Transfer Money,30000.00,30000.00,181
+2012-05-07,Journal Entry,50,None,15500.00,15500.00,182
+2012-05-08,Cheque Expense,0,ANZ Bank,2.50,2.50,183
+2012-05-08,Journal Entry,52,None,0.31,0.31,184
+2012-05-09,Journal Entry,51,None,91.73,91.73,185
+2012-05-15,Journal Entry,49,None,9000.00,9000.00,186
+2012-05-16,Journal Entry,50,None,15000.00,15000.00,187
+2012-05-17,Journal Entry,51,None,10500.00,10500.00,188
+2012-05-22,Cheque Expense,0,Transfer Money,20000.00,20000.00,189
+2012-05-22,Cheque Expense,1,Transfer Money,40000.00,40000.00,190
+2012-05-24,Cheque Expense,0,Transfer Money,1000.00,1000.00,191
+2012-05-31,Journal Entry,57,None,152.77,152.77,192
+2012-06-06,Cheque Expense,0,Transfer Money,8500.00,8500.00,193
+2012-06-08,Cheque Expense,0,ANZ Bank,2.50,2.50,194
+2012-06-08,Journal Entry,53,None,0.26,0.26,195
+2012-06-08,Journal Entry,55,None,96.39,96.39,196
+2012-06-23,Cheque Expense,0,ASIC,226.50,226.50,197
+2012-06-25,Journal Entry,54,None,18700.00,18700.00,198
+2012-06-30,Journal Entry,49,None,11598.37,11598.37,199
+2012-06-30,Journal Entry,52,None,300000.00,300000.00,200
+2012-06-30,Journal Entry,53,None,151831.85,151831.85,201
+2012-06-30,Journal Entry,58,None,56.75,56.75,202
+2012-07-03,Cheque Expense,0,Transfer Money,308000.00,308000.00,203
+2012-07-05,Cheque Expense,0,ASIC,69.00,69.00,204
+2012-07-06,Cheque Expense,0,ANZ Bank,2.50,2.50,205
+2012-07-06,Journal Entry,59,None,0.23,0.23,206
+2012-07-09,Journal Entry,60,None,169.30,169.30,207
+2012-07-13,Journal Entry,61,None,27000.00,27000.00,208
+2012-07-23,Cheque Expense,0,Transfer Money,10000.00,10000.00,209
+2012-07-27,Cheque Expense,0,Australian Taxation Office,3602.00,3602.00,210
+2012-07-27,Journal Entry,62,None,3000.00,3000.00,211
+2012-07-31,Journal Entry,72,None,55.39,55.39,212
+2012-08-08,Cheque Expense,0,ANZ Bank,2.50,2.50,213
+2012-08-08,Journal Entry,67,None,0.23,0.23,214
+2012-08-09,Journal Entry,63,None,142.51,142.51,215
+2012-08-17,Journal Entry,64,None,15000.00,15000.00,216
+2012-08-31,Journal Entry,65,None,35000.00,35000.00,217
+2012-08-31,Journal Entry,73,None,55.56,55.56,218
+2012-09-07,Cheque Expense,0,ANZ Bank,2.50,2.50,219
+2012-09-07,Journal Entry,66,None,176.27,176.27,220
+2012-09-07,Journal Entry,68,None,0.18,0.18,221
+2012-09-17,Cheque Expense,0,Transfer Money,70000.00,70000.00,222
+2012-09-17,Journal Entry,69,None,14000.00,14000.00,223
+2012-09-24,Cheque Expense,0,Transfer Money,20000.00,20000.00,224
+2012-09-24,Journal Entry,70,None,70000.00,70000.00,225
+2012-09-30,Journal Entry,71,None,118.67,118.67,226
+2012-10-01,Cheque Expense,0,Transfer Money,30000.00,30000.00,227
+2012-10-07,Journal Entry,74,None,1353.76,1353.76,228
+2012-10-08,Cheque Expense,0,ANZ Bank,2.50,2.50,229
+2012-10-08,Cheque Expense,0,Transfer Money,30000.00,30000.00,230
+2012-10-08,Journal Entry,76,None,4.10,4.10,231
+2012-10-09,Journal Entry,75,None,140.56,140.56,232
+2012-10-20,Journal Entry,54,None,18500.00,18500.00,233
+2012-10-29,Cheque Expense,0,Australian Taxation Office,190.00,190.00,234
+2012-10-31,Journal Entry,60,None,105.76,105.76,235
+2012-11-08,Cheque Expense,0,ANZ Bank,2.50,2.50,236
+2012-11-08,Journal Entry,58,None,0.18,0.18,237
+2012-11-09,Journal Entry,59,None,89.93,89.93,238
+2012-11-15,Journal Entry,55,None,21000.00,21000.00,239
+2012-11-16,Journal Entry,56,None,7000.00,7000.00,240
+2012-11-20,Journal Entry,57,None,9000.00,9000.00,241
+2012-11-21,Journal Entry,57,None,20000.00,20000.00,242
+2012-11-28,Cheque Expense,0,Transfer Money,10000.00,10000.00,243
+2012-11-30,Journal Entry,63,None,79.76,79.76,244
+2012-12-07,Cheque Expense,0,ANZ Bank,2.50,2.50,245
+2012-12-07,Journal Entry,65,None,0.16,0.16,246
+2012-12-07,Journal Entry,66,None,100.27,100.27,247
+2012-12-17,Journal Entry,61,None,15000.00,15000.00,248
+2012-12-18,Cheque Expense,0,Transfer Money,56242.74,56242.74,249
+2012-12-18,Journal Entry,62,None,1242.74,1242.74,250
+2012-12-31,Journal Entry,64,None,132.82,132.82,251
+2013-01-02,Cheque Expense,0,Transfer Money,45000.00,45000.00,252
+2013-01-03,Cheque Expense,0,Transfer Money,16500.00,16500.00,253
+2013-01-03,Journal Entry,58,None,1000.00,1000.00,254
+2013-01-03,Journal Entry,59,None,20000.00,20000.00,255
+2013-01-03,Journal Entry,67,None,30000.00,30000.00,256
+2013-01-04,Cheque Expense,0,Transfer Money,50000.00,50000.00,257
+2013-01-08,Cheque Expense,0,ANZ Bank,2.50,2.50,258
+2013-01-08,Journal Entry,73,None,0.18,0.18,259
+2013-01-09,Journal Entry,63,None,63.26,63.26,260
+2013-01-15,Journal Entry,58,None,5500.00,5500.00,261
+2013-01-20,Journal Entry,59,None,5000.00,5000.00,262
+2013-01-22,Cheque Expense,0,Australian Taxation Office,962.00,962.00,263
+2013-01-22,Journal Entry,60,None,1000.00,1000.00,264
+2013-01-31,Journal Entry,70,None,21.78,21.78,265
+2013-02-08,Cheque Expense,0,ANZ Bank,2.50,2.50,266
+2013-02-08,Journal Entry,64,None,16.20,16.20,267
+2013-02-15,Journal Entry,61,None,24000.00,24000.00,268
+2013-02-28,Journal Entry,69,None,10.48,10.48,269
+2013-03-08,Cheque Expense,0,ANZ Bank,2.50,2.50,270
+2013-03-08,Journal Entry,65,None,58.49,58.49,271
+2013-03-17,Journal Entry,62,None,4000.00,4000.00,272
+2013-03-31,Journal Entry,68,None,11.63,11.63,273
+2013-04-02,Cheque Expense,0,Transfer Money,30752.05,30752.05,274
+2013-04-02,Journal Entry,66,None,752.05,752.05,275
+2013-04-08,Cheque Expense,0,ANZ Bank,2.50,2.50,276
+2013-04-08,Journal Entry,67,None,1828.99,1828.99,277
+2013-04-09,Journal Entry,71,None,88.38,88.38,278
+2013-04-18,Journal Entry,72,None,22000.00,22000.00,279
+2013-04-24,Cheque Expense,0,Transfer Money,15000.00,15000.00,280
+2013-04-26,Cheque Expense,0,Transfer Money,14000.00,14000.00,281
+2013-04-28,Cheque Expense,0,Australian Taxation Office,51.00,51.00,282
+2013-04-28,Cheque Expense,0,Transfer Money,100.00,100.00,283
+2013-04-30,Journal Entry,75,None,90.69,90.69,284
+2013-05-08,Cheque Expense,2,ANZ Bank,2.50,2.50,285
+2013-05-08,Journal Entry,74,None,28500.00,28500.00,286
+2013-05-09,Journal Entry,76,None,55000.00,55000.00,287
+2013-05-09,Journal Entry,77,None,55000.00,55000.00,288
+2013-05-09,Journal Entry,78,None,91.81,91.81,289
+2013-05-15,Cheque Expense,0,Transfer Money,80000.00,80000.00,290
+2013-05-23,Cheque Expense,0,ASIC,230.00,230.00,291
+2013-05-31,Journal Entry,79,None,84.08,84.08,292
+2013-06-08,Cheque Expense,3,ANZ Bank,2.50,2.50,293
+2013-06-17,Journal Entry,62,None,12000.00,12000.00,294
+2013-06-28,Journal Entry,60,None,270000.00,270000.00,295
+2013-06-30,Journal Entry,61,None,141133.63,141133.63,296
+2013-06-30,Journal Entry,62,None,80742.34,80742.34,297
+2013-06-30,Journal Entry,80,None,25.03,25.03,298
+2013-07-05,Cheque Expense,0,Transfer Money,275000.00,275000.00,299
+2013-07-08,Cheque Expense,4,ANZ Bank,2.50,2.50,300
+2013-07-09,Journal Entry,63,None,152.75,152.75,301
+2013-07-22,Journal Entry,64,None,16700.00,16700.00,302
+2013-07-31,Journal Entry,81,None,25.93,25.93,303
+2013-08-04,Cheque Expense,0,Australian Taxation Office,1140.00,1140.00,304
+2013-08-04,Journal Entry,65,None,1000.00,1000.00,305
+2013-08-08,Cheque Expense,5,ANZ Bank,2.50,2.50,306
+2013-08-09,Journal Entry,67,None,44.70,44.70,307
+2013-08-12,Journal Entry,75,None,808.77,808.77,308
+2013-08-13,Cheque Expense,0,Transfer Money,808.77,808.77,309
+2013-08-20,Journal Entry,68,None,20000.00,20000.00,310
+2013-08-31,Journal Entry,71,None,25.55,25.55,311
+2013-09-08,Cheque Expense,6,ANZ Bank,2.50,2.50,312
+2013-09-09,Journal Entry,70,None,77.31,77.31,313
+2013-09-16,Cheque Expense,0,Transfer Money,11000.00,11000.00,314
+2013-09-16,Journal Entry,69,None,23000.00,23000.00,315
+2013-09-30,Journal Entry,72,None,24.95,24.95,316
+2013-10-08,Cheque Expense,7,ANZ Bank,2.50,2.50,317
+2013-10-09,Cheque Expense,0,Transfer Money,22500.00,22500.00,318
+2013-10-09,Journal Entry,63,None,106.04,106.04,319
+2013-10-20,Cheque Expense,0,Transfer Money,500.00,500.00,320
+2013-10-20,Cheque Expense,8,Australian Taxation Office,345.00,345.00,321
+2013-10-31,Journal Entry,66,None,25.84,25.84,322
+2013-11-03,Journal Entry,76,None,1951.88,1951.88,323
+2013-11-04,Cheque Expense,0,Transfer Money,2500.00,2500.00,324
+2013-11-04,Journal Entry,65,None,31000.00,31000.00,325
+2013-11-08,Cheque Expense,9,ANZ Bank,2.50,2.50,326
+2013-11-08,Journal Entry,64,None,76.52,76.52,327
+2013-11-10,Journal Entry,74,None,769.32,769.32,328
+2013-11-14,Cheque Expense,0,Transfer Money,9000.00,9000.00,329
+2013-11-14,Journal Entry,70,None,32000.00,32000.00,330
+2013-11-30,Journal Entry,78,None,25.06,25.06,331
+2013-12-08,Cheque Expense,10,ANZ Bank,2.50,2.50,332
+2013-12-09,Journal Entry,71,None,159.70,159.70,333
+2013-12-16,Cheque Expense,0,Transfer Money,160000.00,160000.00,334
+2013-12-16,Journal Entry,72,None,20000.00,20000.00,335
+2013-12-23,Cheque Expense,0,Transfer Money,60000.00,60000.00,336
+2013-12-31,Journal Entry,68,None,81.71,81.71,337
+2014-01-08,Cheque Expense,11,ANZ Bank,2.50,2.50,338
+2014-01-08,Journal Entry,69,None,0.22,0.22,339
+2014-01-09,Journal Entry,73,None,79.75,79.75,340
+2014-01-29,Cheque Expense,0,Australian Taxation Office,75.10,75.10,341
+2014-01-31,Journal Entry,67,None,72.86,72.86,342
+2014-02-07,Journal Entry,84,None,50.52,50.52,343
+2014-02-08,Cheque Expense,12,ANZ Bank,2.50,2.50,344
+2014-02-16,Journal Entry,62,None,22700.00,22700.00,345
+2014-02-28,Journal Entry,77,None,65.96,65.96,346
+2014-03-07,Journal Entry,83,None,75.45,75.45,347
+2014-03-08,Cheque Expense,13,ANZ Bank,2.50,2.50,348
+2014-03-11,Cheque Expense,0,Transfer Money,50000.00,50000.00,349
+2014-03-11,Journal Entry,79,None,50000.00,50000.00,350
+2014-03-13,Journal Entry,80,None,22000.00,22000.00,351
+2014-03-23,Journal Entry,86,None,538.52,538.52,352
+2014-03-31,Journal Entry,85,None,152.29,152.29,353
+2014-04-08,Cheque Expense,14,ANZ Bank,2.50,2.50,354
+2014-04-09,Journal Entry,81,None,51.02,51.02,355
+2014-04-22,Journal Entry,82,None,23500.00,23500.00,356
+2014-04-26,Cheque Expense,0,Australian Taxation Office,1245.00,1245.00,357
+2014-04-26,Cheque Expense,0,Transfer Money,800.00,800.00,358
+2014-04-26,Journal Entry,87,None,2000.00,2000.00,359
+2014-04-30,Journal Entry,93,None,184.18,184.18,360
+2014-05-08,Cheque Expense,15,ANZ Bank,2.50,2.50,361
+2014-05-09,Journal Entry,89,None,72.25,72.25,362
+2014-05-11,Cheque Expense,0,Transfer Money,20000.00,20000.00,363
+2014-05-11,Journal Entry,88,None,250.00,250.00,364
+2014-05-16,Journal Entry,90,None,33000.00,33000.00,365
+2014-05-23,Cheque Expense,0,ASIC,236.00,236.00,366
+2014-05-31,Journal Entry,66,None,190.75,190.75,367
+2014-06-01,Journal Entry,96,None,1698.65,1698.65,368
+2014-06-03,Journal Entry,91,None,357000.00,357000.00,369
+2014-06-08,Cheque Expense,16,ANZ Bank,2.50,2.50,370
+2014-06-08,Journal Entry,95,None,1812.33,1812.33,371
+2014-06-09,Cheque Expense,0,Transfer Money,12500.00,12500.00,372
+2014-06-09,Journal Entry,92,None,231.64,231.64,373
+2014-06-22,Journal Entry,94,None,543.35,543.35,374
+2014-06-23,Cheque Expense,0,Transfer Money,870000.00,870000.00,375
+2014-06-30,Journal Entry,98,None,399.00,399.00,376
+2014-07-01,Cheque Expense,0,Transfer Money,2200.00,2200.00,377
+2014-07-04,Cheque Expense,0,Transfer Money,400000.00,400000.00,378
+2014-07-08,Cheque Expense,17,ANZ Bank,2.50,2.50,379
+2014-07-08,Journal Entry,97,None,0.55,0.55,380
+2014-07-09,Journal Entry,100,None,335.46,335.46,381
+2014-07-28,Cheque Expense,0,Australian Taxation Office,1481.00,1481.00,382
+2014-07-28,Journal Entry,101,None,150.00,150.00,383
+2014-07-28,Journal Entry,99,None,1127.71,1127.71,384
+2014-07-31,Journal Entry,102,None,119.04,119.04,385
+2014-08-08,Cheque Expense,18,ANZ Bank,2.50,2.50,386
+2014-08-25,Cheque Expense,0,Transfer Money,12378.67,12378.67,387
+2014-08-26,Cheque Expense,0,Transfer Money,12390.00,12390.00,388
+2014-08-31,Journal Entry,103,None,22.38,22.38,389
+2014-09-01,Cheque Expense,0,Transfer Money,156200.12,156200.12,390
+2014-09-01,Journal Entry,104,None,78077.13,78077.13,391
+2014-09-01,Journal Entry,106,None,675.41,675.41,392
+2014-09-08,Cheque Expense,0,Transfer Money,59000.00,59000.00,393
+2014-09-08,Cheque Expense,19,ANZ Bank,2.50,2.50,394
+2014-09-08,Journal Entry,105,None,83302.26,83302.26,395
+2014-09-08,Journal Entry,107,None,720.61,720.61,396
+2014-09-08,Journal Entry,108,None,0.04,0.04,397
+2014-09-12,Cheque Expense,0,Transfer Money,31000.00,31000.00,398
+2014-09-17,Cheque Expense,0,Transfer Money,27000.00,27000.00,399
+2014-09-22,Journal Entry,112,None,132193.01,132193.01,400
+2014-09-22,Journal Entry,114,None,1111.14,1111.14,401
+2014-09-30,Journal Entry,111,None,131.75,131.75,402
+2014-10-02,Cheque Expense,0,Transfer Money,403254.79,403254.79,403
+2014-10-02,Journal Entry,113,None,3254.79,3254.79,404
+2014-10-08,Cheque Expense,20,ANZ Bank,2.50,2.50,405
+2014-10-08,Journal Entry,109,None,0.86,0.86,406
+2014-10-09,Journal Entry,110,None,36.61,36.61,407
+2014-10-13,Cheque Expense,0,Transfer Money,20000.00,20000.00,408
+2014-10-29,Cheque Expense,0,Australian Taxation Office,617.00,617.00,409
+2014-10-29,Cheque Expense,0,Transfer Money,2500.00,2500.00,410
+2014-10-31,Journal Entry,116,None,1277.29,1277.29,411
+2014-10-31,Journal Entry,118,None,11.14,11.14,412
+2014-11-08,Cheque Expense,21,ANZ Bank,2.50,2.50,413
+2014-11-24,Cheque Expense,0,Transfer Money,3500.00,3500.00,414
+2014-11-30,Journal Entry,115,None,1268.37,1268.37,415
+2014-12-08,Cheque Expense,22,ANZ Bank,2.50,2.50,416
+2014-12-11,Cheque Expense,0,Transfer Money,562000.00,562000.00,417
+2014-12-11,Journal Entry,117,None,562427.47,562427.47,418
+2014-12-11,Journal Entry,121,None,490000.00,490000.00,419
+2014-12-15,Cheque Expense,0,Transfer Money,1053047.75,1053047.75,420
+2014-12-31,Journal Entry,119,None,242.35,242.35,421
+2014-12-31,Journal Entry,120,None,423.75,423.75,422
+2015-01-08,Cheque Expense,23,ANZ Bank,2.50,2.50,423
+2015-01-31,Cheque Expense,0,Transfer Money,349000.00,349000.00,424
+2015-01-31,Journal Entry,122,None,348321.47,348321.47,425
+2015-01-31,Journal Entry,127,None,17.94,17.94,426
+2015-02-05,Cheque Expense,0,Transfer Money,225000.00,225000.00,427
+2015-02-06,Journal Entry,123,None,1.24,1.24,428
+2015-02-08,Cheque Expense,24,ANZ Bank,2.50,2.50,429
+2015-02-27,Journal Entry,129,None,184.49,184.49,430
+2015-02-28,Journal Entry,125,None,68.67,68.67,431
+2015-03-03,Cheque Expense,0,Australian Taxation Office,617.00,617.00,432
+2015-03-03,Journal Entry,124,None,1000.00,1000.00,433
+2015-03-08,Cheque Expense,25,ANZ Bank,2.50,2.50,434
+2015-03-31,Journal Entry,126,None,1.08,1.08,435
+2015-03-31,Journal Entry,130,None,200.39,200.39,436
+2015-04-08,Cheque Expense,26,ANZ Bank,2.50,2.50,437
+2015-04-10,Cheque Expense,0,Transfer Money,15000.00,15000.00,438
+2015-04-27,Cheque Expense,0,Australian Taxation Office,1177.00,1177.00,439
+2015-04-27,Journal Entry,128,None,1000.00,1000.00,440
+2015-04-30,Journal Entry,63,None,2000.00,2000.00,441
+2015-04-30,Journal Entry,64,None,166.39,166.39,442
+2015-04-30,Journal Entry,67,None,1.05,1.05,443
+2015-05-08,Cheque Expense,27,ANZ Bank,2.50,2.50,444
+2015-05-14,Cheque Expense,0,Transfer Money,2000.00,2000.00,445
+2015-05-14,Journal Entry,63,None,4048.79,4048.79,446
+2015-05-22,Cheque Expense,0,ASIC,243.00,243.00,447
+2015-05-28,Cheque Expense,0,Transfer Money,2000.00,2000.00,448
+2015-05-29,Journal Entry,65,None,129.57,129.57,449
+2015-05-31,Journal Entry,68,None,1.00,1.00,450
+2015-06-02,Cheque Expense,0,Transfer Money,13200.00,13200.00,451
+2015-06-04,Cheque Expense,0,Transfer Money,3000.00,3000.00,452
+2015-06-05,Cheque Expense,0,Transfer Money,1000.00,1000.00,453
+2015-06-08,Cheque Expense,28,ANZ Bank,2.50,2.50,454
+2015-06-11,Cheque Expense,0,Transfer Money,12803.29,12803.29,455
+2015-06-12,Cheque Expense,0,Transfer Money,1000.00,1000.00,456
+2015-06-19,Cheque Expense,0,Transfer Money,1000.00,1000.00,457
+2015-06-22,Cheque Expense,0,Transfer Money,12000.00,12000.00,458
+2015-06-24,Cheque Expense,0,Transfer Money,24000.00,24000.00,459
+2015-06-25,Cheque Expense,0,Transfer Money,17000.00,17000.00,460
+2015-06-26,Cheque Expense,0,Transfer Money,1000.00,1000.00,461
+2015-06-26,Journal Entry,66,None,125000.00,125000.00,462
+2015-06-28,Journal Entry,63,None,13947.92,13947.92,463
+2015-06-30,Journal Entry,71,None,97.05,97.05,464
+2015-06-30,Journal Entry,76,None,0.95,0.95,465
+2015-07-03,Cheque Expense,0,Transfer Money,1000.00,1000.00,466
+2015-07-08,Cheque Expense,29,ANZ Bank,2.50,2.50,467
+2015-07-09,Cheque Expense,0,Transfer Money,2000.00,2000.00,468
+2015-07-10,Cheque Expense,0,Transfer Money,1000.00,1000.00,469
+2015-07-13,Cheque Expense,0,Transfer Money,19031.94,19031.94,470
+2015-07-15,Cheque Expense,0,Transfer Money,50000.00,50000.00,471
+2015-07-16,Cheque Expense,0,Transfer Money,49000.00,49000.00,472
+2015-07-17,Cheque Expense,0,Transfer Money,1000.00,1000.00,473
+2015-07-17,Journal Entry,72,None,500.00,500.00,474
+2015-07-31,Journal Entry,73,None,70.12,70.12,475
+2015-07-31,Journal Entry,77,None,0.98,0.98,476
+2015-08-04,Cheque Expense,0,Transfer Money,228772.60,228772.60,477
+2015-08-04,Journal Entry,74,None,3772.60,3772.60,478
+2015-08-08,Cheque Expense,30,ANZ Bank,2.50,2.50,479
+2015-08-31,Journal Entry,75,None,395.85,395.85,480
+2015-09-08,Cheque Expense,31,ANZ Bank,2.50,2.50,481
+2015-09-21,Journal Entry,70,None,800.00,800.00,482
+2015-09-27,Cheque Expense,0,Australian Taxation Office,21.40,21.40,483
+2015-09-27,Journal Entry,69,None,1000.00,1000.00,484
+2015-09-28,Cheque Expense,0,Australian Taxation Office,804.00,804.00,485
+2015-09-30,Journal Entry,78,None,424.76,424.76,486
+2015-10-08,Cheque Expense,32,ANZ Bank,2.50,2.50,487
+2015-10-27,Cheque Expense,0,Australian Taxation Office,756.00,756.00,488
+2015-10-30,Journal Entry,79,None,439.73,439.73,489
+2015-11-08,Cheque Expense,33,ANZ Bank,2.50,2.50,490
+2015-11-30,Journal Entry,80,None,426.36,426.36,491
+2015-12-08,Cheque Expense,34,ANZ Bank,2.50,2.50,492
+2015-12-29,Journal Entry,81,None,49985.00,49985.00,493
+2015-12-30,Cheque Expense,0,Transfer Money,49000.00,49000.00,494
+2015-12-31,Journal Entry,82,None,49345.14,49345.14,495
+2015-12-31,Journal Entry,84,None,447.42,447.42,496
+2016-01-06,Cheque Expense,0,Transfer Money,50000.00,50000.00,497
+2016-01-08,Cheque Expense,35,ANZ Bank,2.50,2.50,498
+2016-01-08,Journal Entry,83,None,0.97,0.97,499
+2016-01-31,Journal Entry,85,None,616.01,616.01,500
+2016-02-08,Cheque Expense,36,ANZ Bank,2.50,2.50,501
+2016-02-19,Cheque Expense,0,Transfer Money,250.00,250.00,502
+2016-02-26,Cheque Expense,0,Australian Taxation Office,756.00,756.00,503
+2016-02-29,Journal Entry,86,None,591.79,591.79,504
+2016-03-08,Cheque Expense,37,ANZ Bank,2.50,2.50,505
+2016-03-31,Journal Entry,87,None,633.73,633.73,506
+2016-04-08,Cheque Expense,38,ANZ Bank,2.50,2.50,507
+2016-04-10,Cheque Expense,0,ASIC,246.00,246.00,508
+2016-04-10,Cheque Expense,0,Transfer Money,250.00,250.00,509
+2016-04-11,Journal Entry,88,None,1000.00,1000.00,510
+2016-04-15,Cheque Expense,0,Australian Taxation Office,756.00,756.00,511
+2016-04-30,Journal Entry,90,None,613.17,613.17,512
+2016-05-07,Journal Entry,64,None,0.47,0.47,513
+2016-05-08,Cheque Expense,39,ANZ Bank,2.50,2.50,514
+2016-05-27,Journal Entry,89,None,147.41,147.41,515
+2016-05-31,Journal Entry,91,None,575.10,575.10,516
+2016-06-08,Cheque Expense,40,ANZ Bank,2.50,2.50,517
+2016-06-12,Journal Entry,65,None,21401.80,21401.80,518
+2016-06-30,Journal Entry,67,None,17857.14,17857.14,519
+2016-06-30,Journal Entry,68,None,22.35,22.35,520
+2016-06-30,Journal Entry,92,None,10.03,10.03,521
+2016-06-30,Journal Entry,93,None,546.50,546.50,522
+2016-07-06,Cheque Expense,0,Transfer Money,21000.00,21000.00,523
+2016-07-08,Cheque Expense,0,ANZ Bank,2.50,2.50,524
+2016-07-09,Cheque Expense,0,Transfer Money,17000.00,17000.00,525
+2016-07-29,Journal Entry,95,None,3.34,3.34,526
+2016-07-31,Journal Entry,94,None,589.86,589.86,527
+2016-08-02,Cheque Expense,0,Australian Taxation Office,732.00,732.00,528
+2016-08-02,Journal Entry,96,None,400.00,400.00,529
+2016-08-08,Cheque Expense,0,Transfer Money,150000.00,150000.00,530
+2016-08-08,Cheque Expense,42,ANZ Bank,2.50,2.50,531
+2016-08-08,Journal Entry,97,None,14000.00,14000.00,532
+2016-08-09,Cheque Expense,0,Transfer Money,28000.00,28000.00,533
+2016-08-15,Cheque Expense,0,Transfer Money,3000.00,3000.00,534
+2016-08-15,Journal Entry,98,None,10000.00,10000.00,535
+2016-08-17,Cheque Expense,0,Transfer Money,30000.00,30000.00,536
+2016-08-17,Journal Entry,99,None,50000.00,50000.00,537
+2016-08-22,Cheque Expense,0,Transfer Money,27000.00,27000.00,538
+2016-08-31,Journal Entry,103,None,344.95,344.95,539
+2016-08-31,Journal Entry,113,None,0.37,0.37,540
+2016-09-08,Cheque Expense,43,ANZ Bank,2.50,2.50,541
+2016-09-08,Journal Entry,100,None,0.42,0.42,542
+2016-09-15,Journal Entry,101,None,30000.00,30000.00,543
+2016-09-16,Cheque Expense,0,Transfer Money,30000.00,30000.00,544
+2016-09-17,Journal Entry,105,None,17000.00,17000.00,545
+2016-09-30,Journal Entry,104,None,238.67,238.67,546
+2016-10-07,Journal Entry,102,None,0.08,0.08,547
+2016-10-08,Cheque Expense,44,ANZ Bank,2.50,2.50,548
+2016-10-17,Journal Entry,106,None,20000.00,20000.00,549
+2016-10-29,Cheque Expense,0,Australian Taxation Office,743.00,743.00,550
+2016-10-29,Journal Entry,66,None,1000.00,1000.00,551
+2016-10-31,Journal Entry,107,None,231.12,231.12,552
+2016-11-08,Cheque Expense,45,ANZ Bank,2.50,2.50,553
+2016-11-11,Cheque Expense,0,Transfer Money,6000.00,6000.00,554
+2016-11-11,Journal Entry,108,None,3000.00,3000.00,555
+2016-11-11,Journal Entry,110,None,1519.00,1519.00,556
+2016-11-11,Journal Entry,111,None,1098.00,1098.00,557
+2016-11-14,Cheque Expense,0,Transfer Money,3000.00,3000.00,558
+2016-11-18,Cheque Expense,0,Transfer Money,3000.00,3000.00,559
+2016-11-30,Cheque Expense,0,Transfer Money,1925.00,1925.00,560
+2016-11-30,Journal Entry,109,None,246.45,246.45,561
+2016-12-05,Cheque Expense,0,Transfer Money,100000.00,100000.00,562
+2016-12-06,Cheque Expense,0,Transfer Money,100000.00,100000.00,563
+2016-12-08,Cheque Expense,46,ANZ Bank,2.50,2.50,564
+2016-12-08,Journal Entry,112,None,0.32,0.32,565
+2016-12-12,Cheque Expense,0,Transfer Money,1000.00,1000.00,566
+2016-12-22,Cheque Expense,0,Transfer Money,4000.00,4000.00,567
+2016-12-24,Cheque Expense,0,Transfer Money,140.00,140.00,568
+2016-12-30,Cheque Expense,0,Transfer Money,2000.00,2000.00,569
+2016-12-31,Journal Entry,114,None,136.33,136.33,570
+2017-01-03,Cheque Expense,0,Transfer Money,2000.00,2000.00,571
+2017-01-04,Cheque Expense,0,Transfer Money,5000.00,5000.00,572
+2017-01-06,Cheque Expense,0,ANZ Bank,2.50,2.50,573
+2017-01-06,Journal Entry,123,None,0.05,0.05,574
+2017-01-09,Cheque Expense,0,Transfer Money,5000.00,5000.00,575
+2017-01-25,Cheque Expense,0,Transfer Money,7000.00,7000.00,576
+2017-01-27,Cheque Expense,0,Transfer Money,7000.00,7000.00,577
+2017-01-31,Journal Entry,115,None,104.21,104.21,578
+2017-02-08,Cheque Expense,48,ANZ Bank,2.50,2.50,579
+2017-02-08,Journal Entry,118,None,0.05,0.05,580
+2017-02-14,Journal Entry,119,None,3000.00,3000.00,581
+2017-02-15,Cheque Expense,0,Transfer Money,3000.00,3000.00,582
+2017-02-21,Journal Entry,120,None,9000.00,9000.00,583
+2017-02-22,Cheque Expense,0,Transfer Money,9000.00,9000.00,584
+2017-02-23,Journal Entry,121,None,25000.00,25000.00,585
+2017-02-27,Cheque Expense,0,Transfer Money,25000.00,25000.00,586
+2017-02-28,Journal Entry,137,None,75.31,75.31,587
+2017-03-06,Cheque Expense,0,Transfer Money,152545.89,152545.89,588
+2017-03-06,Journal Entry,133,None,2545.89,2545.89,589
+2017-03-08,Cheque Expense,49,ANZ Bank,2.50,2.50,590
+2017-03-08,Journal Entry,122,None,0.24,0.24,591
+2017-03-13,Journal Entry,124,None,3000.00,3000.00,592
+2017-03-15,Cheque Expense,0,Transfer Money,3000.00,3000.00,593
+2017-03-15,Journal Entry,125,None,50000.00,50000.00,594
+2017-03-16,Cheque Expense,0,Transfer Money,50000.00,50000.00,595
+2017-03-20,Journal Entry,126,None,50000.00,50000.00,596
+2017-03-22,Cheque Expense,0,Transfer Money,50000.00,50000.00,597
+2017-03-31,Journal Entry,117,None,153.74,153.74,598
+2017-03-31,Journal Entry,127,None,5000.00,5000.00,599
+2017-04-03,Cheque Expense,0,Transfer Money,5000.00,5000.00,600
+2017-04-03,Journal Entry,116,None,20000.00,20000.00,601
+2017-04-04,Journal Entry,134,None,12000.00,12000.00,602
+2017-04-07,Journal Entry,129,None,0.47,0.47,603
+2017-04-08,Cheque Expense,50,ANZ Bank,2.50,2.50,604
+2017-04-10,Cheque Expense,0,ASIC,249.00,249.00,605
+2017-04-10,Journal Entry,130,None,10.00,10.00,606
+2017-04-10,Journal Entry,131,None,250.00,250.00,607
+2017-04-22,Cheque Expense,0,Transfer Money,2000.00,2000.00,608
+2017-04-22,Journal Entry,128,None,750.00,750.00,609
+2017-04-22,Journal Entry,132,None,740.00,740.00,610
+2017-04-24,Cheque Expense,0,Australian Taxation Office,1486.00,1486.00,611
+2017-04-25,Cheque Expense,0,Transfer Money,1500.00,1500.00,612
+2017-04-26,Cheque Expense,0,Transfer Money,500.00,500.00,613
+2017-04-30,Journal Entry,135,None,140.52,140.52,614
+2017-05-03,Cheque Expense,0,Transfer Money,3000.00,3000.00,615
+2017-05-05,Cheque Expense,0,ING Direct,25000.00,25000.00,616
+2017-05-05,Cheque Expense,0,Transfer Money,28000.00,28000.00,617
+2017-05-08,Cheque Expense,0,ANZ Bank,0.80,0.80,618
+2017-05-08,Cheque Expense,51,ANZ Bank,2.50,2.50,619
+2017-05-08,Journal Entry,138,None,0.02,0.02,620
+2017-05-29,Cheque Expense,0,ING Direct,3000.00,3000.00,621
+2017-05-30,Cheque Expense,0,Transfer Money,3000.00,3000.00,622
+2017-05-31,Journal Entry,136,None,106.93,106.93,623
+2017-06-08,Cheque Expense,52,ANZ Bank,2.50,2.50,624
+2017-06-08,Journal Entry,139,None,0.01,0.01,625
+2017-06-14,Cheque Expense,0,Transfer Money,3000.00,3000.00,626
+2017-06-15,Cheque Expense,0,Transfer Money,3000.00,3000.00,627
+2017-06-27,Journal Entry,141,None,310000.00,310000.00,628
+2017-06-28,Journal Entry,140,None,213.30,213.30,629
+2017-06-30,Journal Entry,142,None,12.74,12.74,630
+2017-06-30,Journal Entry,143,None,93.96,93.96,631
+2017-06-30,Journal Entry,75,None,3600.00,3600.00,632
+2017-07-03,Cheque Expense,0,Transfer Money,107397.17,107397.17,633
+2017-07-07,Cheque Expense,0,Transfer Money,100000.00,100000.00,634
+2017-07-07,Journal Entry,144,None,0.19,0.19,635
+2017-07-08,Cheque Expense,53,ANZ Bank,2.50,2.50,636
+2017-07-13,Cheque Expense,0,Transfer Money,52800.00,52800.00,637
+2017-07-17,Cheque Expense,0,Transfer Money,50000.00,50000.00,638
+2017-07-19,Cheque Expense,0,Transfer Money,40000.00,40000.00,639
+2017-07-21,Cheque Expense,0,Transfer Money,30000.00,30000.00,640
+2017-07-21,Journal Entry,147,None,1400.00,1400.00,641
+2017-07-31,Journal Entry,146,None,44.94,44.94,642
+2017-07-31,Journal Entry,148,None,102.97,102.97,643
+2017-08-02,Cheque Expense,0,Australian Taxation Office,638.00,638.00,644
+2017-08-02,Journal Entry,145,None,650.00,650.00,645
+2017-08-08,Cheque Expense,54,ANZ Bank,2.50,2.50,646
+2017-08-08,Journal Entry,149,None,0.04,0.04,647
+2017-08-10,Cheque Expense,0,Transfer Money,10000.00,10000.00,648
+2017-08-10,Journal Entry,150,None,4000.00,4000.00,649
+2017-08-10,Journal Entry,151,None,10000.00,10000.00,650
+2017-08-11,Cheque Expense,0,Transfer Money,4000.00,4000.00,651
+2017-08-11,Journal Entry,69,None,19238.46,19238.46,652
+2017-08-14,Journal Entry,152,None,50000.00,50000.00,653
+2017-08-15,Cheque Expense,0,Transfer Money,44000.00,44000.00,654
+2017-08-18,Cheque Expense,0,Transfer Money,44000.00,44000.00,655
+2017-08-18,Journal Entry,153,None,27000.00,27000.00,656
+2017-08-18,Journal Entry,154,None,19000.00,19000.00,657
+2017-08-18,Journal Entry,156,None,150000.00,150000.00,658
+2017-08-21,Cheque Expense,0,Transfer Money,27000.00,27000.00,659
+2017-08-22,Journal Entry,70,None,21255.68,21255.68,660
+2017-08-23,Cheque Expense,0,Transfer Money,70053.44,70053.44,661
+2017-08-23,Journal Entry,71,None,21456.31,21456.31,662
+2017-08-23,Journal Entry,72,None,42431.12,42431.12,663
+2017-08-23,Journal Entry,73,None,21225.59,21225.59,664
+2017-08-23,Journal Entry,74,None,21446.28,21446.28,665
+2017-08-24,Journal Entry,155,None,70100.00,70100.00,666
+2017-08-28,Cheque Expense,0,Transfer Money,25000.00,25000.00,667
+2017-08-28,Journal Entry,158,None,1700.00,1700.00,668
+2017-08-30,Cheque Expense,0,Transfer Money,4500.00,4500.00,669
+2017-08-31,Journal Entry,157,None,15.53,15.53,670
+2017-08-31,Journal Entry,159,None,51.68,51.68,671
+2017-09-05,Journal Entry,76,None,23701.24,23701.24,672
+2017-09-07,Cheque Expense,0,Transfer Money,50201.24,50201.24,673
+2017-09-08,Cheque Expense,0,ANZ Bank,0.60,0.60,674
+2017-09-08,Cheque Expense,55,ANZ Bank,2.50,2.50,675
+2017-09-08,Journal Entry,177,None,0.62,0.62,676
+2017-09-14,Journal Entry,163,None,1300.00,1300.00,677
+2017-09-15,Journal Entry,178,None,488.40,488.40,678
+2017-09-15,Journal Entry,77,None,697.71,697.71,679
+2017-09-20,Journal Entry,179,None,453.08,453.08,680
+2017-09-20,Journal Entry,78,None,647.26,647.26,681
+2017-09-25,Cheque Expense,0,Transfer Money,3600.00,3600.00,682
+2017-09-29,Cheque Expense,0,Transfer Money,3500.00,3500.00,683
+2017-09-29,Journal Entry,164,None,3.96,3.96,684
+2017-09-30,Journal Entry,199,None,2.79,2.79,685
+2017-10-02,Journal Entry,180,None,466.52,466.52,686
+2017-10-02,Journal Entry,79,None,666.46,666.46,687
+2017-10-08,Cheque Expense,56,ANZ Bank,2.50,2.50,688
+2017-10-09,Journal Entry,181,None,479.88,479.88,689
+2017-10-09,Journal Entry,80,None,685.54,685.54,690
+2017-10-10,Cheque Expense,0,Transfer Money,950.00,950.00,691
+2017-10-11,Cheque Expense,0,Transfer Money,190.00,190.00,692
+2017-10-11,Journal Entry,182,None,2250.00,2250.00,693
+2017-10-12,Cheque Expense,0,Transfer Money,2250.00,2250.00,694
+2017-10-13,Journal Entry,165,None,9500.00,9500.00,695
+2017-10-31,Journal Entry,166,None,2.35,2.35,696
+2017-10-31,Journal Entry,201,None,0.94,0.94,697
+2017-11-06,Cheque Expense,0,Transfer Money,9500.00,9500.00,698
+2017-11-08,Cheque Expense,57,ANZ Bank,2.50,2.50,699
+2017-11-13,Journal Entry,183,None,10.00,10.00,700
+2017-11-30,Journal Entry,167,None,0.78,0.78,701
+2017-11-30,Journal Entry,202,None,0.02,0.02,702
+2017-12-04,Cheque Expense,0,Australian Taxation Office,724.00,724.00,703
+2017-12-04,Journal Entry,184,None,730.00,730.00,704
+2017-12-08,Cheque Expense,58,ANZ Bank,2.50,2.50,705
+2017-12-15,Journal Entry,185,None,483.08,483.08,706
+2017-12-15,Journal Entry,81,None,690.11,690.11,707
+2017-12-20,Journal Entry,186,None,447.48,447.48,708
+2017-12-20,Journal Entry,82,None,639.26,639.26,709
+2017-12-22,Journal Entry,168,None,900.00,900.00,710
+2017-12-31,Journal Entry,203,None,0.02,0.02,711
+2018-01-02,Cheque Expense,0,Transfer Money,1400.00,1400.00,712
+2018-01-02,Journal Entry,187,None,461.44,461.44,713
+2018-01-02,Journal Entry,83,None,659.20,659.20,714
+2018-01-08,Cheque Expense,59,ANZ Bank,2.50,2.50,715
+2018-01-08,Journal Entry,169,None,8000.00,8000.00,716
+2018-01-08,Journal Entry,170,None,460.00,460.00,717
+2018-01-08,Journal Entry,188,None,463.88,463.88,718
+2018-01-08,Journal Entry,84,None,662.69,662.69,719
+2018-01-17,Cheque Expense,0,Transfer Money,3440.00,3440.00,720
+2018-01-17,Journal Entry,171,None,2000.00,2000.00,721
+2018-01-17,Journal Entry,172,None,1440.00,1440.00,722
+2018-01-17,Journal Entry,189,None,1443.20,1443.20,723
+2018-01-31,Journal Entry,173,None,2.67,2.67,724
+2018-01-31,Journal Entry,204,None,0.02,0.02,725
+2018-02-08,Cheque Expense,0,Transfer Money,8470.00,8470.00,726
+2018-02-08,Cheque Expense,60,ANZ Bank,2.50,2.50,727
+2018-02-28,Journal Entry,174,None,0.92,0.92,728
+2018-02-28,Journal Entry,205,None,0.02,0.02,729
+2018-03-08,Cheque Expense,61,ANZ Bank,2.50,2.50,730
+2018-03-15,Journal Entry,190,None,481.20,481.20,731
+2018-03-15,Journal Entry,85,None,687.43,687.43,732
+2018-03-19,Cheque Expense,0,Transfer Money,480.00,480.00,733
+2018-03-20,Journal Entry,191,None,448.44,448.44,734
+2018-03-20,Journal Entry,86,None,640.63,640.63,735
+2018-03-22,Journal Entry,175,None,450.00,450.00,736
+2018-03-22,Journal Entry,192,None,6000.00,6000.00,737
+2018-03-22,Journal Entry,193,None,400.00,400.00,738
+2018-03-22,Journal Entry,194,None,9000.00,9000.00,739
+2018-03-22,Journal Entry,87,None,15783.77,15783.77,740
+2018-03-26,Cheque Expense,0,Transfer Money,16233.77,16233.77,741
+2018-03-26,Journal Entry,176,None,41100.00,41100.00,742
+2018-03-26,Journal Entry,195,None,41072.29,41072.29,743
+2018-03-27,Journal Entry,88,None,41072.29,41072.29,744
+2018-03-27,Journal Entry,90,None,1409.08,1409.08,745
+2018-03-31,Journal Entry,206,None,0.02,0.02,746
+2018-04-03,Journal Entry,198,None,461.88,461.88,747
+2018-04-03,Journal Entry,88,None,659.83,659.83,748
+2018-04-06,Journal Entry,196,None,0.17,0.17,749
+2018-04-08,Cheque Expense,62,ANZ Bank,2.50,2.50,750
+2018-04-09,Cheque Expense,0,Transfer Money,970.00,970.00,751
+2018-04-09,Journal Entry,197,None,471.56,471.56,752
+2018-04-09,Journal Entry,89,None,673.66,673.66,753
+2018-04-16,Cheque Expense,0,Transfer Money,1000.00,1000.00,754
+2018-04-19,Cheque Expense,0,Transfer Money,1500.00,1500.00,755
+2018-04-28,Cheque Expense,0,ASIC,254.00,254.00,756
+2018-04-28,Cheque Expense,0,Australian Taxation Office,724.00,724.00,757
+2018-04-28,Journal Entry,200,None,250.00,250.00,758
+2018-04-28,Journal Entry,89,None,730.00,730.00,759
+2018-04-30,Journal Entry,103,None,15.30,15.30,760
+2018-04-30,Journal Entry,96,None,0.02,0.02,761
+2018-05-07,Cheque Expense,0,Transfer Money,12000.00,12000.00,762
+2018-05-08,Cheque Expense,63,ANZ Bank,2.50,2.50,763
+2018-05-15,Cheque Expense,0,Transfer Money,1000.00,1000.00,764
+2018-05-28,Cheque Expense,0,Transfer Money,1000.00,1000.00,765
+2018-05-31,Journal Entry,104,None,9.40,9.40,766
+2018-05-31,Journal Entry,93,None,0.02,0.02,767
+2018-06-07,Cheque Expense,0,Transfer Money,20000.00,20000.00,768
+2018-06-08,Cheque Expense,64,ANZ Bank,2.50,2.50,769
+2018-06-13,Cheque Expense,0,Transfer Money,2500.00,2500.00,770
+2018-06-15,Journal Entry,91,None,1686.21,1686.21,771
+2018-06-20,Journal Entry,94,None,672.00,672.00,772
+2018-06-21,Journal Entry,105,None,14300.00,14300.00,773
+2018-06-22,Journal Entry,90,None,18500.00,18500.00,774
+2018-06-27,Cheque Expense,0,Transfer Money,33900.00,33900.00,775
+2018-06-27,Journal Entry,106,None,175000.00,175000.00,776
+2018-06-27,Journal Entry,92,None,31347.88,31347.88,777
+2018-06-28,Journal Entry,95,None,31500.00,31500.00,778
+2018-06-29,Journal Entry,91,None,0.82,0.82,779
+2018-06-29,Journal Entry,92,None,6.07,6.07,780
+2018-06-29,Journal Entry,94,None,31347.88,31347.88,781
+2018-06-30,Journal Entry,107,None,0.02,0.02,782
+2018-06-30,Journal Entry,Conversion,None,70514.29,70514.29,783
+2018-07-04,Journal Entry,108,None,31600.00,31600.00,784
+2018-07-06,Cheque Expense,0,Transfer Money,31642.78,31642.78,785
+2018-07-06,Journal Entry,98,None,31642.78,31642.78,786
+2018-07-09,Journal Entry,99,None,697.60,697.60,787
+2018-07-11,Cheque Expense,0,Transfer Money,2500.00,2500.00,788
+2018-07-19,Cheque Expense,0,Transfer Money,650.00,650.00,789
+2018-07-23,Cheque Expense,0,Australian Taxation Office,31.00,31.00,790
+2018-07-23,Journal Entry,109,None,50.00,50.00,791
+2018-07-24,Cheque Expense,0,Transfer Money,31597.62,31597.62,792
+2018-07-24,Journal Entry,97,None,32000.00,32000.00,793
+2018-07-25,Journal Entry,100,None,31597.62,31597.62,794
+2018-07-31,Journal Entry,106,None,50.26,50.26,795
+2018-07-31,Journal Entry,108,None,0.02,0.02,796
+2018-07-31,Journal Entry,110,None,0.40,0.40,797
+2018-08-01,Cheque Expense,0,Transfer Money,1420.00,1420.00,798
+2018-08-09,Cheque Expense,0,Transfer Money,7000.00,7000.00,799
+2018-08-10,Cheque Expense,0,Transfer Money,7000.00,7000.00,800
+2018-08-15,Cheque Expense,0,Transfer Money,2000.00,2000.00,801
+2018-08-15,Journal Entry,98,None,1000.00,1000.00,802
+2018-08-22,Cheque Expense,0,Transfer Money,1000.00,1000.00,803
+2018-08-31,Journal Entry,109,None,0.02,0.02,804
+2018-08-31,Journal Entry,99,None,34.30,34.30,805
+2018-09-11,Cheque Expense,0,Transfer Money,12000.00,12000.00,806
+2018-09-17,Journal Entry,97,None,1555.26,1555.26,807
+2018-09-20,Journal Entry,95,None,684.86,684.86,808
+2018-09-26,Cheque Expense,0,Transfer Money,1000.00,1000.00,809
+2018-09-28,Journal Entry,100,None,27.05,27.05,810
+2018-09-30,Journal Entry,110,None,0.02,0.02,811
+2018-10-01,Journal Entry,101,None,1058.66,1058.66,812
+2018-10-03,Cheque Expense,0,Transfer Money,1000.00,1000.00,813
+2018-10-08,Journal Entry,96,None,699.14,699.14,814
+2018-10-09,Cheque Expense,0,Transfer Money,3000.00,3000.00,815
+2018-10-15,Cheque Expense,0,Transfer Money,1000.00,1000.00,816
+2018-10-31,Journal Entry,111,None,0.02,0.02,817
+2018-10-31,Journal Entry,94,None,29.36,29.36,818
+2018-11-15,Cheque Expense,0,Transfer Money,1500.00,1500.00,819
+2018-11-16,Cheque Expense,0,Transfer Money,3000.00,3000.00,820
+2018-11-30,Journal Entry,101,None,25.71,25.71,821
+2018-11-30,Journal Entry,112,None,0.02,0.02,822
+2018-12-11,Cheque Expense,0,Transfer Money,13500.00,13500.00,823
+2018-12-13,Cheque Expense,0,Transfer Money,1500.00,1500.00,824
+2018-12-14,Journal Entry,103,None,31368.93,31368.93,825
+2018-12-14,Journal Entry,111,None,35000.00,35000.00,826
+2018-12-17,Cheque Expense,0,Transfer Money,7500.00,7500.00,827
+2018-12-17,Journal Entry,102,None,1509.60,1509.60,828
+2018-12-18,Cheque Expense,0,Transfer Money,36018.93,36018.93,829
+2018-12-20,Journal Entry,103,None,660.17,660.17,830
+2018-12-21,Cheque Expense,0,Transfer Money,500.00,500.00,831
+2018-12-24,Journal Entry,104,None,1479.00,1479.00,832
+2018-12-31,Cheque Expense,0,Transfer Money,1490.00,1490.00,833
+2018-12-31,Journal Entry,104,None,1023.17,1023.17,834
+2018-12-31,Journal Entry,105,None,0.58,0.58,835
+2018-12-31,Journal Entry,113,None,0.02,0.02,836
+2018-12-31,Journal Entry,95,None,15.43,15.43,837
+2019-01-02,Cheque Expense,0,Transfer Money,1700.00,1700.00,838
+2019-01-03,Cheque Expense,0,Transfer Money,1000.00,1000.00,839
+2019-01-07,Cheque Expense,0,Transfer Money,2000.00,2000.00,840
+2019-01-07,Journal Entry,105,None,943.33,943.33,841
+2019-01-09,Cheque Expense,0,Transfer Money,4570.00,4570.00,842
+2019-01-21,Cheque Expense,0,Transfer Money,2000.00,2000.00,843
+2019-01-29,Cheque Expense,0,Transfer Money,7500.00,7500.00,844
+2019-01-31,Journal Entry,107,None,5.21,5.21,845
+2019-01-31,Journal Entry,114,None,0.02,0.02,846
+2019-02-04,Cheque Expense,0,Transfer Money,1500.00,1500.00,847
+2019-02-07,Cheque Expense,0,Transfer Money,4000.00,4000.00,848
+2019-02-13,Cheque Expense,0,Transfer Money,140.00,140.00,849
+2019-02-14,Journal Entry,102,None,4000.00,4000.00,850
+2019-02-21,Cheque Expense,0,Transfer Money,600.00,600.00,851
+2019-02-26,Cheque Expense,0,NAB Hybrid Application,50000.00,50000.00,852
+2019-02-26,Journal Entry,103,None,50000.00,50000.00,853
+2019-02-27,Cheque Expense,0,Transfer Money,50000.00,50000.00,854
+2019-02-27,Journal Entry,96,None,50000.00,50000.00,855
+2019-02-28,Journal Entry,120,None,0.02,0.02,856
+2019-02-28,Journal Entry,97,None,0.83,0.83,857
+2019-03-01,Cheque Expense,0,Transfer Money,30000.00,30000.00,858
+2019-03-01,Journal Entry,104,None,30000.00,30000.00,859
+2019-03-08,Cheque Expense,0,Transfer Money,1000.00,1000.00,860
+2019-03-13,Cheque Expense,0,Transfer Money,5500.00,5500.00,861
+2019-03-14,Cheque Expense,0,Transfer Money,10000.00,10000.00,862
+2019-03-18,Cheque Expense,0,Transfer Money,1250.00,1250.00,863
+2019-03-18,Journal Entry,106,None,1780.29,1780.29,864
+2019-03-20,Cheque Expense,0,Transfer Money,470.00,470.00,865
+2019-03-20,Journal Entry,109,None,666.97,666.97,866
+2019-03-21,Journal Entry,107,None,34000.00,34000.00,867
+2019-03-21,Journal Entry,108,None,16000.00,16000.00,868
+2019-03-22,Cheque Expense,0,Transfer Money,21000.00,21000.00,869
+2019-03-22,Journal Entry,115,None,5000.00,5000.00,870
+2019-03-25,Cheque Expense,0,Transfer Money,2000.00,2000.00,871
+2019-03-25,Journal Entry,98,None,2000.00,2000.00,872
+2019-03-29,Cheque Expense,0,ANZ Bank,3.60,3.60,873
+2019-03-29,Journal Entry,160,None,0.06,0.06,874
+2019-03-29,Journal Entry,161,None,4.50,4.50,875
+2019-03-31,Journal Entry,100,None,9.22,9.22,876
+2019-04-01,Journal Entry,110,None,1034.14,1034.14,877
+2019-04-01,Journal Entry,99,None,10.00,10.00,878
+2019-04-08,Cheque Expense,0,Transfer Money,2190.00,2190.00,879
+2019-04-08,Journal Entry,1,None,961.24,961.24,880
+2019-04-11,Cheque Expense,0,Transfer Money,1200.00,1200.00,881
+2019-04-15,Cheque Expense,0,Transfer Money,500.00,500.00,882
+2019-04-26,Journal Entry,162,None,40000.00,40000.00,883
+2019-04-29,Journal Entry,101,None,13000.00,13000.00,884
+2019-04-30,Journal Entry,119,None,37.67,37.67,885
+2019-05-06,Cheque Expense,0,Transfer Money,60000.00,60000.00,886
+2019-05-06,Journal Entry,116,None,60000.00,60000.00,887
+2019-05-09,Cheque Expense,0,Transfer Money,15000.00,15000.00,888
+2019-05-09,Journal Entry,117,None,15000.00,15000.00,889
+2019-05-13,Cheque Expense,0,ASIC,263.00,263.00,890
+2019-05-13,Journal Entry,118,None,280.00,280.00,891
+2019-05-14,Cheque Expense,0,Transfer Money,1000.00,1000.00,892
+2019-05-17,Cheque Expense,0,Transfer Money,250.00,250.00,893
+2019-05-27,Cheque Expense,0,Transfer Money,2000.00,2000.00,894
+2019-05-31,Cheque Expense,0,ANZ Bank,2.40,2.40,895
+2019-05-31,Deposit,0,None,18.37,18.37,896
+2019-05-31,Journal Entry,102,None,0.17,0.17,897
+2019-06-17,Cheque Expense,0,Transfer Money,1590.00,1590.00,898
+2019-06-17,Journal Entry,112,None,482.51,482.51,899
+2019-06-17,Journal Entry,113,None,1775.43,1775.43,900
+2019-06-20,Cheque Expense,0,Transfer Money,460.00,460.00,901
+2019-06-20,Journal Entry,114,None,657.37,657.37,902
+2019-06-30,Deposit,0,ING Direct,0.09,0.09,903
+2019-07-01,Journal Entry,115,None,700.00,700.00,904
+2019-07-01,Journal Entry,24,None,1008.17,1008.17,905
+2019-07-08,Journal Entry,115,None,650.00,650.00,906
+2019-07-31,Deposit,0,None,0.07,0.07,907
+2019-08-07,Journal Entry,25,None,915.13,915.13,908
+2019-08-13,Journal Entry,115,None,96389.16,96389.16,909
+2019-08-13,Journal Entry,116,None,49097.72,49097.72,910
+2019-08-31,Deposit,0,None,0.07,0.07,911
+2019-09-16,Journal Entry,26,None,901.14,901.14,912
+2019-09-17,Journal Entry,27,None,454.24,454.24,913
+2019-09-20,Journal Entry,28,None,599.37,599.37,914
+2019-09-30,Deposit,0,None,0.07,0.07,915
+2019-09-30,Journal Entry,29,None,924.00,924.00,916
+2019-10-08,Journal Entry,30,None,843.00,843.00,917
+2019-10-31,Deposit,0,None,0.06,0.06,918
+2019-11-01,Deposit,0,None,2600.00,2600.00,919
+2019-11-04,Deposit,0,None,30000.00,30000.00,920
+2019-11-05,Expense,0,None,30000.00,30000.00,921
+2019-11-11,Expense,0,None,1600.00,1600.00,922
+2019-11-14,Expense,0,None,1000.00,1000.00,923
+2019-11-14,Journal Entry,31,None,30000.00,30000.00,924
+2019-11-29,Deposit,0,None,0.08,0.08,925
+2019-11-29,Journal Entry,35,None,14.99,14.99,926
+2019-11-30,Deposit,0,None,0.05,0.05,927
+2019-12-16,Expense,0,None,600.00,600.00,928
+2019-12-16,Journal Entry,32,None,854.94,854.94,929
+2019-12-17,Journal Entry,33,None,426.90,426.90,930
+2019-12-17,Transfer,0,None,300.00,300.00,931
+2019-12-20,Journal Entry,34,None,560.45,560.45,932
+2019-12-20,Transfer,0,None,430.00,430.00,933
+2019-12-29,Journal Entry,38,None,14.99,14.99,934
+2019-12-30,Journal Entry,36,None,872.83,872.83,935
+2019-12-30,Transfer,0,None,610.00,610.00,936
+2019-12-31,Deposit,0,None,0.05,0.05,937
+2019-12-31,Expense,0,None,1.20,1.20,938
+2020-01-07,Journal Entry,37,None,793.73,793.73,939
+2020-01-07,Transfer,0,None,560.00,560.00,940
+2020-01-09,Transfer,0,None,50.00,50.00,941
+2020-01-31,Deposit,0,None,0.05,0.05,942
+2020-02-13,Expense,0,Intuit,14.99,14.99,943
+2020-02-29,Deposit,0,None,0.05,0.05,944
+2020-03-16,Deposit,0,None,1229.54,1229.54,945
+2020-03-16,Expense,0,Intuit,14.99,14.99,946
+2020-03-17,Deposit,0,None,415.39,415.39,947
+2020-03-18,Transfer,0,None,1100.00,1100.00,948
+2020-03-20,Deposit,0,None,559.89,559.89,949
+2020-03-20,Transfer,0,None,200380.00,200380.00,950
+2020-03-23,Expense,0,Josephine McLaren,250028.00,250028.00,951
+2020-03-23,Transfer,0,None,50000.00,50000.00,952
+2020-03-30,Deposit,0,None,870.94,870.94,953
+2020-03-31,Deposit,0,ANZ Bank,1.64,1.64,954
+2020-03-31,Deposit,0,None,0.04,0.04,955
+2020-03-31,Expense,0,ANZ Bank,3.60,3.60,956
+2020-03-31,Transfer,0,None,900.00,900.00,957
+2020-04-01,Expense,0,ASIC,267.00,267.00,958
+2020-04-07,Deposit,0,None,804.10,804.10,959
+2020-04-09,Transfer,0,None,600.00,600.00,960
+2020-04-14,Expense,0,Intuit,14.99,14.99,961
+2020-04-28,Journal Entry,42,None,10000.00,10000.00,962
+2020-04-30,Deposit,0,None,0.02,0.02,963
+2020-05-14,Expense,0,Intuit,14.99,14.99,964
+2020-05-31,Deposit,0,None,0.02,0.02,965
+2020-06-15,Deposit,0,Commbank,271.71,271.71,966
+2020-06-15,Deposit,0,None,803.16,803.16,967
+2020-06-15,Expense,0,Intuit,14.99,14.99,968
+2020-06-17,Deposit,0,NAB,391.73,391.73,969
+2020-06-17,Transfer,0,None,950.00,950.00,970
+2020-06-22,Deposit,0,ANZ Bank,537.71,537.71,971
+2020-06-22,Transfer,0,None,400.00,400.00,972
+2020-06-30,Deposit,0,None,0.02,0.02,973
+2020-06-30,Expense,0,None,2.40,2.40,974
+2020-06-30,Journal Entry,39,None,94819.80,94819.80,975
+2020-06-30,Journal Entry,40,None,797.49,797.49,976
+2020-07-01,Transfer,0,None,50000.00,50000.00,977
+2020-07-02,Transfer,0,None,44890.00,44890.00,978
+2020-07-07,Journal Entry,41,None,710.13,710.13,979
+2020-07-07,Transfer,0,None,950.00,950.00,980
+2020-07-14,Expense,0,Intuit,14.99,14.99,981
+2020-07-31,Deposit,0,ANZ Bank,0.20,0.20,982
+2020-07-31,Deposit,0,None,0.02,0.02,983
+2020-08-13,Expense,0,Intuit,14.99,14.99,984
+2020-08-21,Transfer,0,None,240000.00,240000.00,985
+2020-08-24,Transfer,0,None,50000.00,50000.00,986
+2020-08-25,Transfer,0,None,140000.00,140000.00,987
+2020-08-26,Transfer,0,None,50000.00,50000.00,988
+2020-08-31,Deposit,0,ANZ Bank,2.04,2.04,989
+2020-08-31,Deposit,0,None,0.02,0.02,990
+2020-09-08,Journal Entry,44,None,89972.81,89972.81,991
+2020-09-09,Transfer,0,None,90000.00,90000.00,992
+2020-09-14,Expense,0,Intuit,14.99,14.99,993
+2020-09-15,Journal Entry,43,None,734.73,734.73,994
+2020-09-15,Journal Entry,45,None,234.43,234.43,995
+2020-09-16,Transfer,0,None,700.00,700.00,996
+2020-09-17,Journal Entry,46,None,351.37,351.37,997
+2020-09-21,Journal Entry,47,None,479.14,479.14,998
+2020-09-21,Transfer,0,None,600.00,600.00,999
+2020-09-30,Deposit,0,ANZ Bank,1.23,1.23,1000
+2020-09-30,Deposit,0,None,0.02,0.02,1001
+2020-09-30,Expense,0,ANZ Bank,0.60,0.60,1002
+2020-09-30,Journal Entry,48,None,756.17,756.17,1003
+2020-09-30,Transfer,0,None,500.00,500.00,1004
+2020-10-07,Journal Entry,49,None,700.39,700.39,1005
+2020-10-07,Transfer,0,None,500.00,500.00,1006
+2020-10-14,Expense,0,Intuit,14.99,14.99,1007
+2020-10-15,Journal Entry,50,None,337.94,337.94,1008
+2020-10-15,Transfer,0,None,150.00,150.00,1009
+2020-10-31,Deposit,0,None,0.02,0.02,1010
+2020-11-13,Expense,0,None,14.99,14.99,1011
+2020-11-30,Deposit,0,None,0.01,0.01,1012
+2020-12-14,Expense,0,Intuit,14.99,14.99,1013
+2020-12-15,Deposit,0,None,957.11,957.11,1014
+2020-12-17,Deposit,0,None,346.70,346.70,1015
+2020-12-18,Expense,0,None,900.00,900.00,1016
+2020-12-21,Deposit,0,None,477.71,477.71,1017
+2020-12-21,Transfer,0,None,100.00,100.00,1018
+2020-12-30,Deposit,0,None,746.91,746.91,1019
+2020-12-31,Deposit,0,None,0.01,0.01,1020
+2020-12-31,Expense,0,ANZ Bank,0.60,0.60,1021
+2021-01-05,Transfer,0,None,760.00,760.00,1022
+2021-01-07,Deposit,0,None,697.64,697.64,1023
+2021-01-13,Expense,0,Intuit,14.99,14.99,1024
+2021-01-18,Deposit,0,None,681.85,681.85,1025
+2021-01-31,Deposit,0,None,0.01,0.01,1026
+2021-02-15,Expense,0,Intuit,14.99,14.99,1027
+2021-02-28,Deposit,0,None,0.01,0.01,1028
+2021-03-15,Deposit,0,None,930.94,930.94,1029
+2021-03-16,Expense,0,Intuit,14.99,14.99,1030
+2021-03-17,Deposit,0,None,336.56,336.56,1031
+2021-03-22,Deposit,0,None,470.11,470.11,1032
+2021-03-30,Deposit,0,None,726.43,726.43,1033
+2021-03-31,Deposit,0,None,0.01,0.01,1034
+2021-04-07,Deposit,0,None,673.99,673.99,1035
+2021-04-12,Expense,0,ASIC,273.00,273.00,1036
+2021-04-12,Transfer,0,None,400.00,400.00,1037
+2021-04-13,Expense,0,Intuit,14.99,14.99,1038
+2021-04-30,Deposit,0,None,0.01,0.01,1039
+2021-05-14,Expense,0,Intuit,20.00,20.00,1040
+2021-05-18,Expense,0,Australian Taxation Office,1410.40,1410.40,1041
+2021-05-31,Deposit,0,None,0.01,0.01,1042
+2021-06-08,Journal Entry,53,None,89972.81,89972.81,1043
+2021-06-11,Transfer,0,None,93700.00,93700.00,1044
+2021-06-14,Expense,0,Intuit,20.00,20.00,1045
+2021-06-15,Deposit,0,Commbank,955.63,955.63,1046
+2021-06-17,Deposit,0,None,345.79,345.79,1047
+2021-06-18,Transfer,0,None,4095.17,4095.17,1048
+2021-06-21,Deposit,0,None,471.77,471.77,1049
+2021-06-25,Expense,0,ANZ Bank,50000.00,50000.00,1050
+2021-06-25,Transfer,0,None,50000.00,50000.00,1051
+2021-06-28,Expense,0,Cambel Cass (Melbourne),275.00,275.00,1052
+2021-06-28,Transfer,0,None,76000.00,76000.00,1053
+2021-06-30,Deposit,0,None,0.01,0.01,1054
+2021-06-30,Journal Entry,54,None,746.31,746.31,1055
+2021-06-30,Journal Entry,55,None,0.13,0.13,1056
+2021-06-30,Journal Entry,56,None,1.99,1.99,1057
+2021-06-30,Journal Entry,68,None,14285.00,14285.00,1058
+2021-07-05,Journal Entry,57,None,88000.00,88000.00,1059
+2021-07-07,Deposit,0,None,684.83,684.83,1060
+2021-07-08,Transfer,0,None,11000.00,11000.00,1061
+2021-07-14,Expense,0,Intuit,20.00,20.00,1062
+2021-07-16,Transfer,0,None,2600.00,2600.00,1063
+2021-07-30,Deposit,0,None,0.06,0.06,1064
+2021-07-30,Transfer,0,None,20.00,20.00,1065
+2021-07-31,Deposit,0,None,0.01,0.01,1066
+2021-08-13,Expense,0,Intuit,20.00,20.00,1067
+2021-08-31,Deposit,0,None,0.01,0.01,1068
+2021-09-08,Transfer,0,None,100.00,100.00,1069
+2021-09-13,Expense,0,Intuit,20.00,20.00,1070
+2021-09-15,Deposit,0,None,1576.36,1576.36,1071
+2021-09-15,Journal Entry,58,None,62945.50,62945.50,1072
+2021-09-17,Deposit,0,None,344.37,344.37,1073
+2021-09-20,Deposit,0,None,1011.23,1011.23,1074
+2021-09-23,Transfer,0,None,352.00,352.00,1075
+2021-09-29,Transfer,0,None,1700.00,1700.00,1076
+2021-09-30,Deposit,0,None,0.01,0.01,1077
+2021-10-01,Transfer,0,None,20000.00,20000.00,1078
+2021-10-03,Transfer,0,None,20000.00,20000.00,1079
+2021-10-06,Transfer,0,None,10000.00,10000.00,1080
+2021-10-07,Deposit,0,None,689.70,689.70,1081
+2021-10-14,Expense,0,Intuit,20.00,20.00,1082
+2021-10-15,Deposit,0,Commbank,235.56,235.56,1083
+2021-10-15,Journal Entry,59,None,55000.00,55000.00,1084
+2021-10-15,Journal Entry,60,None,3723.47,3723.47,1085
+2021-10-18,Transfer,0,None,55500.00,55500.00,1086
+2021-10-29,Deposit,0,ANZ Bank,0.21,0.21,1087
+2021-10-31,Deposit,0,None,0.01,0.01,1088
+2021-11-15,Expense,0,Intuit,20.00,20.00,1089
+2021-11-22,Transfer,0,None,2700.00,2700.00,1090
+2021-11-25,Transfer,0,None,100000.00,100000.00,1091
+2021-11-29,Journal Entry,61,None,8879.95,8879.95,1092
+2021-11-29,Transfer,0,None,2800.00,2800.00,1093
+2021-11-30,Deposit,0,ANZ Bank,0.41,0.41,1094
+2021-11-30,Deposit,0,None,0.01,0.01,1095
+2021-11-30,Transfer,0,None,6000.00,6000.00,1096
+2021-12-03,Transfer,0,None,6000.00,6000.00,1097
+2021-12-06,Journal Entry,62,None,5729.95,5729.95,1098
+2021-12-14,Expense,0,Intuit,20.00,20.00,1099
+2021-12-15,Deposit,0,None,225.21,225.21,1100
+2021-12-17,Deposit,0,None,340.20,340.20,1101
+2021-12-20,Deposit,0,None,1131.00,1131.00,1102
+2021-12-21,Deposit,0,None,464.14,464.14,1103
+2021-12-22,Transfer,0,None,101300.00,101300.00,1104
+2021-12-31,Deposit,0,ANZ Bank,0.13,0.13,1105
+2021-12-31,Deposit,0,None,0.01,0.01,1106
+2022-01-07,Deposit,0,None,689.16,689.16,1107
+2022-01-13,Expense,0,Intuit,20.00,20.00,1108
+2022-01-31,Deposit,0,ANZ Bank,0.43,0.43,1109
+2022-01-31,Deposit,0,None,0.01,0.01,1110
+2022-02-05,Transfer,0,None,11776.00,11776.00,1111
+2022-02-14,Expense,0,Intuit,20.00,20.00,1112
+2022-02-28,Deposit,0,ANZ Bank,0.35,0.35,1113
+2022-02-28,Deposit,0,None,0.01,0.01,1114
+2022-03-01,Journal Entry,63,None,21278.52,21278.52,1115
+2022-03-15,Deposit,0,None,226.50,226.50,1116
+2022-03-16,Expense,0,Intuit,20.00,20.00,1117
+2022-03-17,Deposit,0,None,341.26,341.26,1118
+2022-03-21,Deposit,0,None,1587.44,1587.44,1119
+2022-03-31,Deposit,0,ANZ Bank,0.53,0.53,1120
+2022-03-31,Deposit,0,None,0.01,0.01,1121
+2022-04-07,Deposit,0,None,680.43,680.43,1122
+2022-04-11,Transfer,0,None,1000.00,1000.00,1123
+2022-04-13,Expense,0,Intuit,20.00,20.00,1124
+2022-04-13,Transfer,0,None,5000.00,5000.00,1125
+2022-04-29,Deposit,0,ANZ Bank,0.48,0.48,1126
+2022-04-30,Deposit,0,None,0.01,0.01,1127
+2022-05-02,Journal Entry,64,None,14795.73,14795.73,1128
+2022-05-02,Journal Entry,65,None,8125.95,8125.95,1129
+2022-05-02,Transfer,0,None,44500.00,44500.00,1130
+2022-05-03,Journal Entry,66,None,5578.40,5578.40,1131
+2022-05-04,Journal Entry,67,None,27710.64,27710.64,1132
+2022-05-11,Expense,0,ASIC,276.00,276.00,1133
+2022-05-16,Expense,0,Intuit,20.00,20.00,1134
+2022-05-18,Deposit,0,None,1600.00,1600.00,1135
+2022-05-18,Journal Entry,69,None,7289.95,7289.95,1136
+2022-05-19,Transfer,0,None,4000.00,4000.00,1137
+2022-05-31,Deposit,0,ANZ Bank,0.10,0.10,1138
+2022-05-31,Journal Entry,73,None,0.02,0.02,1139
+2022-06-01,Deposit,0,Australian Taxation Office,352.00,352.00,1140
+2022-06-13,Expense,0,Intuit,20.00,20.00,1141
+2022-06-15,Deposit,0,None,238.54,238.54,1142
+2022-06-15,Transfer,0,None,14600.00,14600.00,1143
+2022-06-17,Deposit,0,None,356.47,356.47,1144
+2022-06-17,Expense,0,None,14790.71,14790.71,1145
+2022-06-20,Deposit,0,None,1500.74,1500.74,1146
+2022-06-21,Deposit,0,None,466.03,466.03,1147
+2022-06-22,Expense,0,Cambel Cass (Melbourne),291.50,291.50,1148
+2022-06-28,Transfer,0,None,81.28,81.28,1149
+2022-06-29,Expense,0,None,9046.76,9046.76,1150
+2022-06-30,Deposit,0,ANZ Bank,0.01,0.01,1151
+2022-06-30,Journal Entry,70,None,1047.46,1047.46,1152
+2022-06-30,Journal Entry,71,None,13.96,13.96,1153
+2022-06-30,Journal Entry,72,None,145.36,145.36,1154
+2022-06-30,Journal Entry,80,None,6000.00,6000.00,1155
+2022-07-01,Journal Entry,159,None,15.36,15.36,1156
+2022-07-07,Deposit,0,None,73232.46,73232.46,1157
+2022-07-12,Transfer,0,None,807.90,807.90,1158
+2022-07-14,Expense,0,Intuit,20.00,20.00,1159
+2022-07-18,Transfer,0,None,7.96,7.96,1160
+2022-07-19,Expense,0,None,39746.83,39746.83,1161
+2022-07-22,Expense,0,None,30032.81,30032.81,1162
+2022-07-25,Transfer,0,None,130.00,130.00,1163
+2022-07-29,Deposit,0,ANZ Bank,0.26,0.26,1164
+2022-08-11,Transfer,0,None,100.00,100.00,1165
+2022-08-15,Expense,0,Intuit,20.00,20.00,1166
+2022-08-16,Deposit,0,None,20.35,20.35,1167
+2022-09-15,Deposit,0,None,870.60,870.60,1168
+2022-09-16,Deposit,0,None,22.73,22.73,1169
+2022-09-16,Expense,0,Intuit,20.00,20.00,1170
+2022-09-19,Deposit,0,None,919.88,919.88,1171
+2022-09-20,Deposit,0,None,2160.01,2160.01,1172
+2022-09-21,Deposit,0,None,707.49,707.49,1173
+2022-09-26,Transfer,0,None,1000.00,1000.00,1174
+2022-09-29,Transfer,0,None,250.00,250.00,1175
+2022-10-03,Transfer,0,None,2200.00,2200.00,1176
+2022-10-14,Expense,0,Intuit,20.00,20.00,1177
+2022-10-18,Deposit,0,None,19.93,19.93,1178
+2022-11-14,Expense,0,Intuit,20.00,20.00,1179
+2022-11-16,Deposit,0,Betashares,22.40,22.40,1180
+2022-12-02,Transfer,0,None,500.00,500.00,1181
+2022-12-14,Expense,0,Intuit,20.00,20.00,1182
+2022-12-15,Deposit,0,None,1057.14,1057.14,1183
+2022-12-16,Deposit,0,Betashares,22.44,22.44,1184
+2022-12-19,Deposit,0,None,1177.39,1177.39,1185
+2022-12-20,Deposit,0,None,2534.74,2534.74,1186
+2022-12-20,Transfer,0,None,3500.00,3500.00,1187
+2022-12-21,Deposit,0,None,868.37,868.37,1188
+2022-12-21,Journal Entry,76,None,10000.00,10000.00,1189
+2022-12-23,Journal Entry,77,None,10008.40,10008.40,1190
+2022-12-28,Journal Entry,74,None,21393.48,21393.48,1191
+2022-12-30,Deposit,0,ANZ Bank,0.01,0.01,1192
+2023-01-05,Transfer,0,None,9000.00,9000.00,1193
+2023-01-12,Deposit,0,None,352.71,352.71,1194
+2023-01-16,Expense,0,Intuit,20.00,20.00,1195
+2023-01-18,Journal Entry,75,None,21.92,21.92,1196
+2023-01-19,Journal Entry,78,None,26.30,26.30,1197
+2023-01-20,Journal Entry,100,None,15808.00,15808.00,1198
+2023-01-20,Journal Entry,102,None,7242.16,7242.16,1199
+2023-01-23,Transfer,0,None,13000.00,13000.00,1200
+2023-01-31,Deposit,0,ANZ Bank,0.10,0.10,1201
+2023-02-15,Expense,0,Intuit,20.00,20.00,1202
+2023-02-17,Journal Entry,79,None,52.80,52.80,1203
+2023-02-20,Expense,0,Intuit,20.00,20.00,1204
+2023-03-15,Journal Entry,83,None,437.70,437.70,1205
+2023-03-15,Journal Entry,87,None,684.26,684.26,1206
+2023-03-16,Journal Entry,95,None,44.97,44.97,1207
+2023-03-17,Journal Entry,85,None,243.09,243.09,1208
+2023-03-17,Journal Entry,86,None,612.51,612.51,1209
+2023-03-20,Expense,0,Intuit,20.00,20.00,1210
+2023-03-20,Journal Entry,81,None,1286.81,1286.81,1211
+2023-03-20,Journal Entry,82,None,1346.90,1346.90,1212
+2023-03-21,Journal Entry,88,None,903.94,903.94,1213
+2023-03-27,Expense,0,ASIC,290.00,290.00,1214
+2023-03-28,Transfer,0,None,3000.00,3000.00,1215
+2023-04-17,Expense,0,Intuit,20.00,20.00,1216
+2023-04-20,Journal Entry,96,None,51.95,51.95,1217
+2023-05-15,Expense,0,Intuit,20.00,20.00,1218
+2023-05-16,Journal Entry,97,None,47.15,47.15,1219
+2023-05-29,Transfer,0,None,10900.00,10900.00,1220
+2023-05-31,Deposit,0,ANZ Bank,0.51,0.51,1221
+2023-06-01,Transfer,0,None,164.00,164.00,1222
+2023-06-13,Expense,0,Intuit,20.00,20.00,1223
+2023-06-15,Journal Entry,84,None,755.23,755.23,1224
+2023-06-15,Journal Entry,99,None,484.59,484.59,1225
+2023-06-19,Journal Entry,92,None,277.10,277.10,1226
+2023-06-19,Journal Entry,93,None,704.17,704.17,1227
+2023-06-19,Journal Entry,98,None,54.02,54.02,1228
+2023-06-20,Journal Entry,89,None,1395.53,1395.53,1229
+2023-06-20,Journal Entry,90,None,1483.56,1483.56,1230
+2023-06-21,Journal Entry,94,None,996.43,996.43,1231
+2023-06-21,Transfer,0,None,3000.00,3000.00,1232
+2023-06-30,Deposit,0,ANZ Bank,5.37,5.37,1233
+2023-06-30,Journal Entry,104,None,129.77,129.77,1234
+2023-06-30,Journal Entry,107,None,9176.00,9176.00,1235
+2023-07-13,Journal Entry,110,None,363.17,363.17,1236
+2023-07-14,Expense,0,Intuit,20.00,20.00,1237
+2023-07-19,Journal Entry,111,None,48.14,48.14,1238
+2023-07-26,Journal Entry,112,None,110.00,110.00,1239
+2023-08-09,Journal Entry,101,None,7398.01,7398.01,1240
+2023-08-09,Journal Entry,103,None,8333.33,8333.33,1241
+2023-08-12,Transfer,0,None,1485.50,1485.50,1242
+2023-08-14,Expense,0,Intuit,20.00,20.00,1243
+2023-08-17,Journal Entry,113,None,49.60,49.60,1244
+2023-08-22,Journal Entry,105,None,396.00,396.00,1245
+2023-08-22,Transfer,0,None,400.00,400.00,1246
+2023-09-13,Expense,0,Intuit,20.00,20.00,1247
+2023-09-16,Journal Entry,114,None,820.74,820.74,1248
+2023-09-16,Journal Entry,115,None,528.26,528.26,1249
+2023-09-19,Journal Entry,116,None,1106.31,1106.31,1250
+2023-09-21,Journal Entry,117,None,3123.42,3123.42,1251
+2023-09-22,Journal Entry,118,None,1086.43,1086.43,1252
+2023-09-27,Journal Entry,106,None,6504.00,6504.00,1253
+2023-09-27,Journal Entry,125,None,6.60,6.60,1254
+2023-10-16,Expense,0,Intuit,20.00,20.00,1255
+2023-10-18,Journal Entry,119,None,82.68,82.68,1256
+2023-11-08,Transfer,0,None,2032.00,2032.00,1257
+2023-11-13,Expense,0,Intuit,25.00,25.00,1258
+2023-11-16,Journal Entry,120,None,94.84,94.84,1259
+2023-12-14,Expense,0,Intuit,25.00,25.00,1260
+2023-12-16,Journal Entry,121,None,1314.03,1314.03,1261
+2023-12-19,Journal Entry,122,None,1099.15,1099.15,1262
+2023-12-21,Journal Entry,123,None,3019.24,3019.24,1263
+2023-12-22,Journal Entry,124,None,1053.94,1053.94,1264
+2024-01-04,Transfer,0,None,6600.00,6600.00,1265
+2024-01-08,Transfer,0,None,6700.00,6700.00,1266
+2024-01-15,Expense,0,Intuit,25.00,25.00,1267
+2024-01-17,Transfer,0,None,100.00,100.00,1268
+2024-01-18,Journal Entry,126,None,91.82,91.82,1269
+2024-01-31,Deposit,0,ANZ Bank,0.01,0.01,1270
+2024-01-31,Expense,0,None,0.02,0.02,1271
+2024-02-13,Expense,0,Intuit,25.00,25.00,1272
+2024-02-17,Journal Entry,127,None,103.09,103.09,1273
+2024-03-15,Expense,0,Intuit,25.00,25.00,1274
+2024-03-16,Journal Entry,128,None,1355.64,1355.64,1275
+2024-03-19,Journal Entry,129,None,1132.48,1132.48,1276
+2024-03-21,Journal Entry,130,None,3107.66,3107.66,1277
+2024-03-22,Journal Entry,131,None,1087.37,1087.37,1278
+2024-03-24,Journal Entry,108,None,66000.00,66000.00,1279
+2024-03-24,Journal Entry,109,None,4141.76,4141.76,1280
+2024-04-03,Journal Entry,132,None,70.60,70.60,1281
+2024-04-05,Deposit,0,None,71300.00,71300.00,1282
+2024-04-05,Expense,0,ASIC,310.00,310.00,1283
+2024-04-05,Expense,0,None,50000.00,50000.00,1284
+2024-04-05,Transfer,0,None,141100.00,141100.00,1285
+2024-04-08,Expense,0,None,20000.00,20000.00,1286
+2024-04-15,Expense,0,Intuit,25.00,25.00,1287
+2024-04-18,Journal Entry,133,None,88.95,88.95,1288
+2024-05-03,Journal Entry,134,None,23.58,23.58,1289
+2024-05-08,Transfer,0,None,900.00,900.00,1290
+2024-05-14,Expense,0,Intuit,25.00,25.00,1291
+2024-05-16,Journal Entry,135,None,101.68,101.68,1292
+2024-05-28,Journal Entry,158,None,9176.00,9176.00,1293
+2024-05-28,Transfer,0,None,9176.00,9176.00,1294
+2024-05-29,Expense,0,None,1070.52,1070.52,1295
+2024-05-29,Transfer,0,None,1070.00,1070.00,1296
+2024-05-31,Deposit,0,ANZ Bank,0.86,0.86,1297
+2024-06-13,Expense,0,Intuit,25.00,25.00,1298
+2024-06-18,Journal Entry,136,None,833.09,833.09,1299
+2024-06-18,Journal Entry,137,None,536.49,536.49,1300
+2024-06-18,Journal Entry,138,None,291.59,291.59,1301
+2024-06-18,Journal Entry,139,None,748.34,748.34,1302
+2024-06-20,Journal Entry,140,None,1630.56,1630.56,1303
+2024-06-20,Journal Entry,142,None,96.56,96.56,1304
+2024-06-22,Journal Entry,141,None,1096.37,1096.37,1305
+2024-06-26,Transfer,0,None,6400.00,6400.00,1306
+2024-06-27,Deposit,0,None,130.00,130.00,1307
+2024-06-28,Deposit,0,ANZ Bank,8.19,8.19,1308
+2024-06-28,Transfer,0,None,25000.00,25000.00,1309
+2024-06-30,Journal Entry,162,None,28000.00,28000.00,1310
+2024-07-01,Transfer,0,None,39500.00,39500.00,1311
+2024-07-10,Transfer,0,None,4100.00,4100.00,1312
+2024-07-11,Expense,0,None,283.00,283.00,1313
+2024-07-11,Transfer,0,None,3800.00,3800.00,1314
+2024-07-15,Expense,0,Intuit,25.00,25.00,1315
+2024-07-17,Journal Entry,143,None,87.80,87.80,1316
+2024-07-24,Journal Entry,144,None,120.00,120.00,1317
+2024-07-29,Journal Entry,145,None,32724.00,32724.00,1318
+2024-07-31,Deposit,0,ANZ Bank,4.05,4.05,1319
+2024-07-31,Journal Entry,146,None,21720.00,21720.00,1320
+2024-07-31,Journal Entry,147,None,25216.17,25216.17,1321
+2024-08-13,Expense,0,Intuit,25.00,25.00,1322
+2024-08-17,Journal Entry,148,None,180.08,180.08,1323
+2024-08-26,Deposit,0,None,92600.00,92600.00,1324
+2024-08-30,Deposit,0,ANZ Bank,12.66,12.66,1325
+2024-09-05,Journal Entry,181,None,40.96,40.96,1326
+2024-09-10,Transfer,0,None,5000.00,5000.00,1327
+2024-09-13,Expense,0,Intuit,25.00,25.00,1328
+2024-09-17,Journal Entry,150,None,836.04,836.04,1329
+2024-09-17,Journal Entry,151,None,538.46,538.46,1330
+2024-09-18,Journal Entry,149,None,168.78,168.78,1331
+2024-09-18,Journal Entry,152,None,295.39,295.39,1332
+2024-09-18,Journal Entry,153,None,758.29,758.29,1333
+2024-09-20,Expense,0,Cambel Cass (Melbourne),291.50,291.50,1334
+2024-09-20,Journal Entry,209,None,377.61,377.61,1335
+2024-09-21,Journal Entry,154,None,701.30,701.30,1336
+2024-09-24,Journal Entry,155,None,735.20,735.20,1337
+2024-09-30,Deposit,0,ANZ Bank,94.65,94.65,1338
+2024-10-03,Journal Entry,156,None,43.49,43.49,1339
+2024-10-03,Transfer,0,None,10000.00,10000.00,1340
+2024-10-07,Transfer,0,None,2600.00,2600.00,1341
+2024-10-08,Transfer,0,None,6000.00,6000.00,1342
+2024-10-10,Transfer,0,None,9000.00,9000.00,1343
+2024-10-14,Expense,0,Intuit,25.00,25.00,1344
+2024-10-17,Journal Entry,157,None,174.79,174.79,1345
+2024-10-29,Deposit,0,None,13600.00,13600.00,1346
+2024-10-29,Transfer,0,None,9000.00,9000.00,1347
+2024-10-30,Transfer,0,None,9000.00,9000.00,1348
+2024-10-31,Deposit,0,ANZ Bank,66.20,66.20,1349
+2024-11-05,Journal Entry,183,None,51.47,51.47,1350
+2024-11-06,Expense,0,None,283.00,283.00,1351
+2024-11-06,Transfer,0,None,15500.00,15500.00,1352
+2024-11-13,Expense,0,Intuit,29.00,29.00,1353
+2024-11-19,Journal Entry,163,None,168.13,168.13,1354
+2024-11-28,Transfer,0,None,2000.00,2000.00,1355
+2024-11-29,Deposit,0,ANZ Bank,39.58,39.58,1356
+2024-12-04,Journal Entry,184,None,50.36,50.36,1357
+2024-12-13,Transfer,0,None,20000.00,20000.00,1358
+2024-12-16,Deposit,0,None,20000.00,20000.00,1359
+2024-12-16,Expense,0,Intuit,29.00,29.00,1360
+2024-12-16,Transfer,0,None,19900.00,19900.00,1361
+2024-12-17,Journal Entry,164,None,832.06,832.06,1362
+2024-12-17,Journal Entry,165,None,535.97,535.97,1363
+2024-12-17,Transfer,0,None,10000.00,10000.00,1364
+2024-12-18,Journal Entry,166,None,293.81,293.81,1365
+2024-12-18,Journal Entry,167,None,168.71,168.71,1366
+2024-12-18,Journal Entry,168,None,754.69,754.69,1367
+2024-12-18,Transfer,0,None,30000.00,30000.00,1368
+2024-12-21,Journal Entry,169,None,1072.94,1072.94,1369
+2024-12-24,Journal Entry,170,None,730.80,730.80,1370
+2024-12-27,Transfer,0,None,10000.00,10000.00,1371
+2024-12-31,Deposit,0,ANZ Bank,61.76,61.76,1372
+2025-01-02,Transfer,0,None,10000.00,10000.00,1373
+2025-01-06,Journal Entry,185,None,57.15,57.15,1374
+2025-01-09,Transfer,0,None,20500.00,20500.00,1375
+2025-01-13,Expense,0,Intuit,29.00,29.00,1376
+2025-01-18,Journal Entry,171,None,187.27,187.27,1377
+2025-01-29,Transfer,0,None,1000.00,1000.00,1378
+2025-01-31,Deposit,0,ANZ Bank,81.41,81.41,1379
+2025-02-03,Transfer,0,None,2000.00,2000.00,1380
+2025-02-05,Journal Entry,186,None,63.49,63.49,1381
+2025-02-10,Transfer,0,None,3300.00,3300.00,1382
+2025-02-13,Expense,0,Intuit,29.00,29.00,1383
+2025-02-19,Journal Entry,172,None,181.25,181.25,1384
+2025-02-24,Journal Entry,179,None,62408.00,62408.00,1385
+2025-02-24,Journal Entry,180,None,43526.00,43526.00,1386
+2025-02-24,Transfer,0,None,133800.00,133800.00,1387
+2025-02-25,Expense,0,None,50000.00,50000.00,1388
+2025-02-25,Transfer,0,None,15000.00,15000.00,1389
+2025-02-28,Journal Entry,160,None,0.01,0.01,1390
+2025-02-28,Journal Entry,161,None,56.43,56.43,1391
+2025-03-03,Deposit,0,None,101800.00,101800.00,1392
+2025-03-03,Transfer,0,None,50000.00,50000.00,1393
+2025-03-04,Expense,0,None,50000.00,50000.00,1394
+2025-03-05,Journal Entry,187,None,72.63,72.63,1395
+2025-03-05,Journal Entry,188,None,0.02,0.02,1396
+2025-03-10,Expense,0,None,2500.00,2500.00,1397
+2025-03-17,Expense,0,Intuit,29.00,29.00,1398
+2025-03-17,Expense,0,None,283.00,283.00,1399
+2025-03-17,Transfer,0,None,300.00,300.00,1400
+2025-03-18,Journal Entry,173,None,827.74,827.74,1401
+2025-03-18,Journal Entry,174,None,533.31,533.31,1402
+2025-03-18,Journal Entry,175,None,292.24,292.24,1403
+2025-03-18,Journal Entry,176,None,751.14,751.14,1404
+2025-03-19,Journal Entry,177,None,164.21,164.21,1405
+2025-03-31,Deposit,0,ANZ Bank,6.35,6.35,1406
+2025-03-31,Expense,0,ASIC,321.00,321.00,1407
+2025-03-31,Transfer,0,None,3300.00,3300.00,1408
+2025-04-03,Journal Entry,189,None,17.10,17.10,1409
+2025-04-14,Expense,0,Intuit,29.00,29.00,1410
+2025-04-17,Journal Entry,178,None,182.26,182.26,1411
+2025-04-22,Deposit,0,None,99000.00,99000.00,1412
+2025-04-23,Transfer,0,None,98800.00,98800.00,1413
+2025-04-24,Transfer,0,None,200.00,200.00,1414
+2025-04-28,Expense,0,None,283.00,283.00,1415
+2025-04-30,Deposit,0,ANZ Bank,9.79,9.79,1416
+2025-05-01,Deposit,0,None,50000.00,50000.00,1417
+2025-05-07,Deposit,0,None,50000.00,50000.00,1418
+2025-05-08,Transfer,0,None,100000.00,100000.00,1419
+2025-05-12,Deposit,0,None,150000.00,150000.00,1420
+2025-05-12,Transfer,0,None,256000.00,256000.00,1421
+2025-05-13,Transfer,0,None,100000.00,100000.00,1422
+2025-05-14,Expense,0,Intuit,29.00,29.00,1423
+2025-05-14,Journal Entry,190,None,100177.08,100177.08,1424
+2025-05-14,Transfer,0,None,100000.00,100000.00,1425
+2025-05-16,Expense,0,None,612.16,612.16,1426
+2025-05-16,Journal Entry,191,None,51657.42,51657.42,1427
+2025-05-16,Transfer,0,None,100650.00,100650.00,1428
+2025-05-17,Journal Entry,193,None,179.27,179.27,1429
+2025-05-19,Journal Entry,192,None,50432.34,50432.34,1430
+2025-05-30,Deposit,0,ANZ Bank,28.31,28.31,1431
+2025-06-04,Journal Entry,194,None,77.01,77.01,1432
+2025-06-13,Expense,0,Intuit,29.00,29.00,1433
+2025-06-17,Journal Entry,195,None,806.86,806.86,1434
+2025-06-17,Journal Entry,196,None,519.00,519.00,1435
+2025-06-18,Journal Entry,197,None,286.31,286.31,1436
+2025-06-18,Journal Entry,198,None,732.34,732.34,1437
+2025-06-19,Journal Entry,199,None,270.06,270.06,1438
+2025-06-19,Journal Entry,204,None,745.71,745.71,1439
+2025-06-19,Journal Entry,205,None,178.56,178.56,1440
+2025-06-30,Deposit,0,ANZ Bank,0.89,0.89,1441
+2025-06-30,Journal Entry,210,None,28000.00,28000.00,1442
+2025-07-10,Expense,0,Cambel Cass (Melbourne),302.50,302.50,1443
+2025-07-14,Expense,0,Intuit,29.00,29.00,1444
+2025-07-17,Journal Entry,200,None,213.12,213.12,1445
+2025-07-17,Journal Entry,203,None,710.84,710.84,1446
+2025-07-17,Journal Entry,206,None,186.73,186.73,1447
+2025-07-21,Transfer,0,None,650.00,650.00,1448
+2025-07-26,Journal Entry,208,None,70.00,70.00,1449
+2025-07-31,Deposit,0,ANZ Bank,0.65,0.65,1450
+2025-08-13,Expense,0,Intuit,29.00,29.00,1451
+2025-08-15,Transfer,0,None,3860.00,3860.00,1452
+2025-08-19,Journal Entry,201,None,204.38,204.38,1453
+2025-08-19,Journal Entry,202,None,696.93,696.93,1454
+2025-08-19,Journal Entry,207,None,185.00,185.00,1455
+2025-08-28,Transfer,0,None,300.00,300.00,1456
+2025-08-29,Deposit,0,ANZ Bank,0.30,0.30,1457
+2025-09-12,Expense,0,Intuit,286.33,286.33,1458

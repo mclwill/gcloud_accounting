@@ -1,0 +1,67 @@
+.acct-popover.popover {
+  min-width: 420px !important;
+  max-width: 520px !important;
+}
+
+.acct-popover .popover-body {
+  width: 100% !important;
+}
+
+.acct-popover .Select {
+  width: 100% !important;
+}
+
+.acct-popover .Select-menu-outer {
+  width: 100% !important;
+}
+
+/* Entire popover font */
+.acct-popover {
+  font-size: 16px;           /* base size */
+}
+
+/* Header */
+.acct-popover .popover-header {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Selected value shown in the dropdown */
+.acct-popover .Select-value-label {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+}
+
+/* Placeholder text */
+.acct-popover .Select-placeholder {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Dropdown options list */
+.acct-popover .Select-menu-outer {
+  font-size: 16px;
+}
+
+.acct-popover .Select-option {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 12px;
+}
+
+/* Highlighted / hovered option */
+.acct-popover .Select-option.is-focused {
+  font-weight: 600;
+}
+
+/* Selected option in menu */
+.acct-popover .Select-option.is-selected {
+  font-weight: 700;
+}
+
+.acct-popover .Select-value-label,
+.acct-popover .Select-option {
+  font-family: inherit;
+  letter-spacing: 0.2px;
+}
+

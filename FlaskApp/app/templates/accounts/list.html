@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Accounts{% endblock %}
+
+{% block content %}
+<h1>Accounts</h1>
+
+<form method="get" class="filters">
+  <label>
+    Entity
+    <select name="entity_name">
+      <option value="">All entities</option>
+      {% for entity in entities %}
+        <option value="{{ entity.name }}"
+          {% if entity.name == entity_name %}selected{% endif %}>
+          {{ entity.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <button type="submit">Apply</button>
+  <a href="{{ url_for('accounts_ui.list') }}">Reset</a>
+</form>
+
+<table class="accounts">
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th class="number">Debit</th>
+      <th class="number">Credit</th>
+      <th class="number">Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in accounts %}
+      <tr>
+        <td>{{ a.code }}</td>
+        <td>
+          <a href="{{ url_for('accounts_ui.ledger', account_id=a.id, entity_name=entity_name) }}">
+            {{ a.name }}
+          </a>
+        </td>
+        <td class="number">{{ "%.2f"|format(a.debit_total or 0) }}</td>
+        <td class="number">{{ "%.2f"|format(a.credit_total or 0) }}</td>
+        <td class="number">
+          {{ "%.2f"|format((a.debit_total or 0) - (a.credit_total or 0)) }}
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="5">No accounts found.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

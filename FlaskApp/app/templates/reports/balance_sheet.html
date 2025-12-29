@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>
+  Balance Sheet
+  {% if entity_name %}
+    <small style="font-weight: normal;">
+      ({{ entity_name }})
+    </small>
+  {% endif %}
+</h1>
+
+<a href="{{ url_for('accounts_ui.list') }}">
+    ← Back to account list
+<hr>
+
+<iframe
+  src="{{ dash_src }}"
+  style="width:100%; height:85vh; border:none;">
+</iframe>
+{% endblock %}

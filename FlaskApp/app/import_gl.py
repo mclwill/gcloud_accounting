@@ -1,83 +1,79 @@
 import pandas as pd
 from FlaskApp.app import app, db
-from FlaskApp.app.accounting_db import Entity, Account, Transaction
+from FlaskApp.app.accounting_db import Entity, Account, Transaction, TransactionLine
 import FlaskApp.app.common as common
 import os
 
-def import_gl():
-    # Load Excel file
-    common.logger.debug(f"PWD = {os.getcwd()}")
-    df = pd.read_csv("FlaskApp/app/assets/General_ledger.csv",na_values=["","NA","null"])  # adjust path if needed
+def lookup_account_id(name):
+    account = Account.query.filter_by(name=name).first()
+    common.logger.debug(f"Account = {name}")
+    if account:
+        return account.id
+    else:
+        # Optionally create new account if not found
+        new_account = Account(entity_id=1, name=name, type="Expense")
+        db.session.add(new_account)
+        db.session.flush()
+        return new_account.id
 
-    # Look for existing entity
-    entity = Entity.query.filter_by(name="JAJG Pty Ltd", type="company").first()
-    if not entity:
-        entity = Entity(name="JAJG Pty Ltd", type="company")
-        db.session.add(entity)
-        db.session.commit()
+def import_gl(entity):
+   # Load your parsed GL file
+    df = pd.read_csv("FlaskApp/app/assets/General_ledger.csv")
 
-    # Cache accounts
-    account_cache = {}
+    # Iterate over unique transaction_ids
+    for txn_id, group in df.groupby("transaction_id"):
+        if txn_id == "check":  # skip unmatched rows
+            continue
 
-    def get_or_create_account(name, type_="expense"):
-        if name in account_cache:
-            return account_cache[name]
-        account = Account.query.filter_by(entity_id=entity.id, name=name).first()
-        if not account:
-            raise ValueError(f"Account not found: {name}")  
-        account_cache[name] = account
-        return account
-
-    # Iterate rows
-    for _, row in df.iterrows():
-        account_name = row.get("Account")
-
-        # Robust NaN/empty checks
-        is_account_missing = (
-            pd.isna(account_name) or
-            (isinstance(account_name, str) and account_name.strip() == "")
+        # Create Transaction record
+        txn = Transaction(
+            entity_id=entity,  # replace with actual entity_id
+            transaction_id=str(txn_id),
+            date=pd.to_datetime(group["Date"].iloc[0]).date(),
+            description=group["Memo/Description"].iloc[0],
+            transaction_type=group["Transaction Type"].iloc[0],
         )
-        if is_account_missing:
-            # skip rows without a valid account name
-            continue
-        
-        debit = row.get("Debit", 0) or 0
-        credit = row.get("Credit", 0) or 0
-        amount = debit if debit else credit
-        common.logger.debug(f"account_name is : {account_name} and type is {type(account_name)}")
-
-        acc = get_or_create_account(account_name)
-
-        if debit:
-            txn = Transaction(
-                entity_id=entity.id,
-                date=row.get("Date"),
-                description=row.get("Description", ""),
-                debit_account_id=acc.id,
-                credit_account_id=None,   # optional: suspense/offset
-                amount=debit,
-                transaction_type=row.get("Transaction Type", "Journal")
-            )
-        elif credit:
-            txn = Transaction(
-                entity_id=entity.id,
-                date=row.get("Date"),
-                description=row.get("Description", ""),
-                debit_account_id=None,
-                credit_account_id=acc.id,
-                amount=credit,
-                transaction_type=row.get("Transaction Type", "Journal")
-            )
-        else:
-            continue
-
         db.session.add(txn)
+        db.session.flush()  # ensures txn.id is available
 
+        # Create TransactionLine entries for each row in this transaction
+        for _, row in group.iterrows():
+            # Example: decide debit vs credit based on which column is nonzero
+            if row["Debit"] > 0:
+                line = TransactionLine(
+                    transaction_id=txn.id,
+                    account_id=lookup_account_id(row["Account"]),  # implement lookup
+                    is_debit=True,
+                    amount=row["Debit"],
+                )
+            if row["Credit"] > 0:
+                line = TransactionLine(
+                    transaction_id=txn.id,
+                    account_id=lookup_account_id(row["Account"]),
+                    is_debit=False,
+                    amount=row["Credit"],
+                )
+            db.session.add(line)
+
+    # Commit all inserts
     db.session.commit()
-    print("Imported GL for JAJG Pty Ltd")
+
+    common.logger.debug("Imported GL for JAJG Pty Ltd")
+
+def lookup_account_id(name):
+    account = Account.query.filter_by(name=name).first()
+    if account:
+        return account.id
+    else:
+        # Optionally create new account if not found
+        new_account = Account(entity_id=1, name=name, type="expense")
+        db.session.add(new_account)
+        db.session.flush()
+        return new_account.id
+   
 
 if __name__ == "__main__":
     # Run inside Flask app context
     with app.app_context():
-        import_gl()
+        import_gl('JAJG Pty Ltd')
 

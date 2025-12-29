@@ -1,0 +1,7 @@
+/* Hide the selection (radio) column completely: header + body */
+.dash-table-container .dash-select-cell,
+.dash-table-container .dash-select-header {
+  display: none !important;
+}
+
+

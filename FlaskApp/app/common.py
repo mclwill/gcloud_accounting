@@ -21,8 +21,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-import FlaskApp.app.secrets as secrets
-from FlaskApp.app import app
+from . import secrets
+from . import app
 
 #used for setting testing on and off - False for testing purposes True for production
 
@@ -697,6 +697,8 @@ check_logging_initiate()
 dbx = False
 dropbox_initiate()
 
+'''Remove below as only for Uphance 
+
 #initiate uphance 
 customers = access_secret_version('global_parameters',None,'customers')
 
@@ -721,7 +723,7 @@ for c in customers:
     cross_docks_info[c] = False
     get_CD_FTP_credentials(c)
 
-
+'''
 
 
 

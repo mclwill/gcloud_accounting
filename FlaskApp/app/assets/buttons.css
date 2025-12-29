@@ -1,0 +1,13 @@
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background-color: inherit;
+}
+
+.show-hide {
+    display: none;
+}
+

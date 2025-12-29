@@ -1,0 +1,4 @@
+export FLASK_LOCAL=True
+export FLASK_APP=FlaskApp.app
+
+(accounting) Mac@Mac-mini gcloud_accounting % flask run --cert=localhost+2.pem --key=localhost+2-key.pem

@@ -1,0 +1,18 @@
+/* Force popovers to render above everything */
+.acct-popover,
+.popover {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 999999 !important;
+}
+
+/* Make sure popover isn't clipped by anything */
+.popover {
+  position: fixed !important;
+}
+
+/* If some global CSS sets pointer-events:none */
+.popover, .popover * {
+  pointer-events: auto !important;
+}

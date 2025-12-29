@@ -1,9 +1,9 @@
-from FlaskApp.app import app
+from . import app
 #import time
 import sys
 import threading
 from flask import request, jsonify
-import FlaskApp.app.common as common
+from . import common
 import urllib.parse
 
 

@@ -24,9 +24,9 @@ from flask_login import (
 from oauthlib.oauth2 import WebApplicationClient
 
 
-from FlaskApp.app.user import User
-import FlaskApp.app.common as common
-from FlaskApp.app import app 
+from .user import User
+from . import common
+from . import app 
 
 if ('LOCAL' in app.config) and app.config['LOCAL']:
     file_prefix = './FlaskApp/'
@@ -64,8 +64,13 @@ login_manager.session_protection = 'strong'
 def unauthorized():
     #common.logger.debug('handler: ' + str(request.args) + str(request.path))
     #common.logger.debug('handler: ' + str(request.__dict__))
-    session['next_url'] = request.path
-    return redirect(url_for('login',next=request.endpoint))
+    if 'next_url' not in session:
+        session['next_url'] = request.url 
+        common.logger.debug(f"SET next_url = {request.url}")
+        #changed from request.path as suggested by CoPilot
+    #return redirect(url_for('login',next=request.endpoint)) changed at request of CoPilot
+    
+    return redirect(url_for('login'))
 
 '''
 # Naive database setup
@@ -192,7 +197,9 @@ def callback():
             if url != '/login':
                return redirect(url)
 
-    return redirect_dest(url_for('/dashboard/'))
+    #return redirect_dest(url_for('/dashboard/')) changed at request of CoPilot
+    return redirect(url_for('accounts_ui.list'))
+
 
 def redirect_dest(fallback):
     #common.logger.debug('redirect: ' + str(request.args) + str(request.path))
@@ -222,4 +229,13 @@ def user():
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
+
+@app.before_request
+def protect_dash():
+    if request.path.startswith("/dash"):
+        if not current_user.is_authenticated:
+            if "next_url" not in session:
+                session["next_url"] = request.url
+                common.logger.debug(f"SET next_url = {request.url}")
+            return redirect(url_for("login"))
 

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Accounting{% endblock %}</title>
+</head>
+<header class="app-header">
+  <h1>Accounting Dashboard</h1>
+
+  {% if all_entities|length > 1 %}
+    <form method="post" action="{{ url_for('set_entity') }}">
+      <select name="entity" onchange="this.form.submit()">
+        {% for e in all_entities %}
+          <option value="{{ e.name }}"
+            {% if e.name == current_entity %}selected{% endif %}>
+            {{ e.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+  {% else %}
+    <span class="entity-label">{{ current_entity }}</span>
+  {% endif %}
+  <nav class="app-nav">
+    <!-- Profit & Loss -->
+    <form class="report-form" id="pnl-form" onsubmit="return false;">
+      <a href="/reports/pnl">P&amp;L</a>
+
+      <label>
+        <span>From</span>
+        <input type="date" id="pnl-start">
+      </label>
+
+      <label>
+        <span>To</span>
+        <input type="date" id="pnl-end">
+      </label>
+
+      <button type="button" onclick="goPnL()">Run</button>
+    </form>
+
+    <!-- Balance Sheet -->
+    <form class="report-form" id="bs-form" onsubmit="return false;">
+      <a href="/reports/balance-sheet">Balance Sheet</a>
+
+      <label>
+        <span>As of</span>
+        <input type="date" id="bs-asof">
+      </label>
+
+      <button type="button" onclick="goBalanceSheet()">Run</button>
+    </form>
+  </nav>
+
+  <script>
+    function goPnL(){
+      const start = document.getElementById("pnl-start").value;
+      const end = document.getElementById("pnl-end").value;
+
+      if(!start || !end){
+        window.location.href = "/reports/pnl";
+        return;
+      }
+
+      const qs = new URLSearchParams({ start, end }).toString();
+      window.location.href = "/reports/pnl?" + qs;
+    }
+
+    function goBalanceSheet(){
+      const asof = document.getElementById("bs-asof").value;
+
+      if(!asof){
+        window.location.href = "/reports/balance-sheet";
+        return;
+      }
+
+      const qs = new URLSearchParams({ asof }).toString();
+      window.location.href = "/reports/balance-sheet?" + qs;
+    }
+  </script>
+</header>
+
+<body>
+  {% block content %}{% endblock %}
+</body>
+</html>

@@ -7,7 +7,8 @@ import os
 def import_accounts():
     # Load Excel file
     common.logger.debug(f"PWD = {os.getcwd()}")
-    df = pd.read_csv("FlaskApp/app/assets/JAJG Pty Ltd_Account List.csv")  # adjust path if needed
+    acc_file = "FlaskApp/app/assets/JAJG Pty Ltd_Account List.csv"
+    df = pd.read_csv(acc_file,thousands=',',na_values=["","NA","null"])  # adjust path if needed
 
     # Look for existing entity
     entity = Entity.query.filter_by(name="JAJG Pty Ltd", type="company").first()

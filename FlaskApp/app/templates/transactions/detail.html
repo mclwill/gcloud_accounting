@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction {{ transaction.transaction_id }}{% endblock %}
+
+{% block content %}
+<h1>Transaction {{ transaction.transaction_id }}</h1>
+
+<section>
+  <p><strong>Date:</strong> {{ transaction.date }}</p>
+  <p><strong>Description:</strong> {{ transaction.description }}</p>
+  <p><strong>Type:</strong> {{ transaction.transaction_type }}</p>
+  <p><strong>Status:</strong>
+    {{ "Posted" if transaction.posted_at else "Draft" }}
+  </p>
+  <p><strong>Created:</strong> {{ transaction.created_at }}</p>
+  {% if transaction.posted_at %}
+    <p><strong>Posted:</strong> {{ transaction.posted_at }}</p>
+  {% endif %}
+</section>
+
+<h2>Postings</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Account</th>
+      <th>Debit</th>
+      <th>Credit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for line, account in lines %}
+      <tr>
+        <td>{{ account.code }} – {{ account.name }}</td>
+        <td class="number">
+          {% if line.is_debit %}{{ "%.2f"|format(line.amount) }}{% endif %}
+        </td>
+        <td class="number">
+          {% if not line.is_debit %}{{ "%.2f"|format(line.amount) }}{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>
+  <a href="{{ url_for('transactions_ui.list') }}">← Back to transactions</a>
+</p>
+{% endblock %}

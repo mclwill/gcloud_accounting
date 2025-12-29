@@ -1,7 +1,7 @@
 import threading
-import FlaskApp.app.auth_real_python as arp
+from . import auth_real_python as arp
 from flask_login import UserMixin
-import FlaskApp.app.common as common
+from . import common
 import traceback
 
 lock = threading.Lock()

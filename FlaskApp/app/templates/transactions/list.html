@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+<h1>Transactions</h1>
+
+<form method="get" class="filters">
+  <fieldset>
+    <legend>Filters</legend>
+
+    <label>
+      Entity
+      <select name="entity_name">
+        <option value="">All entities</option>
+        {% for entity in entities %}
+          <option value="{{ entity.name }}"
+            {% if entity.name == entity_name %}selected{% endif %}>
+            {{ entity.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <!--input type="text" name="entity_id" value="{{ entity_id or '' }}">-->
+    </label>
+
+    <label>
+      Account
+      <select name="account_id">
+        <option value="">All</option>
+        {% for acct in accounts %}
+          <option value="{{ acct.id }}"
+            {{ 'selected' if account_id == acct.id|string else '' }}>
+            {{ acct.code }} – {{ acct.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      Status
+      <select name="status">
+        <option value="">All</option>
+        <option value="draft" {{ 'selected' if status == 'draft' else '' }}>Draft</option>
+        <option value="posted" {{ 'selected' if status == 'posted' else '' }}>Posted</option>
+      </select>
+    </label>
+
+    <label>
+      Start date
+      <input type="date" name="start_date" value="{{ start_date or '' }}">
+    </label>
+
+    <label>
+      End date
+      <input type="date" name="end_date" value="{{ end_date or '' }}">
+    </label>
+
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('transactions_ui.list') }}">Reset</a>
+  </fieldset>
+</form>
+
+<table class="transactions">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Transaction ID</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Accounts</th>
+      <th class="number">Debit</th>
+      <th class="number">Credit</th>
+      <th>Status</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in transactions %}
+      <tr class="{{ 'posted' if t.posted_at else 'draft' }}">
+        <td>{{ t.date }}</td>
+        <td>
+          <a href="{{ url_for('transactions_ui.detail', transaction_id=t.id) }}">
+            {{ t.transaction_id }}
+          </a>
+        </td>
+        <td>{{ t.description }}</td>
+        <td>{{ t.transaction_type }}</td>
+        <td>{{ t.account_names or "" }}</td>
+        <td class="number">{{ "%.2f"|format(t.debit_total or 0) }}</td>
+        <td class="number">{{ "%.2f"|format(t.credit_total or 0) }}</td>
+        <td>{{ 'Posted' if t.posted_at else 'Draft' }}</td>
+        <td>{{ t.created_at }}</td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="8">No transactions found.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

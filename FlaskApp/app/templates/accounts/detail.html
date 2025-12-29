@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ account.name }}</h1>
+
+<p>Account ID: {{ account.id }}</p>
+
+<a href="{{ url_for('accounts_ui.ledger', account_id=account.id) }}">
+    View ledger →
+</a>
+{% endblock %}
