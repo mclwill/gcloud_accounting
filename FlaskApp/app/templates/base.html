@@ -12,12 +12,14 @@
       <h1>Accounting Dashboard</h1>
 
       <div class="auth-links">
-        {% if is_logged_in %}
-          <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-          <a href="{{ url_for('login') }}">Login</a>
-        {% endif %}
-      </div>
+      {% if is_logged_in %}
+        <div class="user-id">User {{ current_user_id }}</div>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+      {% endif %}
+    </div>
+
     </div>
 
     {% if all_entities|length > 1 %}

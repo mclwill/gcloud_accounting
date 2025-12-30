@@ -65,7 +65,8 @@ def absolute_url(path: str) -> str:
 @app.context_processor
 def inject_auth_state():
     return {
-        "is_logged_in": bool(session.get("user_id"))  # or whatever key you use
+        "is_logged_in": bool(session.get("user_id")),  # or whatever key you use
+        "current_user_id": session.get("user_id"),
     }
 
 
