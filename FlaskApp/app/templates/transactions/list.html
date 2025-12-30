@@ -5,6 +5,11 @@
 {% block content %}
 <h1>Transactions</h1>
 
+<a href="{{ url_for('accounts_ui.list') }}">
+    ← Back to account list
+
+<hr>
+
 <form method="get" class="filters">
   <fieldset>
     <legend>Filters</legend>
@@ -56,6 +61,16 @@
       <input type="date" name="end_date" value="{{ end_date or '' }}">
     </label>
 
+    <label>
+      Description contains
+      <input type="text" name="q" value="{{ q or '' }}" placeholder="e.g. rent, invoice #">
+    </label>
+
+    <label>
+      Amount (debit or credit)
+      <input type="number" step="0.01" name="amount" value="{{ amount or '' }}" placeholder="e.g. 125.00">
+    </label>
+
     <button type="submit">Apply</button>
     <a href="{{ url_for('transactions_ui.list') }}">Reset</a>
   </fieldset>
@@ -87,8 +102,20 @@
         <td>{{ t.description }}</td>
         <td>{{ t.transaction_type }}</td>
         <td>{{ t.account_names or "" }}</td>
-        <td class="number">{{ "%.2f"|format(t.debit_total or 0) }}</td>
-        <td class="number">{{ "%.2f"|format(t.credit_total or 0) }}</td>
+        <td class="number">
+          {% if t.debit_account_id %}
+            <a href="{{ url_for('accounts_ui.ledger', account_id=t.debit_account_id, txn_id=t.id) }}">{{ "%.2f"|format(t.debit_total or 0) }}</a>
+          {% else %}
+            {{ "%.2f"|format(t.debit_total or 0) }}
+          {% endif %}
+        </td>
+        <td class="number">
+          {% if t.credit_account_id %}
+            <a href="{{ url_for('accounts_ui.ledger', account_id=t.credit_account_id, txn_id=t.id) }}">{{ "%.2f"|format(t.credit_total or 0) }}</a>
+          {% else %}
+            {{ "%.2f"|format(t.credit_total or 0) }}
+          {% endif %}
+        </td>
         <td>{{ 'Posted' if t.posted_at else 'Draft' }}</td>
         <td>{{ t.created_at }}</td>
       </tr>

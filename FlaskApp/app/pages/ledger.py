@@ -263,7 +263,7 @@ def layout(account_id=None,account_name=None,txn_id=None, **_):
             selected_rows=[selected_row],
             sort_action="native",
             filter_action="native",
-            style_table={"overflowX": "auto"},
+            style_table={"overflowX": "auto", "overflowY": "auto", "height": "70vh"},
             style_cell_conditional=[
                 {"if": {"column_type": "numeric"}, "textAlign": "right"}
             ],
@@ -302,6 +302,21 @@ def layout(account_id=None,account_name=None,txn_id=None, **_):
                 },
             ],
         ),
+        html.Script(
+            """
+            (function () {
+                try {
+                    const row = document.getElementById("txn-%s");
+                    if (row) {
+                        row.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            })();
+            """ % txn_id
+        ),
+
 
         dcc.ConfirmDialog(
             id="delete-confirm",
@@ -986,4 +1001,3 @@ def dbg_lines(active_cell, selected_rows, selected_cells):
 )
 def dbg_popover_open(is_open):
     return f"popover is_open = {is_open}"
-
