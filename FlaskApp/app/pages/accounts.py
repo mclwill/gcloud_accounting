@@ -80,7 +80,7 @@ def _account_type_options(entity_name: str):
 layout = html.Div(
     style={"padding": "16px"},
     children=[
-        html.H3("Accounts"),
+        #html.H3("Accounts"),
         html.Div(
             style={"display": "flex", "gap": "10px", "alignItems": "center", "flexWrap": "wrap"},
             children=[

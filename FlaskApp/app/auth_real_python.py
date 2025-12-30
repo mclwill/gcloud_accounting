@@ -47,7 +47,9 @@ GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
 
-valid_users = common.access_secret_version('customer_parameters','aemery','dashboard_auth')
+valid_users = common.access_secret_version('global_parameters',None,'auth')
+
+#common.logger.debug(f'Valid users : {valid_users}')
 
 # Flask app setup
 #app = Flask(__name__)
@@ -171,7 +173,7 @@ def callback():
         picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
         #common.logger.debug(users_email + '\n' + str(list(valid_users.values())))
-        if not users_email in list(valid_users.values()):
+        if not users_email in valid_users:
             return "User not authorised", 401
     else:
         return "User email not available or not verified by Google.", 401
@@ -188,6 +190,8 @@ def callback():
 
     # Begin user session by logging the user in
     login_user(user,remember=True,duration=timedelta(days=1))
+
+    session['user_id'] = users_email
 
     #common.logger.debug(str(session))
     if 'next_url' in session:

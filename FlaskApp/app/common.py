@@ -19,7 +19,7 @@ import base64
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from flask import request
+from flask import request, session
 import sys
 
 
@@ -61,6 +61,14 @@ def access_secret_version(secret_id: str, customer: str, parameter: str):
 def absolute_url(path: str) -> str:
     # path should start with "/"
     return request.host_url.rstrip("/") + path
+
+@app.context_processor
+def inject_auth_state():
+    return {
+        "is_logged_in": bool(session.get("user_id"))  # or whatever key you use
+    }
+
+
 
 def json_dump(file,variable):
     if ('LOCAL' in app.config) and app.config['LOCAL']:

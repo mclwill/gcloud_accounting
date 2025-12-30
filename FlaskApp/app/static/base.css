@@ -1,0 +1,21 @@
+.app-header {
+  width: 100%;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.auth-links {
+  margin-left: auto;
+}
+
+.header-top h1 {
+  margin: 0;
+}
+
+
+
