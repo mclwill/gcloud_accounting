@@ -2,3 +2,15 @@ export FLASK_LOCAL=True
 export FLASK_APP=FlaskApp.app
 
 (accounting) Mac@Mac-mini gcloud_accounting % flask run --cert=localhost+2.pem --key=localhost+2-key.pem
+
+#bring in chatgpt code base in new branch on git
+#first create and go to new branch in Sublime Merge
+#unzip chatgpt codebase into tmp folder
+#do rsync as per parameters below - first with --dry-run then without
+
+rsync -av --delete --dry-run \
+  --exclude='.git' \
+  --exclude='__pycache__/' \
+  --exclude='*.pyc' \
+  ../tmp/ \
+  .
