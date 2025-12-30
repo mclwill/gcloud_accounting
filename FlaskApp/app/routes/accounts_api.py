@@ -3,6 +3,10 @@ from flask_login import login_required
 from FlaskApp.app.services.transaction_list import get_transaction_list
 from FlaskApp.app.utils.money import money  # adjust import if needed
 import FlaskApp.app.common as common
+from FlaskApp.app.services.balance_sheet_report import TYPE_TO_SECTION as BS_TYPE_TO_SECTION
+from FlaskApp.app.services.pnl_report import TYPE_TO_SECTION as PNL_TYPE_TO_SECTION
+from FlaskApp.app.models.account import Account
+
 
 from FlaskApp.app import app
 
@@ -16,6 +20,15 @@ def account_ledger(account_id):
         abort(403)
 
     entity_name = session.get("current_entity")
+
+    account = Account.query.get_or_404(account_id)
+
+    acct_type = (account.type or "").strip()
+    section = BS_TYPE_TO_SECTION.get(acct_type) or PNL_TYPE_TO_SECTION.get(acct_type)
+
+    # Debit-normal accounts
+    debit_normal = section in ("Assets", "Expenses", "Cost of Goods Sold")
+
     common.logger.debug(f"account_id={account_id}, entity_name={entity_name}")
 
     rows = get_transaction_list(
@@ -23,21 +36,31 @@ def account_ledger(account_id):
         entity_name=entity_name,
     )
 
-    result = []
-    balance = 0.0
+    balances_by_txn_id = {}
+    running = 0.0
 
-    for r in rows:
+    for r in reversed(rows_list):  # oldest -> newest
         debit = money(r.debit_total)
         credit = money(r.credit_total)
-        balance += credit - debit
 
+        if debit_normal:
+            # Assets / Expenses / COGS
+            running += (debit - credit)
+        else:
+            # Liabilities / Equity / Income
+            running += (credit - debit)
+
+        balances_by_txn_id[r.id] = running
+
+    result = []
+    for r in rows_list:  # newest -> oldest
         result.append({
-            "transaction_id": r.id,              # ✅ REQUIRED
+            "transaction_id": r.id,
             "date": r.date.isoformat(),
             "description": r.description,
-            "debit": debit,
-            "credit": credit,
-            "balance": balance,
+            "debit": money(r.debit_total),
+            "credit": money(r.credit_total),
+            "balance": balances_by_txn_id.get(r.id, 0.0),
         })
 
     return jsonify(result)
