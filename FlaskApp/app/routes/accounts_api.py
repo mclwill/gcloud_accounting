@@ -31,7 +31,7 @@ def account_ledger(account_id):
 
     common.logger.debug(f"account_id={account_id}, entity_name={entity_name}")
 
-    rows = get_transaction_list(
+    rows_list = get_transaction_list(
         account_id=account_id,
         entity_name=entity_name,
     )
