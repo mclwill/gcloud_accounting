@@ -1,5 +1,5 @@
 import dash
-from dash import html, dash_table, Input, Output, State, callback, dcc, no_update, ctx
+from dash import html, dash_table, Input, Output, State, callback, dcc, no_update, ctx, clientside_callback
 import dash_bootstrap_components as dbc
 from dash.dash_table.Format import Format
 import pandas as pd
@@ -257,6 +257,7 @@ def layout(account_id=None,account_name=None,txn_id=None, **_):
         
         dash_table.DataTable(
             id="ledger-table",
+            virtualization = False,
             data=ledger_df.to_dict("records"),
             row_selectable="single",
             cell_selectable=True,
@@ -344,6 +345,7 @@ def layout(account_id=None,account_name=None,txn_id=None, **_):
         dcc.Store(id="ledger-refresh", data=0),
         dcc.Store(id="last-saved-txn-id", data=int(txn_id) if txn_id is not None else None),
         dcc.Interval(id="ledger-init", interval=250, n_intervals=0, max_intervals=1),
+        html.Div(id="ledger-scroll-dummy", style={"display": "none"}),
     ])
 
 
@@ -370,36 +372,23 @@ def select_row_from_any_cell(active_cell):
     Input("ledger-table", "selected_rows"),
 )
 def highlight_selected_rows(selected_rows):
-    
-    #set background colours the same to get highlighting of selected row with same format
-
+    # Base zebra striping + keep Dash's normal active/selected cell behavior
     base = [
         {"if": {"row_index": "odd"}, "backgroundColor": "#FAFAFA"},
-        # keep cell state styling alive:
         {"if": {"state": "selected"}, "backgroundColor": "#E6F2FF", "border": "1px solid #3399FF"},
         {"if": {"state": "active"},   "backgroundColor": "#E6F2FF", "border": "1px solid #3399FF"},
     ]
 
-    selected_rows = selected_rows or []
     highlight_color = "#E6F2FF"
     border_color = "#3399FF"
 
     styles = []
-
-    # Highlight entire selected row
-    for i in selected_rows:
+    for i in (selected_rows or []):
         styles.append({
             "if": {"row_index": i},
             "backgroundColor": highlight_color,
             "border": f"1px solid {border_color}",
         })
-
-    # Make active cell match row highlight
-    #styles.append({
-    #    "if": {"state": "active"},
-    #    "backgroundColor": highlight_color,
-    #    "border": f"1px solid {border_color}",
-    #})
 
     return base + styles
 
@@ -970,12 +959,80 @@ def refresh_ledger_table(_refresh_token, account_id, last_saved_txn_id,selected_
     # Clear any old "selected_cells", and set active_cell to the selected row
     return rows, [selected_row],[{'row':selected_row,'column':0}]#, {"row": selected_row, "column_id": "description"}#, []
 
+#----------------------------
+# Clientside call back for auto scroll
+# ----------------------------
 
+clientside_callback(
+    """
+    function(selected_rows) {
+        if (!selected_rows || selected_rows.length === 0) {
+            return window.dash_clientside.no_update;
+        }
+
+        const idx = selected_rows[0];
+
+        function attempt(tries) {
+            const container = document.querySelector('#ledger-table .dash-spreadsheet-container');
+            if (!container) {
+                if (tries > 0) setTimeout(() => attempt(tries - 1), 80);
+                return;
+            }
+
+            // ✅ Robust: some dash-table versions put data-dash-row on TD, not TR
+            let row = null;
+
+            // Try TD first (most common)
+            const cell = container.querySelector(`td[data-dash-row="${idx}"]`);
+            if (cell) {
+                row = cell.closest('tr');
+            }
+
+            // Fallback: some versions put it on TR
+            if (!row) {
+                row = container.querySelector(`tr[data-dash-row="${idx}"]`);
+            }
+
+            // Final fallback: index-based (last resort)
+            if (!row) {
+                const rows = container.querySelectorAll('tbody tr');
+                row = rows && rows[idx] ? rows[idx] : null;
+            }
+
+            if (!row) {
+                if (tries > 0) setTimeout(() => attempt(tries - 1), 80);
+                return;
+            }
+
+            // ---- Scroll container so row is centered ----
+            const containerRect = container.getBoundingClientRect();
+            const rowRect = row.getBoundingClientRect();
+
+            const currentScrollTop = container.scrollTop;
+            const rowTopInContainer = (rowRect.top - containerRect.top) + currentScrollTop;
+            const targetScrollTop = rowTopInContainer - (container.clientHeight / 2) + (row.clientHeight / 2);
+
+            container.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+
+            // ---- Flash (re-triggerable) ----
+            row.classList.remove('flash-ledger-row');
+            void row.offsetWidth; // reflow to restart animation
+            row.classList.add('flash-ledger-row');
+
+            setTimeout(() => row.classList.remove('flash-ledger-row'), 1300);
+        }
+
+        setTimeout(() => attempt(8), 0);
+        return "";
+    }
+    """,
+    Output("ledger-scroll-dummy", "children"),
+    Input("ledger-table", "selected_rows"),
+)
 
 #----------------------------
 # Debug code
 # ----------------------------
-
 
 @callback(
     Output("txn-lines-debug", "children"),

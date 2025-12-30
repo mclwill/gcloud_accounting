@@ -1,0 +1,10 @@
+@keyframes ledgerFlashBg {
+  0%   { background-color: rgba(255, 230, 120, 0.95); }
+  40%  { background-color: rgba(255, 230, 120, 0.65); }
+  100% { background-color: rgba(255, 230, 120, 0.0); }
+}
+
+/* Apply to each cell so it wins over DataTable row/cell backgrounds */
+.flash-ledger-row td {
+  animation: ledgerFlashBg 1.2s ease-out 1 !important;
+}
