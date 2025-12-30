@@ -12,6 +12,8 @@ def get_transaction_list(
     start_date=None,
     end_date=None,
     account_id=None,      # NEW
+    search_amount=None,  # NEW: match debit/credit line amount
+    search_text=None,    # NEW: partial match on transaction description
 ):
     """
     Returns one row per transaction with debit/credit totals.
@@ -35,6 +37,20 @@ def get_transaction_list(
         func.distinct(Account.name)
     ).label("account_names")
 
+    debit_account_id = func.min(
+        case(
+            (TransactionLine.is_debit == True, TransactionLine.account_id),
+            else_=None,
+        )
+    ).label("debit_account_id")
+
+    credit_account_id = func.min(
+        case(
+            (TransactionLine.is_debit == False, TransactionLine.account_id),
+            else_=None,
+        )
+    ).label("credit_account_id")
+
 
     query = (
         db.session.query(
@@ -47,7 +63,9 @@ def get_transaction_list(
             Transaction.posted_at,
             debit_sum,
             credit_sum,
-            account_names
+            account_names,
+            debit_account_id,
+            credit_account_id
         )
         .select_from(Transaction)  # 🔑 anchor the query
         .outerjoin(TransactionLine, TransactionLine.transaction_id == Transaction.id)
@@ -66,6 +84,20 @@ def get_transaction_list(
 
     if account_id:
         query = query.filter(TransactionLine.account_id == account_id)
+
+
+    if search_text:
+        # Case-insensitive partial match on transaction description
+        query = query.filter(Transaction.description.ilike(f"%{search_text}%"))
+
+    if search_amount is not None and search_amount != "":
+        # Match any debit/credit line amount (with small tolerance for float comparisons)
+        try:
+            amt = float(search_amount)
+            tol = 0.005
+            query = query.filter(TransactionLine.amount.between(amt - tol, amt + tol))
+        except (TypeError, ValueError):
+            pass
 
     if start_date:
         query = query.filter(Transaction.date >= start_date)

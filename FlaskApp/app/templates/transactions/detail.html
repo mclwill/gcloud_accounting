@@ -31,7 +31,7 @@
   <tbody>
     {% for line, account in lines %}
       <tr>
-        <td>{{ account.code }} – {{ account.name }}</td>
+<td><a href="{{ url_for('accounts_ui.ledger', account_id=account.id, txn_id=transaction.id) }}">{{ account.code }} – {{ account.name }}</a></td>
         <td class="number">
           {% if line.is_debit %}{{ "%.2f"|format(line.amount) }}{% endif %}
         </td>

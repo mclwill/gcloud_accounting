@@ -50,6 +50,15 @@
 
       <button type="button" onclick="goBalanceSheet()">Run</button>
     </form>
+    <!-- Transaction Search -->
+    <form class="report-form" id="txn-search" method="get" action="{{ url_for('transactions_ui.list') }}">
+      <a href="{{ url_for('transactions_ui.list') }}">Transactions</a>
+      <label>
+        <span>Search</span>
+        <input type="text" name="q" placeholder="Desc or amount…" value="">
+      </label>
+      <button type="submit">Go</button>
+    </form>
   </nav>
 
   <script>

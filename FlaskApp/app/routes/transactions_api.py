@@ -76,12 +76,16 @@ def list_transactions():
     status = request.args.get("status")
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
+    q = request.args.get("q")
+    amount = request.args.get("amount")
 
     rows = get_transaction_list(
         entity_name=entity_name,
         status=status,
         start_date=start_date,
         end_date=end_date,
+        search_text=q,
+        search_amount=amount,
     )
 
     result = []

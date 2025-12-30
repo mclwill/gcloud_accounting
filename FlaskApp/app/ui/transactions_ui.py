@@ -14,12 +14,25 @@ def list():
     account_id = request.args.get("account_id",type=int)
     entity_name = session['current_entity']
 
+    q = (request.args.get("q") or "").strip()
+    amount = request.args.get("amount")
+
+    # Navbar search uses a single box (q). If q looks numeric and amount wasn't provided, treat it as amount.
+    if (amount is None or str(amount).strip() == "") and q:
+        try:
+            amount = float(q)   # <-- convert to number
+            q = None            # <-- don't also apply description filter
+        except ValueError:
+            pass
+
     transactions = get_transaction_list(
         entity_name=entity_name,
         status=request.args.get("status"),
         start_date=request.args.get("start_date"),
         end_date=request.args.get("end_date"),
         account_id=account_id,
+        search_text=q,
+        search_amount=amount,
     )
 
     common.logger.debug(f"Entities = {get_entities()}")
@@ -32,6 +45,8 @@ def list():
         start_date=request.args.get("start_date"),
         end_date=request.args.get("end_date"),
         account_id=account_id,
+        q=q,
+        amount=amount,
         accounts=get_accounts(),
         entities=get_entities()  # we’ll add this next
     )
@@ -51,4 +66,3 @@ def detail(transaction_id):
         transaction=transaction,
         lines=lines,
     )
-
