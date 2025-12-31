@@ -211,7 +211,7 @@ def layout(account_id=None,account_name=None,txn_id=None, **_):
                             ],
                             columns=non_editable_columns,
                             hidden_columns = ['_account_name_is_editable'],
-                            markdown_options={"html":True,'link_target':'_blank'}
+                            markdown_options={"html":True} #,'link_target':'_blank'}
                         )
                     ]
                 ),
@@ -467,7 +467,7 @@ def load_transaction(selected_rows, _init, rows):
         if acc_id:
             row["account_link"] = (
                 f'<a href="/accounts/ledger/{acc_id}?txn_id={txn_id}" '
-                f'target="_blank" rel="noopener noreferrer">{acc_name}</a>'
+                f'rel="noopener noreferrer">{acc_name}</a>'
             )
         else:
             row["account_link"] = acc_name
@@ -891,7 +891,7 @@ def apply_selected_account(selected_name, row_idx, rows, txn_header):
     if txn_id and acc_id:
         rows[row_idx]["account_link"] = (
             f'<a href="/accounts/ledger/{acc_id}?txn_id={txn_id}" '
-            f'target="_blank" rel="noopener noreferrer">{acc_name}</a>'
+            f'rel="noopener noreferrer">{acc_name}</a>'
         )
     else:
         rows[row_idx]["account_link"] = acc_name
