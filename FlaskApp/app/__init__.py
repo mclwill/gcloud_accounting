@@ -41,7 +41,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 # Import models so Alembic sees them
-from .models import entity, account, transaction, transaction_line  # ← IMPORTANT
+from .models import entity, account, transaction, transaction_line, csv_account_mapping  # ← IMPORTANT
 
 from .routes.transactions_api import bp as transactions_api_bp
 from .routes.accounts_api import bp as accounts_api_bp
@@ -106,4 +106,3 @@ def protect_dash():
 
 if __name__ == "__main__":
     dash_main.dash_app.run_server(debug=True)
-

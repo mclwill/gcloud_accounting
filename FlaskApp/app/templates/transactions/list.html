@@ -5,6 +5,8 @@
 {% block content %}
 <h1>Transactions</h1>
 
+<p><a href="{{ url_for('transactions_ui.import_csv') }}">Import from CSV</a></p>
+
 <a href="{{ url_for('accounts_ui.list') }}">
     ← Back to account list
 

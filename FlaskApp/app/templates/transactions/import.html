@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}Import Transactions{% endblock %}
+
+{% block content %}
+<h1>Import transactions from CSV (Banktivity)</h1>
+
+<p><a href="{{ url_for('transactions_ui.list') }}">← Back to transactions</a></p>
+
+<hr>
+{% if last_imported_ids and last_imported_ids|length > 0 %}
+  <div style="padding:8px; border:1px solid #ccc; margin: 10px 0;">
+    <strong>Recently imported:</strong>
+    <ul style="margin:6px 0 0 18px;">
+      {% for tid in last_imported_ids %}
+        <li><a href="{{ url_for('transactions_ui.detail', transaction_id=tid) }}">Transaction #{{ tid }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="show_mappings" value="{{ '1' if show_mappings else '0' }}">
+
+{% if reviewed_duplicates and reviewed_duplicates|length > 0 %}
+  <p><em>{{ reviewed_duplicates|length }} CSV transaction(s) were previously marked as duplicates and are hidden from preview.</em></p>
+{% endif %}
+  <div style="margin-top: 4px;">
+    {% if show_duplicates %}
+      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates='0', show_unmapped=('1' if show_unmapped else '0')) }}">Hide duplicates</a>
+    {% else %}
+      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates='1', show_unmapped=('1' if show_unmapped else '0')) }}">Show duplicates</a>
+    {% endif %}
+    &nbsp;|&nbsp;
+    {% if show_unmapped %}
+      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates=('1' if show_duplicates else '0'), show_unmapped='0') }}">Hide unmapped</a>
+    {% else %}
+      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates=('1' if show_duplicates else '0'), show_unmapped='1') }}">Show unmapped</a>
+    {% endif %}
+  </div>
+  <fieldset>
+    <legend>1) Upload & filter</legend>
+    <label>Start date (inclusive):</label>
+    <input type="date" name="start_date" value="{{ start_date }}">
+    <br><br>
+
+    <label>CSV file:</label>
+    <input type="file" name="csv_file" accept=".csv">
+    {% if csv_path %}
+      <div style="font-size: 0.9em; margin-top: 0.25em;">
+        <em>Note:</em> browsers don’t keep the chosen file after you submit. Your uploaded file is shown below.
+      </div>
+    {% endif %}
+    {% if csv_path %}
+      <input type="hidden" name="csv_path" value="{{ csv_path }}">
+      <div style="font-size: 0.9em; opacity: 0.8;">Using: {{ csv_path }}</div>
+    {% endif %}
+    <br><br>
+
+    <button type="submit">Preview</button>
+  </fieldset>
+</form>
+
+{% if csv_path %}
+  <hr>
+
+  
+<h2>2) Account mapping</h2>
+<p>
+  Map the CSV <strong>bank account</strong> names to your app's <strong>Asset</strong> accounts.
+  This is saved in the database per entity for future imports.
+</p>
+
+{% if csv_path and missing_mappings|length > 0 %}
+  <p><strong>{{ missing_mappings|length }}</strong> CSV asset account(s) are not mapped and are hidden from the preview.</p>
+{% endif %}
+
+<button type="button" id="toggle-mappings-btn" style="margin: 6px 0 10px 0;">
+  Check Account Mappings
+</button>
+
+<div id="mapping-panel" style="display: {{ 'block' if show_mappings else 'none' }}; padding: 10px; border: 1px solid #ddd;">
+  <form method="post">
+    <input type="hidden" name="action" value="save_mappings">
+    <input type="hidden" name="csv_path" value="{{ csv_path }}">
+    <input type="hidden" name="start_date" value="{{ start_date }}">
+    <input type="hidden" name="show_mappings" value="1">
+    <input type="hidden" name="show_duplicates" value="{{ '1' if show_duplicates else '0' }}">
+    <input type="hidden" name="show_unmapped" value="{{ '1' if show_unmapped else '0' }}">
+    <input type="hidden" name="show_duplicates" value="{{ '1' if show_duplicates else '0' }}">
+    <input type="hidden" name="show_unmapped" value="{{ '1' if show_unmapped else '0' }}">
+
+    {% if mapping_rows|length == 0 %}
+      <p><em>No mappings yet.</em></p>
+    {% else %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>CSV account name</th>
+            <th>Mapped to (Asset account)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in mapping_rows %}
+            <tr>
+              <td>{{ row.csv_name }}</td>
+              <td>
+                <input type="hidden" name="csv_names" value="{{ row.csv_name }}">
+                <select name="map_to__{{ loop.index0 }}">
+                  <option value="">-- choose --</option>
+                  {% for a in accounts %}
+                    <option value="{{ a.id }}" {% if row.account_id and (a.id == row.account_id) %}selected{% endif %}>
+                      {{ a.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td>
+                {% if csv_path and (row.csv_name in missing_mappings) %}
+                  <strong>Unmapped (in CSV)</strong>
+                {% else %}
+                  OK
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit">Save mappings</button>
+    {% endif %}
+  </form>
+
+  <div style="margin-top: 10px;">
+    <button type="button" id="hide-mappings-btn">Hide mappings</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  var panel = document.getElementById("mapping-panel");
+  var btn = document.getElementById("toggle-mappings-btn");
+  var hideBtn = document.getElementById("hide-mappings-btn");
+  if (!panel || !btn) return;
+
+  function setVisible(v) {
+    panel.style.display = v ? "block" : "none";
+    btn.textContent = v ? "Hide mappings" : "Check Account Mappings";
+    try { localStorage.setItem("csvImportShowMappings", v ? "1" : "0"); } catch(e) {}
+  }
+
+  // initial: server value or localStorage override
+  var stored = null;
+  try { stored = localStorage.getItem("csvImportShowMappings"); } catch(e) {}
+  if (stored !== null && "{{ '1' if show_mappings else '0' }}" === "0") {
+    setVisible(stored === "1");
+  } else {
+    setVisible(panel.style.display !== "none");
+  }
+
+  btn.addEventListener("click", function() {
+    setVisible(panel.style.display === "none");
+  });
+  if (hideBtn) hideBtn.addEventListener("click", function() { setVisible(false); });
+})();
+</script>
+{% if show_duplicates and (hidden_duplicate_rows|length > 0 or hidden_imported_rows|length > 0) %}
+  <hr>
+  <h2>Hidden (duplicates / already imported)</h2>
+  <p style="opacity: 0.8; font-size: 0.95em;">
+    These rows were hidden because they were previously marked as <strong>duplicate</strong> or already <strong>imported</strong>.
+    They are shown here for transparency (they still won’t import unless you remove the duplicate mark in the database).
+  </p>
+
+  {% if hidden_duplicate_rows|length > 0 %}
+    <h3>Duplicates</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th><th>Payee</th><th>Amount</th><th>CSV account</th><th>Linked txn</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in hidden_duplicate_rows %}
+          <tr>
+            <td>{{ r.date }}</td>
+            <td>{{ r.payee or r.details }}</td>
+            <td>{{ '%.2f'|format(r.amount) }}</td>
+            <td>{{ r.asset_csv_account }}</td>
+            <td>
+              {% if r.linked_transaction_id %}
+                <a href="{{ url_for('transactions_ui.detail', transaction_id=r.linked_transaction_id) }}">{{ r.linked_transaction_id }}</a>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if hidden_imported_rows|length > 0 %}
+    <h3>Already imported</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th><th>Payee</th><th>Amount</th><th>CSV account</th><th>Linked txn</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in hidden_imported_rows %}
+          <tr>
+            <td>{{ r.date }}</td>
+            <td>{{ r.payee or r.details }}</td>
+            <td>{{ '%.2f'|format(r.amount) }}</td>
+            <td>{{ r.asset_csv_account }}</td>
+            <td>
+              {% if r.linked_transaction_id %}
+                <a href="{{ url_for('transactions_ui.detail', transaction_id=r.linked_transaction_id) }}">{{ r.linked_transaction_id }}</a>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endif %}
+
+{% if show_unmapped and hidden_unmapped_rows|length > 0 %}
+  <hr>
+  <h2>Hidden (unmapped CSV accounts)</h2>
+  <p style="opacity: 0.8; font-size: 0.95em;">
+    These rows were hidden because their CSV bank account name isn’t mapped to an <strong>Asset</strong> account yet.
+    Map the account above, then re-preview.
+  </p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th><th>Payee</th><th>Amount</th><th>CSV account</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in hidden_unmapped_rows %}
+        <tr>
+          <td>{{ r.date }}</td>
+          <td>{{ r.payee or r.details }}</td>
+          <td>{{ '%.2f'|format(r.amount) }}</td>
+          <td>{{ r.asset_csv_account }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+<h2>3) Preview & import</h2>
+  <form method="post">
+    <input type="hidden" name="csv_path" value="{{ csv_path }}">
+    <input type="hidden" name="start_date" value="{{ start_date }}">
+    <input type="hidden" name="action" value="import_selected">
+    <input type="hidden" name="show_mappings" value="{{ '1' if show_mappings else '0' }}">
+    <input type="hidden" name="show_duplicates" value="{{ '1' if show_duplicates else '0' }}">
+    <input type="hidden" name="show_unmapped" value="{{ '1' if show_unmapped else '0' }}">
+
+{% if reviewed_duplicates and reviewed_duplicates|length > 0 %}
+  <p><em>{{ reviewed_duplicates|length }} CSV transaction(s) were previously marked as duplicates and are hidden from preview.</em></p>
+{% endif %}
+
+    {% if rows|length == 0 %}
+      <p><em>No transactions to preview. Upload a CSV and/or choose an earlier start date.</em></p>
+    {% else %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Import?</th>
+      <th>Date</th>
+      <th>TRN_NO</th>
+      <th>Payee</th>
+      <th>Type</th>
+      <th>Account</th>
+      <th>Dr/Cr</th>
+      <th>Amount</th>
+      <th>Assign other side</th>
+      <th>Possible matches</th>
+      <th>Confirm import<br><small>(not duplicate)</small></th>
+      <th>Mark duplicate</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>
+          <input type="checkbox" name="import_trn_no" value="{{ r.trn_no }}">
+        </td>
+        <td>{{ r.date }}</td>
+        <td>{{ r.trn_no }}</td>
+        <td>{{ r.payee }}</td>
+        <td>{{ r.type }}</td>
+        <td>{{ r.mapped_account_name or "—" }}</td>
+        <td>
+          {% if r.lines and r.lines[0].is_debit %}Dr{% elif r.lines %}Cr{% else %}—{% endif %}
+        </td>
+        <td>
+          {% if r.lines %}{{ "%.2f"|format(r.lines[0].amount or 0) }}{% else %}—{% endif %}
+        </td>
+
+        <td>
+          <select name="counter__{{ r.trn_no }}">
+            <option value="">—</option>
+            {% for a in all_accounts %}
+              {% if r.mapped_account_id and a.id == r.mapped_account_id %}
+                {# skip same as asset account #}
+              {% else %}
+                <option value="{{ a.id }}"
+                  {% if r.suggested and r.suggested.account_id == a.id %}selected{% endif %}
+                >{{ a.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </td>
+
+        <td style="font-size:0.95em;">
+          {% if r.match_count > 0 %}
+            ⚠️ {{ r.match_count }} possible match(es)
+            <ul style="margin:0; padding-left: 1.2em;">
+              {% for c in r.match_candidates %}
+                <li>
+                  <a href="{{ url_for('transactions_ui.detail', transaction_id=c.id) }}">#{{ c.id }}</a>
+                  — {{ c.description }}
+                  {% if c.asset_account %} (Acct: {{ c.asset_account }}){% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            ✅ No matches found
+          {% endif %}
+        </td>
+
+        <td>
+  {% if r.match_count > 0 %}
+    <label>
+      <input type="checkbox" name="confirm_trn_no" value="{{ r.trn_no }}" class="confirm-box" data-trn="{{ r.trn_no }}">
+      Confirm import
+    </label>
+  {% else %}
+    —
+  {% endif %}
+</td>
+<td>
+  {% if r.match_count > 0 %}
+    <label>
+      <input type="checkbox" name="dup_trn_no" value="{{ r.trn_no }}" class="dup-box" data-trn="{{ r.trn_no }}">
+      Duplicate
+    </label>
+  {% else %}
+    —
+  {% endif %}
+</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+    {% endif %}
+
+
+    <button type="submit">Import selected</button>
+  </form>
+{% endif %}
+
+{% endblock %}
+
+<script>
+  (function() {
+    function bySelector(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+    function sync(trn) {
+      var dup = document.querySelector('input.dup-box[data-trn="'+trn+'"]');
+      var conf = document.querySelector('input.confirm-box[data-trn="'+trn+'"]');
+      var imp = document.querySelector('input[name="import_trn_no"][value="'+trn+'"]');
+      if (!dup || !conf || !imp) return;
+      if (dup.checked) {
+        conf.checked = false;
+        imp.checked = false;
+        conf.disabled = true;
+      } else {
+        conf.disabled = false;
+      }
+      if (conf.checked) {
+        dup.checked = false;
+      }
+    }
+    function bind() {
+      bySelector('input.dup-box').forEach(function(el){
+        el.addEventListener('change', function(){ sync(el.dataset.trn); });
+        sync(el.dataset.trn);
+      });
+      bySelector('input.confirm-box').forEach(function(el){
+        el.addEventListener('change', function(){ sync(el.dataset.trn); });
+        sync(el.dataset.trn);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', bind);
+  })();
+</script>

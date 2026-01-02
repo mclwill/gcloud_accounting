@@ -14,15 +14,19 @@ class Transaction(db.Model):
 
     entity_id = db.Column(db.Integer, db.ForeignKey("entities.id"), nullable=False)
 
-    # Unique per entity_id (via composite UniqueConstraint above)
+    # External/import id (e.g., Banktivity TRN_NO). Kept as Integer to match recent migration.
     transaction_id = db.Column(db.Integer, nullable=False, index=True)
 
-    date = db.Column(db.Date, default=date.today, nullable=False)
-    description = db.Column(db.String(200))
-    transaction_type = db.Column(db.String(50))  # e.g. 'Journal', 'Payment', 'Receipt'
+    # Transaction effective date
+    date = db.Column(db.Date, nullable=False, index=True)
+
+    description = db.Column(db.Text, nullable=True)
+    transaction_type = db.Column(db.String(50), nullable=True)
+    code = db.Column(db.String(50), nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
     posted_at = db.Column(db.DateTime)
 
     entity = db.relationship("Entity", backref="transactions")

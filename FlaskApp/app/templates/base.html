@@ -104,6 +104,18 @@
     </script>
   </header>
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages" style="margin: 1rem 0;">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}" style="padding:0.5rem 0.75rem; border:1px solid #ddd; border-radius:6px; margin-bottom:0.5rem;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
   {% block content %}{% endblock %}
 
 </body>
