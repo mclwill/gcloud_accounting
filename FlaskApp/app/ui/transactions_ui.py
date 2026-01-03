@@ -220,7 +220,7 @@ def import_csv():
                 asset_first.setdefault(int(txn_id), str(acct_name))
 
             for txn_id in candidate_ids:
-                names = sorted(list(tmp.get(int(txn_id), set())), key=lambda s: s.lower())
+                names = sorted(tmp.get(int(txn_id), set()), key=lambda s: s.lower())
                 candidate_other[int(txn_id)] = ", ".join(names) if names else asset_first.get(int(txn_id), "")
 
             for trn_no, lst in possible_matches.items():
