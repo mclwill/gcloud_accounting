@@ -190,50 +190,50 @@ def import_csv():
             ]
 
         # Enrich match candidates with "other side" account names.
-# The template expects the field name `asset_account`, but we populate it with the
-# counterparty account(s) from the matched DB transaction:
-#   - Prefer non-asset accounts (expense/income/liability/equity)
-#   - If the match is a transfer between assets, show the *other* asset account
-#     (exclude the CSV's mapped asset account).
-candidate_ids = {m["id"] for lst in possible_matches.values() for m in lst}
-txn_lines: Dict[int, List[Tuple[int, str, str]]] = {}  # txn_id -> [(acct_id, acct_type, acct_name)]
-if candidate_ids:
-    for txn_id, acct_id, acct_type, acct_name in (
-        db.session.query(
-            TransactionLine.transaction_id,
-            Account.id,
-            Account.type,
-            Account.name,
-        )
-        .join(Account, Account.id == TransactionLine.account_id)
-        .filter(TransactionLine.transaction_id.in_(candidate_ids))
-        .all()
-    ):
-        txn_lines.setdefault(int(txn_id), []).append((int(acct_id), str(acct_type), str(acct_name)))
+        # The template expects the field name `asset_account`, but we populate it with the
+        # counterparty account(s) from the matched DB transaction:
+        #   - Prefer non-asset accounts (expense/income/liability/equity)
+        #   - If the match is a transfer between assets, show the *other* asset account
+        #     (exclude the CSV's mapped asset account).
+        candidate_ids = {m["id"] for lst in possible_matches.values() for m in lst}
+        txn_lines: Dict[int, List[Tuple[int, str, str]]] = {}  # txn_id -> [(acct_id, acct_type, acct_name)]
+        if candidate_ids:
+            for txn_id, acct_id, acct_type, acct_name in (
+                db.session.query(
+                    TransactionLine.transaction_id,
+                    Account.id,
+                    Account.type,
+                    Account.name,
+                )
+                .join(Account, Account.id == TransactionLine.account_id)
+                .filter(TransactionLine.transaction_id.in_(candidate_ids))
+                .all()
+            ):
+                txn_lines.setdefault(int(txn_id), []).append((int(acct_id), str(acct_type), str(acct_name)))
 
-    for t in preview_txns:
-        csv_acct = t.lines[0].csv_account_name if t.lines else ""
-        exclude_acct_id = mappings.get(csv_acct)  # the asset account shown in the "Account" column
-        for m in possible_matches.get(t.trn_no, []):
-            tid = int(m["id"])
-            lines = txn_lines.get(tid, [])
-            # Prefer non-asset accounts excluding the mapped asset account
-            non_asset = [
-                name for (aid, atype, name) in lines
-                if (exclude_acct_id is None or aid != int(exclude_acct_id)) and atype not in ASSET_TYPES
-            ]
-            # If none, fall back to "other" accounts excluding the mapped asset account (handles transfers)
-            if non_asset:
-                names = sorted(set(non_asset), key=lambda s: s.lower())
-            else:
-                other = [
-                    name for (aid, atype, name) in lines
-                    if (exclude_acct_id is None or aid != int(exclude_acct_id))
-                ]
-                names = sorted(set(other), key=lambda s: s.lower())
-            m["asset_account"] = ", ".join(names)
+            for t in preview_txns:
+                csv_acct = t.lines[0].csv_account_name if t.lines else ""
+                exclude_acct_id = mappings.get(csv_acct)  # the asset account shown in the "Account" column
+                for m in possible_matches.get(t.trn_no, []):
+                    tid = int(m["id"])
+                    lines = txn_lines.get(tid, [])
+                    # Prefer non-asset accounts excluding the mapped asset account
+                    non_asset = [
+                        name for (aid, atype, name) in lines
+                        if (exclude_acct_id is None or aid != int(exclude_acct_id)) and atype not in ASSET_TYPES
+                    ]
+                    # If none, fall back to "other" accounts excluding the mapped asset account (handles transfers)
+                    if non_asset:
+                        names = sorted(set(non_asset), key=lambda s: s.lower())
+                    else:
+                        other = [
+                            name for (aid, atype, name) in lines
+                            if (exclude_acct_id is None or aid != int(exclude_acct_id))
+                        ]
+                        names = sorted(set(other), key=lambda s: s.lower())
+                    m["asset_account"] = ", ".join(names)
 
-# Collect unmapped accounts present in the CSV
+        # Collect unmapped accounts present in the CSV
         csv_accounts = sorted({ln.csv_account_name for t in txns for ln in t.lines})
         missing_mappings = [a for a in csv_accounts if a not in mappings]
 
