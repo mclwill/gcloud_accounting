@@ -4,6 +4,7 @@
 import sys
 import logging
 
+#raise RuntimeError(sys.version)
 logging.basicConfig(stream=sys.stderr)
 
 # Add both the project root and the inner FlaskApp folder to sys.path
