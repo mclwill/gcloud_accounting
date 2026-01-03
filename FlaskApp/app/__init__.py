@@ -11,12 +11,35 @@ from .services.entities import get_entities
 SESSION_ENTITY_KEY = "current_entity"
 DEFAULT_ENTITY = "JAJG Pty Ltd"
 
-def print_perms(path):
+def uri_to_path(db_uri: str) -> str:
+    # Only convert sqlite URIs; return others unchanged or raise
+    if db_uri.startswith("sqlite:"):
+        u = urlparse(db_uri)
+        # sqlite:////absolute/path.db -> u.path == /absolute/path.db
+        return unquote(u.path)
+    return db_uri  # for non-sqlite, you might just print the uri
+
+def print_perms(db_uri_or_path: str) -> None:
+    path = uri_to_path(db_uri_or_path)
+
     st = os.stat(path)
+    owner = pwd.getpwuid(st.st_uid).pw_name
+    group = grp.getgrgid(st.st_gid).gr_name
+
     print(f"{path}")
     print(f"  perms : {stat.filemode(st.st_mode)} ({oct(st.st_mode & 0o777)})")
-    print(f"  owner : {pwd.getpwuid(st.st_uid).pw_name}")
-    print(f"  group : {grp.getgrgid(st.st_gid).gr_name}")
+    print(f"  owner : {owner}")
+    print(f"  group : {group}")
+
+    d = os.path.dirname(path) or "."
+    dst = os.stat(d)
+    downer = pwd.getpwuid(dst.st_uid).pw_name
+    dgroup = grp.getgrgid(dst.st_gid).gr_name
+
+    print(f"{d}/")
+    print(f"  perms : {stat.filemode(dst.st_mode)} ({oct(dst.st_mode & 0o777)})")
+    print(f"  owner : {downer}")
+    print(f"  group : {dgroup}")
 
 app = Flask(__name__)
 app.config.from_prefixed_env()
