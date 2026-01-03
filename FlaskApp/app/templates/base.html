@@ -58,6 +58,11 @@
 
 
 <nav class="app-nav">
+      <!-- Accounts -->
+      <form class="report-form" onsubmit="return false;">
+        <a href="/accounts">Accounts</a>
+      </form>
+
       <!-- Profit & Loss -->
       <form class="report-form" id="pnl-form" onsubmit="return false;">
         <a href="/reports/pnl">P&amp;L</a>
@@ -86,10 +91,7 @@
 
         <button type="button" onclick="goBalanceSheet()">Run</button>
       </form>
-      <!-- Accounts -->
-      <form class="report-form" onsubmit="return false;">
-        <a href="/accounts">Accounts</a>
-      </form>
+
 
       <!-- Transaction Search -->
       <form class="report-form" id="txn-search" method="get" action="{{ url_for('transactions_ui.list') }}">
