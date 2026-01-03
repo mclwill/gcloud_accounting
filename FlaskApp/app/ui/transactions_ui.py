@@ -597,6 +597,59 @@ def import_csv():
             m["asset_account"] = ", ".join(names)
 
     # ------------------------------
+    # Auto-hide duplicates created by this import
+    # If a remaining CSV row matches a transaction we just imported (same date+amount),
+    # remember it as a duplicate linked to that imported transaction and hide it immediately.
+    # ------------------------------
+    auto_marked = 0
+    if last_imported_ids and preview_txns:
+        imported_set = {int(x) for x in (last_imported_ids or [])}
+        kept = []
+        for t in preview_txns:
+            trn_no = int(t.trn_no)
+            hit = None
+            for m in possible_matches.get(trn_no, []):
+                if int(m.get("id", 0)) in imported_set:
+                    hit = m
+                    break
+            if not hit:
+                kept.append(t)
+                continue
+
+            # Persist as remembered duplicate (fingerprint-based) and hide from preview.
+            try:
+                csv_acct = t.lines[0].csv_account_name if getattr(t, "lines", None) else None
+                asset_id = mappings.get(csv_acct) if csv_acct else None
+                if asset_id:
+                    fp = _csv_fingerprint_for_txn(t, int(asset_id))
+                    _upsert_csv_review(
+                        entity_id=entity_id,
+                        source="banktivity",
+                        fingerprint=fp,
+                        status="duplicate",
+                        linked_transaction_id=int(hit["id"]),
+                    )
+                    auto_marked += 1
+                    current_app.logger.warning(
+                        "Auto-marked duplicate due to just-imported match: trn_no=%s fp=%s linked_transaction_id=%s",
+                        trn_no,
+                        fp,
+                        int(hit["id"]),
+                    )
+                else:
+                    # If we can't fingerprint it (no mapping), keep it visible.
+                    kept.append(t)
+            except Exception as e:
+                current_app.logger.exception("Auto-mark duplicate failed for trn_no=%s: %s", trn_no, e)
+                kept.append(t)
+
+        if auto_marked:
+            db.session.commit()
+            flash(f"Auto-hidden {auto_marked} duplicate(s) that match transactions you just imported.", "success")
+        preview_txns = kept
+
+
+    # ------------------------------
     # Suggest likely counterparty account (historical heuristic)
     # ------------------------------
     suggestions: Dict[int, Optional[dict]] = {}
