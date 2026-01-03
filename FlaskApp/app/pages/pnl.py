@@ -3,6 +3,7 @@ import dash
 from dash import html, dcc, Input, Output, State, callback, no_update
 from datetime import date, timedelta
 from urllib.parse import parse_qs, urlencode
+from flask import session as flask_session
 
 import FlaskApp.app.common as common
 
@@ -239,6 +240,11 @@ def export_pnl(_, start_date, end_date):
         "p2_end": end.isoformat(),
     }
 
+    # Ensure the API runs for the currently selected entity.
+    entity_name = flask_session.get("current_entity")
+    if entity_name:
+        params["entity"] = entity_name
+
     url = common.absolute_url(f"/api/reports/pnl?" + urlencode(params))
 
     try:
@@ -290,6 +296,11 @@ def load_pnl_preview(start_date, end_date):
         "p2_start": cur_start.isoformat(),
         "p2_end": end.isoformat(),
     }
+
+    # Ensure the API runs for the currently selected entity.
+    entity_name = flask_session.get("current_entity")
+    if entity_name:
+        params["entity"] = entity_name
 
     url = common.absolute_url(f'/api/reports/pnl?' + urlencode(params))
 

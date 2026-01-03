@@ -23,14 +23,45 @@ def _require_token():
         abort(403)
 
 
+def _get_entity_from_request() -> Entity | None:
+    """Resolve entity for a report request.
+
+    Important: Dash callbacks in this codebase fetch these endpoints via server-side
+    HTTP requests (requests.get). Those calls do NOT include the browser session
+    cookie, so `session.get('current_entity')` will be empty.
+
+    To support both browser-direct calls *and* server-side internal calls, we allow
+    an explicit query parameter:
+
+      - ?entity=<entity name>
+      - ?entity_id=<entity id>
+
+    If neither is provided, we fall back to the session.
+    """
+
+    # Prefer explicit query params
+    entity_id = request.args.get("entity_id", type=int)
+    if entity_id:
+        return db.session.query(Entity).filter(Entity.id == entity_id).one_or_none()
+
+    entity_name = request.args.get("entity")
+    if entity_name:
+        return db.session.query(Entity).filter(Entity.name == entity_name).one_or_none()
+
+    # Fall back to current session entity
+    entity_name = session.get("current_entity")
+    if not entity_name:
+        return None
+    return db.session.query(Entity).filter(Entity.name == entity_name).one_or_none()
+
+
 @bp.route("/pnl", methods=["GET"])
 def pnl_json():
     _require_token()
 
-    entity_name = session.get("current_entity")
-    entity = db.session.query(Entity).filter(Entity.name == entity_name).one_or_none()
+    entity = _get_entity_from_request()
     if not entity:
-        return jsonify({"error": "No current entity"}), 400
+        return jsonify({"error": "No current entity (pass ?entity=... or select one)"}), 400
 
     # Example query params: ?p1_start=2023-07-01&p1_end=2024-06-30&p2_start=2024-07-01&p2_end=2025-06-30
     periods = []
@@ -54,10 +85,9 @@ def pnl_json():
 def pnl_excel():
     _require_token()
 
-    entity_name = session.get("current_entity")
-    entity = db.session.query(Entity).filter(Entity.name == entity_name).one_or_none()
+    entity = _get_entity_from_request()
     if not entity:
-        return jsonify({"error": "No current entity"}), 400
+        return jsonify({"error": "No current entity (pass ?entity=... or select one)"}), 400
 
     periods = []
     i = 1
@@ -94,10 +124,9 @@ def pnl_excel():
 def balance_sheet_json():
     _require_token()
 
-    entity_name = session.get("current_entity")
-    entity = db.session.query(Entity).filter(Entity.name == entity_name).one_or_none()
+    entity = _get_entity_from_request()
     if not entity:
-        return jsonify({"error": "No current entity"}), 400
+        return jsonify({"error": "No current entity (pass ?entity=... or select one)"}), 400
 
     cols = []
     i = 1
@@ -119,10 +148,9 @@ def balance_sheet_json():
 def balance_sheet_excel():
     _require_token()
 
-    entity_name = session.get("current_entity")
-    entity = db.session.query(Entity).filter(Entity.name == entity_name).one_or_none()
+    entity = _get_entity_from_request()
     if not entity:
-        return jsonify({"error": "No current entity"}), 400
+        return jsonify({"error": "No current entity (pass ?entity=... or select one)"}), 400
 
     cols = []
     i = 1

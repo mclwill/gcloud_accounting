@@ -3,6 +3,7 @@ import dash
 from dash import html, dcc, Input, Output, State, callback, no_update
 from datetime import date, datetime
 from urllib.parse import parse_qs, urlencode
+from flask import session as flask_session
 
 import FlaskApp.app.common as common
 
@@ -238,6 +239,11 @@ def _build_query(asof: date, compare_prevfy: bool) -> tuple[str, str]:
             "c1_label": f"As of {asof.isoformat()}",
             "c1_date": asof.isoformat(),
         }
+
+    # Ensure the API runs for the currently selected entity.
+    entity_name = flask_session.get("current_entity")
+    if entity_name:
+        params["entity"] = entity_name
 
     qs = urlencode(params)
     return f"{base_json}?{qs}", f"{base_xlsx}?{qs}"
