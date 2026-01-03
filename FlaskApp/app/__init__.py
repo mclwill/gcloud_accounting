@@ -3,13 +3,20 @@ from flask_login import login_required
 from flask_migrate import Migrate
 import dash
 import dash_bootstrap_components as dbc
-import os
+import os, stat, pwd, grp
 
 from .accounting_db import db  # ← IMPORT db, do not create it here
 from .services.entities import get_entities
 
 SESSION_ENTITY_KEY = "current_entity"
 DEFAULT_ENTITY = "JAJG Pty Ltd"
+
+def print_perms(path):
+    st = os.stat(path)
+    print(f"{path}")
+    print(f"  perms : {stat.filemode(st.st_mode)} ({oct(st.st_mode & 0o777)})")
+    print(f"  owner : {pwd.getpwuid(st.st_uid).pw_name}")
+    print(f"  group : {grp.getgrgid(st.st_gid).gr_name}")
 
 app = Flask(__name__)
 app.config.from_prefixed_env()
@@ -35,6 +42,8 @@ else:
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 print(app.config["SQLALCHEMY_DATABASE_URI"])
+print_perms(app.config["SQLALCHEMY_DATABASE_URI"])
+print_perms(os.path.dirname(app.config["SQLALCHEMY_DATABASE_URI"]))
 
 app.config["API_DEBUG"] = True
 
