@@ -112,131 +112,17 @@ def _csv_fingerprint_for_txn(t, asset_account_id: int) -> str:
     term = term[:64]
     return _csv_txn_fingerprint(t.date, signed_amt, int(asset_account_id), term)
 
-
-
-def _csv_total_signed(t) -> float:
-    """Compute signed total from CSV transaction lines (robust across parsers)."""
-    total = 0.0
-    for ln in getattr(t, "lines", []) or []:
-        amt = float(getattr(ln, "amount", 0) or 0)
-        is_debit = bool(getattr(ln, "is_debit", True))
-        total += amt if is_debit else -amt
-    return round(total, 2)
-
-
-def _csv_total_abs(t) -> float:
-    return abs(_csv_total_signed(t))
-
-
-def _find_match_candidates(*, entity_id: int, tx_date: date, amount_abs: float, tol: float = 0.005, limit: int = 5) -> List[dict]:
-    """Find possible existing DB matches for a CSV row (date + amount)."""
-    if not tx_date or amount_abs <= 0:
-        return []
-
-    # Find candidate transaction ids by matching any line amount around amount_abs on same date.
-    cand_ids = (
-        db.session.query(Transaction.id)
-        .join(TransactionLine)
-        .filter(Transaction.entity_id == entity_id)
-        .filter(Transaction.date == tx_date)
-        .filter(TransactionLine.amount.between(amount_abs - tol, amount_abs + tol))
-        .distinct()
-        .limit(limit)
-        .all()
-    )
-    cand_ids = [int(x[0]) for x in cand_ids]
-    if not cand_ids:
-        return []
-
-    # Load candidates and an asset-account name (if any)
-    txns = (
-        db.session.query(Transaction)
-        .options(load_only(Transaction.id, Transaction.description, Transaction.date))
-        .filter(Transaction.id.in_(cand_ids))
-        .all()
-    )
-    # Map id -> "other side" account(s) (non-asset accounts) for display.
-    # Your template expects the key name "asset_account"; we keep that key but populate it
-    # with the non-asset account(s) involved in the candidate transaction.
-    rows = (
-        db.session.query(TransactionLine.transaction_id, Account.name)
-        .join(Account, Account.id == TransactionLine.account_id)
-        .filter(TransactionLine.transaction_id.in_(cand_ids))
-        .filter(~Account.type.in_(ASSET_TYPES))
-        .all()
-    )
-    other_names: Dict[int, str] = {}
-    for tid, name in rows:
-        tid = int(tid)
-        if not name:
-            continue
-        existing = other_names.get(tid)
-        if existing:
-            # keep unique names, preserve order
-            parts = existing.split(", ")
-            if name not in parts:
-                other_names[tid] = existing + ", " + name
-        else:
-            other_names[tid] = name
-
-    out = []
-    tx_by_id = {t.id: t for t in txns}
-    for tid in cand_ids:
-        t = tx_by_id.get(tid)
-        if not t:
-            continue
-        out.append(
-            {
-                "id": int(t.id),
-                "description": t.description,
-                "asset_account": other_names.get(t.id),
-            }
-        )
-    return out
-
 # ------------------------------
 # CSV Import (Banktivity)
 # ------------------------------
 
-def _upsert_csv_review(*, entity_id: int, source: str, fingerprint: str, status: str, linked_transaction_id: Optional[int]) -> bool:
-    """Insert or update a CsvImportReview row. Returns True if a new row was inserted."""
-    existing = (
-        db.session.query(CsvImportReview)
-        .filter(CsvImportReview.entity_id == entity_id)
-        .filter(CsvImportReview.source == source)
-        .filter(CsvImportReview.fingerprint == fingerprint)
-        .one_or_none()
-    )
-    if existing is None:
-        db.session.add(
-            CsvImportReview(
-                entity_id=entity_id,
-                source=source,
-                fingerprint=fingerprint,
-                status=status,
-                linked_transaction_id=linked_transaction_id,
-                reviewed_at=datetime.utcnow(),
-            )
-        )
-        return True
-
-    # Keep the most informative state (duplicate beats imported), but allow setting linked id on imported.
-    existing.status = status
-    if linked_transaction_id is not None:
-        existing.linked_transaction_id = linked_transaction_id
-    existing.reviewed_at = datetime.utcnow()
-    return False
-
-
 @bp.route("/import", methods=["GET", "POST"])
 @login_required
 def import_csv():
-    """Preview Banktivity CSV, allow mapping, duplicate marking, and importing."""
+    """Preview Banktivity CSV, show matches, allow importing missing txns."""
     entity_id = _current_entity_id()
 
     show_mappings = (request.values.get("show_mappings") == "1")
-    show_duplicates = (request.values.get("show_duplicates") == "1")
-    show_unmapped = (request.values.get("show_unmapped") == "1")
 
     # Date filter
     start_date_str = request.values.get("start_date") or ""
@@ -249,57 +135,113 @@ def import_csv():
     # Recently imported transaction ids (stored in session on POST).
     last_imported_ids = session.pop("csv_last_imported_ids", None)
 
-    # Upload CSV
     if request.method == "POST" and "csv_file" in request.files and request.files["csv_file"].filename:
+        # Save upload to a temp path under instance folder (works locally + in prod)
         f = request.files["csv_file"]
-        upload_dir = current_app.instance_path + "/csv_uploads"
+        ts = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+        safe_name = f.filename.replace("/", "_").replace("\\", "_")
+        tmp_dir = (bp.root_path + "/../tmp")
         import os
-        os.makedirs(upload_dir, exist_ok=True)
-        safe_name = f"banktivity_{entity_id}_{int(datetime.utcnow().timestamp())}.csv"
-        csv_path = os.path.join(upload_dir, safe_name)
+        os.makedirs(tmp_dir, exist_ok=True)
+        csv_path = os.path.join(tmp_dir, f"banktivity_{entity_id}_{ts}_{safe_name}")
         f.save(csv_path)
-        flash("CSV uploaded.", "success")
-        return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
 
-    # Load mappings for this entity/source
-    mappings: Dict[str, int] = {
-        m.csv_account_name: int(m.account_id)
-        for m in (
-            db.session.query(CsvAccountMapping)
-            .filter(CsvAccountMapping.entity_id == entity_id)
-            .filter(CsvAccountMapping.source == "banktivity")
-            .all()
-        )
-    }
-
-    # Parse CSV (if provided)
     txns = []
+    missing_mappings: List[str] = []
+    mapping_rows: List[dict] = []
+    existing_ids: set[int] = set()  # kept for backward-compat; not used for matching
+    mappings: Dict[str, int] = {}
+
+    # Load saved CSV->Asset account mappings for this entity
+    for m in (
+        db.session.query(CsvAccountMapping)
+        .filter(CsvAccountMapping.entity_id == entity_id)
+        .filter(CsvAccountMapping.source == "banktivity")
+        .all()
+    ):
+        mappings[m.csv_account_name] = int(m.account_id)
+
+    possible_matches: Dict[int, list[dict]] = {}
+
     if csv_path:
-        try:
-            txns = parse_banktivity_csv(csv_path, start_date=start_date)
-        except Exception as e:
-            flash(f"Failed to parse CSV: {e}", "error")
-            txns = []
+        txns = parse_banktivity_csv(csv_path, start_date=start_date)
 
-    txn_by_id = {getattr(t, "trn_no", None): t for t in txns}
+        # Possible matches based on (date, amount)
+        tol = 0.005
+        for t in txns:
+            amt = float(t.total_abs or 0)
+            if amt <= 0:
+                possible_matches[t.trn_no] = []
+                continue
 
-    # Handle imports (and duplicate marking)
+            candidates = (
+                db.session.query(Transaction)
+                .options(load_only(Transaction.id, Transaction.description, Transaction.date))
+                .join(TransactionLine)
+                .filter(Transaction.entity_id == entity_id)
+                .filter(Transaction.date == t.date)
+                .filter(TransactionLine.amount.between(amt - tol, amt + tol))
+                .distinct()
+                .all()
+            )
+            possible_matches[t.trn_no] = [
+                {"id": int(c.id), "description": (c.description or "")}
+                for c in candidates
+            ]
+
+        # Enrich match candidates with asset account name
+        candidate_ids = {m["id"] for lst in possible_matches.values() for m in lst}
+        candidate_asset: Dict[int, str] = {}
+        if candidate_ids:
+            for txn_id, acct_name in (
+                db.session.query(TransactionLine.transaction_id, Account.name)
+                .join(Account, Account.id == TransactionLine.account_id)
+                .filter(TransactionLine.transaction_id.in_(candidate_ids))
+                .filter(Account.type.in_(ASSET_TYPES))
+                .distinct()
+                .all()
+            ):
+                candidate_asset.setdefault(int(txn_id), acct_name)
+
+            for trn_no, lst in possible_matches.items():
+                for m in lst:
+                    m["asset_account"] = candidate_asset.get(int(m["id"]), "")
+
+        # Collect unmapped accounts present in the CSV
+        csv_accounts = sorted({ln.csv_account_name for t in txns for ln in t.lines})
+        missing_mappings = [a for a in csv_accounts if a not in mappings]
+
+        # Build mapping rows for UI: show existing mappings plus any unmapped CSV accounts
+        existing_names = set(mappings.keys())
+        all_names = sorted(existing_names.union(set(missing_mappings)))
+        mapping_rows = [{"csv_name": n, "account_id": mappings.get(n)} for n in all_names]
+
+        if len(txns) == 0:
+            flash("No transactions found for the selected start date. Try an earlier date.", "warning")
+
+    if not csv_path:
+        # When no CSV is loaded yet, still show any existing mappings.
+        all_csv_names = sorted(set(mappings.keys()) | set(missing_mappings))
+        mapping_rows = [{"csv_name": n, "account_id": mappings.get(n)} for n in all_csv_names]
+
+    # Handle imports
     if request.method == "POST" and request.form.get("action") == "import_selected":
         # Selected transactions to import (may be empty if user is only marking duplicates)
-        selected_ids = {int(x) for x in request.form.getlist("import_trn_no") if x}
+        selected = request.form.getlist("import_trn_no")
+        selected_ids = {int(x) for x in selected if x}
 
-        # Confirmed duplicates (persist regardless of whether anything is imported)
+        # Duplicates marked by the user (persist regardless of whether anything is imported)
         dup_ids = {int(x) for x in request.form.getlist("dup_trn_no") if x}
 
         if not csv_path:
             flash("No CSV uploaded.", "error")
             return redirect(url_for("transactions_ui.import_csv"))
 
-        # Re-parse to avoid trusting form fields
+        # Re-parse to avoid trusting form fields (used for both dup marking and import)
         txns = parse_banktivity_csv(csv_path, start_date=start_date)
         txn_by_id = {t.trn_no: t for t in txns}
 
-        # Refresh mappings (in case they changed in another tab)
+        # Refresh mappings
         mappings = {
             m.csv_account_name: int(m.account_id)
             for m in (
@@ -310,54 +252,141 @@ def import_csv():
             )
         }
 
-        # Validate required mappings for any selected row
-        unmapped_needed = set()
-        for trn_no in selected_ids | dup_ids:
-            t = txn_by_id.get(trn_no)
-            if not t or not t.lines:
-                continue
-            csv_acct = t.lines[0].csv_account_name
-            if csv_acct not in mappings:
-                unmapped_needed.add(csv_acct)
-
-        if unmapped_needed:
-            flash(
-                "Cannot proceed yet. Please map these CSV accounts first: " + ", ".join(sorted(unmapped_needed)),
-                "error",
-            )
-            return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
-
-        # Persist duplicate reviews FIRST so they survive any later rollback due to missing confirmations.
+        # Persist duplicate reviews first (independent of import)
         saved_dups = 0
         for trn_no in sorted(dup_ids):
             t = txn_by_id.get(trn_no)
-            if not t or not t.lines:
+            if not t or not getattr(t, "lines", None):
                 continue
-            asset_id = mappings.get(t.lines[0].csv_account_name)
-            if not asset_id:
+            asset_csv_acct = t.lines[0].csv_account_name
+            asset_acct_id = mappings.get(asset_csv_acct)
+            if not asset_acct_id:
                 continue
-            fp = _csv_fingerprint_for_txn(t, asset_id)
-            inserted = _upsert_csv_review(
-                entity_id=entity_id,
-                source="banktivity",
-                fingerprint=fp,
-                status="duplicate",
-                linked_transaction_id=None,
+            fp = _csv_fingerprint_for_txn(t, int(asset_acct_id))
+            exists = (
+                db.session.query(CsvImportReview.id)
+                .filter(CsvImportReview.entity_id == entity_id)
+                .filter(CsvImportReview.source == "banktivity")
+                .filter(CsvImportReview.fingerprint == fp)
+                .first()
+                is not None
             )
-            if inserted:
+            if not exists:
+                db.session.add(
+                    CsvImportReview(
+                        entity_id=entity_id,
+                        source="banktivity",
+                        fingerprint=fp,
+                        status="duplicate",
+                        linked_transaction_id=None,
+                        reviewed_at=datetime.utcnow(),
+                    )
+                )
                 saved_dups += 1
 
         if saved_dups:
             db.session.commit()
-            flash(f"Remembered {saved_dups} duplicate(s).", "success")
+            current_app.logger.info("CSV DUPLICATE SAVE: persisted %s duplicate(s)", saved_dups)
 
-        # Never import rows marked as duplicates.
-        selected_ids = {x for x in selected_ids if x not in dup_ids}
+        # Never import rows marked as duplicates
+        if dup_ids:
+            selected_ids = {x for x in selected_ids if x not in dup_ids}
+
+        if not selected_ids:
+            if saved_dups:
+                flash(f"Saved {saved_dups} duplicate review(s).", "success")
+            else:
+                flash("No transactions selected.", "warning")
+            return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str, show_mappings="1"))
+
+        # Refresh mappings
+        mappings = {
+            m.csv_account_name: int(m.account_id)
+            for m in (
+                db.session.query(CsvAccountMapping)
+                .filter(CsvAccountMapping.entity_id == entity_id)
+                .filter(CsvAccountMapping.source == "banktivity")
+                .all()
+            )
+        }
+
+        # Validate all required mappings exist for selected transactions
+        unmapped_needed = set()
+        for trn_no in selected_ids:
+            t = txn_by_id.get(trn_no)
+            if not t:
+                continue
+            for ln in t.lines:
+                if ln.csv_account_name not in mappings:
+                    unmapped_needed.add(ln.csv_account_name)
+
+        if unmapped_needed:
+            flash(
+                "Cannot import yet. Please map these CSV accounts first: " + ", ".join(sorted(unmapped_needed)),
+                "error",
+            )
+            return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
+
+        imported = 0
+        imported_txn_ids: List[int] = []
 
         # If a CSV transaction has possible DB matches, require an explicit confirmation checkbox.
         confirmed = {int(x) for x in request.form.getlist("confirm_trn_no") if x}
 
+        # If user marked a row as a confirmed duplicate, remember it and do NOT import it.
+        dup_ids = {int(x) for x in request.form.getlist("dup_trn_no") if x}
+
+                # If user marked rows as duplicates, persist those reviews FIRST so they are remembered
+        # even if we later rollback due to unconfirmed possible matches.
+        saved_dups = 0
+        if dup_ids:
+            # Note: allow marking duplicates even if they were not selected for import.
+            for trn_no in sorted(dup_ids):
+                t = txn_by_id.get(trn_no)
+                if not t or not t.lines:
+                    continue
+
+                asset_csv_acct = t.lines[0].csv_account_name
+                asset_acct_id = mappings.get(asset_csv_acct)
+                if not asset_acct_id:
+                    # Can't fingerprint without asset mapping; skip saving
+                    continue
+
+                signed_amt = t.lines[0].amount if t.lines[0].is_debit else -t.lines[0].amount
+                term = (t.payee or t.details or "").strip()
+                fp = _csv_txn_fingerprint(t.date, signed_amt, int(asset_acct_id), term)
+
+                exists = (
+                    db.session.query(CsvImportReview.id)
+                    .filter(CsvImportReview.entity_id == entity_id)
+                    .filter(CsvImportReview.source == "banktivity")
+                    .filter(CsvImportReview.fingerprint == fp)
+                    .first()
+                    is not None
+                )
+                if not exists:
+                    db.session.add(
+                        CsvImportReview(
+                            entity_id=entity_id,
+                            source="banktivity",
+                            fingerprint=fp,
+                            status="duplicate",
+                            linked_transaction_id=None,
+                            reviewed_at=datetime.utcnow(),
+                        )
+                    )
+                    saved_dups += 1
+
+            if saved_dups:
+                db.session.commit()
+                flash(f"Remembered {saved_dups} duplicate(s).", "success")
+
+        # Ensure duplicates are never imported even if user also checked "Import?"
+        selected_ids = {x for x in selected_ids if x not in dup_ids}
+
+
         tol = 0.005
+
         next_txn_id = (
             db.session.query(db.func.max(Transaction.transaction_id))
             .filter(Transaction.entity_id == entity_id)
@@ -365,13 +394,44 @@ def import_csv():
             or 0
         )
 
-        imported = 0
-        imported_txn_ids: List[int] = []
-        blocked_for_review: List[int] = []
+        blocked_for_review: list[int] = []
 
         for trn_no in sorted(selected_ids):
             t = txn_by_id.get(trn_no)
-            if not t or not t.lines:
+            if not t:
+                continue
+
+            # If marked as duplicate: store review + skip import
+            if trn_no in dup_ids:
+                ''' - change to ensure duplicates are remembered
+                if t.lines:
+                    asset_csv_acct = t.lines[0].csv_account_name
+                    asset_acct_id = mappings.get(asset_csv_acct)
+                    if asset_acct_id:
+                        signed_amt = t.lines[0].amount if t.lines[0].is_debit else -t.lines[0].amount
+                        term = t.payee or t.details or ""
+                        fp = _csv_txn_fingerprint(t.date, signed_amt, int(asset_acct_id), term)
+
+                        exists = (
+                            db.session.query(CsvImportReview.id)
+                            .filter(CsvImportReview.entity_id == entity_id)
+                            .filter(CsvImportReview.source == "banktivity")
+                            .filter(CsvImportReview.fingerprint == fp)
+                            .first()
+                            is not None
+                        )
+                        if not exists:
+                            db.session.add(
+                                CsvImportReview(
+                                    entity_id=entity_id,
+                                    source="banktivity",
+                                    fingerprint=fp,
+                                    status="duplicate",
+                                    linked_transaction_id=None,
+                                    reviewed_at=datetime.utcnow(),
+                                )
+                            )
+                '''
                 continue
 
             # Optional counter-account from dropdown
@@ -383,8 +443,8 @@ def import_csv():
                 except ValueError:
                     counter_account_id = None
 
-            # Detect possible existing matches: same date, similar amount (any line)
-            amt = _csv_total_abs(t)
+            # Require confirm if candidates exist
+            amt = float(t.total_abs or 0)
             candidates_exist = False
             if amt > 0:
                 candidates_exist = (
@@ -402,31 +462,47 @@ def import_csv():
                 blocked_for_review.append(trn_no)
                 continue
 
-            # Create transaction
             next_txn_id += 1
             txn = Transaction(
                 entity_id=entity_id,
-                transaction_id=next_txn_id,
+                transaction_id=int(next_txn_id),
                 date=t.date,
-                description=(t.payee or t.details or "")[:255],
-                status="cleared",
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow(),
+                description=t.payee or t.details or "",
+                transaction_type=t.type,
+                posted_at=datetime.combine(t.date, datetime.min.time()),
             )
             db.session.add(txn)
-            db.session.flush()  # txn.id available
+            db.session.flush()
+            imported_txn_ids.append(int(txn.id))
 
-            # Remember imported fingerprint so we can hide re-imports from preview.
-            asset_id = mappings.get(t.lines[0].csv_account_name)
-            if asset_id:
-                fp = _csv_fingerprint_for_txn(t, asset_id)
-                _upsert_csv_review(
-                    entity_id=entity_id,
-                    source="banktivity",
-                    fingerprint=fp,
-                    status="imported",
-                    linked_transaction_id=txn.id,
-                )
+            # Remember imported fingerprint
+            if t.lines:
+                asset_csv_acct = t.lines[0].csv_account_name
+                asset_acct_id = mappings.get(asset_csv_acct)
+                if asset_acct_id:
+                    signed_amt = t.lines[0].amount if t.lines[0].is_debit else -t.lines[0].amount
+                    term = t.payee or t.details or ""
+                    fp = _csv_txn_fingerprint(t.date, signed_amt, int(asset_acct_id), term)
+
+                    exists = (
+                        db.session.query(CsvImportReview.id)
+                        .filter(CsvImportReview.entity_id == entity_id)
+                        .filter(CsvImportReview.source == "banktivity")
+                        .filter(CsvImportReview.fingerprint == fp)
+                        .first()
+                        is not None
+                    )
+                    if not exists:
+                        db.session.add(
+                            CsvImportReview(
+                                entity_id=entity_id,
+                                source="banktivity",
+                                fingerprint=fp,
+                                status="imported",
+                                linked_transaction_id=txn.id,
+                                reviewed_at=datetime.utcnow(),
+                            )
+                        )
 
             # Create mapped asset line(s)
             for ln in t.lines:
@@ -443,45 +519,50 @@ def import_csv():
 
             # Optional counter line (balanced)
             if counter_account_id and t.lines:
-                ref_ln = t.lines[0]
-                db.session.add(
-                    TransactionLine(
-                        transaction_id=txn.id,
-                        account_id=counter_account_id,
-                        is_debit=(not ref_ln.is_debit),
-                        amount=float(ref_ln.amount),
-                        memo="Auto counter (CSV import)",
+                asset_csv_acct = t.lines[0].csv_account_name
+                asset_acct_id = mappings.get(asset_csv_acct)
+                if asset_acct_id and counter_account_id == int(asset_acct_id):
+                    flash(f"Counter account cannot be the same as the mapped asset account for TRN_NO {trn_no}.", "error")
+                else:
+                    ref_ln = t.lines[0]
+                    db.session.add(
+                        TransactionLine(
+                            transaction_id=txn.id,
+                            account_id=counter_account_id,
+                            is_debit=(not ref_ln.is_debit),
+                            amount=float(ref_ln.amount),
+                            memo="Auto counter (CSV import)",
+                        )
                     )
-                )
 
             imported += 1
-            imported_txn_ids.append(txn.id)
 
         if blocked_for_review:
             db.session.rollback()
             flash(
-                "Possible duplicates found. Please review and tick 'Confirm' for: "
-                + ", ".join(str(x) for x in blocked_for_review),
+                "Some selected rows have possible date/amount matches in the database and were not confirmed. "
+                f"Please review and tick 'Confirm' for: {', '.join(str(x) for x in blocked_for_review)}",
                 "error",
             )
             return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
 
         db.session.commit()
-        if imported_txn_ids:
-            session["csv_last_imported_ids"] = imported_txn_ids
-        if imported:
-            flash(f"Imported {imported} transaction(s).", "success")
+        session["csv_last_imported_ids"] = imported_txn_ids
+        flash(f"Imported {imported} transaction(s).", "success")
         return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
 
     # Handle mapping saves
     if request.method == "POST" and request.form.get("action") == "save_mappings":
+        # Expect form fields:
+        #  - csv_names (repeated hidden inputs with the CSV account names)
+        #  - map_to__<index> = <account_id>
         updates = 0
         csv_names = request.form.getlist("csv_names")
         for idx, csv_name in enumerate(csv_names):
-            acct_id = request.form.get(f"map_to__{idx}") or ""
-            if not acct_id.strip():
+            csv_name = (csv_name or "").strip()
+            if not csv_name:
                 continue
-            acct_id = int(acct_id)
+            v = request.form.get(f"map_to__{idx}")
 
             existing = (
                 db.session.query(CsvAccountMapping)
@@ -490,9 +571,32 @@ def import_csv():
                 .filter(CsvAccountMapping.csv_account_name == csv_name)
                 .one_or_none()
             )
+
+            # User cleared the mapping → delete existing row
+            if not v:
+                if existing:
+                    db.session.delete(existing)
+                    updates += 1
+                continue
+
+            try:
+                acct_id = int(v)
+            except Exception:
+                continue
+                
             if existing:
                 if int(existing.account_id) != acct_id:
-                    existing.account_id = acct_id
+                        existing.account_id = acct_id
+                        updates += 1
+                else:
+                    db.session.add(
+                        CsvAccountMapping(
+                            entity_id=entity_id,
+                            source="banktivity",
+                            csv_account_name=csv_name,
+                            account_id=acct_id,
+                        )
+                    )
                     updates += 1
             else:
                 db.session.add(
@@ -509,42 +613,38 @@ def import_csv():
         flash(f"Saved {updates} mapping(s).", "success")
         return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
 
-    # ------------------------------
     # Render preview
-    # ------------------------------
-
     # Only show transactions whose *asset* CSV account has been mapped for this entity.
     preview_txns = []
-    unmapped_txns = []
     unmapped_accounts = set()
 
     for t in txns:
-        if not getattr(t, "lines", None):
+        if not t.lines:
             continue
         csv_acct = t.lines[0].csv_account_name
         if csv_acct in mappings:
             preview_txns.append(t)
         else:
             unmapped_accounts.add(csv_acct)
-            unmapped_txns.append(t)
 
     missing_mappings = sorted(unmapped_accounts)
 
-    # Hide CSV rows previously reviewed (duplicate OR already-imported) for this entity/source.
+    # Hide CSV rows previously reviewed as duplicates for this entity/source.
     reviewed_duplicates = []
-    hidden_reviewed_txns = []  # list of dicts {txn, status, linked_transaction_id}
     if preview_txns:
-        fp_by_trn: Dict[int, str] = {}
-        fps: List[str] = []
+        fp_by_trn = {}
+        fps = []
         for t in preview_txns:
-            asset_id = mappings.get(t.lines[0].csv_account_name)
+            csv_acct = t.lines[0].csv_account_name if t.lines else ""
+            asset_id = mappings.get(csv_acct)
             if not asset_id:
                 continue
-            fp = _csv_fingerprint_for_txn(t, asset_id)
+            signed_amt = t.lines[0].amount if t.lines[0].is_debit else -t.lines[0].amount
+            term = t.payee or t.details or ""
+            fp = _csv_txn_fingerprint(t.date, signed_amt, int(asset_id), term)
             fp_by_trn[t.trn_no] = fp
             fps.append(fp)
 
-        reviewed: Dict[str, CsvImportReview] = {}
         if fps:
             reviewed = {
                 r.fingerprint: r
@@ -561,15 +661,15 @@ def import_csv():
         for t in preview_txns:
             fp = fp_by_trn.get(t.trn_no)
             r = reviewed.get(fp) if fp else None
-            if r and r.status in {"duplicate", "imported"}:
-                if r.status == "duplicate":
-                    reviewed_duplicates.append({"trn_no": t.trn_no, "linked_transaction_id": r.linked_transaction_id})
-                hidden_reviewed_txns.append({"txn": t, "status": r.status, "linked_transaction_id": r.linked_transaction_id})
+            if r and r.status == "duplicate":
+                reviewed_duplicates.append({"trn_no": t.trn_no, "linked_transaction_id": r.linked_transaction_id})
                 continue
             filtered.append(t)
         preview_txns = filtered
 
     # Suggest a likely non-asset counterparty account based on historical transactions.
+    # Heuristic: find the most common non-asset account used on transactions whose
+    # description contains the CSV payee (or details).
     suggestions: Dict[int, Optional[dict]] = {}
     if csv_path and preview_txns:
         term_for_trn: Dict[int, str] = {}
@@ -579,10 +679,13 @@ def import_csv():
             term = (t.payee or t.details or "").strip()
             if not term:
                 continue
+            # keep terms short-ish to avoid wild LIKE matches
             term = term[:64]
             term_for_trn[t.trn_no] = term
             unique_terms.setdefault(term, None)
 
+        # Subquery of non-asset accounts (used for suggestions). Use an explicit
+        # SELECT in the IN() clause to avoid SAWarnings about coercing subqueries.
         non_asset_accounts_sq = (
             db.session.query(Account.id)
             .filter(Account.entity_id == entity_id)
@@ -591,10 +694,16 @@ def import_csv():
         )
 
         for term in unique_terms.keys():
+            # Find most common non-asset account used on similar descriptions.
             res = (
-                db.session.query(Account.id, Account.name, func.count(TransactionLine.id).label("cnt"))
-                .join(TransactionLine, TransactionLine.account_id == Account.id)
-                .join(Transaction, Transaction.id == TransactionLine.transaction_id)
+                db.session.query(
+                    Account.id.label("id"),
+                    Account.name.label("name"),
+                    func.count(TransactionLine.id).label("cnt"),
+                )
+                .select_from(Transaction)
+                .join(TransactionLine, TransactionLine.transaction_id == Transaction.id)
+                .join(Account, Account.id == TransactionLine.account_id)
                 .filter(Transaction.entity_id == entity_id)
                 .filter(Transaction.description.ilike(f"%{term}%"))
                 .filter(Account.id.in_(select(non_asset_accounts_sq.c.id)))
@@ -609,84 +718,36 @@ def import_csv():
         for trn_no, term in term_for_trn.items():
             suggestions[trn_no] = unique_terms.get(term)
 
-    # Build preview rows for template
+
+    # Accounts for display/dropdowns
+    all_accounts = get_accounts()
+    account_by_id = {int(a.id): a for a in all_accounts}
+
     preview_rows = []
     for t in preview_txns:
-        if not getattr(t, "lines", None):
-            continue
-
-        asset_csv = t.lines[0].csv_account_name
-        mapped_account_id = mappings.get(asset_csv)
-
-        mapped_account_name = None
-        if mapped_account_id:
-            mapped_account_name = db.session.query(Account.name).filter(Account.id == mapped_account_id).scalar()
-
-        amount_signed = _csv_total_signed(t)
-        amount_abs = _csv_total_abs(t)
-
-        match_candidates = _find_match_candidates(
-            entity_id=entity_id,
-            tx_date=t.date,
-            amount_abs=amount_abs,
-            tol=0.005,
-            limit=5,
-        )
-        match_count = len(match_candidates)
-
+        candidates = possible_matches.get(t.trn_no, [])
+        csv_acct = t.lines[0].csv_account_name if t.lines else ""
+        # Backward-compatible keys expected by the template.
+        match_count = len(candidates)
         preview_rows.append(
             {
                 "trn_no": t.trn_no,
                 "date": t.date,
-                "type": getattr(t, "type", None),
-                "payee": getattr(t, "payee", None),
-                "lines": getattr(t, "lines", []),
-                "mapped_account_id": mapped_account_id,
-                "mapped_account_name": mapped_account_name,
-                "amount": amount_signed,
-                "suggested": suggestions.get(t.trn_no),
+                "payee": t.payee,
+                "type": t.type,
+                "details": t.details,
+                "total": t.total_abs,
+                "csv_account": csv_acct,
+                "mapped_account_id": mappings.get(csv_acct),
+                "mapped_account_name": (account_by_id.get(mappings.get(csv_acct)).name if mappings.get(csv_acct) and account_by_id.get(mappings.get(csv_acct)) else ""),
+                "possible_matches": candidates,
+                "needs_confirm": bool(candidates),
                 "match_count": match_count,
-                "match_candidates": match_candidates,
+                "match_candidates": candidates,
+                "suggested": suggestions.get(t.trn_no),
+                "lines": t.lines,
             }
         )
-
-    # Optional: surface hidden items for review (unmapped CSV accounts / remembered duplicates).
-    hidden_duplicate_rows = []
-    hidden_imported_rows = []
-    if show_duplicates and hidden_reviewed_txns:
-        for item in hidden_reviewed_txns:
-            t = item["txn"]
-            row = {
-                "trn_no": t.trn_no,
-                "date": t.date,
-                "payee": getattr(t, "payee", None),
-                "details": getattr(t, "details", None),
-                "amount": float(_csv_total_signed(t)),
-                "asset_csv_account": t.lines[0].csv_account_name if getattr(t, "lines", None) else None,
-                "status": item["status"],
-                "linked_transaction_id": item.get("linked_transaction_id"),
-            }
-            if item["status"] == "duplicate":
-                hidden_duplicate_rows.append(row)
-            else:
-                hidden_imported_rows.append(row)
-
-    hidden_unmapped_rows = []
-    if show_unmapped and unmapped_txns:
-        for t in unmapped_txns:
-            hidden_unmapped_rows.append(
-                {
-                    "trn_no": t.trn_no,
-                    "date": t.date,
-                    "payee": getattr(t, "payee", None),
-                    "details": getattr(t, "details", None),
-                    "amount": float(_csv_total_signed(t)),
-                    "asset_csv_account": t.lines[0].csv_account_name if getattr(t, "lines", None) else None,
-                }
-            )
-    all_accounts = get_accounts()
-    mapping_rows = [{"csv_name": n, "account_id": mappings.get(n)} for n in sorted(mappings.keys())]
-
     return render_template(
         "transactions/import.html",
         csv_path=csv_path,
@@ -701,10 +762,5 @@ def import_csv():
         txns_count=len(txns),
         preview_count=len(preview_rows),
         reviewed_duplicates=reviewed_duplicates,
-        show_duplicates=show_duplicates,
-        show_unmapped=show_unmapped,
-        hidden_duplicate_rows=hidden_duplicate_rows,
-        hidden_imported_rows=hidden_imported_rows,
-        hidden_unmapped_rows=hidden_unmapped_rows,
         last_imported_ids=last_imported_ids or [],
     )
