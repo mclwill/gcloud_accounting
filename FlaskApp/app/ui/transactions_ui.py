@@ -288,7 +288,21 @@ def import_csv():
         selected_ids = {int(x) for x in selected if x}
 
         # Duplicates marked by the user (persist regardless of whether anything is imported)
-        dup_ids = {int(x) for x in request.form.getlist("dup_trn_no") if x}
+        # New template naming: dup_trn_no__<TRN_NO>=1 (more robust than getlist)
+        dup_ids: set[int] = set()
+        for k in request.form.keys():
+            if k.startswith("dup_trn_no__"):
+                try:
+                    dup_ids.add(int(k.split("__", 1)[1]))
+                except Exception:
+                    continue
+
+        # Backwards-compatibility with older template: dup_trn_no=<TRN_NO>
+        for v in request.form.getlist("dup_trn_no"):
+            try:
+                dup_ids.add(int(v))
+            except Exception:
+                continue
 
         if not csv_path:
             flash("No CSV uploaded.", "error")
@@ -297,6 +311,15 @@ def import_csv():
         # Re-parse to avoid trusting form fields (used for both dup marking and import)
         txns = parse_banktivity_csv(csv_path, start_date=start_date)
         txn_by_id = {t.trn_no: t for t in txns}
+
+        current_app.logger.warning(
+            "CSV import POST: csv_path=%s start_date=%s selected_ids=%s dup_ids=%s total_csv_txns=%d",
+            csv_path,
+            start_date_str,
+            sorted(selected_ids),
+            sorted(dup_ids),
+            len(txn_by_id),
+        )
 
         # Refresh mappings
         mappings = {
@@ -320,6 +343,12 @@ def import_csv():
             if not asset_acct_id:
                 continue
             fp = _csv_fingerprint_for_txn(t, int(asset_acct_id))
+            current_app.logger.warning(
+                "Remembering duplicate request: trn_no=%s fp=%s asset_account_id=%s",
+                trn_no,
+                fp,
+                asset_acct_id,
+            )
             exists = (
                 db.session.query(CsvImportReview.id)
                 .filter(CsvImportReview.entity_id == entity_id)
@@ -344,6 +373,11 @@ def import_csv():
         if saved_dups:
             db.session.commit()
             current_app.logger.info("CSV DUPLICATE SAVE: persisted %s duplicate(s)", saved_dups)
+        elif dup_ids:
+            current_app.logger.info(
+                "CSV DUPLICATE SAVE: no new duplicates persisted (already known?) dup_ids=%s",
+                sorted(dup_ids),
+            )
 
         # Never import rows marked as duplicates
         if dup_ids:

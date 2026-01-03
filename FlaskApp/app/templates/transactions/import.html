@@ -26,19 +26,6 @@
 {% if reviewed_duplicates and reviewed_duplicates|length > 0 %}
   <p><em>{{ reviewed_duplicates|length }} CSV transaction(s) were previously marked as duplicates and are hidden from preview.</em></p>
 {% endif %}
-  <div style="margin-top: 4px;">
-    {% if show_duplicates %}
-      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates='0', show_unmapped=('1' if show_unmapped else '0')) }}">Hide duplicates</a>
-    {% else %}
-      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates='1', show_unmapped=('1' if show_unmapped else '0')) }}">Show duplicates</a>
-    {% endif %}
-    &nbsp;|&nbsp;
-    {% if show_unmapped %}
-      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates=('1' if show_duplicates else '0'), show_unmapped='0') }}">Hide unmapped</a>
-    {% else %}
-      <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else '0'), show_duplicates=('1' if show_duplicates else '0'), show_unmapped='1') }}">Show unmapped</a>
-    {% endif %}
-  </div>
   <fieldset>
     <legend>1) Upload & filter</legend>
     <label>Start date (inclusive):</label>
@@ -86,10 +73,6 @@
     <input type="hidden" name="csv_path" value="{{ csv_path }}">
     <input type="hidden" name="start_date" value="{{ start_date }}">
     <input type="hidden" name="show_mappings" value="1">
-    <input type="hidden" name="show_duplicates" value="{{ '1' if show_duplicates else '0' }}">
-    <input type="hidden" name="show_unmapped" value="{{ '1' if show_unmapped else '0' }}">
-    <input type="hidden" name="show_duplicates" value="{{ '1' if show_duplicates else '0' }}">
-    <input type="hidden" name="show_unmapped" value="{{ '1' if show_unmapped else '0' }}">
 
     {% if mapping_rows|length == 0 %}
       <p><em>No mappings yet.</em></p>
@@ -165,105 +148,12 @@
   if (hideBtn) hideBtn.addEventListener("click", function() { setVisible(false); });
 })();
 </script>
-{% if show_duplicates and (hidden_duplicate_rows|length > 0 or hidden_imported_rows|length > 0) %}
-  <hr>
-  <h2>Hidden (duplicates / already imported)</h2>
-  <p style="opacity: 0.8; font-size: 0.95em;">
-    These rows were hidden because they were previously marked as <strong>duplicate</strong> or already <strong>imported</strong>.
-    They are shown here for transparency (they still won’t import unless you remove the duplicate mark in the database).
-  </p>
-
-  {% if hidden_duplicate_rows|length > 0 %}
-    <h3>Duplicates</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date</th><th>Payee</th><th>Amount</th><th>CSV account</th><th>Linked txn</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for r in hidden_duplicate_rows %}
-          <tr>
-            <td>{{ r.date }}</td>
-            <td>{{ r.payee or r.details }}</td>
-            <td>{{ '%.2f'|format(r.amount) }}</td>
-            <td>{{ r.asset_csv_account }}</td>
-            <td>
-              {% if r.linked_transaction_id %}
-                <a href="{{ url_for('transactions_ui.detail', transaction_id=r.linked_transaction_id) }}">{{ r.linked_transaction_id }}</a>
-              {% else %}
-                —
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% endif %}
-
-  {% if hidden_imported_rows|length > 0 %}
-    <h3>Already imported</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date</th><th>Payee</th><th>Amount</th><th>CSV account</th><th>Linked txn</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for r in hidden_imported_rows %}
-          <tr>
-            <td>{{ r.date }}</td>
-            <td>{{ r.payee or r.details }}</td>
-            <td>{{ '%.2f'|format(r.amount) }}</td>
-            <td>{{ r.asset_csv_account }}</td>
-            <td>
-              {% if r.linked_transaction_id %}
-                <a href="{{ url_for('transactions_ui.detail', transaction_id=r.linked_transaction_id) }}">{{ r.linked_transaction_id }}</a>
-              {% else %}
-                —
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% endif %}
-{% endif %}
-
-{% if show_unmapped and hidden_unmapped_rows|length > 0 %}
-  <hr>
-  <h2>Hidden (unmapped CSV accounts)</h2>
-  <p style="opacity: 0.8; font-size: 0.95em;">
-    These rows were hidden because their CSV bank account name isn’t mapped to an <strong>Asset</strong> account yet.
-    Map the account above, then re-preview.
-  </p>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Date</th><th>Payee</th><th>Amount</th><th>CSV account</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for r in hidden_unmapped_rows %}
-        <tr>
-          <td>{{ r.date }}</td>
-          <td>{{ r.payee or r.details }}</td>
-          <td>{{ '%.2f'|format(r.amount) }}</td>
-          <td>{{ r.asset_csv_account }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% endif %}
 <h2>3) Preview & import</h2>
   <form method="post">
     <input type="hidden" name="csv_path" value="{{ csv_path }}">
     <input type="hidden" name="start_date" value="{{ start_date }}">
     <input type="hidden" name="action" value="import_selected">
     <input type="hidden" name="show_mappings" value="{{ '1' if show_mappings else '0' }}">
-    <input type="hidden" name="show_duplicates" value="{{ '1' if show_duplicates else '0' }}">
-    <input type="hidden" name="show_unmapped" value="{{ '1' if show_unmapped else '0' }}">
 
 {% if reviewed_duplicates and reviewed_duplicates|length > 0 %}
   <p><em>{{ reviewed_duplicates|length }} CSV transaction(s) were previously marked as duplicates and are hidden from preview.</em></p>
@@ -352,7 +242,7 @@
 <td>
   {% if r.match_count > 0 %}
     <label>
-      <input type="checkbox" name="dup_trn_no" value="{{ r.trn_no }}" class="dup-box" data-trn="{{ r.trn_no }}">
+      <input type="checkbox" name="dup_trn_no__{{ r.trn_no }}" value="1" class="dup-box" data-trn="{{ r.trn_no }}">
       Duplicate
     </label>
   {% else %}
