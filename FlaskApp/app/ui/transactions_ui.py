@@ -221,8 +221,7 @@ def import_csv():
 
     if not csv_path:
         # When no CSV is loaded yet, still show any existing mappings.
-        all_csv_names = sorted(set(mappings.keys()) | set(missing_mappings))
-        mapping_rows = [{"csv_name": n, "account_id": mappings.get(n)} for n in all_csv_names]
+        mapping_rows = [{"csv_name": n, "account_id": mappings.get(n)} for n in sorted(mappings.keys())]
 
     # Handle imports
     if request.method == "POST" and request.form.get("action") == "import_selected":
@@ -553,39 +552,51 @@ def import_csv():
 
     # Handle mapping saves
     if request.method == "POST" and request.form.get("action") == "save_mappings":
-        # Expect form fields:
-        #  - csv_names (repeated hidden inputs with the CSV account names)
-        #  - map_to__<index> = <account_id>
+        """
+        Save CSV→Account mappings.
+
+        The mapping form posts:
+          - csv_names: repeated hidden inputs (one per row)
+          - map_to__<index>: selected account id (or "" when user chooses "Choose")
+        """
         updates = 0
         csv_names = request.form.getlist("csv_names")
-        for idx, csv_name in enumerate(csv_names):
-            csv_name = (csv_name or "").strip()
-            if not csv_name:
-                continue
-            v = request.form.get(f"map_to__{idx}")
 
-            existing = (
-                db.session.query(CsvAccountMapping)
-                .filter(CsvAccountMapping.entity_id == entity_id)
-                .filter(CsvAccountMapping.source == "banktivity")
-                .filter(CsvAccountMapping.csv_account_name == csv_name)
-                .one_or_none()
-            )
+        # Protect against duplicate csv_names in the posted form (can happen when we build rows
+        # from multiple sources and the template repeats a name).
+        seen: set[str] = set()
 
-            # User cleared the mapping → delete existing row
-            if not v:
-                if existing:
-                    db.session.delete(existing)
-                    updates += 1
-                continue
+        with db.session.no_autoflush:
+            for idx, csv_name in enumerate(csv_names):
+                csv_name = (csv_name or "").strip()
+                if not csv_name or csv_name in seen:
+                    continue
+                seen.add(csv_name)
 
-            try:
-                acct_id = int(v)
-            except Exception:
-                continue
-                
-            if existing:
-                if int(existing.account_id) != acct_id:
+                v = (request.form.get(f"map_to__{idx}") or "").strip()
+
+                existing = (
+                    db.session.query(CsvAccountMapping)
+                    .filter(CsvAccountMapping.entity_id == entity_id)
+                    .filter(CsvAccountMapping.source == "banktivity")
+                    .filter(CsvAccountMapping.csv_account_name == csv_name)
+                    .one_or_none()
+                )
+
+                # User cleared the mapping → delete existing row
+                if not v:
+                    if existing is not None:
+                        db.session.delete(existing)
+                        updates += 1
+                    continue
+
+                try:
+                    acct_id = int(v)
+                except ValueError:
+                    continue
+
+                if existing is not None:
+                    if int(existing.account_id) != acct_id:
                         existing.account_id = acct_id
                         updates += 1
                 else:
@@ -598,19 +609,9 @@ def import_csv():
                         )
                     )
                     updates += 1
-            else:
-                db.session.add(
-                    CsvAccountMapping(
-                        entity_id=entity_id,
-                        source="banktivity",
-                        csv_account_name=csv_name,
-                        account_id=acct_id,
-                    )
-                )
-                updates += 1
 
         db.session.commit()
-        flash(f"Saved {updates} mapping(s).", "success")
+        flash(f"Saved {updates} mapping change(s).", "success")
         return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
 
     # Render preview
