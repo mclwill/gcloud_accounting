@@ -17,21 +17,6 @@
     <legend>Filters</legend>
 
     <label>
-      Entity
-      <select name="entity_name">
-        <option value="">All entities</option>
-        {% for entity in entities %}
-          <option value="{{ entity.name }}"
-            {% if entity.name == entity_name %}selected{% endif %}>
-            {{ entity.name }}
-          </option>
-        {% endfor %}
-      </select>
-
-      <!--input type="text" name="entity_id" value="{{ entity_id or '' }}">-->
-    </label>
-
-    <label>
       Account
       <select name="account_id">
         <option value="">All</option>
