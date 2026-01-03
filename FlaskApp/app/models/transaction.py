@@ -27,7 +27,7 @@ class Transaction(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
-    posted_at = db.Column(db.DateTime)
+    posted_at = db.Column(db.DateTime, default=datetime.utcnow, server_default=db.func.now(), nullable=False)
 
     entity = db.relationship("Entity", backref="transactions")
 

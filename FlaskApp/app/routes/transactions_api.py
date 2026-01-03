@@ -160,6 +160,7 @@ def update_transaction(transaction_id: int):
     txn.date = txn_date
     txn.description = description
 
+    txn.posted_at = datetime.utcnow()
     TransactionLine.query.filter_by(transaction_id=transaction_id).delete()
 
     for line in lines:
@@ -241,6 +242,7 @@ def create_transaction():
         date=txn_date,
         description=description,
         created_at=datetime.utcnow(),
+        posted_at=datetime.utcnow(),
     )
 
     db.session.add(txn)

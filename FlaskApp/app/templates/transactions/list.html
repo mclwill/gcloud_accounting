@@ -15,8 +15,7 @@
 <form method="get" class="filters">
   <fieldset>
     <legend>Filters</legend>
-
-    <label>
+<label>
       Account
       <select name="account_id">
         <option value="">All</option>
@@ -28,17 +27,7 @@
         {% endfor %}
       </select>
     </label>
-
-    <label>
-      Status
-      <select name="status">
-        <option value="">All</option>
-        <option value="draft" {{ 'selected' if status == 'draft' else '' }}>Draft</option>
-        <option value="posted" {{ 'selected' if status == 'posted' else '' }}>Posted</option>
-      </select>
-    </label>
-
-    <label>
+<label>
       Start date
       <input type="date" name="start_date" value="{{ start_date or '' }}">
     </label>
@@ -73,13 +62,12 @@
       <th>Accounts</th>
       <th class="number">Debit</th>
       <th class="number">Credit</th>
-      <th>Status</th>
-      <th>Created</th>
+            <th>Created</th>
     </tr>
   </thead>
   <tbody>
     {% for t in transactions %}
-      <tr class="{{ 'posted' if t.posted_at else 'draft' }}">
+      <tr>
         <td>{{ t.date }}</td>
         <td>
           <a href="{{ url_for('transactions_ui.detail', transaction_id=t.id) }}">
@@ -103,8 +91,7 @@
             {{ "%.2f"|format(t.credit_total or 0) }}
           {% endif %}
         </td>
-        <td>{{ 'Posted' if t.posted_at else 'Draft' }}</td>
-        <td>{{ t.created_at }}</td>
+<td>{{ t.created_at }}</td>
       </tr>
     {% else %}
       <tr>

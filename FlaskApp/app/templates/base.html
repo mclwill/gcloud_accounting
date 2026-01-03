@@ -22,7 +22,7 @@
 
     </div>
 
-    {% if all_entities|length > 1 %}
+        {% if all_entities|length > 1 %}
       <form method="post" action="{{ url_for('app_ui.set_entity') }}">
         <select name="entity" onchange="this.form.submit()">
           {% for e in all_entities %}
@@ -55,14 +55,12 @@
         <button type="submit">Create</button>
       </form>
     </details>
+    <div class="header-links" style="margin-top: 6px;">
+      <a href="/accounts">Accounts</a>
+    </div>
 
 
-<nav class="app-nav">
-      <!-- Accounts -->
-      <form class="report-form" onsubmit="return false;">
-        <a href="/accounts">Accounts</a>
-      </form>
-
+    <nav class="app-nav">
       <!-- Profit & Loss -->
       <form class="report-form" id="pnl-form" onsubmit="return false;">
         <a href="/reports/pnl">P&amp;L</a>
@@ -91,9 +89,7 @@
 
         <button type="button" onclick="goBalanceSheet()">Run</button>
       </form>
-
-
-      <!-- Transaction Search -->
+<!-- Transaction Search -->
       <form class="report-form" id="txn-search" method="get" action="{{ url_for('transactions_ui.list') }}">
         <a href="{{ url_for('transactions_ui.list') }}">Transactions</a>
         <label>

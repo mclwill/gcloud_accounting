@@ -65,9 +65,9 @@ else:
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////var/www/FlaskApp/instance/accounting.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-#print(app.config["SQLALCHEMY_DATABASE_URI"])
-#print_perms(app.config["SQLALCHEMY_DATABASE_URI"])
-#print_perms(os.path.dirname(app.config["SQLALCHEMY_DATABASE_URI"]))
+print(app.config["SQLALCHEMY_DATABASE_URI"])
+print_perms(app.config["SQLALCHEMY_DATABASE_URI"])
+print_perms(os.path.dirname(app.config["SQLALCHEMY_DATABASE_URI"]))
 
 app.config["API_DEBUG"] = True
 
