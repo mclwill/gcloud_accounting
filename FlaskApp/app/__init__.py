@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 import dash
 import dash_bootstrap_components as dbc
 import os, stat, pwd, grp
+from urllib.parse import urlparse, unquote
 
 from .accounting_db import db  # ← IMPORT db, do not create it here
 from .services.entities import get_entities
