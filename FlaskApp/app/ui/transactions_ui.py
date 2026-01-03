@@ -116,9 +116,9 @@ def _upsert_review(
 # ------------------------------
 # Transactions list + detail
 # ------------------------------
-@bp.route("/")
+@bp.route("/", endpoint="list")
 @login_required
-def list():
+def index():
     entity_name = session.get("current_entity")
 
     account_id = request.args.get("account_id", type=int)
@@ -619,7 +619,7 @@ def import_csv():
             .subquery()
         )
 
-        for term in list(unique_terms.keys()):
+        for term in tuple(unique_terms.keys()):
             res = (
                 db.session.query(
                     Account.id.label("id"),
