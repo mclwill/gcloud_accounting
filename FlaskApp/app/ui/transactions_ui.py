@@ -189,46 +189,51 @@ def import_csv():
                 for c in candidates
             ]
 
-        # Enrich match candidates with the *other side* (non-asset) account name(s)
-        candidate_ids = {m["id"] for lst in possible_matches.values() for m in lst}
-        candidate_other: Dict[int, str] = {}
-        if candidate_ids:
-            rows = (
-                db.session.query(TransactionLine.transaction_id, Account.name)
-                .join(Account, Account.id == TransactionLine.account_id)
-                .filter(TransactionLine.transaction_id.in_(candidate_ids))
-                .filter(~Account.type.in_(ASSET_TYPES))
-                .all()
-            )
-            tmp: Dict[int, set[str]] = {}
-            for txn_id, acct_name in rows:
-                tmp.setdefault(int(txn_id), set()).add(str(acct_name))
+        # Enrich match candidates with "other side" account names.
+# The template expects the field name `asset_account`, but we populate it with the
+# counterparty account(s) from the matched DB transaction:
+#   - Prefer non-asset accounts (expense/income/liability/equity)
+#   - If the match is a transfer between assets, show the *other* asset account
+#     (exclude the CSV's mapped asset account).
+candidate_ids = {m["id"] for lst in possible_matches.values() for m in lst}
+txn_lines: Dict[int, List[Tuple[int, str, str]]] = {}  # txn_id -> [(acct_id, acct_type, acct_name)]
+if candidate_ids:
+    for txn_id, acct_id, acct_type, acct_name in (
+        db.session.query(
+            TransactionLine.transaction_id,
+            Account.id,
+            Account.type,
+            Account.name,
+        )
+        .join(Account, Account.id == TransactionLine.account_id)
+        .filter(TransactionLine.transaction_id.in_(candidate_ids))
+        .all()
+    ):
+        txn_lines.setdefault(int(txn_id), []).append((int(acct_id), str(acct_type), str(acct_name)))
 
-            # Fallback to asset account if a transaction has no non-asset lines
-            if not tmp:
-                tmp = {}
+    for t in preview_txns:
+        csv_acct = t.lines[0].csv_account_name if t.lines else ""
+        exclude_acct_id = mappings.get(csv_acct)  # the asset account shown in the "Account" column
+        for m in possible_matches.get(t.trn_no, []):
+            tid = int(m["id"])
+            lines = txn_lines.get(tid, [])
+            # Prefer non-asset accounts excluding the mapped asset account
+            non_asset = [
+                name for (aid, atype, name) in lines
+                if (exclude_acct_id is None or aid != int(exclude_acct_id)) and atype not in ASSET_TYPES
+            ]
+            # If none, fall back to "other" accounts excluding the mapped asset account (handles transfers)
+            if non_asset:
+                names = sorted(set(non_asset), key=lambda s: s.lower())
+            else:
+                other = [
+                    name for (aid, atype, name) in lines
+                    if (exclude_acct_id is None or aid != int(exclude_acct_id))
+                ]
+                names = sorted(set(other), key=lambda s: s.lower())
+            m["asset_account"] = ", ".join(names)
 
-            asset_rows = (
-                db.session.query(TransactionLine.transaction_id, Account.name)
-                .join(Account, Account.id == TransactionLine.account_id)
-                .filter(TransactionLine.transaction_id.in_(candidate_ids))
-                .filter(Account.type.in_(ASSET_TYPES))
-                .all()
-            )
-            asset_first: Dict[int, str] = {}
-            for txn_id, acct_name in asset_rows:
-                asset_first.setdefault(int(txn_id), str(acct_name))
-
-            for txn_id in candidate_ids:
-                names = sorted(tmp.get(int(txn_id), set()), key=lambda s: s.lower())
-                candidate_other[int(txn_id)] = ", ".join(names) if names else asset_first.get(int(txn_id), "")
-
-            for trn_no, lst in possible_matches.items():
-                for m in lst:
-                    m["asset_account"] = candidate_other.get(int(m["id"]), "")
-
-
-        # Collect unmapped accounts present in the CSV
+# Collect unmapped accounts present in the CSV
         csv_accounts = sorted({ln.csv_account_name for t in txns for ln in t.lines})
         missing_mappings = [a for a in csv_accounts if a not in mappings]
 
@@ -573,39 +578,51 @@ def import_csv():
 
     # Handle mapping saves
     if request.method == "POST" and request.form.get("action") == "save_mappings":
-        # Expect form fields:
-        #  - csv_names (repeated hidden inputs with the CSV account names)
-        #  - map_to__<index> = <account_id>
+        """
+        Save CSV→Account mappings.
+
+        The mapping form posts:
+          - csv_names: repeated hidden inputs (one per row)
+          - map_to__<index>: selected account id (or "" when user chooses "Choose")
+        """
         updates = 0
         csv_names = request.form.getlist("csv_names")
-        for idx, csv_name in enumerate(csv_names):
-            csv_name = (csv_name or "").strip()
-            if not csv_name:
-                continue
-            v = request.form.get(f"map_to__{idx}")
 
-            existing = (
-                db.session.query(CsvAccountMapping)
-                .filter(CsvAccountMapping.entity_id == entity_id)
-                .filter(CsvAccountMapping.source == "banktivity")
-                .filter(CsvAccountMapping.csv_account_name == csv_name)
-                .one_or_none()
-            )
+        # Protect against duplicate csv_names in the posted form (can happen when we build rows
+        # from multiple sources and the template repeats a name).
+        seen: set[str] = set()
 
-            # User cleared the mapping → delete existing row
-            if not v:
-                if existing:
-                    db.session.delete(existing)
-                    updates += 1
-                continue
+        with db.session.no_autoflush:
+            for idx, csv_name in enumerate(csv_names):
+                csv_name = (csv_name or "").strip()
+                if not csv_name or csv_name in seen:
+                    continue
+                seen.add(csv_name)
 
-            try:
-                acct_id = int(v)
-            except Exception:
-                continue
-                
-            if existing:
-                if int(existing.account_id) != acct_id:
+                v = (request.form.get(f"map_to__{idx}") or "").strip()
+
+                existing = (
+                    db.session.query(CsvAccountMapping)
+                    .filter(CsvAccountMapping.entity_id == entity_id)
+                    .filter(CsvAccountMapping.source == "banktivity")
+                    .filter(CsvAccountMapping.csv_account_name == csv_name)
+                    .one_or_none()
+                )
+
+                # User cleared the mapping → delete existing row
+                if not v:
+                    if existing is not None:
+                        db.session.delete(existing)
+                        updates += 1
+                    continue
+
+                try:
+                    acct_id = int(v)
+                except ValueError:
+                    continue
+
+                if existing is not None:
+                    if int(existing.account_id) != acct_id:
                         existing.account_id = acct_id
                         updates += 1
                 else:
@@ -618,19 +635,9 @@ def import_csv():
                         )
                     )
                     updates += 1
-            else:
-                db.session.add(
-                    CsvAccountMapping(
-                        entity_id=entity_id,
-                        source="banktivity",
-                        csv_account_name=csv_name,
-                        account_id=acct_id,
-                    )
-                )
-                updates += 1
 
         db.session.commit()
-        flash(f"Saved {updates} mapping(s).", "success")
+        flash(f"Saved {updates} mapping change(s).", "success")
         return redirect(url_for("transactions_ui.import_csv", csv_path=csv_path, start_date=start_date_str))
 
     # Render preview
