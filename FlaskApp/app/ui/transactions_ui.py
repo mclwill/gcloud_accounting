@@ -172,7 +172,6 @@ def import_csv():
 
     show_mappings = request.values.get("show_mappings") == "1"
     show_hidden = (request.values.get("show_hidden") == "1")
-    show_unmapped = (request.values.get("show_unmapped") == "1")
 
     start_date_str = request.values.get("start_date") or ""
     start_date: Optional[date] = None
@@ -750,6 +749,14 @@ def import_csv():
             csv_acct = t.lines[0].csv_account_name if getattr(t, "lines", None) else ""
             mapped_id = int(mappings.get(csv_acct) or 0)
             mapped_name = account_by_id.get(mapped_id).name if mapped_id and account_by_id.get(mapped_id) else ""
+            # Some older duplicate-review rows were saved without a linked txn id.
+            # If it's missing, try to infer it from the current match candidates.
+            linked_id = meta.get("linked_transaction_id")
+            if not linked_id:
+                candidates = possible_matches.get(trn, [])
+                if candidates:
+                    linked_id = candidates[0].get("id")
+
             hidden_review_rows.append({
                 "trn_no": trn,
                 "date": t.date,
@@ -760,20 +767,7 @@ def import_csv():
                 "mapped_account_name": mapped_name or csv_acct,
                 "lines": getattr(t, "lines", None),
                 "status": meta.get("status"),
-                "linked_transaction_id": meta.get("linked_transaction_id"),
-            })
-
-    hidden_unmapped_rows: List[dict] = []
-    if unmapped_txns:
-        for t in unmapped_txns:
-            csv_acct = t.lines[0].csv_account_name if getattr(t, "lines", None) else ""
-            hidden_unmapped_rows.append({
-                "trn_no": int(getattr(t, "trn_no", 0) or 0),
-                "date": t.date,
-                "payee": getattr(t, "payee", "") or getattr(t, "details", "") or "",
-                "type": getattr(t, "type", "") or "",
-                "csv_account_name": csv_acct,
-                "lines": getattr(t, "lines", None),
+                "linked_transaction_id": linked_id,
             })
 
     return render_template(
@@ -791,9 +785,7 @@ def import_csv():
         preview_count=len(preview_rows),
         reviewed_duplicates=reviewed_duplicates,
         show_hidden=show_hidden,
-        show_unmapped=show_unmapped,
         hidden_review_rows=hidden_review_rows,
-        hidden_unmapped_rows=hidden_unmapped_rows,
 
         last_imported_ids=last_imported_ids or [],
     )

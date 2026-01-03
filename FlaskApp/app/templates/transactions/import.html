@@ -66,29 +66,13 @@
         <td>{% if r.lines and r.lines[0].is_debit %}Dr{% elif r.lines %}Cr{% else %}—{% endif %}</td>
         <td>{% if r.lines %}{{ "%.2f"|format(r.lines[0].amount or 0) }}{% else %}—{% endif %}</td>
         <td>{{ r.status }}</td>
-        <td>{% if r.linked_transaction_id %}{{ r.linked_transaction_id }}{% else %}—{% endif %}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-{% endif %}
-
-{% if show_unmapped and hidden_unmapped_rows and hidden_unmapped_rows|length > 0 %}
-  <hr>
-  <h3>Unmapped transactions</h3>
-  <p>These rows are not shown in the main preview because their CSV asset account is not mapped yet.</p>
-  <table>
-    <thead>
-      <tr><th>Date</th><th>Payee/Details</th><th>CSV Account</th><th>Dr/Cr</th><th>Amount</th></tr>
-    </thead>
-    <tbody>
-    {% for r in hidden_unmapped_rows %}
-      <tr>
-        <td>{{ r.date }}</td>
-        <td>{{ r.payee }}</td>
-        <td>{{ r.csv_account_name }}</td>
-        <td>{% if r.lines and r.lines[0].is_debit %}Dr{% elif r.lines %}Cr{% else %}—{% endif %}</td>
-        <td>{% if r.lines %}{{ "%.2f"|format(r.lines[0].amount or 0) }}{% else %}—{% endif %}</td>
+        <td>
+          {% if r.linked_transaction_id %}
+            <a href="{{ url_for('transactions_ui.detail', transaction_id=r.linked_transaction_id) }}">#{{ r.linked_transaction_id }}</a>
+          {% else %}
+            —
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
     </tbody>
@@ -112,11 +96,8 @@
 
 {% if csv_path %}
   <div style="margin: 6px 0 12px 0;">
-    <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else None), show_hidden=(None if show_hidden else '1'), show_unmapped=('1' if show_unmapped else None)) }}" style="margin-right: 12px;">
+    <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else None), show_hidden=(None if show_hidden else '1')) }}" style="margin-right: 12px;">
       {% if show_hidden %}Hide{% else %}Show{% endif %} hidden duplicates/imported
-    </a>
-    <a href="{{ url_for('transactions_ui.import_csv', csv_path=csv_path, start_date=start_date, show_mappings=('1' if show_mappings else None), show_hidden=('1' if show_hidden else None), show_unmapped=(None if show_unmapped else '1')) }}">
-      {% if show_unmapped %}Hide{% else %}Show{% endif %} unmapped transactions
     </a>
   </div>
 {% endif %}
