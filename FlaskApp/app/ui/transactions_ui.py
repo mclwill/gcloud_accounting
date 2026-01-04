@@ -16,7 +16,7 @@ from FlaskApp.app.models.entity import Entity
 from FlaskApp.app.models.transaction import Transaction
 from FlaskApp.app.models.transaction_line import TransactionLine
 from FlaskApp.app.services.accounts import get_accounts
-from FlaskApp.app.services.balance_sheet_report import ASSET_TYPES
+from FlaskApp.app.services.balance_sheet_report import ASSET_TYPES, LIABILITY_TYPES
 from FlaskApp.app.services.banktivity_import import parse_banktivity_csv
 from FlaskApp.app.services.entities import get_entities
 from FlaskApp.app.services.transaction_detail import get_transaction_detail
@@ -716,6 +716,15 @@ def import_csv():
         csv_acct = t.lines[0].csv_account_name if getattr(t, "lines", None) else ""
         mapped_id = mappings.get(csv_acct)
         mapped_name = account_by_id.get(mapped_id).name if mapped_id and account_by_id.get(mapped_id) else ""
+        suggested = suggestions.get(int(t.trn_no))
+        # Phase A: For Transfers, suggest other-side from PAYEE/DETAILS via existing account mappings
+        if (getattr(t, 'type', '') or '').strip().lower() == 'transfer':
+            label = (getattr(t, 'payee', '') or getattr(t, 'details', '') or '').strip()
+            other_id = mappings.get(label) if label else None
+            if other_id and int(other_id) != int(mapped_id or 0):
+                other_acct = account_by_id.get(int(other_id))
+                if other_acct and (other_acct.type in (ASSET_TYPES + LIABILITY_TYPES)):
+                    suggested = {'account_id': int(other_acct.id), 'account_name': other_acct.name, 'count': None}
 
         preview_rows.append(
             {
@@ -732,7 +741,7 @@ def import_csv():
                 "needs_confirm": bool(candidates),
                 "match_count": len(candidates),
                 "match_candidates": candidates,
-                "suggested": suggestions.get(int(t.trn_no)),
+                "suggested": suggested,
                 "lines": getattr(t, "lines", None),
             }
         )
@@ -749,6 +758,25 @@ def import_csv():
             csv_acct = t.lines[0].csv_account_name if getattr(t, "lines", None) else ""
             mapped_id = int(mappings.get(csv_acct) or 0)
             mapped_name = account_by_id.get(mapped_id).name if mapped_id and account_by_id.get(mapped_id) else ""
+            suggested = suggestions.get(int(t.trn_no))
+            # Phase A: For Transfers, suggest other-side from PAYEE/DETAILS via existing account mappings
+            if (getattr(t, "type", "") or "").strip().lower() == "transfer":
+                label = (getattr(t, "payee", "") or getattr(t, "details", "") or "").strip()
+                other_id = mappings.get(label) if label else None
+                if other_id and int(other_id) != int(mapped_id or 0):
+                    other_acct = account_by_id.get(int(other_id))
+                    if other_acct and (other_acct.type in (ASSET_TYPES + LIABILITY_TYPES)):
+                        suggested = {"account_id": int(other_acct.id), "account_name": other_acct.name, "count": None}
+
+            suggested = suggestions.get(int(t.trn_no))
+            # Phase A: For Transfers, suggest other-side from PAYEE/DETAILS via existing account mappings
+            if (getattr(t, 'type', '') or '').strip().lower() == 'transfer':
+                label = (getattr(t, 'payee', '') or getattr(t, 'details', '') or '').strip()
+                other_id = mappings.get(label) if label else None
+                if other_id and int(other_id) != int(mapped_id or 0):
+                    other_acct = account_by_id.get(int(other_id))
+                    if other_acct and (other_acct.type in (ASSET_TYPES + LIABILITY_TYPES)):
+                        suggested = {'account_id': int(other_acct.id), 'account_name': other_acct.name, 'count': None}
             # Some older duplicate-review rows were saved without a linked txn id.
             # If it's missing, try to infer it from the current match candidates.
             linked_id = meta.get("linked_transaction_id")
@@ -768,6 +796,7 @@ def import_csv():
                 "lines": getattr(t, "lines", None),
                 "status": meta.get("status"),
                 "linked_transaction_id": linked_id,
+                "suggested": suggested,
             })
 
     return render_template(
